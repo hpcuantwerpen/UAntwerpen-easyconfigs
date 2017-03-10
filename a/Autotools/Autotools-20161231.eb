@@ -1,0 +1,19 @@
+easyblock = 'Bundle'
+
+name = 'Autotools'
+version = '20161231'  # date of the most recent change
+
+homepage = 'http://autotools.io'
+description = """This bundle collect the standard GNU build tools: Autoconf, Automake and libtool"""
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+dependencies = [
+    ('M4',       '1.4.18'), # 20161231
+    ('Autoconf', '2.69'),   # 20120424
+    ('Automake', '1.15'),   # 20150105
+    ('libtool',  '2.4.6'),  # 20150215
+]
+# Pure bundle -- no need to specify 'binutils' used when building GCCcore toolchain as build dependency
+
+moduleclass = 'devel'
