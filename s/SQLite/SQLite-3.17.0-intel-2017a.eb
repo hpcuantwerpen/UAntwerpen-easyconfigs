@@ -1,0 +1,48 @@
+##
+# This file is an EasyBuild reciPY as per https://github.com/hpcugent/easybuild
+#
+# Copyright:: Copyright 2012-2014 Uni.Lu/LCSB, NTUA
+# Authors::   Fotis Georgatos <fotis@cern.ch>
+# License::   MIT/GPL
+# $Id$
+#
+# This work implements a part of the HPCBIOS project and is a component of the policy:
+# http://hpcbios.readthedocs.org/en/latest/
+##
+
+easyblock = 'ConfigureMake'
+
+name = 'SQLite'
+version = '3.17.0'   # KL version check 20170301
+
+homepage = 'http://www.sqlite.org/'
+description = 'SQLite: SQL Database Engine in a C Library'
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+source_urls = ['http://www.sqlite.org/2017/']
+version_minor_etc = version.split('.')[1:]
+version_minor_etc += '0' * (3 - len(version_minor_etc))
+version_str = '%(version_major)s' + ''.join('%02d' % int(x) for x in version_minor_etc)
+sources = ['sqlite-autoconf-%s.tar.gz' % version_str]
+
+dependencies = [
+    ('libreadline', '7.0'),     # KL 20170301
+    ('Tcl',         '8.6.6'),   # KL 20170301
+]
+
+# From version 3.17 on, SQLite uses __builtin_sub_overflow(), __builtin_add_overflow(), 
+# and __builtin_mul_overflow() which are supported in recent versions of GCC.
+# However, it somehow wrongly detects support in the Intel compilers, resulting in
+# a build failure.
+# The tricky bit: I took the CFLAGS options that EasyBuild sets by default for the
+# intel/2017a toolchain, then added -DSQLITE_DISABLE_INTRINSIC.
+configopts = 'CFLAGS="-O2 -xHost -ftz -fp-speculation=safe -fp-model source -DSQLITE_DISABLE_INTRINSIC"'
+
+sanity_check_paths = {
+    'files': ['bin/sqlite3', 'include/sqlite3ext.h', 'include/sqlite3.h', 'lib/libsqlite3.a',
+              'lib/libsqlite3.%s' % SHLIB_EXT],
+    'dirs': ['lib/pkgconfig'],
+}
+
+moduleclass = 'devel'
