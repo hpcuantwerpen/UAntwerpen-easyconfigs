@@ -1,0 +1,39 @@
+easyblock = 'ConfigureMake'
+
+name = 'Guile'
+version = '1.8.8'
+
+homepage = 'http://www.gnu.org/software/guile'
+description = """Guile is the GNU Ubiquitous Intelligent Language for Extensions,
+ the official extension language for the GNU operating system."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+sources = [SOURCELOWER_TAR_GZ]
+source_urls = [GNU_SOURCE]
+
+dependencies = [
+    ('GMP',          '6.1.2'),
+    ('libunistring', '0.9.7'),
+    ('libffi',       '3.2.1'),
+    ('libreadline',  '7.0'),     # KL Was 6.3 in previous toolchains, let's try with 7.0
+#    ('libtool',      '2.4.6'),  # Moved to build dependency
+#    ('pkg-config',   '0.29.1'), # Moved to OS dependency as the preinstalled one seems to do a good job.
+]
+
+builddependencies = [
+#    ('pkg-config', '0.29.1', '', True),   # Seems to work with the OS one from SL6 also.
+    ( 'libtool',   '2.4.6',  '', True)
+]
+
+osdependencies = [ ('pkgconfig')]
+
+configopts = " --enable-error-on-warning=no"
+
+sanity_check_paths = {
+    'files': ["bin/%s" % x for x in ["guile", 'guile-config', 'guile-snarf', 'guile-tools']] +
+             ["lib/libguile.a", "include/libguile.h"],
+    'dirs': []
+}
+
+moduleclass = 'devel'
