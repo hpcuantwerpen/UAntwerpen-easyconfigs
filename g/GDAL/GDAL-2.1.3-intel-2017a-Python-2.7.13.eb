@@ -1,0 +1,118 @@
+easyblock = 'ConfigureMake'
+
+name = 'GDAL'
+version = '2.1.3'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'http://www.gdal.org/'
+description = """GDAL is a translator library for raster geospatial data formats that is released under an X/MIT style
+ Open Source license by the Open Source Geospatial Foundation. As a library, it presents a single abstract data model
+ to the calling application for all supported formats. It also comes with a variety of useful commandline utilities for
+ data translation and processing."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+source_urls = ['http://download.osgeo.org/gdal/%(version)s/']
+sources = [SOURCELOWER_TAR_XZ]
+
+# The ticket claims the issue dealt with with the patch for 2.1.2 has been solved.
+# patches = ['GDAL-%(version)s_fix-vrtsources.patch']
+# Issue: Wrong data type in one of the jpeg2000 files, breaks on compilers
+# that don't know uchar.
+patches = ['GDAL-2.1.3_patch_jasper.patch']
+
+dependencies = [
+    ('zlib', '1.2.11')
+]
+
+builddependencies = [
+    ('pkg-config', '0.29.1', '', True),   # The configure script test whether pkg-config >= 0.25
+]
+
+configopts  = ''
+# there is a bug in the build system causing the build with libtool to fail for the moment
+# (static library is also missing because of this)
+configopts += ' --without-libtool'
+
+# Point to libz, we use our own rather than the internal one.
+# Some of the optional components depend on the module version anyway.
+configopts += ' --with-libz=$EBROOTLIBZ'
+
+# Point configure to the Expat XML parser
+# Used for several formats, including SVG and Open Document Spreadsheet
+dependencies.append( ('expat', '2.2.0') )
+configopts += ' --with-expat=$EBROOTEXPAT'
+
+# Support for libxml2
+# Also depends on zlib
+dependencies.append( ('libxml2', '2.9.4') )
+configopts += ' --with-xml2=$EBROOTLIBXML2'
+
+# PNG support
+dependencies.append( ('libpng', '1.6.28') )
+configopts += ' --with-png=$EBROOTLIBPNG'
+
+# TIFF support
+dependencies.append( ('LibTIFF', '4.0.7') )
+configopts += ' --with-libtiff=$EBROOTLIBTIFF'
+
+# JPEG support
+dependencies.append( ('libjpeg-turbo', '1.5.1') )
+configopts += ' --with-jpeg=$EBROOTLIBJPEGMINTURBO'
+
+# JPEG2000 support through JasPer
+# This option needs the patch above
+dependencies.append( ('JasPer', '2.0.12') )   # Give it a try, otherwise try 1.900.29 (was 1.900.1)
+configopts += ' --with-jasper=$EBROOTJASPER'
+
+# HDF5
+# This needs the path to the MPI include files to be included in the compiler options,
+# see below.
+dependencies.append( ('HDF5', '1.8.18') )
+configopts += ' --with-hdf5=$EBROOTHDF5'
+
+# For GMT-compatible netCDF:
+# netCDF (Uses HDF5, so you might as well include support for HDF5 also)
+dependencies.append( ('netCDF', '4.4.1.1') )
+configopts += ' --with-netcdf=$EBROOTNETCDF'
+
+# For OGC Web Coverage service and some other OBC services: cURL needed
+# Also used for various OGR vector formats
+dependencies.append( ('cURL', '7.53.1') )
+configopts += ' --with-curl=$EBROOTCURL'
+
+# For GeoPackage support: SQLite 3, also component for Rasterlite2 support
+# Also used for some OGR vector formats
+# SQLite 3
+dependencies.append( ('SQLite', '3.17.0') )
+configopts += ' --with-sqlite3=$EBROOTSQLITE'
+# And add regexp support to SQLite:
+dependencies.append( ('PCRE', '8.40') )
+configopts += ' --with-pcre=$EBROOTPCRE'
+
+# GEOS support
+# Note that the EasyBuild GEOS module contains Python support, so we may
+# include that as well right away.
+dependencies.append( ('GEOS', '3.6.1', versionsuffix) )
+configopts += ' --with-geos=$EBROOTGEOS/bin/geos-config'
+
+#
+# Bindings to other languages
+#
+dependencies.append( ('Python', '2.7.13') )
+configopts += ' --with-python=$EBROOTPYTHON/bin/python'
+modextrapaths = {'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages'}
+
+#
+# Compilers as in the manual install
+#
+configopts += ' CC=icc   CFLAGS="-O2 -xHost -ftz -fp-speculation=safe -fp-model source"'
+configopts += ' CXX=icpc CXXFLAGS="-I$EBROOTIMPI/compilers_and_libraries/linux/mpi/include64 -O2 -xHost -ftz -fp-speculation=safe -fp-model source"'
+
+sanity_check_paths = {
+    'files': ['lib/libgdal.%s' % SHLIB_EXT],
+#    'dirs': ['bin', 'include', 'lib/python%(pyshortver)s/site-packages']
+    'dirs': ['bin', 'include']
+}
+
+moduleclass = 'data'
