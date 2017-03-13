@@ -1,0 +1,27 @@
+#! /bin/bash
+# Run this script with two arguments: The package name and the package version, e.g.
+# make_patch_wd308 multicool 0.1-10
+# make_patch_wd308 forecast 8.0
+packagename=$1
+packageversion=$2
+echo "Requested building patch for ${packagename}_${packageversion}"
+
+filename="${packagename}_${packageversion}.tar.gz"
+packagelocation="http://cran.r-project.org/src/contrib/"
+wget ${packagelocation}${filename}
+
+tar -xf ${filename}
+cp -r ${packagename} ${packagename}.orig
+
+/bin/echo -e \
+  "# disable Intel C++ compiler (icpc) warning/error #308, to avoid 'member \"std::complex<double>::_M_value\" is inaccessible'\nPKG_CXXFLAGS = -wd308" > ${packagename}/src/Makevars
+pushd ${packagename}
+md5sum src/Makevars | sed -e "s/ src/*src/" >> MD5
+popd
+
+patchfile=${packagename}-${packageversion}_icpc-wd308.patch
+echo "add -wd308 compiler option to avoid compiler warning #308 being treated as an error" > $patchfile
+echo "author: Kenneth Hoste (HPC-UGent), Kurt Lust (UAntwerpen)"       >> $patchfile
+diff -ruN ${packagename}.orig/MD5 ${packagename}/MD5                   >> $patchfile
+diff -ruN ${packagename}.orig/src/Makevars ${packagename}/src/Makevars >> $patchfile
+

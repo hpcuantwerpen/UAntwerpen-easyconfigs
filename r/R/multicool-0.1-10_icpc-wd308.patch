@@ -1,0 +1,14 @@
+add -wd308 compiler option to avoid compiler warning #308 being treated as an error
+author: Kenneth Hoste (HPC-UGent), Kurt Lust (UAntwerpen)
+--- multicool.orig/MD5	2017-03-10 10:58:25.921265000 +0100
++++ multicool/MD5	2017-03-10 10:58:25.925376316 +0100
+@@ -21,3 +21,4 @@
+ b18b7e9e5912cf1014aa2c2fa8e86047 *src/compositions.cpp
+ 994ea793adf2455b973554d9b8dacd99 *src/multicool.cpp
+ 8e6ea24037e92ec9c30f699f4e3f9b8a *src/multinomial.h
++b1d3a4d02405fe08c7983c479bc27f13 *src/Makevars
+--- multicool.orig/src/Makevars	1970-01-01 01:00:00.000000000 +0100
++++ multicool/src/Makevars	2017-03-10 10:58:25.924054000 +0100
+@@ -0,0 +1,2 @@
++# disable Intel C++ compiler (icpc) warning/error #308, to avoid 'member "std::complex<double>::_M_value" is inaccessible'
++PKG_CXXFLAGS = -wd308

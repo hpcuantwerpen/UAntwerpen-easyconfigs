@@ -1,0 +1,16 @@
+add -wd308 compiler option to avoid compiler warning #308 being treated as an error
+author: Kenneth Hoste (HPC-UGent), Kurt Lust (UAntwerpen)
+--- forecast.orig/MD5	2017-03-10 13:35:44.275808000 +0100
++++ forecast/MD5	2017-03-10 13:35:44.285202143 +0100
+@@ -193,3 +193,4 @@
+ c84653dccc60c5c7460cf3a4878d501a *vignettes/JSS-paper.bib
+ 22567b42a7cc05594968d063f7769b8d *vignettes/JSS2008.Rmd
+ b9564ddd59a06782310989e8f33db55e *vignettes/jsslogo.jpg
++b1d3a4d02405fe08c7983c479bc27f13 *src/Makevars
+--- forecast.orig/src/Makevars	2017-03-10 13:35:44.280677000 +0100
++++ forecast/src/Makevars	2017-03-10 13:35:44.284067000 +0100
+@@ -1,2 +1,2 @@
+-## Use the R_HOME indirection to support installations of multiple R version
+-PKG_LIBS=$(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
++# disable Intel C++ compiler (icpc) warning/error #308, to avoid 'member "std::complex<double>::_M_value" is inaccessible'
++PKG_CXXFLAGS = -wd308
