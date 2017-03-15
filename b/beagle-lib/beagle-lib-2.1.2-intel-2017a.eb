@@ -1,0 +1,37 @@
+easyblock = 'ConfigureMake'
+
+name = 'beagle-lib'
+version = '2.1.2'
+homepage = 'https://github.com/beagle-dev/beagle-lib'
+description = """beagle-lib is a high-performance library that can perform the core calculations at the heart of most
+ Bayesian and Maximum Likelihood phylogenetics packages."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+# Enable OpenMP support. The Beagle code does contain OpenMP pragmas,
+# but since it seems that it is installed only to be used by BEAST and
+# since parallelism seems to come from threads in Java, we leave it disabled for now.
+# OpnMP is also not used in the other Beagle EasyConfigs.
+# toolchainopts = {'openmp': 'True'}
+
+# https://github.com/beagle-dev/beagle-lib/archive/beagle_release_2_1_2.tar.gz
+source_urls = ['https://github.com/beagle-dev/beagle-lib/archive/']
+sources = ['beagle_release_%s.tar.gz' % version.replace('.', '_')]
+
+dependencies = [('Java', '8', '', True)]
+
+builddependencies = [('Autotools', '20161231', '', True)]
+
+# parallel build does not work (to test)
+parallel = 1
+
+preconfigopts = "./autogen.sh && "
+
+sanity_check_paths = {
+    'files': ["include/libhmsbeagle-1/libhmsbeagle/%s" % includefile
+              for includefile in ["beagle.h", "platform.h"]] +
+             ["lib/libhmsbeagle%s.so" % libfile
+              for libfile in ["-cpu", "-cpu-sse", "-jni", ""]],
+    'dirs': []
+}
+
+moduleclass = 'numlib'
