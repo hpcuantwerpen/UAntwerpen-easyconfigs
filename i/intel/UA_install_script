@@ -1,0 +1,41 @@
+#!/bin/bash
+
+module load intel/2017a
+
+# For old configure scripts that still expect libmpich.a rather than libmpi.a for Intel MPI,
+# e.g., the Rmpi R-package.
+cd $EBROOTIMPI/compilers_and_libraries_$EBVERSIONIMPI/linux/mpi/intel64/lib
+ln -s libmpi.a libmpich.a
+
+# Create FFTW-compatible interfaces.
+cd $MKLROOT/interfaces/fftw2xc
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2xc_double_intel.a     PRECISION=MKL_DOUBLE
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2xc_single_intel.a     PRECISION=MKL_SINGLE
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2xc_double_intel_pic.a PRECISION=MKL_DOUBLE CLFAGS="-fpic" 
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2xc_single_intel_pic.a PRECISION=MKL_SINGLE CLFAGS="-fpic" 
+cd $MKLROOT/interfaces/fftw2xf
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2xf_double_intel.a     PRECISION=MKL_DOUBLE
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2xf_single_intel.a     PRECISION=MKL_SINGLE
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2xf_double_intel_pic.a PRECISION=MKL_DOUBLE CLFAGS="-fpic" 
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2xf_single_intel_pic.a PRECISION=MKL_SINGLE CLFAGS="-fpic" 
+cd $MKLROOT/interfaces/fftw3xc
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw3xc_intel.a
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw3xc_intel_pic.a CFLAGS=-fpic
+cd $MKLROOT/interfaces/fftw3xf
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw3xf_intel.a
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw3xf_intel_pic.a CFLAGS=-fpic
+cd $MKLROOT/interfaces/fftw2x_cdft
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2x_cdft_DOUBLE_lp64      interface=lp64  PRECISION=MKL_DOUBLE
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2x_cdft_SINGLE_lp64      interface=lp64  PRECISION=MKL_SINGLE
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2x_cdft_DOUBLE_ilp64     interface=ilp64 PRECISION=MKL_DOUBLE
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2x_cdft_SINGLE_ilp64     interface=ilp64 PRECISION=MKL_SINGLE
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2x_cdft_DOUBLE_lp64_pic  interface=lp64  PRECISION=MKL_DOUBLE CLFAGS="-fpic"
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2x_cdft_SINGLE_lp64_pic  interface=lp64  PRECISION=MKL_SINGLE CLFAGS="-fpic"
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2x_cdft_DOUBLE_ilp64_pic interface=ilp64 PRECISION=MKL_DOUBLE CLFAGS="-fpic"
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw2x_cdft_SINGLE_ilp64_pic interface=ilp64 PRECISION=MKL_SINGLE CLFAGS="-fpic"
+cd $MKLROOT/interfaces/fftw3x_cdft
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw3x_cdft_lp64      interface=lp64
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw3x_cdft_ilp64     interface=ilp64
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw3x_cdft_lp64_pic  interface=lp64  CLFAGS="-fpic"
+make libintel64 INSTALL_DIR=../../lib/intel64_lin INSTALL_LIBNAME=libfftw3x_cdft_ilp64_pic interface=ilp64 CLFAGS="-fpic"
+

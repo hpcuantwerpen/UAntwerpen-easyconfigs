@@ -1,0 +1,163 @@
+#%Module
+proc ModulesHelp { } {
+
+    puts stderr "Application developtment tools form Intel Parallel Studio XE 2017 update 1 Cluster Edition: Debugger, VTune Apmplifier, Advisor, Inspector and ITAC - https://software.intel.com/en-us/intel-parallel-studio-xe"
+
+}
+
+module-whatis "Description: Application developtment tools form Intel Parallel Studio XE 2017 update 1 Cluster Edition: Debugger, VTune Apmplifier, Advisor, Inspector and ITAC - https://software.intel.com/en-us/intel-parallel-studio-xe"
+
+set root		/apps/antwerpen/ivybridge/sl6/intel-psxe/2017_update2
+
+set ebversion		2017_update2
+set itacversion		2017.2.028 
+set vtuneversion	2017.2.0.499904
+set advisorversion	2017.1.2.501009
+set inspectorversion	2017.1.2.497970
+
+set debugroot		$root/debugger_2017
+set docroot		$root/documentation_2017/en
+set itacroot		$root/itac/$itacversion
+set vtuneroot		$root/vtune_amplifier_xe_$vtuneversion
+set advisorroot		$root/advisor_$advisorversion
+set inspectorroot	$root/inspector_$inspectorversion
+
+conflict inteldevtools
+
+if { ![ is-loaded intel/2017a ] } {
+    module load intel/2017a
+}
+
+#
+# License
+#
+prepend-path	INTEL_LICENSE_FILE		/apps/antwerpen/licenses/intel/license.lic
+
+#
+# Debugger
+#
+prepend-path	LD_LIBRARY_PATH			$debugroot/iga/lib
+prepend-path	LD_LIBRARY_PATH			$debugroot/libipt/intel64/lib
+
+prepend-path	PATH				$debugroot/gdb/intel64/bin
+
+prepend-path	MANPATH				$docroot/debugger/gdb-ia/man/
+prepend-path	INFOPATH			$docroot/debugger/gdb-ia/info/
+
+prepend-path	NLSPATH				$debugroot/gdb/intel64/share/locale/%l_%t/%N
+
+setenv		INTEL_PYTHONHOME		"$debugroot/python/intel64/"
+
+#
+# ITAC and VTUNE
+#
+
+prepend-path	LD_LIBRARY_PATH			"$itacroot/intel64/slib"
+# The next one???? Same file names but different files.
+# prepend-path	LD_LIBRARY_PATH			"$itacroot/mic/slib"
+
+prepend-path	PATH				"$itacroot/intel64/bin"
+prepend-path	PATH				"$vtuneroot/bin64"
+
+prepend-path	MANPATH				"$itacroot/man"
+
+setenv		MPS_INTEL_LIBITTNOTIFY64	libmps.so
+setenv		MPS_KMP_FORKJOIN_FRAMES_MODE	3
+setenv		MPS_LD_PRELOAD			libmps.so
+setenv		MPS_STAT_DIR_POSTFIX		"_%D-%T"
+setenv		MPS_STAT_ENABLE_IDLE		I_MPI_PVAR_IDLE
+setenv		MPS_STAT_ENABLE_IDLE_VAL	1
+setenv		MPS_STAT_LEVEL			5
+setenv		MPS_STAT_MESSAGES		1
+setenv		MPS_TOOL_ROOT			"$itacroot"
+
+setenv		VT_ADD_LIBS			"-ldwarf -lelf -lvtunwind -lm -lpthread"
+setenv		VT_ARCH				intel64
+setenv		VT_LIB_DIR			"$itacroot/intel64/lib"
+setenv		VT_MPI				impi4
+setenv		VT_ROOT				"$itacroot"
+setenv		VT_SLIB_DIR			"$itacroot/intel64/slib"
+
+setenv		VTUNE_AMPLIFIER_XE_2017_DIR	"$vtuneroot"
+
+#
+# Inspector
+#
+
+prepend-path	PATH				$inspectorroot/bin64
+
+prepend-path	MANPATH				$inspectorroot/man
+
+setenv		INSPECTOR_2017_DIR		"$inspectorroot"
+
+# Other entries put by the former EasyBuild module, but not by psxevars.sh:
+# Note that the Advisor contains the same include files and more, so it makes
+# little sense to even specify these.
+# prepend-path	CPATH				$inspectorroot/include 
+# prepend-path	FPATH				$inspectorroot/include 
+# prepend-path	LD_LIBRARY_PATH			$inspectorpath/lib64
+# prepend-path	LIBRARY_PATH			$inspectorpath/lib64
+
+#
+# Advisor
+#
+
+prepend-path	PATH				$advisorroot/bin64
+
+prepend-path	MANPATH				$advisorroot/man
+
+setenv		ADVISOR_2017_DIR		"$advisorroot"
+
+# Other entries put by the former EasyBuild module, but not by psxevars.sh:
+# prepend-path	CPATH				$advisorroot/include 
+# prepend-path	FPATH				$advisorroot/include 
+# prepend-path	LD_LIBRARY_PATH			$advisorpath/lib64
+# prepend-path	LIBRARY_PATH			$advisorpath/lib64
+
+#
+# MIC-related
+# Tools for running Xeon Phi applications in offload mode and for
+# development of such applications on regular intel64 nodes.
+#
+
+prepend-path	MIC_LD_LIBRARY_PATH		$itacroot/mic/slib
+
+prepend-path	PATH				$debugroot/gdb/intel64_mic/bin
+
+prepend-path	MANPATH				$docroot/debugger/gdb-mic/man/
+prepend-path	INFOPATH			$docroot/debugger/gdb-mic/info/
+
+prepend-path	NLSPATH				$debugroot/gdb/intel64_mic/share/locale/%l_%t/%N
+
+setenv		GDBSERVER_MIC			"$debugroot/gdb/targets/mic/bin/gdbserver"
+setenv		GDB_CROSS			"$debugroot/gdb/intel64_mic/bin/gdb-mic"
+setenv		MPM_LAUNCHER			"$debugroot/mpm/mic/bin/start_mpm.sh"
+
+#
+# Intel heterogeneous computing on integrated GPU
+# Tools for running and developing applications with offload to
+# Intel integrateded graphics chips
+#
+
+prepend-path	PATH				$debugroot/gdb/intel64_igfx/bin
+
+prepend-path	MANPATH				$docroot/debugger/gdb-igfx/man/
+prepend-path	INFOPATH			$docroot/debugger/gdb-igfx/info/
+
+#
+# EasyBuild toolchain compatibility
+# Some environment variables that others may potentially be using in
+# Makefiles etc.
+#
+
+setenv		EBROOTADVISOR			"$root"
+setenv		EBROOTINSPECTOR			"$root"
+setenv		EBROOTVTUNE			"$root"
+setenv		EBROOTITAC			"$root"
+
+
+setenv 		EBVERSIONADVISOR		"$ebversion"
+setenv 		EBVERSIONINSPECTOR		"$ebversion"
+setenv 		EBVERSIONVTUNE			"$ebversion"
+setenv		EBVERSIONITAC			"$itacversion"
+

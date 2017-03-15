@@ -1,0 +1,23 @@
+easyblock = 'Toolchain'
+
+name = 'intel'
+version = '2017a'
+
+homepage = 'http://software.intel.com/en-us/intel-cluster-toolkit-compiler/'
+description = """Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran compilers, Intel MPI & Intel MKL."""
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+gccver = '6.3.0'
+binutilsver = '2.27'
+gccsuff = '-GCC-%s-%s' % (gccver, binutilsver)
+dependencies = [
+    ('GCCcore', gccver),
+    ('binutils', binutilsver, '-GCCcore-%s' % gccver),
+    ('icc', 'phony'),
+    ('ifort', 'phony'),
+    ('impi', 'phony'),
+    ('imkl', 'phony'),
+]
+
+moduleclass = 'toolchain'

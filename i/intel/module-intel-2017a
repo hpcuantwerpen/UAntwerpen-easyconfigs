@@ -1,0 +1,178 @@
+#%Module
+proc ModulesHelp { } {
+    puts stderr { Intel Parallel Studio XE 2017 update 1 Cluster Edition: Compilers, Intel MPI and the MKL, IPP, TBB and DAAL libraries. See the inteldevtools/2017a module for the development tools - https://software.intel.com/en-us/intel-parallel-studio-xe
+    }
+}
+
+module-whatis {Description: Intel Parallel Studio XE 2017 update 1 Cluster Edition: Compilers, Intel MPI and the MKL, IPP, TBB and DAAL libraries. See the inteldevtools/2017a module for the development tools - https://software.intel.com/en-us/intel-parallel-studio-xe}
+
+set root		/apps/antwerpen/ivybridge/sl6/intel-psxe/2017_update2
+set compilerversion	2017.2.174
+
+set compilerroot	$root/compilers_and_libraries_$compilerversion/linux
+set docroot		$root/documentation_2017/en
+
+conflict intel
+
+if { [ module-info mode remove ] } {
+    module unload icc/phony
+    module unload ifort/phony
+}
+
+
+#
+# When EasyBuild is loaded, we load a number of phony modules to tick 
+# EasyBuild into believing a regular Intel toolchain with all submodules
+# has been loaded.
+# Note that we need this strange construct to make sure that module load
+# and module unload work correctly. Otherwise the phony/all modules
+# are removed too early, causing an error message about not being
+# able to remove the icc/phony etc. modules.
+# 
+if { [ is-loaded EasyBuild ]  } {
+
+    if { [ module-info mode remove ] } {
+        module unload icc/phony
+        module unload ifort/phony
+        module unload impi/phony
+        module unload imkl/phony
+    }
+
+    module use  /apps/antwerpen/modules/phony/all
+
+    if { [ module-info mode load ] } {
+        module load icc/phony
+        module load ifort/phony
+        module load impi/phony
+        module load imkl/phony
+    }
+}
+
+if { ![ is-loaded GCCcore/6.3.0 ] } {
+    module load GCCcore/6.3.0
+}
+
+if { ![ is-loaded binutils/2.27-GCCcore-6.3.0 ] } {
+    module load binutils/2.27-GCCcore-6.3.0
+}
+
+#
+# License
+#
+prepend-path	INTEL_LICENSE_FILE		/apps/antwerpen/licenses/intel/license.lic
+
+#
+# Compilers
+#
+prepend-path	LD_LIBRARY_PATH			$compilerroot/compiler/lib/intel64_lin
+
+prepend-path	LIBRARY_PATH			$compilerroot/compiler/lib/intel64_lin
+
+prepend-path	MANPATH				$docroot/man/common
+
+# The first one contains the compilervars scripts, the next one all compiler executables.
+prepend-path	PATH				$compilerroot/bin
+prepend-path	PATH				$compilerroot/bin/intel64
+
+prepend-path	NLSPATH				$compilerroot/compiler/lib/intel64/locale/%l_%t/%N
+
+# 
+# MPI-related
+#
+prepend-path	LD_LIBRARY_PATH			$compilerroot/mpi/intel64/lib
+
+# The next line is usefull for packages that try to compile programs that need
+# mpi.h without using the MPI wrappers (e.g., the Rmpi R-package).
+prepend-path	LIBRARY_PATH			$compilerroot/mpi/intel64/lib
+
+prepend-path	MANPATH				$compilerroot/mpi/man
+
+prepend-path	PATH				$compilerroot/mpi/intel64/bin
+
+# The next two are usefull for packages that try to compile programs that need
+# mpi.h without using the MPI wrappers (e.g., the Rmpi R-package).
+prepend-path 	CPATH				$compilerroot/mpi/intel64/include
+prepend-path 	FPATH				$compilerroot/mpi/intel64/include
+
+prepend-path	CLASSPATH			$compilerroot/mpi/intel64/lib/mpi.jar
+
+setenv		I_MPI_ROOT			"$compilerroot/mpi"
+setenv		I_MPI_HYDRA_BOOTSTRAP		pbsdsh
+
+#
+# Libraries
+#
+# - IPP
+
+prepend-path	CPATH				$compilerroot/ipp/include
+prepend-path	LD_LIBRARY_PATH			$compilerroot/ipp/lib/intel64
+prepend-path	LIBRARY_PATH			$compilerroot/ipp/lib/intel64
+
+setenv		IPPROOT				"$compilerroot/ipp"
+
+# - MKL
+
+prepend-path	CPATH				$compilerroot/mkl/include
+prepend-path	LD_LIBRARY_PATH			$compilerroot/mkl/lib/intel64_lin
+prepend-path	LIBRARY_PATH			$compilerroot/mkl/lib/intel64_lin
+prepend-path	NLSPATH				$compilerroot/mkl/lib/intel64_lin/locale/%l_%t/%N
+
+setenv 		MKLROOT				"$compilerroot/mkl"
+
+# - TBB
+
+prepend-path	CPATH				$compilerroot/tbb/include
+prepend-path	LD_LIBRARY_PATH			$compilerroot/tbb/lib/intel64_lin/gcc4.7
+prepend-path	LIBRARY_PATH			$compilerroot/tbb/lib/intel64_lin/gcc4.7
+
+setenv		TBBROOT				"$compilerroot/tbb"
+
+# - DAAL
+
+prepend-path	CPATH				$compilerroot/daal/include
+prepend-path	LD_LIBRARY_PATH			$compilerroot/daal/lib/intel64_lin
+prepend-path	LIBRARY_PATH			$compilerroot/daal/lib/intel64_lin
+prepend-path	CLASSPATH			$compilerroot/daal/lib/daal.jar
+
+setenv		DAALROOT			"$compilerroot/daal"
+
+#
+# MIC-related
+# Tools for running Xeon Phi applications in offload mode and for
+# development of such applications on regular intel64 nodes.
+#
+
+prepend-path	MIC_LD_LIBRARY_PATH		$compilerroot/compiler/lib/intel64_lin_mic
+prepend-path	MIC_LD_LIBRARY_PATH		$compilerroot/mpi/mic/lib
+prepend-path	MIC_LD_LIBRARY_PATH		$compilerroot/ipp/lib/mic
+prepend-path	MIC_LD_LIBRARY_PATH		$compilerroot/mkl/lib/intel64_lin_mic
+prepend-path	MIC_LD_LIBRARY_PATH		$compilerroot/tbb/lib/mic
+
+prepend-path	MIC_LIBRARY_PATH		$compilerroot/compiler/lib/mic
+prepend-path	MIC_LIBRARY_PATH		$compilerroot/compiler/lib/intel64_lin_mic
+prepend-path	MIC_LIBRARY_PATH		$compilerroot/mpi/mic/lib
+prepend-path	MIC_LIBRARY_PATH		$compilerroot/mkl/lib/intel64_lin_mic
+prepend-path	MIC_LIBRARY_PATH		$compilerroot/tbb/lib/mic
+
+#
+# EasyBuild toolchain compatibility
+# Some environment variables that others may potentially be using in
+# Makefiles etc.
+#
+
+setenv		EBROOTICC			"$root"
+setenv		EBROOTIFORT			"$root"
+setenv		EBROOTIMKL			"$root"
+setenv		EBROOTIMPI			"$root"
+setenv		EBROOTINTEL			"$root"
+setenv		EBROOTICCIFORT			"$root"
+setenv		EBROOTIIMPI			"$root"
+
+setenv		EBVERSIONINTEL			"2017a"
+setenv		EBVERSIONICC			"$compilerversion"
+setenv		EBVERSIONIFORT			"$compilerversion"
+setenv		EBVERSIONIMKL			"$compilerversion"
+setenv		EBVERSIONIMPI			"$compilerversion"
+setenv		EBVERSIONIIMKL			"2017a"
+setenv		EBVERSIONICCIFORT		"$compilerversion"
+

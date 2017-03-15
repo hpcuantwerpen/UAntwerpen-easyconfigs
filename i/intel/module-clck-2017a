@@ -1,0 +1,39 @@
+#%Module
+proc ModulesHelp { } {
+    puts stderr { Intel Cluster Checker 2017a. - Homepage: https://clusterready.intel.com/intel-cluster-checker/
+    }
+}
+
+module-whatis  {Description: Intel Cluster Checker 2017a. - Homepage: https://clusterready.intel.com/intel-cluster-checker/}
+
+set root		/apps/antwerpen/ivybridge/sl6/intel-psxe/2017_update2
+set clckroot		$root/clck/2017.2.019
+
+if { ![ is-loaded intel/2017a ] } {
+    module load intel/2017a
+}
+
+#
+# License
+#
+prepend-path	INTEL_LICENSE_FILE	/apps/antwerpen/licenses/intel/license.lic
+
+#
+# CLCK
+#
+prepend-path	CPLUS_INCLUDE_PATH	$clckroot/include
+
+prepend-path	LIBRARY_PATH		$clckroot/lib/intel64
+
+prepend-path	PATH			$clckroot/bin/intel64
+
+setenv		CLCKROOT		$clckroot
+
+#
+# MIC-related
+# Tools for running Xeon Phi applications in offload mode and for
+# development of such applications on regular intel64 nodes.
+#
+
+prepend-path	MIC_LIBRARY_PATH	$clckroot/lib/intel64
+
