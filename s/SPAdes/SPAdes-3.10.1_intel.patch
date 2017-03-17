@@ -1,0 +1,31 @@
+--- SPAdes-3.10.1-orig/src/common/modules/path_extend/ideal_pair_info.hpp	2017-02-28 15:55:36.000000000 +0100
++++ SPAdes-3.10.1/src/common/modules/path_extend/ideal_pair_info.hpp	2017-03-17 11:55:10.018826000 +0100
+@@ -14,7 +14,7 @@
+ 
+ #ifndef IDEAL_PAIR_INFO_HPP_
+ #define IDEAL_PAIR_INFO_HPP_
+-#import <vector>
++#include <vector>
+ #include "pipeline/graph_pack.hpp"
+ 
+ namespace path_extend {
+--- SPAdes-3.10.1-orig/src/common/assembly_graph/dijkstra/dijkstra_algorithm.hpp	2017-02-28 15:55:35.000000000 +0100
++++ SPAdes-3.10.1/src/common/assembly_graph/dijkstra/dijkstra_algorithm.hpp	2017-03-17 13:41:20.123431611 +0100
+@@ -39,12 +39,12 @@
+ 
+   bool operator()(T obj1, T obj2){
+       if(obj1.distance != obj2.distance)
+-          return obj2.distance < obj1.distance;
++          return ((obj2.distance) < (obj1.distance));
+       if(obj2.curr_vertex != obj1.curr_vertex)
+-          return obj2.curr_vertex < obj1.curr_vertex;
+-      if(obj2.prev_vertex != obj1.prev_vertex)
+-          return obj2.prev_vertex < obj1.prev_vertex;
+-      return obj2.edge_between < obj1.edge_between;
++          return ((obj2.curr_vertex) < (obj1.curr_vertex));
++      if(obj2.prev_vertex != (obj1.prev_vertex))
++          return ((obj2.prev_vertex) < obj1.prev_vertex);
++      return ((obj2.edge_between) < (obj1.edge_between));
+   }
+ };
+ 
