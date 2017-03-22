@@ -1,0 +1,42 @@
+# Python scripts and library for submitting and managing PBS jobs, developt
+# by the PRedictive Integrated Structural Materials Science Center (PRISMS), at the University of Michigan
+# These tools are used by other tools from the PRISMS group.
+#
+# Developed by Kurt Lust, UAntwerpen.
+#
+# TODO: Since EasyBuild detects a lib directory, it prepends it to LD_LIBRARY_PATH and LIBRARY_PATH
+# which does not make sense in this case. Can this be avoided without changing the standard 
+# directories as typically used for Python modules?
+
+easyblock = 'ConfigureMake'
+
+name = 'pbs_PRISMS'
+version = '1.0.1'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/prisms-center/pbs'
+description = """A python package for submitting and managing PBS jobs, developed by the PRedictive Integrated Structural Materials Science Center (PRISMS), at the University of Michigan and used by other tools of the PRISMS group."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+source_urls = ['https://github.com/prisms-center/pbs/archive/']
+sources = [ 'v%(version)s.tar.gz' ]
+
+dependencies = [('Python', '2.7.13')]
+
+#osdependencies = ['torque']
+
+skipsteps = [ 'configure', 'build' ]
+preinstallopts = "mkdir -p %(installdir)s/bin && "
+installopts = "BIN=%(installdir)s/bin PYINSTALL=%(installdir)s"
+
+pythonpath = 'lib/python%(pyshortver)s/site-packages'
+modextrapaths = {'PYTHONPATH': pythonpath}
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ["%s/pbs" % pythonpath]
+}
+
+moduleclass = 'tools'
+
