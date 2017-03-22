@@ -25,6 +25,8 @@ dependencies = [
     ('Perl', '5.24.1'),
 ]
 
+modextrapaths = { 'PATH': '.' }
+
 sanity_check_paths = {
     'files': ["bismark", "bismark2bedGraph", "bismark2report", "bismark_genome_preparation",
               "bismark_methylation_extractor", "coverage2cytosine", "deduplicate_bismark"],
