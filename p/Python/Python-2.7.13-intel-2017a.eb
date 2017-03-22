@@ -154,6 +154,13 @@ exts_list = [
     ('virtualenv', '15.1.0', {
         'source_urls': ['https://pypi.python.org/packages/source/v/virtualenv'],
     }),
+    ('sklearn', '0.18.1', {
+        'source_tmpl': 'scikit-learn-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/s/scikit-learn'],
+    }),
+    ('scoop', '0.7.1.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/scoop'],
+    }),
 ]
 
 moduleclass = 'lang'
