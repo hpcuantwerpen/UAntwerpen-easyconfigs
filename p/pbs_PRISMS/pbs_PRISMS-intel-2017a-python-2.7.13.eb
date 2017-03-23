@@ -34,8 +34,10 @@ pythonpath = 'lib/python%(pyshortver)s/site-packages'
 modextrapaths = {'PYTHONPATH': pythonpath}
 
 sanity_check_paths = {
-    'files': [],
-    'dirs': ["%s/pbs" % pythonpath]
+    'files': ['bin/pstat', 'bin/psub', 'bin/taskmaster'] +
+             ["%s/pbs/jobdb.py" % pythonpath, "%s/pbs/job.py" % pythonpath, 
+              "%s/pbs/misc.py" % pythonpath, "%s/pbs/templates.py" % pythonpath],
+    'dirs': []
 }
 
 moduleclass = 'tools'
