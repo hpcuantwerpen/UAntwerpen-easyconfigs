@@ -1,0 +1,62 @@
+# CASM EasyConfig based on the install instructions in 
+# https://github.com/prisms-center/CASMcode/blob/master/INSTALL.md
+#
+# Written by Kurt Lust
+#
+# Note: CASM Dependencies:
+# * Boost
+# * Python: 
+#   - Scipy, within SciPy: numpy and Pandas
+#   - scikit-learn
+#   - deap, which depends on scoop
+#   - pbs, but the one from https://github.com/prisms-center/pbs which differs from the pip-installed one.
+# * Some other codes that are part of the CASM distribution:
+#   - Eigen 3.1.3
+#   - JSON Spirit 4.06
+#   - Mersenne Twister random number generator
+#   - Qhull 2015.0.6 2015/10/20
+#   - gzstream 1.5
+#
+
+easyblock = 'SCons'
+
+name = 'CASM'
+version = '0.2.0'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = "https://github.com/prisms-center/CASMcode"
+description = """CASM is a cluster approach to first-principles statistical mechanical software for the study of multi-component crystalline solids. Homepage: https://github.com/prisms-center/CASMcode"""
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+
+# https://github.com/prisms-center/CASMcode/archive/v0.2.0.tar.gz
+source_urls = ['https://github.com/prisms-center/CASMcode/archive/']
+sources = ['v%(version)s.tar.gz']
+
+patches = ['CASM-%(version)s_intel.patch']
+
+dependencies = [
+    ('Python', '2.7.12'),
+#    ('pbs_PRISMS', '1.0.1', versionsuffix),
+    ('Boost', '1.63.0', versionsuffix),
+]
+
+builddependencies = [
+    ('SCons', '2.5.1', versionsuffix),
+]
+
+toolchainopts = {'cstd': 'c++11'}
+
+prefix_arg  = 'prefix='
+commonopts  = 'cxx=icpc opt=2 boost_prefix=$EBROOTBOOST '
+buildopts   = commonopts + '-j 10'
+installopts = commonopts
+
+pythonpath = 'lib/python%(pyshortver)s/site-packages'
+modextrapaths = {'PYTHONPATH': pythonpath}
+
+sanity_check_paths = { 
+    'files': ["bin/%s" % x for x in ['casm', 'casm-calc', 'casm-learn', 'casm.view', 'vasp.relax', 'vasp.setup'] ],
+    'dirs': ['include', "%s/casm" % pythonpath, "%s/vasp" % pythonpath]
+}
+
