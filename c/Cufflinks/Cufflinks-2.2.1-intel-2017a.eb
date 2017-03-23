@@ -1,0 +1,34 @@
+# Problem: Configure doesn't seem to like the libbbam.a provided by SAMtools 1.4...
+# Development of Cufflinks halted in 2014.
+
+name = 'Cufflinks'
+version = '2.2.1'
+
+homepage = 'http://cole-trapnell-lab.github.io/cufflinks/'
+description = """Transcript assembly, differential expression, and differential regulation for RNA-Seq"""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'optarch': True, 'pic': True}
+
+sources = [SOURCELOWER_TAR_GZ]
+source_urls = ['http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/']
+
+pyver = '2.7.13'
+boostver = '1.63.0'
+#versionsuffix = '-Python-%s-Boost-%s' % (pyver, boostver)
+dependencies = [
+    ('Boost', boostver, '-Python-%s' % pyver),
+    ('SAMtools', '1.4'),
+    ('Eigen', '3.3.3'),
+    ('zlib', '1.2.11'),
+]
+
+configopts = '--enable-intel64 --with-boost=$EBROOTBOOST --with-bam-libdir=${EBROOTSAMTOOLS}/lib'
+preconfigopts = 'env CPPFLAGS=-I${EBROOTEIGEN}/include'
+
+sanity_check_paths = {
+    'files': ['bin/cufflinks'],
+    'dirs': []
+}
+
+moduleclass = 'bio'
