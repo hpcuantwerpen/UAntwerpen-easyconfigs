@@ -1,3 +1,7 @@
+# Developed by Kurt Lust, UAntwerpen
+#
+# Implicit requirements: Numpy (1.10.4 or greater)
+
 easyblock = 'PythonPackage'
 
 name = 'DLCpar'
@@ -21,4 +25,4 @@ sanity_check_paths = {
     'dirs': [ "%s/dlcpar" % pythonpath ]
 }
 
-moduleclass = 'lang'
+moduleclass = 'bio'
