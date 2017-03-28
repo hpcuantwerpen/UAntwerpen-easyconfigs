@@ -1,0 +1,37 @@
+easyblock = 'ConfigureMake'
+
+name = 'Guile'
+version = '2.2.0'
+
+homepage = 'https://www.gnu.org/software/guile/'
+description = """Guile is a programming language, designed to help programmers create flexible applications that
+ can be extended by users or other programmers with plug-ins, modules, or scripts."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+source_urls = [GNU_SOURCE]
+sources = [SOURCELOWER_TAR_GZ]
+patches = ['Guile-%(version)s_intel.patch']
+
+builddependencies = [
+    ('Autotools',  '20161231', '', True),
+    ('pkg-config', '0.29.1', '', True),
+    ('gettext',    '0.19.8.1'),
+    ('ncurses',    '6.0'),
+    ('libreadline',  '7.0'),
+]
+dependencies = [
+    ('libunistring', '0.9.7'),
+    ('libffi',       '3.2.1'),
+    ('gc',           '7.6.0'), 
+    ('GMP',          '6.1.2'),
+]
+
+sanity_check_paths = {
+    'files': ['bin/guild', 'bin/guile', 'bin/guile-config', 'bin/guile-snarf', 'bin/guile-tools',
+              'include/guile/%(version_major_minor)s/libguile.h',
+              'lib/libguile-%(version_major_minor)s.a', 'lib/libguile-%%(version_major_minor)s.%s' % SHLIB_EXT],
+    'dirs': ['include/guile/%(version_major_minor)s/libguile', 'lib/guile/%(version_major_minor)s/ccache'],
+}
+
+moduleclass = 'lang'
