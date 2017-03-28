@@ -1,3 +1,6 @@
+# Tried to install this in the default Python module, but there are problems with the default
+# sanity checks.
+#
 easyblock = "PythonPackage"
 
 name = 'HTSeq'
