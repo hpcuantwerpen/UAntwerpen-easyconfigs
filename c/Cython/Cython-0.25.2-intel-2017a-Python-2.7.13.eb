@@ -1,3 +1,5 @@
+# Not strictly needed, this package is now part of our default Python install.
+#
 easyblock = 'PythonPackage'
 
 name = 'Cython'
