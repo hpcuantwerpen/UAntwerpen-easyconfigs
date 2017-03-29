@@ -23,6 +23,8 @@ dependencies = [
     ('libffi', '3.2.1'),       # KL 20170301
     ('freetype', '2.7.1'),     # Needed for matplotlib
     ('libpng', '1.6.28'),      # Needed for matplotlib
+    ('libxml2', '2.9.4'),      # Needed for lxml
+    ('libxslt', '1.1.29'),     # Needed for lxml
     # OS dependency should be preferred if the os version is more recent then this version,
     # it's nice to have an up to date openssl for security reasons
     # ('OpenSSL', '1.0.2h'),
@@ -160,6 +162,9 @@ exts_list = [
     }),
     ('scoop', '0.7.1.1', {
         'source_urls': ['https://pypi.python.org/packages/source/s/scoop'],
+    }),
+    ('lxml', '3.7.3', {
+        'source_urls': ['https://pypi.python.org/packages/source/l/lxml'],
     }),
 ]
 
