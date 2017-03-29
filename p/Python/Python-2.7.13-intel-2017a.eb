@@ -166,6 +166,9 @@ exts_list = [
     ('lxml', '3.7.3', {
         'source_urls': ['https://pypi.python.org/packages/source/l/lxml'],
     }),
+    ('requests', '2.13.0', {  # Needed for the easyconfig update script.
+        'source_urls': ['https://pypi.python.org/packages/source/r/requests'],
+    }),
 ]
 
 moduleclass = 'lang'
