@@ -1,0 +1,175 @@
+name = 'Python'
+version = '3.6.1'
+
+homepage = 'http://python.org/'
+description = """Python is a programming language that lets you work more quickly and integrate your systems
+ more effectively."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'pic': True}
+
+source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
+sources = [SOURCE_TGZ]
+
+# python needs bzip2 to build the bz2 package
+dependencies = [
+    ('bzip2', '1.0.6'),        # KL 20170301
+    ('zlib', '1.2.11'),        # KL 20170301
+    ('libreadline', '7.0'),    # KL 20170301
+    ('ncurses', '6.0'),        # KL 20170301
+    ('SQLite', '3.17.0'),      # KL 20170301
+    ('Tk', '8.6.6'),           # KL 20170301
+    ('GMP', '6.1.2'),          # KL 20170301
+    ('libffi', '3.2.1'),       # KL 20170301
+    ('freetype', '2.7.1'),     # Needed for matplotlib
+    ('libpng', '1.6.28'),      # Needed for matplotlib
+    ('libxml2', '2.9.4'),      # Needed for lxml
+    ('libxslt', '1.1.29'),     # Needed for lxml
+    # OS dependency should be preferred if the os version is more recent then this version,
+    # it's nice to have an up to date openssl for security reasons
+    # ('OpenSSL', '1.0.2h'),
+]
+
+osdependencies = [('openssl-devel', 'libssl-dev', 'libopenssl-devel')]
+
+# order is important!
+# package versions updated May 28th 2015
+exts_list = [
+    ('six', '1.10.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/six/'],
+    }),
+    ('pyparsing', '2.2.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/pyparsing/'],
+    }),
+    ('packaging', '16.8', {  # Needed for recent versions of setuptools
+        'source_urls': ['https://pypi.python.org/packages/source/p/packaging/'],
+    }),
+    ('appdirs', '1.4.3', {   # Needed for recent versions of setuptools
+        'source_urls': ['https://pypi.python.org/packages/source/a/appdirs/'],
+    }),
+    ('setuptools', '34.3.3', {
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': ['https://pypi.python.org/packages/source/s/setuptools/'],
+    }),
+    ('pip', '9.0.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/pip/'],
+    }),
+    ('nose', '1.3.7', {
+        'source_urls': ['https://pypi.python.org/packages/source/n/nose/'],
+    }),
+    ('numpy', '1.11.0', { # Problem: 3.1.0 numpy EasyBlock does not yet recognize that the system_info has changed in 1.12.0 and now deals with MKL also.
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': ['https://pypi.python.org/packages/source/n/numpy'],
+        'patches': ['numpy-1.8.0-mkl.patch'],   # Patch doesn't work for 1.12. the system_info.py routine moreover should recognize MKL.
+    }),
+    ('scipy', '0.19.0', {
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': ['https://pypi.python.org/packages/source/s/scipy'],
+    }),
+    ('dateutil', '2.6.0', {
+        'source_tmpl': 'python-%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/p/python-dateutil/'],
+    }),
+    ('cycler', '0.10.0', {    # Requirement for matplotlib according to the documentation
+        'source_urls': ['https://pypi.python.org/packages/source/c/cycler/'],
+    }),
+    ('blist', '1.3.6', {
+        'source_urls': ['https://pypi.python.org/packages/source/b/blist/'],
+    }),
+    ('mpi4py', '2.0.0', {
+        'source_urls': ['http://bitbucket.org/mpi4py/mpi4py/downloads/'],
+    }),
+    ('paycheck', '1.0.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/paycheck/'],
+        'patches': [
+            'paycheck-1.0.2_setup-open-README-utf8.patch',
+        ],
+    }),
+    ('pbr', '2.0.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/pbr/'],
+    }),
+    ('lockfile', '0.12.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/l/lockfile/'],
+    }),
+    ('Cython', '0.25.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/c/cython/'],
+    }),
+    ('deap', '1.0.2', {
+        'source_tmpl': '%(name)s-%(version)s.post2.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/d/deap/'],
+        'patches': [
+            'deap-1.0.2_setup-open-README-utf8.patch',
+        ],
+    }),
+    ('decorator', '4.0.11', {
+        'source_urls': ['https://pypi.python.org/packages/source/d/decorator/'],
+    }),
+    ('arff', '2.1.0', {
+        'source_tmpl': 'liac-%(name)s-%(version)s.zip',
+        'source_urls': ['https://pypi.python.org/packages/source/l/liac-arff/'],
+    }),
+    ('pycrypto', '2.6.1', {
+        'modulename': 'Crypto',
+        'source_urls': ['http://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/'],
+    }),
+    ('ecdsa', '0.13', {
+        'source_urls': ['https://pypi.python.org/packages/source/e/ecdsa/'],
+    }),
+    ('cryptography', '1.8.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/c/cryptography/'],
+    }),
+    ('pyasn1', '0.2.3', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/pyasn1/'],
+    }),
+    ('paramiko', '2.1.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/paramiko/'],
+    }),
+    ('netifaces', '0.10.5', {
+        'source_urls': ['https://pypi.python.org/packages/source/n/netifaces'],
+    }),
+    ('netaddr', '0.7.19', {
+        'source_urls': ['https://pypi.python.org/packages/source/n/netaddr'],
+    }),
+    ('funcsigs', '1.0.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/f/funcsigs'],
+    }),
+    ('mock', '2.0.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/m/mock'],
+    }),
+    ('pytz', '2016.10', {  # Requirement for matplotlib
+        'source_urls': ['https://pypi.python.org/packages/source/p/pytz'],
+    }),
+    ('pandas', '0.19.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/pandas'],
+    }),
+    ('enum34', '1.1.6', {
+        'modulename': 'enum',
+        'source_urls': ['https://pypi.python.org/packages/source/e/enum34'],
+    }),
+    ('bitstring', '3.1.5', {
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': ['https://pypi.python.org/packages/source/b/bitstring'],
+    }),
+    ('matplotlib', '2.0.0', {  # Problem: The test infrastructure is not integrated in the distribution.
+#    ('matplotlib', '1.5.3', { # Version used in 2016b to check if the install works
+        'source_urls': ['https://pypi.python.org/packages/source/m/matplotlib/'],
+    }),
+    ('virtualenv', '15.1.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/v/virtualenv'],
+    }),
+    ('sklearn', '0.18.1', {
+        'source_tmpl': 'scikit-learn-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/s/scikit-learn'],
+    }),
+    ('scoop', '0.7.1.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/s/scoop'],
+    }),
+    ('lxml', '3.7.3', {
+        'source_urls': ['https://pypi.python.org/packages/source/l/lxml'],
+    }),
+    ('requests', '2.13.0', { # Needed for the easyconfig update script.
+        'source_urls': ['https://pypi.python.org/packages/source/r/requests'],
+    }),
+]
+
+moduleclass = 'lang'
