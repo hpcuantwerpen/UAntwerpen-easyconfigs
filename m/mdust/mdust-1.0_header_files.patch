@@ -1,0 +1,24 @@
+# Some mdust source files don't include essential ISO C header files
+# leading to warnings about implicitly defined functions.
+# Developed by Kurt Lust, UAntwerp.
+--- mdust-orig/fastafile.c	2002-07-08 21:16:10.000000000 +0200
++++ mdust/fastafile.c	2017-04-03 10:24:20.066289000 +0200
+@@ -1,6 +1,8 @@
+ #include <stdio.h>
+ #include <ctype.h>
+ #include <malloc.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+ #include "fastafile.h"
+ 
+--- mdust-orig/mdust.c	2002-07-08 21:16:10.000000000 +0200
++++ mdust/mdust.c	2017-04-03 10:25:31.923212000 +0200
+@@ -1,6 +1,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <ctype.h>
++#include <string.h>
+ #include "dust.h"
+ #include "fastafile.h"
+ 

@@ -1,0 +1,37 @@
+# EasyConfig for mdust.
+# mdust is a little tool, without version numbering so we just assigned 1.0.
+#
+# Written by Kurt Lust, UAntwerpen
+
+easyblock = 'MakeCp'
+
+name = 'mdust'
+version = '1.0'
+
+homepage = 'http://compbio.dfci.harvard.edu/tgi/'
+description = """A nucleic acid complexity filtering program, part of the DFCI Gene Indices Software Tools but no longer maintained."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+# Download: ftp://occams.dfci.harvard.edu/pub/bio/tgi/software/seqclean/mdust.tar.gz
+sources = ['%(namelower)s.tar.gz']
+source_urls = [('ftp://occams.dfci.harvard.edu/pub/bio/tgi/software/seqclean')]
+
+patches = ['%(namelower)s-%(version)s_header_files.patch']
+
+# Need to overwrite the compiler settings in the Makefile.
+buildopts = 'CC=$CC CFLAGS="$CFLAGS -D_REENTRANT" LINKER=$CC'
+
+files_to_copy = [
+    (["mdust"], 'bin'),
+    "LICENSE", "README"]
+
+sanity_check_paths = {
+    'files': ["bin/mdust"],
+    'dirs': [],
+}
+
+# to add script folder to path just uncomment this line
+#modextrapaths = {'PATH': 'scripts'}
+
+moduleclass = 'bio'
