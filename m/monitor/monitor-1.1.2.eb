@@ -1,0 +1,20 @@
+easyblock = 'ConfigureMake'
+
+name = 'monitor'
+version = '1.1.2'
+
+homepage = 'https://www.vscentrum.be/cluster-doc/running-jobs/monitoring-memory-and-cpu-usage-of-programs'
+description = """monitor logs cpu and memory usage of a running application"""
+
+sources = [SOURCE_TAR_GZ]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+osdependencies = [('perl')]
+
+sanity_check_paths = {
+    'dirs': ['bin'],
+    'files': ['bin/monitor'],
+}
+
+moduleclass = 'tools'
