@@ -11,7 +11,7 @@ description = """The GenomeTools genome analysis system is a free collection of 
 sources = [SOURCELOWER_TAR_GZ]
 source_urls = ['http://genometools.org/pub/']
 
-patches = ['genometools-%(version)s_format_specifiers.patch']
+patches = ['%(name)s-%(version)s_format_specifiers.patch']
 
 dependencies = [
     ('cairo', '1.15.4'),
