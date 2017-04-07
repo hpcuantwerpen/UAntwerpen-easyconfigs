@@ -80,6 +80,10 @@ exts_list = [
     # First packages that need patches and the packages they depend on.
     # These are the packages were EasyBuild actually offers some added value.
     #
+    # Note: For Rmpi, you need to remove the lines in the easyblock that set the path to the include
+    # files and the libraries as these are wrong. The configure script will find the libraries through
+    # the environment variables.
+    # 
     ('Rmpi',          '0.6-6',       dict(ext_options.items() + [('patches', ['Rmpi-0.6-6_impi5.patch'])])),                # No dependencies
     ('glasso',        '1.8',         dict(ext_options.items() + [('patches', [('glasso-1.8-ifort-no-fixed.patch', 1)])])),  # No dependencies
     ('abind',         '1.4-5',       ext_options),
