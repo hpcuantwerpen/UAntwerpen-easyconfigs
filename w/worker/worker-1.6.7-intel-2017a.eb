@@ -12,9 +12,10 @@ tcname = 'intel'
 tcver = '2017a'
 # Worker also needs the path to the toolchain modules, which for UAntwerp is constructed
 # from the <cluster>-<os>-pair and the toolchain version number. Therefore the next variable:
-UAclusterOS = 'hopper-sl6'
+UAcluster = 'hopper'
+UAOS = 'sl6'
 # The number of cores per node is also set in the worker configuration file.
-cores_per_node = '20 '
+cores_per_node = 20
 
 #
 # Pretty standard easyconfig part, but don't forget to consider updating the
@@ -83,13 +84,13 @@ modextrapaths = {
 # adjust worker configuration file
 # note: tweak this to your local setup
 postinstallcmds = [
-    'sed -i "s/ cores_per_node = .*/ cores_per_node = %s/g" %%(installdir)s/conf/worker.conf' % (cores_per_node),
+    'sed -i "s/ cores_per_node = .*/ cores_per_node = %d/g" %%(installdir)s/conf/worker.conf' % (cores_per_node),
     'sed -i "s@ qsub = .*@ qsub = `which qsub`@g" %(installdir)s/conf/worker.conf',
     'sed -i "s/ email = .*/ email = hpc@uantwerpen.be/g" %(installdir)s/conf/worker.conf',
     'sed -i "s/ unload_modules = .*/ unload_modules = intel/g" %(installdir)s/conf/worker.conf',
     'sed -i "s@ mpi_module = .*@ mpi_module = %s/%s@g" %%(installdir)s/conf/worker.conf' % (tcname, tcver),
-#    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/hopper-sl6/2017a/all@g" %(installdir)s/conf/worker.conf',
-    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s/%s/all@g" %%(installdir)s/conf/worker.conf' % (UAclusterOS, tcver),
+#    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s/%s/all@g" %%(installdir)s/conf/worker.conf' % (UAclusterOS, tcver),
+    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s-%s/%s/all /apps/antwerpen/modules/%s-%s/%s/all@g" %%(installdir)s/conf/worker.conf' % (UAcluster, UAOS, UAOS, UAcluster, UAOS, tcver),
 ]
 
 moduleclass = 'tools'
