@@ -71,6 +71,11 @@ exts_list = [
     }),
 ]
 
+osdependencies = [
+  'perl',
+  'perl-ExtUtils-MakeMaker',
+]
+
 modextrapaths = {
     'PERL5LIB': ['share/perl5', 'lib64/perl5'],
 }
