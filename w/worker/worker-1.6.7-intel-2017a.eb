@@ -3,6 +3,24 @@ easyblock = 'ConfigureMake'
 name = 'worker'
 version = '1.6.7'
 
+#
+# Set the cluster configuration
+#
+# worker needs to find the correct mpirun and therefore uses the toolchain, which is
+# set through the next two variables.
+tcname = 'intel'
+tcver = '2017a'
+# Worker also needs the path to the toolchain modules, which for UAntwerp is constructed
+# from the <cluster>-<os>-pair and the toolchain version number. Therefore the next variable:
+UAclusterOS = 'hopper-sl6'
+# The number of cores per node is also set in the worker configuration file.
+cores_per_node = '20 '
+
+#
+# Pretty standard easyconfig part, but don't forget to consider updating the
+# Perl module version numbers.
+#
+
 homepage = 'https://github.com/gjbex/worker'
 description = """The Worker framework has been developed to help deal with parameter exploration experiments
  that would otherwise result in many jobs, forcing the user resort to scripting to retain her sanity;
@@ -13,36 +31,42 @@ toolchain = {'name': 'dummy', 'version': ''}
 source_urls = ['https://github.com/gjbex/worker/archive/']
 sources = ['%(version)s.tar.gz']
 
-tcname = 'intel'
-tcver = '2017a'
 builddependencies = [(tcname, tcver)]
 versionsuffix = '-%s-%s' % (tcname, tcver)
 
 exts_defaultclass = 'PerlModule'
 
 exts_list = [
-    ('Config::General', '2.61', {
-        'source_tmpl': 'Config-General-2.61.tar.gz',
+    ('Config::General', '2.63', {
+        'source_tmpl': 'Config-General-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/T/TL/TLINDEN'],
     }),
     ('IO::Stringy', '2.111', {
-        'source_tmpl': 'IO-stringy-2.111.tar.gz',
+        'source_tmpl': 'IO-stringy-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/D/DS/DSKOLL'],
     }),
-    ('Text::CSV', '1.33', {
-        'source_tmpl': 'Text-CSV-1.33.tar.gz',
-        'source_urls': ['https://cpan.metacpan.org/authors/id/M/MA/MAKAMAKA'],
+    ('Set::Scalar', '1.29', {
+        'source_tmpl': 'Set-Scalar-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/D/DA/DAVIDO'],
+    }),
+    ('Template', '2.26', {
+        'source_tmpl': 'Template-Toolkit-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/A/AB/ABW'],
+    }),
+    ('Text::CSV', '1.93', {
+        'source_tmpl': 'Text-CSV-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI'],
     }),
     ('DBI', '1.636', {
-        'source_tmpl': 'DBI-1.636.tar.gz',
+        'source_tmpl': 'DBI-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/T/TI/TIMB'],
     }),
-    ('DBD::SQLite', '1.50', {
-        'source_tmpl': 'DBD-SQLite-1.50.tar.gz',
+    ('DBD::SQLite', '1.54', {
+        'source_tmpl': 'DBD-SQLite-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI'],
     }),
     ('Date::Language', '2.30', {
-        'source_tmpl': 'TimeDate-2.30.tar.gz',
+        'source_tmpl': 'TimeDate-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/G/GB/GBARR'],
     }),
 ]
@@ -54,12 +78,13 @@ modextrapaths = {
 # adjust worker configuration file
 # note: tweak this to your local setup
 postinstallcmds = [
-    'sed -i "s/ cores_per_node = .*/ cores_per_node = 16/g" %(installdir)s/conf/worker.conf',
+    'sed -i "s/ cores_per_node = .*/ cores_per_node = %s/g" %%(installdir)s/conf/worker.conf' % (cores_per_node),
     'sed -i "s@ qsub = .*@ qsub = `which qsub`@g" %(installdir)s/conf/worker.conf',
-    'sed -i "s/ email = .*/ email = hpc-support@example.com/g" %(installdir)s/conf/worker.conf',
+    'sed -i "s/ email = .*/ email = hpc@uantwerpen.be/g" %(installdir)s/conf/worker.conf',
     'sed -i "s/ unload_modules = .*/ unload_modules = intel/g" %(installdir)s/conf/worker.conf',
     'sed -i "s@ mpi_module = .*@ mpi_module = %s/%s@g" %%(installdir)s/conf/worker.conf' % (tcname, tcver),
-    'sed -i "s@ module_path = .*@ module_path = %(installdir)s/../../../modules/all@g" %(installdir)s/conf/worker.conf',
+#    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/hopper-sl6/2017a/all@g" %(installdir)s/conf/worker.conf',
+    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s/%s/all@g" %%(installdir)s/conf/worker.conf' % (UAclusterOS, tcver),
 ]
 
 moduleclass = 'tools'
