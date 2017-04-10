@@ -35,14 +35,36 @@ sources = ['%(version)s.tar.gz']
 builddependencies = [(tcname, tcver)]
 versionsuffix = '-%s-%s' % (tcname, tcver)
 
+osdependencies = [
+  'perl',                                    # We use the system perl.
+  ('perl-devel', 'perl-ExtUtils-ParseXS'),   # Need xsubpp for the installation of Template.
+  'perl-ExtUtils-MakeMaker',                 # Not needed if ExtUtils::MakeMaker is included in the extensions list.
+  'perl-AppConfig',                          # Not needed if AppConfig is included in the extensions list.
+]
+
 exts_defaultclass = 'PerlModule'
 
 exts_list = [
+#
+# The following ones are Perl core modules, though they appear to not always be installed
+# by the Perl RPMs
+#
+#    ('ExtUtils::MakeMaker', '7.24', {
+#        'source_tmpl': 'ExtUtils-MakeMaker-%(version)s.tar.gz',
+#        'source_urls': ['https://cpan.metacpan.org/authors/id/B/BI/BINGOS'],
+#    }),
+#    ('AppConfig', '1.71', {
+#        'source_tmpl': 'AppConfig-%(version)s.tar.gz',
+#        'source_urls': ['https://cpan.metacpan.org/authors/id/N/NE/NEILB'],
+#    }),
+#
+# The following are non-core modules. We cannot rely on them being present in the system PErl.
+#
     ('Config::General', '2.63', {
         'source_tmpl': 'Config-General-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/T/TL/TLINDEN'],
     }),
-    ('IO::Stringy', '2.111', {
+    ('IO::Stringy', '2.111', {   # For IO::Scalar
         'source_tmpl': 'IO-stringy-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/D/DS/DSKOLL'],
     }),
@@ -66,15 +88,10 @@ exts_list = [
         'source_tmpl': 'DBD-SQLite-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI'],
     }),
-    ('Date::Language', '2.30', {
+    ('Date::Language', '2.30', { # For Date::Parse
         'source_tmpl': 'TimeDate-%(version)s.tar.gz',
         'source_urls': ['https://cpan.metacpan.org/authors/id/G/GB/GBARR'],
     }),
-]
-
-osdependencies = [
-  'perl',
-  'perl-ExtUtils-MakeMaker',
 ]
 
 modextrapaths = {
@@ -89,7 +106,6 @@ postinstallcmds = [
     'sed -i "s/ email = .*/ email = hpc@uantwerpen.be/g" %(installdir)s/conf/worker.conf',
     'sed -i "s/ unload_modules = .*/ unload_modules = intel/g" %(installdir)s/conf/worker.conf',
     'sed -i "s@ mpi_module = .*@ mpi_module = %s/%s@g" %%(installdir)s/conf/worker.conf' % (tcname, tcver),
-#    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s/%s/all@g" %%(installdir)s/conf/worker.conf' % (UAclusterOS, tcver),
     'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s-%s/%s/all /apps/antwerpen/modules/%s-%s/%s/all@g" %%(installdir)s/conf/worker.conf' % (UAcluster, UAOS, UAOS, UAcluster, UAOS, tcver),
 ]
 
