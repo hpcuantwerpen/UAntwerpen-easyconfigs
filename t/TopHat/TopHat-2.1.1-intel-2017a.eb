@@ -1,0 +1,38 @@
+# This file is an EasyBuild reciPY as per https://github.com/hpcugent/easybuild
+# Author: Pablo Escobar Lopez
+# Swiss Institute of Bioinformatics
+# Biozentrum - University of Basel
+
+easyblock = 'ConfigureMake'
+
+name = 'TopHat'
+version = '2.1.1'
+
+homepage = 'http://ccb.jhu.edu/software/tophat/'
+description = """TopHat is a fast splice junction mapper for RNA-Seq reads. Note that this code is now in low maintenance, we advice users to switch to HISAT2 which is supposedly much more accurate and much more efficient."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'pic': True}
+
+sources = [SOURCELOWER_TAR_GZ]
+source_urls = ['http://ccb.jhu.edu/software/tophat/downloads/']
+
+patches = [
+    '%(name)s-%(version)s_easybuild.patch',
+]
+
+dependencies = [
+    ('Boost', '1.63.0', '-Python-2.7.13'),
+    ('zlib',  '1.2.11'),
+]
+
+configopts = '--with-boost=$EBROOTBOOST'
+
+parallel = 1
+
+sanity_check_paths = {
+    'files': ['bin/tophat'],
+    'dirs': [],
+}
+
+moduleclass = 'bio'

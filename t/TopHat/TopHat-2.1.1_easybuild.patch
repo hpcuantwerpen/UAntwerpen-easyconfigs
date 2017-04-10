@@ -1,0 +1,19 @@
+--- tophat-2.1.1-orig//src/samtools-0.1.18/Makefile	2016-02-14 19:21:17.376079000 +0100
++++ tophat-2.1.1/src/samtools-0.1.18/Makefile	2017-04-10 11:01:25.163381000 +0200
+@@ -1,5 +1,5 @@
+-CC=			gcc
+-CFLAGS=		-g -Wall -O2 #-m64 #-arch ppc
++#CC=			gcc
++#CFLAGS=		-g -Wall -O2 #-m64 #-arch ppc
+ DFLAGS=		-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_USE_KNETFILE -D_CURSES_LIB=0
+ KNETFILE_O=	knetfile.o
+ LOBJS=		bgzf.o kstring.o bam_aux.o bam.o bam_import.o sam.o bam_index.o	\
+@@ -12,7 +12,7 @@
+ PROG=		samtools_0.1.18
+ INCLUDES=	-I.
+ SUBDIRS=	. bcftools
+-LIBPATH=
++#LIBPATH=
+ LIBCURSES=	-lcurses
+ 
+ .SUFFIXES:.c .o
