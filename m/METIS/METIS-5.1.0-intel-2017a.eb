@@ -4,7 +4,8 @@ version = '5.1.0'
 homepage = 'http://glaros.dtc.umn.edu/gkhome/metis/metis/overview'
 description = """METIS is a set of serial programs for partitioning graphs, partitioning finite element meshes,
 and producing fill reducing orderings for sparse matrices. The algorithms implemented in METIS are based on the
-multilevel recursive-bisection, multilevel k-way, and multi-constraint partitioning schemes."""
+multilevel recursive-bisection, multilevel k-way, and multi-constraint partitioning schemes. This version is 
+compiled with 32-bit indices and 64-bit for content."""
 
 toolchain = {'name': 'intel', 'version': '2017a'}
 toolchainopts = {'pic': True}
