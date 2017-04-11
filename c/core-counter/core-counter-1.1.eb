@@ -13,9 +13,14 @@ toolchain = {'name': 'dummy', 'version': ''}
 source_urls = ['https://github.com/gjbex/core-counter/archive/']
 sources = ['%(version)s.tar.gz']
 
+builddependencies = [ 
+   ('Autotools', '20161231', '', True),
+]
 osdependencies = [('glibc-static')]
 
-preconfigopts = "automake --add-missing && "
+# aclocal is needed when the included aclocal.m4 was build for an older
+# version of automake.
+preconfigopts = "aclocal && automake --add-missing && "
 
 sanity_check_paths = {
     'files': ['bin/core-counter'],
