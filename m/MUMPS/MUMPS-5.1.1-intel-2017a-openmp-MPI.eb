@@ -9,29 +9,29 @@ easyblock = 'MakeCp'
 
 name = 'MUMPS'
 version = '5.1.1'
-versionsuffix = '-openmp-noMPI'
+versionsuffix = '-openmp-MPI'
 
 homepage = 'http://graal.ens-lyon.fr/MUMPS/'
-description = "A parallel sparse direct solver. This version is compiled using Makefile.INTEL.SEQ with SCOTCH and METIS, so it does not use MPI. It does use OpenMP however."
+description = "A parallel sparse direct solver. This version is compiled using Makefile.INTEL.PAR with SCOTCH and ParMETIS, so it uses MPI. It does also use OpenMP."
 
 toolchain = {'name': 'intel', 'version': '2017a'}
-toolchainopts = {'pic': True, 'openmp': True, 'usempi': False}
+toolchainopts = {'pic': True, 'openmp': True, 'usempi': True}
 
 source_urls = ['http://mumps.enseeiht.fr/']
 sources = ['%(name)s_%(version)s.tar.gz']
 
 dependencies = [
-    ('SCOTCH', '6.0.4'),
-    ('METIS',  '5.1.0'),
+    ('SCOTCH',   '6.0.4'),
+    ('ParMETIS', '4.0.3'),
 ]
 
 parallel = 1
 
-prebuildopts = 'cp Make.inc/Makefile.INTEL.SEQ Makefile.inc && '
+prebuildopts = 'cp Make.inc/Makefile.INTEL.PAR Makefile.inc && '
 buildopts  = 'all '     # All precisions + examples
-buildopts += 'ISCOTCH="-I${EBROOTSCOTCH}/include"  LSCOTCH="-L${EBROOTSCOTCH}/lib -lesmumps -lscotch -lscotcherr" '
-buildopts += 'IMETIS="-I${EBROOTMETIS}/include" LMETIS="-L${EBROOTMETIS}/lib -lmetis" '
-buildopts += 'ORDERINGSF="-Dscotch -Dmetis -Dpord" '
+buildopts += 'ISCOTCH="-I${EBROOTSCOTCH}/include"  LSCOTCH="-L${EBROOTSCOTCH}/lib -lptesmumps -lptscotch -lptscotcherr -lesmumps -lscotch -lscotcherr" '
+buildopts += 'IMETIS="-I${EBROOTPARMETIS}/include" LMETIS="-L${EBROOTPARMETIS}/lib -lparmetis -lmetis" '
+buildopts += 'ORDERINGSF="-Dscotch -Dptscotch -Dmetis -Dparmetis -Dpord" '
 buildopts += 'OPTF="$FCFLAGS -nofor_main" '
 buildopts += 'OPTL="$FCFLAGS -nofor_main" '
 buildopts += 'OPTC="$CFLAGS" '
@@ -48,10 +48,8 @@ buildopts += 'MKLROOT="$MKLROOT" '
 # - Copy libseq/libmpiseq.a to lib/libmpiseq.a
 #
 files_to_copy = [
-    "include", "lib", "doc", "examples", "LICENSE", "CREDITS",
-    ( ['libseq/libmpiseq.a'], 'lib' )
+    "include", "lib", "doc", "examples", "LICENSE", "CREDITS"
 ]
-#    "examples", 
 
 sanity_check_paths = {
     'files' : ["LICENSE", "lib/libmumps_common.a"],
