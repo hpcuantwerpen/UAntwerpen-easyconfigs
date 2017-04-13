@@ -1,0 +1,86 @@
+# We will not use the mumps EasyBlock as that one sucks.
+#
+# Choices for this build:
+# - No MPI, but we do use OpenMP to compile MUMPS
+# - We add the sequential SCOTCH and METIS orderings to the default ordering.
+# - s, d, c, and z versions of the libraries.
+#
+easyblock = 'MakeCp'
+
+name = 'LAMMPS'
+version = '31Mar2017'
+
+homepage = 'http://lammps.sandia.gov/'
+description = "LAMMPS is a classical molecular dynamics code, and an acronym for Large-scale Atomic/Molecular Massively Parallel Simulator. The module contains a MPI binary (lmp_mpi) and serial binary (lmp_serial) with UA customizations, and some of the tools."
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'pic': True, 'openmp': False, 'usempi': True}
+
+source_urls = ['https://github.com/lammps/lammps/archive/']
+sources = [
+    'stable_%(version)s.tar.gz',
+    'UAextensions_%(version)s.tar.gz'
+]
+patches = [ '%(name)s-%(version)s_intel.patch' ]
+
+dependencies = [
+    ('Voro++',        '0.4.6'),
+    ('PLUMED',        '2.3.0'),
+    ('libjpeg-turbo', '1.5.1'),
+    ('libpng',        '1.6.28'),
+]
+osdependencies = [
+    ('python-devel'),
+]
+
+parallel = 1
+
+# Note that we use && rather then ; to separate commands so that the build fails
+# if one of the commands fails.
+# Configure phase of the build
+buildcmds  = '$EBROOTPLUMED/lib/plumed/patches/patch.sh -e lammps-6Apr13 --shared -p ; '
+buildcmds += 'cd src ; make yes-all yes-plumed no-kim no-poems no-meam no-kokkos no-user-atc no-user-awpmd no-user-quip no-user-h5md no-user-vtk no-gpu no-user-omp no-user-intel no-opt no-user-qmmm no-user-smd no-mscg ; '
+# Build phase: First build the libraries, then MPI and serial versions of LAMMPS.
+buildcmds += 'cd ../lib/colvars && make -j20 -f Makefile.g++ CXX=${CXX} CXXFLAGS="${CXXFLAGS}" ; '
+buildcmds += 'cd ../reax        && make -j20 -f Makefile.ifort F90FLAGS="${F90FLAGS}" ; '
+buildcmds += 'cd ../../src && '
+buildcmds += 'make -j20 mpi CC=${MPICXX} CFLAGS="${CXXFLAGS}" && '
+buildcmds += 'make clean-all && make no-mpiio no-user-lb && '
+buildcmds += 'make -j20 serial CC=${CXX} CFLAGS="${CXXFLAGS}" && '
+# Next build some tools.
+buildcmds += 'cd ../tools && ${CXX} -o binary2txt ${CXXFLAGS} binary2txt.cpp && '
+buildcmds += '               ${F90} -o chain ${F90FLAGS} chain.f && '
+buildcmds += '               ${F90} -o micelle2d ${F90FLAGS} micelle2d.f && '
+buildcmds += 'cd colvars  && ${CXX} -o abf_integrate ${CXXFLAGS} abf_integrate.cpp abf_data.cpp && '
+buildcmds += 'cd ../reax  && ${F90} -o bondConnectCheck ${F90FLAGS} bondConnectCheck.f90 && '
+buildcmds += '               ${CC}  -o mol_fra ${CFLAGS} mol_fra.c && '
+buildcmds += 'cd ../../src && '
+prebuildopts  = buildcmds
+buildopts  = 'clean-all '
+
+#
+# Files to copy:
+# - the LICENSE file
+# - src/lmp_mpi and src/lmp_serial to the bin directory
+# - The doc directory
+# - The examples directory
+# - A selection of tools goes into the bin directory
+# - tools/matlab, tools/python, tools/emacs, tools/vim are copied to the tools subdirectory.
+#
+files_to_copy = [
+    "LICENSE",
+    (["src/lmp_mpi", "src/lmp_serial"], "bin"),
+    "doc", 
+    "examples",
+    (["tools/binary2txt", "tools/chain", "tools/micelle2d", "tools/colvars/abf_integrate", "tools/reax/bondConnectCheck", "tools/reax/mol_fra", "tools/reax/reaxc_bond.pl"], "bin"),
+    (["tools/matlab", "tools/python", "tools/emacs", "tools/vim"], "tools") 
+]
+
+sanity_check_paths = {
+    'files' : ["LICENSE", "bin/lmp_mpi", "bin/lmp_serial", 
+               "bin/binary2txt", "bin/chain", "bin/micelle2d", "bin/abf_integrate", "bin/bondConnectCheck", "bin/mol_fra"],
+    'dirs'  : ["doc", "examples", "tools/matlab", "tools/python", "tools/emacs", "tools/vim"]
+}
+
+moduleclass = 'math'
+

@@ -1,6 +1,15 @@
+#! /bin/bash
+
 version=31Mar2017
 toolchain=intel-2017a
 installdir=/scratch/antwerpen/200/vsc20001/LAMMPS/${version}-${toolchain}
+
+#
+# Offline preparations: We expect a file UAextensions_${version}.tar.gz with a subset
+# of the directory structure of the LAMMPS distribution file and containing the
+# various fix_* and pair_* files contributed by the users in 
+# lammps-stable_${version}/src
+#
 
 #
 # Get the sources
@@ -35,8 +44,13 @@ export F90FLAGS="-O2 -funroll-loops -fPIC"
 # Untar the package
 tar -xf /apps/antwerpen/sources/l/LAMMPS/stable_${version}.tar.gz
 # Creates the directory lammps-stable_${version}
+# Now also uncompress the UA extensions
+tar -xf /apps/antwerpen/sources/l/LAMMPS/UAextensions_${version}.tar.gz
 
 cd lammps-stable_${version}
+
+############################################################################################
+# Patch phase
 
 #
 # First some regular patching. We've redesigned the patches so that they
@@ -48,6 +62,9 @@ cd lammps-stable_${version}
 # - lib/voronoi/Makefile.lammps
 patch -p1 </apps/antwerpen/sources/l/LAMMPS/LAMMPS-${version}_intel.patch
 
+############################################################################################
+# Configure phase
+
 #
 # PLUMED support is not integrated in LAMMPS, but the developers of PLUMED 
 # offer a patching procedure to integrate it in a similar way as other
@@ -55,16 +72,6 @@ patch -p1 </apps/antwerpen/sources/l/LAMMPS/LAMMPS-${version}_intel.patch
 # Note that officially only the 6Apr13 version of LAMMPS is supported!
 #
 $EBROOTPLUMED/lib/plumed/patches/patch.sh -e lammps-6Apr13 --shared -p
-
-#
-# Instal versious UAntwerp-specific extensions, in chronological order so 
-# that we always keep the newest version. This adds a number of fix_* and
-# pair_* files to the src directory.
-#
-/bin/cp -fp /apps/antwerpen/sources/l/LAMMPS/fix-1Feb14/* src
-/bin/cp -fp /apps/antwerpen/sources/l/LAMMPS/fix-30Oct14/* src
-/bin/cp -fp /apps/antwerpen/sources/l/LAMMPS/fix-14May16/* src
-/bin/cp -fp /apps/antwerpen/sources/l/LAMMPS/fix-31Mar2017/* src
 
 #
 # Configure LAMMPS with the packages that will be used
@@ -78,6 +85,9 @@ make no-kim no-poems no-meam no-kokkos no-user-atc no-user-awpmd no-user-quip no
 # Other features
 make no-gpu no-user-omp no-user-intel no-opt no-user-qmmm no-user-smd no-mscg
 
+############################################################################################
+# Build phase
+
 #
 # Build the software
 #
@@ -88,6 +98,7 @@ cd ../../src      ; make -j20 mpi CC=${MPICXX} CFLAGS="${CXXFLAGS}"
 make clean-all
 make no-mpiio no-user-lb
 make -j20 serial CC=${CXX} CFLAGS="${CXXFLAGS}"
+
 # Try building some tools
 cd ../tools ; ${CXX} -o binary2txt ${CXXFLAGS} binary2txt.cpp
               ${F90} -o chain ${F90FLAGS} chain.f
@@ -96,9 +107,9 @@ cd colvars  ; ${CXX} -o abf_integrate ${CXXFLAGS} abf_integrate.cpp abf_data.cpp
 cd ../reax  ; ${F90} -o bondConnectCheck ${F90FLAGS} bondConnectCheck.f90
               ${CC} -o mol_fra ${CFLAGS} mol_fra.c
 
-#
-# And now the copy phase
-#
+############################################################################################
+# Install phase
+
 cd ../..
 mkdir -p ${installdir}/bin
 cp LICENSE ${installdir}
