@@ -1,0 +1,46 @@
+# IMPORTANT NOTE:
+# This EasyConfig requires a specially prepared source file, build by adding
+# the necessary patch file to the main distribution file, then retarring in
+# a file openmx%(versio)s.tar.gz (e.g., openmx3.8.3.tar.g) that is stored in
+# a place where EasyBuild can find it. 
+#
+easyblock = 'MakeCp'
+
+name = 'OpenMX'
+version = '3.8.3'
+
+homepage = 'http://www.openmx-square.org/'
+description = "OpenMX (Open source package for Material eXplorer) is a software package for nano-scale material simulations based on density functional theories (DFT), norm-conserving pseudopotentials, and pseudo-atomic localized basis functions. This version is compiled with MPI and OpenMP"
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'pic': False, 'openmp': True, 'usempi': True}
+
+source_urls = [homepage]
+sources = ['openmx%(version)s.tar.gz']
+
+dependencies = [ ]
+
+parallel = 1
+
+prebuildopts = 'cd source && '
+buildopts  = 'CC="${MPICC} ${CFLAGS} -I${MKLROOT}/include/fftw -I./liberi-091216/source" FC="${MPIF90} ${F90FLAGS}" LIB="-mkl=parallel -lifcoremt"'
+
+#
+# Files to copy:
+# - The binary openmx from source to bin
+# - The documentation file openmx3.8.pdf to the doc subdirectory
+# - The subdirectory DFT_DATA13
+#
+files_to_copy = [
+    (["source/openmx"], "bin"),
+    (["openmx3.8.pdf"], "doc"),
+    "DFT_DATA13"
+]
+
+sanity_check_paths = {
+    'files' : ["bin/openmx"],
+    'dirs'  : ["doc", "DFT_DATA13"]
+}
+
+moduleclass = 'math'
+
