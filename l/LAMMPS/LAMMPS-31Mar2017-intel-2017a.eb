@@ -1,10 +1,3 @@
-# We will not use the mumps EasyBlock as that one sucks.
-#
-# Choices for this build:
-# - No MPI, but we do use OpenMP to compile MUMPS
-# - We add the sequential SCOTCH and METIS orderings to the default ordering.
-# - s, d, c, and z versions of the libraries.
-#
 easyblock = 'MakeCp'
 
 name = 'LAMMPS'
