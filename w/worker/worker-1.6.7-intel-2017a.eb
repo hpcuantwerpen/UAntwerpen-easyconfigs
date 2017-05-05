@@ -39,7 +39,7 @@ osdependencies = [
   'perl',                                    # We use the system perl.
   ('perl-devel', 'perl-ExtUtils-ParseXS'),   # Need xsubpp for the installation of Template.
   'perl-ExtUtils-MakeMaker',                 # Not needed if ExtUtils::MakeMaker is included in the extensions list.
-  'perl-AppConfig',                          # Not needed if AppConfig is included in the extensions list.
+#  'perl-AppConfig',                          # Not needed if AppConfig is included in the extensions list.
 ]
 
 exts_defaultclass = 'PerlModule'
@@ -53,10 +53,10 @@ exts_list = [
 #        'source_tmpl': 'ExtUtils-MakeMaker-%(version)s.tar.gz',
 #        'source_urls': ['https://cpan.metacpan.org/authors/id/B/BI/BINGOS'],
 #    }),
-#    ('AppConfig', '1.71', {
-#        'source_tmpl': 'AppConfig-%(version)s.tar.gz',
-#        'source_urls': ['https://cpan.metacpan.org/authors/id/N/NE/NEILB'],
-#    }),
+    ('AppConfig', '1.71', {
+        'source_tmpl': 'AppConfig-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/N/NE/NEILB'],
+    }),
 #
 # The following are non-core modules. We cannot rely on them being present in the system PErl.
 #
