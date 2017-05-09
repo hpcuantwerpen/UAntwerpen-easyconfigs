@@ -1,0 +1,34 @@
+easyblock = 'ConfigureMake'
+
+name = 'Libint'
+version = '1.1.6'
+versionsuffix = '-CP2K'
+
+homepage = 'https://sourceforge.net/p/libint/'
+description = """Libint library is used to evaluate the traditional (electron repulsion) and certain novel two-body matrix elements (integrals) over Cartesian Gaussian functions used in modern atomic and molecular theory.\n
+This version was compiled specifically for use with CP2K following the instructions on https://github.com/hfp/libxsmm/blob/master/documentation/cp2k.md."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+sources = ['release-%s.tar.gz' % '-'.join(version.split('.'))]
+source_urls = ['https://github.com/evaleev/libint/archive/']
+
+builddependencies = [('Autotools', '20161231', '', True)]
+
+preconfigopts  = 'aclocal -I lib/autoconf && libtoolize && autoconf && '
+preconfigopts += 'env AR=xiar CC=icc CXX=icpc '
+
+configopts  = '--with-cxx-optflags="-O2 -xHost" '
+configopts += '--with-cc-optflags=" -O2 -xHost" '
+configopts += '--with-libderiv-max-am1=4 '
+configopts += '--with-libint-max-am=5 '
+
+sanity_check_paths = {
+    'files': ['include/lib%(x)s/lib%(x)s.h' % {'x': x} for x in ['deriv', 'int', 'r12']] +
+             ['include/libint/hrr_header.h', 'include/libint/vrr_header.h'] +
+             ['lib/lib%s.%s' % (x,y) for x in ['deriv', 'int', 'r12'] for y in ['a']],
+    'dirs': [],
+}
+
+#modextravars = {'LIBINTROOT': '%(installdir)s'}  # Needed for our build process of CP2K.
+moduleclass = 'chem'
