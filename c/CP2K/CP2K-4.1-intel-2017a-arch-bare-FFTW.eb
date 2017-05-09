@@ -1,0 +1,58 @@
+easyblock = 'MakeCp'
+
+name = 'CP2K'
+version = '4.1'
+versionsuffix = '-arch-bare-FFTW'
+
+homepage = 'http://www.cp2k.org/'
+description = """CP2K is a freely available (GPL) program, written in Fortran 95, to perform atomistic and molecular simulations of solid state, liquid, molecular and biological systems. It provides a general framework for different methods such as e.g. density functional theory (DFT) using a mixed Gaussian and plane waves approach (GPW), and classical pair and many-body potentials.\n
+This version is build using the instructions from https://github.com/hfp/libxsmm/blob/master/documentation/cp2k.md"""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+sources = [SOURCELOWER_TAR_BZ2]
+source_urls = [SOURCEFORGE_SOURCE]
+patches = [
+    ('CP2K-4.1_intel-arch-bare-FFTW.patch',0),
+]
+
+dependencies = [ 
+    ('FFTW', '3.3.6'), 
+]
+
+builddependencies = [ ] 
+
+start_dir = 'makefiles'
+
+prebuildopts  = ''
+#prebuildopts += 'pushd ../.. && '
+#prebuildopts += 'wget https://github.com/hfp/libxsmm/archive/1.8.tar.gz && '
+#prebuildopts += 'tar -xf 1.8.tar.gz && '
+#prebuildopts += 'popd && '
+
+buildopts = 'ARCH=Linux-x86-64-intel-FFTW VERSION=popt'
+
+runtest  = 'ARCH=Linux-x86-64-intel-FFTW VERSION=popt TESTOPTS="-mpiexec mpirun" test ; '
+runtest += 'echo "Testing done." '
+
+
+
+# don't use parallel make, results in compilation failure
+# because Fortran module files aren't created before they are needed
+parallel = 1
+
+files_to_copy = [
+    "COPYRIGHT",
+    'data', 
+    'tests', 
+    'regtesting', 
+    (['exe/Linux-x86-64-intel-FFTW/%s.%s' % (x,y) for x in ['cp2k', 'cp2k_shell', 'dbcsr_example_1', 'dbcsr_example_2', 'dbcsr_example_3', 'dbcsr_performance_driver', 'dbcsr_test_csr_conversions', 'dbcsr_unittest', 'graph', 'libcp2k_unittest'] for y in ['popt']  ], 'bin') 
+]
+
+sanity_check_paths = {
+    'files' : ['COPYRIGHT'],
+    'dirs'  : ['bin', 'data', 'tests']
+}
+
+moduleclass = 'chem'
+

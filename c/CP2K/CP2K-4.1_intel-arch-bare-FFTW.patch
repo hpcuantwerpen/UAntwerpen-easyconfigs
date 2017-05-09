@@ -1,0 +1,88 @@
+# This patch file adds an architecture file to compile CP2K in POPT-version
+# with the Intel compilers and MKL, but using FFTW rather than the FFT
+# libraries from MKL as the latter contain a bug that causes failure of CP2K.
+--- arch/Linux-x86-64-intel-FFTW.popt	2017-05-08 16:27:11.708353000 +0200
++++ arch/Linux-x86-64-intel-FFTW.popt	2017-05-08 15:52:04.910995000 +0200
+@@ -0,0 +1,82 @@
++# Arch file targeting Linux 64-bit using the Intel tool chain with FFTW
++#
++PERL     = perl
++CPP      = #cpp
++AR       = xiar -r
++
++CXX = mpiicpc
++CC  = mpiicc
++FC  = mpiifort
++LD  = mpiifort
++
++# Diagnostic message to be turned off
++DIAG_DISABLE = 8290,8291,10010,10212,11060
++CPPFLAGS  := $(NULL)
++CXXFLAGS  := -diag-disable $(DIAG_DISABLE) -std=c++0x
++CFLAGS    := -diag-disable $(DIAG_DISABLE)
++FCFLAGS   := -diag-disable $(DIAG_DISABLE) -free -fpp
++LDFLAGS   := -diag-disable $(DIAG_DISABLE)
++LDFLAGS_C := -diag-disable $(DIAG_DISABLE) -nofor_main
++OPTFLAGS  := $(NULL)
++
++# Optimizer
++OPTFLAGS  += -O2
++OPTFLAGS  += -xHost
++DFLAGS    += -DNDEBUG
++
++# Floating point model
++CXXFLAGS  += -fp-model precise #-fno-alias -ansi-alias
++CFLAGS    += -fp-model precise #-fno-alias -ansi-alias
++FCFLAGS   += -fp-model source
++
++# BLAS/Lapack/ScaLPACK and FFTW3
++LIBS     = -Wl,--start-group \
++             ${EBROOTFFTW}/lib/libfftw3.a \
++             ${EBROOTFFTW}/lib/libfftw3_omp.a \
++           -Wl,--end-group
++LIBS    += ${MKLROOT}/lib/intel64/libmkl_scalapack_lp64.a \
++           -Wl,--start-group \
++             ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a \
++             ${MKLROOT}/lib/intel64/libmkl_sequential.a \
++             ${MKLROOT}/lib/intel64/libmkl_core.a \
++             ${MKLROOT}/lib/intel64/libmkl_blacs_intelmpi_lp64.a \
++           -Wl,--end-group \
++           -lpthread -lm -ldl
++
++INCS     = -I${EBROOTFFTW}/include
++INCS    += -I${MKLROOT}/include
++
++DFLAGS   += -D__parallel -D__SCALAPACK -D__MPI_VERSION=3 \
++            -D__FFTW3 \
++            -D__HAS_ISO_C_BINDING
++
++CFLAGS   += $(INCS)
++CXXFLAGS += $(INCS)
++FCFLAGS  += $(INCS)
++LDFLAGS  += $(INCS)
++
++DFLAGS   += -D__parallel -D__BLACS -D__SCALAPACK
++
++DFLAGS   += -D__INTEL -D__HAS_ISO_C_BINDING -D__USE_CP2K_TRACE
++IFLAGS   += # general include paths
++
++CXXFLAGS  += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
++CFLAGS    += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
++FCFLAGS   += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
++LDFLAGS   += $(OPTFLAGS)
++
++thermostat_utils.o: thermostat_utils.F
++	$(FC) -c $(FCFLAGS) -O1 $<
++
++mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
++	$(FC) -c $(FCFLAGS) -O0 $<
++
++qs_vxc_atom.o: qs_vxc_atom.F
++	$(FC) -c $(FCFLAGS) -O1 $<
++
++process.o: process.cpp
++	$(CXX) -c $(CXXFLAGS) -O1 $<
++
++transpose.o: transpose.cpp
++	$(CXX) -c $(CXXFLAGS) -O1 $<
++
