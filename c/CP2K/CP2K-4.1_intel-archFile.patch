@@ -1,0 +1,210 @@
+--- cp2k-4.1-orig/arch/Linux-x86-64-intel-mic.psmp	2016-05-04 14:03:30.921224000 +0200
++++ cp2k-4.1/arch/Linux-x86-64-intel-mic.psmp	2017-05-09 14:17:30.226152223 +0200
+@@ -1,5 +1,5 @@
+ # Arch file targeting Linux 64-bit using the Intel tool chain
+-#
++# Modifications by Kurt Lust for use with FFTW, but not fully tested!
+ PERL     = perl
+ CPP      = #cpp
+ AR       = xiar -r
+@@ -60,30 +60,34 @@
+ #
+ #LIBXSTREAMROOT = $(HOME)/libxstream
+ 
++# FFTW3: Make sure libfftw3.a and libfftw3_omp.a exist. We currently only support
++# static linking of these libraries.
++#LIBFFTW3ROOT = ...
++
+ # Diagnostic message to be turned off
+ DIAG_DISABLE = 8290,8291,10010,10212,11060
+ 
+ # DEFAULTS
+ #
+-ifeq (,$(PAR))
++ifeq (,$(PAR))  # PAR = 0: No MPI; PAR = 1: MPI
+   PAR := 1
+ endif
+-ifeq (,$(SMP))
++ifeq (,$(SMP))  # SMP = 0: No multithreading/OpenMP; SMP = 1: Multithreading/OpenMP
+   SMP := 1
+ endif
+-ifeq (,$(ACC))
++ifeq (,$(ACC))  # ACC = 0: No accellerator support, ACC = 1: Accellerator support
+   ACC := 1
+ endif
+-ifeq (,$(MIC))
++ifeq (,$(MIC))  # MIC = 0": No MIC support; MIC = 1: MIC support included
+   MIC := 1
+ endif
+ ifeq (,$(ATTRIBUTE))
+   ATTRIBUTE := mic
+ endif
+-ifeq (,$(MKL))
+-  MKL := 2
++ifeq (,$(MKL))  # MKL = 0: No MKL; MKL = 1: Sequential MKL; MKL = 2: Multi-threaded MKL.
++  MKL := 1
+ endif
+-ifeq (,$(MKL_STATIC))
++ifeq (,$(MKL_STATIC))  # MLL_STATIC = 0: Dynamically link the MJL libraries; MKL_STATI=1: Link the static versions.
+   MKL_STATIC := 1
+ endif
+ ifeq (1,$(MKL_DIRECT))
+@@ -166,17 +170,18 @@
+   IFLAGS  += -I$(SRCDIR)/acc/mic/libxstream/include
+ endif
+ 
+-ifneq (0,$(ACC))
+-  DFLAGS += -D__ACC -D__DBCSR_ACC
++ifneq (,$(LIBXSMMROOT))
++  DFLAGS  += -D__LIBXSMM
++  IFLAGS  += -I$(LIBXSMMROOT)/include
++  LIBS    += $(LIBXSMMROOT)/lib/libxsmm.a $(LIBXSMMROOT)/lib/libxsmmf.a
++  #MIC_CXFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
++  #MIC_CCFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
++  #MIC_FCFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
++  MIC_LDFLAGS += -offload-option,mic,ld,"$(LIBXSMMROOT)/lib/mic/libxsmm.a"
++endif
+ 
+-  ifneq (,$(LIBXSMMROOT))
+-    DFLAGS  += -D__LIBXSMM
+-    IFLAGS  += -I$(LIBXSMMROOT)/include
+-    #MIC_CXFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
+-    #MIC_CCFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
+-    #MIC_FCFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
+-    MIC_LDFLAGS += -offload-option,mic,ld,"$(LIBXSMMROOT)/lib/mic/libxsmm.a"
+-  endif
++ifneq (0,$(ACC)) # Add accellerator support.
++  DFLAGS += -D__ACC -D__DBCSR_ACC
+ 
+   ifeq (0,$(OCL))
+     DFLAGS += -D__ACC_MIC
+@@ -202,10 +207,16 @@
+ endif
+ 
+ ifneq (1,$(MKL))
+-  ifneq (0,$(MKL)) # smp
++  ifneq (0,$(MKL)) # smp # MKL != 0 and MKL != 1
+     DFLAGS  += -D__MKL -D__FFTSG -D__FFTW3
+-    IFLAGS  +=-I$(MKLROOT)/include -I$(MKLROOT)/include/fftw
+-    ifneq (1,$(MKL_STATIC))
++    IFLAGS  +=-I$(MKLROOT)/include
++    ifneq (,$(LIBFFTW3ROOT)) # Use FFTW.
++      IFLAGS += -I$(LIBFFTW3ROOT)/include
++      LIBS += -Wl,--start-group $(LIBFFTW3ROOT)/lib/libfftw3.a $(LIBFFTW3ROOT)/lib/libfftw3_omp.a -Wl,--end-group
++    else # FFTW = 0, use FFTW interfaces from MKL
++      IFLAGS += -I$(MKLROOT)/include/fftw
++    endif
++    ifneq (1,$(MKL_STATIC))A # MKL_STATIC != 1
+       LIBS += -L$(MKLROOT)/lib/intel64
+       ifneq (0,$(PAR))
+         MIC_LDFLAGS += -offload-option,mic,ld,"-L$(MKLROOT)/lib/mic -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lmkl_blacs_intelmpi_lp64"
+@@ -214,36 +225,36 @@
+         MIC_LDFLAGS += -offload-option,mic,ld,"-L$(MKLROOT)/lib/mic -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread"
+         LIBS += -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread
+       endif
+-    else # static
+-      ifneq (0,$(PAR))
++    else # static, MKL_STATIC = 1
++      ifneq (0,$(PAR)) # PAR != 0, MPI run, so add ScaLAPACK too
+         MIC_LDFLAGS += -offload-option,mic,ld," \
+           $(MKLROOT)/lib/mic/libmkl_scalapack_lp64.a \
+           --start-group \
+             $(MKLROOT)/lib/mic/libmkl_intel_lp64.a \
+-            $(MKLROOT)/lib/mic/libmkl_core.a \
+             $(MKLROOT)/lib/mic/libmkl_intel_thread.a \
+-          --end-group \
+-          $(MKLROOT)/lib/mic/libmkl_blacs_intelmpi_lp64.a"
++            $(MKLROOT)/lib/mic/libmkl_core.a \
++            $(MKLROOT)/lib/mic/libmkl_blacs_intelmpi_lp64.a" \
++          --end-group
+         LIBS += \
+           $(MKLROOT)/lib/intel64/libmkl_scalapack_lp64.a \
+           -Wl,--start-group \
+             $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a \
+-            $(MKLROOT)/lib/intel64/libmkl_core.a \
+             $(MKLROOT)/lib/intel64/libmkl_intel_thread.a \
+-          -Wl,--end-group \
+-          $(MKLROOT)/lib/intel64/libmkl_blacs_intelmpi_lp64.a
+-      else
++            $(MKLROOT)/lib/intel64/libmkl_core.a \
++            $(MKLROOT)/lib/intel64/libmkl_blacs_intelmpi_lp64.a \
++          -Wl,--end-group
++      else # PAR = 0, non-MPI
+         MIC_LDFLAGS += -offload-option,mic,ld," \
+           --start-group \
+             $(MKLROOT)/lib/mic/libmkl_intel_lp64.a \
+-            $(MKLROOT)/lib/mic/libmkl_core.a \
+             $(MKLROOT)/lib/mic/libmkl_intel_thread.a \
++            $(MKLROOT)/lib/mic/libmkl_core.a \
+           --end-group"
+         LIBS += \
+           -Wl,--start-group \
+             $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a \
+-            $(MKLROOT)/lib/intel64/libmkl_core.a \
+             $(MKLROOT)/lib/intel64/libmkl_intel_thread.a \
++            $(MKLROOT)/lib/intel64/libmkl_core.a \
+           -Wl,--end-group
+       endif
+     endif
+@@ -254,9 +265,15 @@
+     MIC_LDFLAGS += -offload-option,mic,ld,"-lpthread -lm"
+     LIBS += -lpthread -lm
+   endif
+-else # sequential
++else # sequential  # MKL = 1.
+   DFLAGS  += -D__MKL -D__FFTSG -D__FFTW3
+-  IFLAGS  +=-I$(MKLROOT)/include -I$(MKLROOT)/include/fftw
++  IFLAGS  +=-I$(MKLROOT)/include
++  ifneq (,$(LIBFFTW3ROOT)) # Use FFTW.
++    IFLAGS += -I$(LIBFFTW3ROOT)/include
++    LIBS += -Wl,--start-group $(LIBFFTW3ROOT)/lib/libfftw3.a $(LIBFFTW3ROOT)/lib/libfftw3_omp.a -Wl,--end-group
++  else # FFTW = 0, use FFTW interfaces from MKL
++    IFLAGS += -I$(MKLROOT)/include/fftw
++  endif
+   ifneq (1,$(MKL_STATIC))
+     LIBS += -L$(MKLROOT)/lib/intel64
+     ifneq (0,$(PAR))
+@@ -269,33 +286,33 @@
+   else # static
+     ifneq (0,$(PAR))
+       MIC_LDFLAGS += -offload-option,mic,ld," \
+-        $(MKLROOT)/lib/mic/libmkl_scalapack_lp64.a
++        $(MKLROOT)/lib/mic/libmkl_scalapack_lp64.a \
+         --start-group \
+           $(MKLROOT)/lib/mic/libmkl_intel_lp64.a \
+-          $(MKLROOT)/lib/mic/libmkl_core.a \
+           $(MKLROOT)/lib/mic/libmkl_sequential.a \
+-        --end-group \
+-        $(MKLROOT)/lib/mic/libmkl_blacs_intelmpi_lp64.a"
++          $(MKLROOT)/lib/mic/libmkl_core.a \
++          $(MKLROOT)/lib/mic/libmkl_blacs_intelmpi_lp64.a" \
++        --end-group
+       LIBS += \
+-        $(MKLROOT)/lib/intel64/libmkl_scalapack_lp64.a
++        $(MKLROOT)/lib/intel64/libmkl_scalapack_lp64.a \
+         -Wl,--start-group \
+           $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a \
+-          $(MKLROOT)/lib/intel64/libmkl_core.a \
+           $(MKLROOT)/lib/intel64/libmkl_sequential.a \
+-        -Wl,--end-group \
+-        $(MKLROOT)/lib/intel64/libmkl_blacs_intelmpi_lp64.a
++          $(MKLROOT)/lib/intel64/libmkl_core.a \
++          $(MKLROOT)/lib/intel64/libmkl_blacs_intelmpi_lp64.a \
++        -Wl,--end-group
+     else
+       MIC_LDFLAGS += -offload-option,mic,ld," \
+         --start-group \
+           $(MKLROOT)/lib/mic/libmkl_intel_lp64.a \
+-          $(MKLROOT)/lib/mic/libmkl_core.a \
+           $(MKLROOT)/lib/mic/libmkl_sequential.a \
++          $(MKLROOT)/lib/mic/libmkl_core.a \
+         --end-group"
+       MKL_LIBS = \
+         -Wl,--start-group \
+           $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a \
+-          $(MKLROOT)/lib/intel64/libmkl_core.a \
+           $(MKLROOT)/lib/intel64/libmkl_sequential.a \
++          $(MKLROOT)/lib/intel64/libmkl_core.a \
+         -Wl,--end-group
+     endif
+   endif
