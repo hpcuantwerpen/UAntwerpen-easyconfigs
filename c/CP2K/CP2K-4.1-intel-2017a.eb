@@ -1,4 +1,8 @@
-# Built with EasyBuild version 3.1.0 on 2017-02-07_18-11-03
+# EasyConfig using the EasyBuild CP2K-block.
+# The generated binary does not work with this version of the compiler due to 
+# problems with the FFT routines in this version of the MKL library. The authors
+# of CP2K advise to use FFTW3 instead, however, the EasyBuild compile fails when 
+# this module is added.
 name = 'CP2K'
 version = '4.1'
 
