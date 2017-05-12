@@ -1,0 +1,29 @@
+easyblock = 'MakeCp'
+
+name = 'RAxML'
+version = '8.2.10'
+versionsuffix = '-hybrid'
+
+homepage = 'https://github.com/stamatak/standard-RAxML'
+description = ("RAxML search algorithm for maximum likelihood based inference of phylogenetic trees.\n"
+               "Users are advised to consider switching to RAxML-ng once this package is\n"
+               "sufficiently stable as it should be more efficient and better adapted\m"
+               "to modern architectures.\n"
+               "This version was compiled with support for MPI and multithreading.")
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+sources = ['v%(version)s.zip']
+source_urls = ['https://github.com/stamatak/standard-RAxML/archive/']
+patches = [ ('%(name)s-%(version)s_Makefile-intel.patch',1) ]
+
+buildopts = '-f Makefile.HYBRID.intel AVXLEVEL=1'
+
+files_to_copy = [(["raxmlHPC-HYBRID"], "bin"), "usefulScripts", "README", "manual"]
+
+sanity_check_paths = {
+    'files': ["bin/raxmlHPC-HYBRID"],
+    'dirs': [],
+}
+
+moduleclass = 'bio'

@@ -1,0 +1,79 @@
+--- standard-RAxML-8.2.10-orig/Makefile.HYBRID.intel	2017-05-12 11:03:49.678729000 +0200
++++ standard-RAxML-8.2.10/Makefile.HYBRID.intel	2017-05-12 11:02:57.136146000 +0200
+@@ -0,0 +1,76 @@
++# Makefile November 2009 by Alexandros Stamatakis
++# Makefile adapted May 2017 by Kurt Lust: Intel, and 3 modes: AVXLEVEL=0 for sse3, AVXLEVEL=1 for AVX and AVXLEVEL=2 for AVX2 with FMA
++
++ifeq (,$(AVXLEVEL))
++  AVXLEVEL := 0
++endif
++
++COPTFLAGS := -O3 -xHost
++DFMAFLAG := 
++DFLAGS := -D_WAYNE_MPI -D_USE_PTHREADS -D_GNU_SOURCE
++
++
++ifeq (0, $(AVXLEVEL))
++  DFLAGS := $(DFLAGS) -D__SIM_SSE3
++endif
++ifeq (1, $(AVXLEVEL))
++  DFLAGS := $(DFLAGS) -D__SIM_SSE3 -D__AVX
++endif
++ifeq (2, $(AVXLEVEL)) 
++  DFLAGS := $(DFLAGS) -D__SIM_SSE3 -D__AVX
++  DFMAFLAG := -D_FMA
++endif
++
++CC = mpiicc 
++CFLAGS = $(DFLAGS) $(COPTFLAGS)
++
++LIBRARIES = -lm -pthread 
++
++RM = rm -f
++
++objs    = axml.o  optimizeModel.o multiple.o searchAlgo.o topologies.o parsePartitions.o treeIO.o models.o bipartitionList.o rapidBootstrap.o evaluatePartialGenericSpecial.o evaluateGenericSpecial.o newviewGenericSpecial.o makenewzGenericSpecial.o   classify.o fastDNAparsimony.o fastSearch.o leaveDropping.o rmqs.o rogueEPA.o ancestralStates.o avxLikelihood.o  mem_alloc.o eigen.o 
++
++all : clean raxmlHPC-HYBRID
++
++GLOBAL_DEPS = axml.h globalVariables.h rmq.h rmqs.h  #mem_alloc.h compiler.h  gcc.h  ll_asm.h  ll_list.h
++
++raxmlHPC-HYBRID : $(objs)
++	$(CC) -o $@ $(objs) $(LIBRARIES) $(LDFLAGS) 
++
++# Files compiled with generic rules
++rmqs.o : rmqs.c $(GLOBAL_DEPS)
++classify.o : classify.c $(GLOBAL_DEPS)
++evaluatePartialSpecialGeneric.o : evaluatePartialSpecialGeneric.c $(GLOBAL_DEPS)
++bipartitionList.o : bipartitionList.c $(GLOBAL_DEPS)
++optimizeModel.o : optimizeModel.c $(GLOBAL_DEPS)
++multiple.o : multiple.c $(GLOBAL_DEPS)
++axml.o : axml.c $(GLOBAL_DEPS)
++searchAlgo.o : searchAlgo.c $(GLOBAL_DEPS)
++topologies.o : topologies.c $(GLOBAL_DEPS)
++parsePartitions.o : parsePartitions.c $(GLOBAL_DEPS)
++treeIO.o : treeIO.c $(GLOBAL_DEPS)
++models.o : models.c $(GLOBAL_DEPS)
++rapidBootstrap.o : rapidBootstrap.c $(GLOBAL_DEPS) 
++evaluatePartialGenericSpecial.o : evaluatePartialGenericSpecial.c $(GLOBAL_DEPS)
++evaluateGenericSpecial.o : evaluateGenericSpecial.c $(GLOBAL_DEPS)
++newviewGenericSpecial.o : newviewGenericSpecial.c $(GLOBAL_DEPS)
++makenewzGenericSpecial.o : makenewzGenericSpecial.c $(GLOBAL_DEPS)
++fastDNAparsimony.o : fastDNAparsimony.c $(GLOBAL_DEPS)
++fastSearch.o : fastSearch.c $(GLOBAL_DEPS)
++leaveDropping.o : leaveDropping.c $(GLOBAL_DEPS)
++rogueEPA.o : rogueEPA.c $(GLOBAL_DEPS)
++ancestralStates.o : ancestralStates.c $(GLOBAL_DEPS)
++mem_alloc.o eigen.o  : mem_alloc.c  $(GLOBAL_DEPS)
++
++# Specific rules for certain files
++avxLikelihood.o : avxLikelihood.c $(GLOBAL_DEPS)
++	$(CC) $(CFLAGS) $(DFMAFLAG) -c -o $@ $<
++
++eigen.o : eigen.c $(GLOBAL_DEPS)
++	$(CC) -c -o $@ $<
++
++# Other targets
++clean : 
++	$(RM) *.o raxmlHPC-HYBRID
++
++dev: raxmlHPC-HYBRID
