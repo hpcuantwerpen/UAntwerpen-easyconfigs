@@ -1,5 +1,6 @@
 name = 'Python'
 version = '2.7.13'
+#versionsuffix = '-test'
 
 homepage = 'http://python.org/'
 description = """Python is a programming language that lets you work more quickly and integrate your systems
@@ -52,6 +53,10 @@ exts_list = [
     ('pyparsing', '2.1.10', {   # Needed for recent versions of setuptools
         'source_urls': ['https://pypi.python.org/packages/source/p/pyparsing/'],
     }),
+#    ('setuptools', '33.1.1', {
+#        'source_urls': ['https://pypi.python.org/packages/source/s/setuptools/'],
+#        'source_tmpl': '%(name)s-%(version)s.zip',
+#    }),
 #    ('setuptools', '34.3.0', {   # 34.3.0 doesn't seem to work as it already requires setuptools, 
 #                                 # correct afterwards with pip install -U setuptools...
 #        'source_tmpl': '%(name)s-%(version)s.zip',  # 34.3.0 only in zip-format.
@@ -63,20 +68,23 @@ exts_list = [
     ('nose', '1.3.7', {           # Used by some test() routines in Python modules.
         'source_urls': ['https://pypi.python.org/packages/source/n/nose/'],
     }),
-    ('numpy', '1.11.0', {       # Problem: 3.1.0 numpy EasyBlock does not yet recognize that the system_info has changed in 1.12.0 and now deals with MKL also.
+    ('numpy', '1.12.1', { 
         'source_tmpl': '%(name)s-%(version)s.zip',
         'source_urls': ['https://pypi.python.org/packages/source/n/numpy'],
-        'patches': ['numpy-1.8.0-mkl.patch'],      # Patch doesn't work for 1.12. the system_info.py routine moreover should recognize MKL.
+        'patches': ['numpy-1.12.0-mkl.patch'],
     }),
-    ('scipy', '0.18.1', {
+    ('scipy', '0.19.0', {
+        'source_tmpl': '%(name)s-%(version)s.zip',
         'source_urls': ['https://pypi.python.org/packages/source/s/scipy'],
     }),
     ('dateutil', '2.6.0', {   # Requirement for matplotlib
         'source_tmpl': 'python-%(name)s-%(version)s.tar.gz',
         'source_urls': ['https://pypi.python.org/packages/source/p/python-dateutil/'],
     }),
-    ('cycler', '0.10.0', {    # Requirement for matplotlib according to the documentation
-        'source_urls': ['https://pypi.python.org/packages/source/c/cycler/'],
+    ('Cycler', '0.10.0', {    # Requirement for matplotlib according to the documentation.
+        'modulename': 'cycler',
+        'source_urls': ['https://pypi.python.org/packages/source/C/Cycler'],
+        'source_tmpl': 'cycler-%(version)s.tar.gz',
     }),
     ('blist', '1.3.6', {
         'source_urls': ['https://pypi.python.org/packages/source/b/blist/'],
@@ -150,7 +158,7 @@ exts_list = [
         'source_tmpl': '%(name)s-%(version)s.zip',
         'source_urls': ['https://pypi.python.org/packages/source/f/functools32'],
     }),
-    ('matplotlib', '2.0.0', {  # Problem: The test infrastructure is not integrated in the distribution.
+    ('matplotlib', '2.0.2', {  # Problem: The test infrastructure is not integrated in the distribution.
 #    ('matplotlib', '1.5.3', { # Version used in 2016b to check if the install works
         'source_urls': ['https://pypi.python.org/packages/source/m/matplotlib/'],
     }),
@@ -172,6 +180,9 @@ exts_list = [
     }),
     ('pysam', '0.10.0', {
         'source_urls': ['https://pypi.python.org/packages/source/p/pysam'],
+    }),
+    ('tinyarray', '1.2.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/t/tinyarray'],
     }),
 ]
 
