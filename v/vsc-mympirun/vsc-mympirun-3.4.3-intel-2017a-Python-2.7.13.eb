@@ -1,4 +1,5 @@
-easyblock = 'PythonPackage'
+#easyblock = 'PythonPackage'
+easyblock = 'Bundle'
 
 name = 'vsc-mympirun'
 version = '3.4.3'
@@ -9,18 +10,36 @@ description = """VSC-tools is a set of Python libraries and scripts that are com
 
 toolchain = {'name': 'intel', 'version': '2017a'}
 
-sources = [SOURCE_TAR_GZ]
-source_urls = ['https://github.com/hpcugent/vsc-mympirun/archive/']
+# this is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
 
 dependencies = [
     ('Python',   '2.7.13'),
-    ('vsc-base', '2.5.1', '', True),
+]
+
+exts_list = [
+    ('vsc-install', '0.10.26', { 
+        'modulename'  : 'vsc.install',
+        'source_urls' : ['https://pypi.python.org/packages/source/v/vsc-install'],
+        'sources'     : [SOURCE_TAR_GZ],
+    }),
+    ('vsc-base', '2.5.8', {
+        'modulename'  : 'vsc.utils.fancylogger',
+        'source_urls' : ['https://pypi.python.org/packages/source/v/vsc-base'],
+        'sources'     : [SOURCE_TAR_GZ],
+    }),
+    ('vsc-mympirun', '3.4.3', {
+        'modulename'  : 'vsc.mympirun',
+        'source_urls' : ['https://github.com/hpcugent/vsc-mympirun'],
+        'sources'     : [SOURCE_TAR_GZ]
+    }),
 ]
 
 # we ship something in bin/fake
-modextrapaths = {'PATH': 'bin/fake'}
+#modextrapaths = {'PATH': 'bin/fake'}
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
 
-options = {'modulename': 'vsc.mympirun'}
+#skipsteps = ['sanity_check']
 
 sanity_check_paths = {
     'files': ['bin/mympirun'],
