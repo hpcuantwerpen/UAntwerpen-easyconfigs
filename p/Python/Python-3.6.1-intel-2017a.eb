@@ -26,6 +26,7 @@ dependencies = [
     ('libxml2', '2.9.4'),      # Needed for lxml
     ('libxslt', '1.1.29'),     # Needed for lxml
     ('cURL',    '7.53.1'),     # Needed for pysam
+    ( 'X11',    '20170129'),
     # OS dependency should be preferred if the os version is more recent then this version,
     # it's nice to have an up to date openssl for security reasons
     # ('OpenSSL', '1.0.2h'),
@@ -175,6 +176,9 @@ exts_list = [
     }),
     ('pysam', '0.10.0', {
         'source_urls': ['https://pypi.python.org/packages/source/p/pysam'],
+    }),
+    ('pypandoc', '1.4', {
+        'source_urls': ['https://pypi.python.org/packages/source/p/pypandoc'],
     }),
     ('tinyarray', '1.2.0', {
         'source_urls': ['https://pypi.python.org/packages/source/t/tinyarray'],
