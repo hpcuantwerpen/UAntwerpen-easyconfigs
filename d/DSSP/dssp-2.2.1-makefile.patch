@@ -1,0 +1,34 @@
+--- makefile.org	2013-09-11 08:33:28.000000000 +0200
++++ makefile	2015-05-18 13:24:01.646126579 +0200
+@@ -15,17 +15,17 @@
+ 
+ VERSION				= 2.2.1
+ 
+-DEST_DIR			?= /usr/local
+-LIB_DIR				= $(BOOST_LIB_DIR)
+-INC_DIR				= $(BOOST_INC_DIR)
++DEST_DIR			?= /apps/antwerpen/ivybridge/sl6/DSSP/$(VERSION)-intel-$(EBVERSIONINTEL)
++LIB_DIR				= $(EBROOTBOOST)/lib
++INC_DIR				= $(EBROOTBOOST)/include
+ BIN_DIR				= $(DEST_DIR)/bin
+ MAN_DIR				= $(DEST_DIR)/man/man1
+ 
+ BOOST_LIBS			= thread filesystem program_options iostreams system
+-LIBS				= $(BOOST_LIBS:%=boost_%$(BOOST_LIB_SUFFIX)) z bz2
++LIBS				= $(BOOST_LIBS:%=boost_%$(BOOST_LIB_SUFFIX)) z bz2 pthread m
+ 
+ DEFINES				= USE_COMPRESSION LINUX VERSION='"$(VERSION)"'
+-CXX					= g++
++CXX					= icpc 
+ 
+ CFLAGS				+= $(INC_DIR:%=-I%) -iquote src -g -Wall -Wno-multichar -pthread
+ LDOPTS				+= $(LIB_DIR:%=-L%) $(LIBS:%=-l%) -g -pthread
+@@ -50,7 +50,7 @@
+ 
+ mkdssp: $(OBJECTS)
+ 	@ echo linking $@
+-	@ $(CXX) -static -o $@ $^ $(LDOPTS)
++	@ $(CXX) -o $@ $^ $(LDOPTS)
+ 
+ include $(OBJECTS:%.o=%.d)
+ 
