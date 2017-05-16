@@ -177,12 +177,13 @@ exts_list = [
     ('pysam', '0.10.0', {
         'source_urls': ['https://pypi.python.org/packages/source/p/pysam'],
     }),
-    ('pypandoc', '1.4', {
-        'source_urls': ['https://pypi.python.org/packages/source/p/pypandoc'],
-    }),
     ('tinyarray', '1.2.0', {
         'source_urls': ['https://pypi.python.org/packages/source/t/tinyarray'],
     }),
+#    ('pypandoc', '1.4', {   # Do not install for now as we do not have pandoc.
+#                            # Just ignore the warnings from packages that want it.
+#        'source_urls': ['https://pypi.python.org/packages/source/p/pypandoc'],
+#    }),
 ]
 
 moduleclass = 'lang'
