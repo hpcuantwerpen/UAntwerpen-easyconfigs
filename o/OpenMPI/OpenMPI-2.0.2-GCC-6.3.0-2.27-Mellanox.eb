@@ -1,0 +1,94 @@
+easyblock = 'ConfigureMake'
+
+name = 'OpenMPI'
+version = '2.0.2'
+versionsuffix = '-Mellanox'
+
+homepage = 'http://www.open-mpi.org/'
+description = """The Open MPI Project is an open source MPI-2 implementation."""
+
+toolchain = {'name': 'GCC', 'version': '6.3.0-2.27'}
+
+# Source from release site:
+source_urls = ['http://www.open-mpi.org/software/ompi/v%(version_major_minor)s/downloads']
+sources = [SOURCELOWER_TAR_BZ2]
+
+#patches = ['%(name)s-%(version)s_Mellanox_config.patch']
+
+dependencies      = []
+osdependencies    = [
+    ('libibverbs-dev', 'libibverbs-devel'),
+    ('hwloc-devel'),
+    ('numactl-devel'),
+    ('libxml2-devel'),
+]
+builddependencies = [
+    ('Autotools', '20161231', '', True),
+]
+
+configopts  = ''
+#configopts += '--with-platform=contrib/platform/mellanox/optimized ' # Default options for optimized Mellanox support
+
+# Installation options
+configopts += '--enable-shared '                     # Build shared libraries
+#configopts += '--disable-shared '                    # Do not build shared libraries
+#configopts += '--enable-static '                     # Build static libraries
+configopts += '--disable-static '                    # Do not build static libraries
+configopts += '--disable-dlopen '                    # Include the Open MPI components in the regular MPI libraries rather than generating stand-alone dynamic shared objects
+configopts += '--disable-wrapper-rpath '             # Taken from the Mellanox configuration in contrib/platform/mellanox/optimized
+#configopts += '--enable-mca-no-build=coll-ml '       # Taken from the Mellanox configuration
+configopts += '--enable-mca-no-build=coll-ml,mtl-psm '
+
+# Networking support options
+# - Use IBverbs, in fact, it is also turned on by the Mellanox optimized configuration
+osdependencies.append( ('libibverbs-dev', 'libibverbs-devel') )
+configopts += '--with-verbs '                        # IB Verbs support, in fact, it is also turned on by the Mellanox optimized configuration
+# - Use knem for fast intra-node transfers (at least for larger messages)
+configopts += '--with-knem=/opt/knem-1.1.2.90mlnx1 '
+# - Use the Unified Communication X library, see https://github.com/openucx/ucx/wiki
+#configopts += '--with-ucx=<TODO>'
+# - Mellanox communication library
+osdependencies.append( ('mxm') )
+configopts += '--with-mxm=/opt/mellanox/mxm '
+# - Enable Mellanox FCA 3.5/hcoll collectives support on newer Mellanox switches 
+osdependencies.append( ('hcoll') )
+configopts += '--with-hcoll=/opt/mellanox/hcoll '
+# - Enable/disable the older Mellanox FCA 2.5
+#osdependencies.append( ('fca') )
+#configopts += '--with-fca=/opt/mellanox/fca 
+
+# Run-time system support
+configopts += '--enable-mpirun-prefix-by-default '   # suppress failure modes in relation to mpirun path
+configopts += '--without-loadleveler '
+configopts += '--without-lsf '
+configopts += '--without-sge '
+configopts += '--without-slurm '
+configopts += '--without-tm '
+osdependencies.append( ('moab-torque-devel') )
+configopts += '--with-tm '                           # Torque. Not really needed on our system, configure seems to find the libraries without problems.
+
+# Miscellaneous support libraries
+#configopts += '--with-hwloc=$EBROOTHWLOC '          # hwloc support
+#configopts += '--with-hwloc=internal '              # Use internal HWLOC library
+configopts += '--with-hwloc '                        # Not really needed, let configure detect the system one.
+
+# MPI functionality
+configopts += '--enable-mpi-thread-multiple '        # Allows the MPI thread level MPI_THREAD_MULTIPLE.
+#configopts += '--with-mpi-param-check=no '           # Suggested by the Mellanox configuration file, but is this really what we want?
+#configopts += '--with-threads=posix '               # In the easyconfig I started from, but I cannot find it in the configure options.
+#configopts += '--enable-mca-no-build=plm-rsh '      # Disable support for starting processes over rsh/ssh. Does not work????
+
+# We need to run autogen.pl for the patch to take effect on the configuration.
+#preconfigopts = "./autogen.pl && "
+
+#maxparallel = 1
+
+libs = ["mpi_mpifh", "mpi", "ompitrace", "open-pal", "open-rte"]
+sanity_check_paths = {
+    'files': ["bin/%s" % binfile for binfile in ["ompi_info", "opal_wrapper", "orterun"]] +
+             ["lib/lib%s.%s" % (libfile, SHLIB_EXT) for libfile in libs] +
+             ["include/%s.h" % x for x in ["mpi-ext", "mpif-config", "mpif", "mpi", "mpi_portable_platform"]],
+    'dirs': [],
+}
+
+moduleclass = 'mpi'
