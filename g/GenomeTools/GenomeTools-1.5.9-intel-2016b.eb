@@ -1,0 +1,24 @@
+easyblock = 'ConfigureMake'
+
+name = 'GenomeTools'
+version = '1.5.9'
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+
+homepage = 'http://genometools.org/'
+description = """The GenomeTools genome analysis system is a free collection of bioinformatics tools (in the realm of genome informatics) combined into a single binary named gt. It is based on a C library named “libgenometools” which consists of several modules."""
+
+sources = [SOURCELOWER_TAR_GZ]
+source_urls = ['http://genometools.org/pub/']
+
+patches = ['%(name)s-%(version)s_format_specifiers.patch']
+
+dependencies = [
+    ('cairo', '1.15.4'),  # Block 7
+    ('Pango', '1.40.4'),  # Block 10
+]
+
+skipsteps = ['configure']
+installopts = "prefix=%(installdir)s"
+
+moduleclass = 'bio'

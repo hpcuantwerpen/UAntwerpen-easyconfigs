@@ -1,0 +1,60 @@
+# We will not use the mumps EasyBlock as that one sucks.
+#
+# Choices for this build:
+# - No MPI, but we do use OpenMP to compile MUMPS
+# - We add the sequential SCOTCH and METIS orderings to the default ordering.
+# - s, d, c, and z versions of the libraries.
+#
+easyblock = 'MakeCp'
+
+name = 'MUMPS'
+version = '5.1.1'
+versionsuffix = '-openmp-MPI'
+
+homepage = 'http://graal.ens-lyon.fr/MUMPS/'
+description = "A parallel sparse direct solver. This version is compiled using Makefile.INTEL.PAR with SCOTCH and ParMETIS, so it uses MPI. It does also use OpenMP."
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+toolchainopts = {'pic': True, 'openmp': True, 'usempi': True}
+
+source_urls = ['http://mumps.enseeiht.fr/']
+sources = ['%(name)s_%(version)s.tar.gz']
+
+dependencies = [
+    ('SCOTCH',   '6.0.4'),
+    ('ParMETIS', '4.0.3'),
+]
+
+parallel = 1
+
+prebuildopts = 'cp Make.inc/Makefile.INTEL.PAR Makefile.inc && '
+buildopts  = 'all '     # All precisions + examples
+buildopts += 'ISCOTCH="-I${EBROOTSCOTCH}/include"  LSCOTCH="-L${EBROOTSCOTCH}/lib -lptesmumps -lptscotch -lptscotcherr -lesmumps -lscotch -lscotcherr" '
+buildopts += 'IMETIS="-I${EBROOTPARMETIS}/include" LMETIS="-L${EBROOTPARMETIS}/lib -lparmetis -lmetis" '
+buildopts += 'ORDERINGSF="-Dscotch -Dptscotch -Dmetis -Dparmetis -Dpord" '
+buildopts += 'OPTF="$FCFLAGS -nofor_main" '
+buildopts += 'OPTL="$FCFLAGS -nofor_main" '
+buildopts += 'OPTC="$CFLAGS" '
+buildopts += 'MKLROOT="$MKLROOT" '
+
+#
+# Files to copy:
+# - The include directory
+# - The lib directory
+# - The doc directory
+# - The examples directory
+# - the LICENSE file
+# - The CREDITS file
+# - Copy libseq/libmpiseq.a to lib/libmpiseq.a
+#
+files_to_copy = [
+    "include", "lib", "doc", "examples", "LICENSE", "CREDITS"
+]
+
+sanity_check_paths = {
+    'files' : ["LICENSE", "lib/libmumps_common.a"],
+    'dirs'  : ["include", "doc"]
+}
+
+moduleclass = 'math'
+

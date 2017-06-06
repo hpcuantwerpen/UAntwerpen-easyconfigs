@@ -1,0 +1,53 @@
+# Developed by Kurt Lust, UAntwerpen
+#
+# Implicit requirements: 
+# - SciPy >=0.9
+# - Tinyarray
+# - matplotlib >= 1.1
+# - nose testing framework
+# - BLAS and LAPACK
+# - Uses single-core MUMPS (optionally)
+
+easyblock = 'PythonPackage'
+
+name = 'kwant'
+version = '1.2.2'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://kwant-project.org'
+description = ("Kwant is a free (open source) Python package for numerical\n" 
+               "calculations on tight-binding models with a strong focus on\n"
+               "quantum transport.\n"
+               "Note that the package relies on purely sequential, single-core\n"
+               "libraries...")
+
+req_py_majver=3
+req_py_minver=4
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+
+source_urls = ['https://pypi.python.org/packages/source/k/kwant']
+sources = [SOURCELOWER_TAR_GZ]
+
+dependencies = [
+    ('MUMPS',  '5.1.1', '-noOpenMP-noMPI'),  # Block 2
+    ('Python', '3.6.1'),                     # Block 5
+]
+
+prebuildopts  = 'echo "[mumps]"  >build.conf && '
+prebuildopts += 'echo "libraries = zmumps mumps_common pord metis esmumps scotch scotcherr mpiseq ifcore" >>build.conf && '
+prebuildopts += 'echo "library_dirs = $EBROOTMUMPS/lib $EBROOTSCOTCH/lib $EBROOTMETIS/lib $MKLROOT/../compiler/lib/intel64_lin" >>build.conf && '
+prebuildopts += 'echo "[lapack]" >>build.conf && '
+prebuildopts += 'echo "libraries = mkl_intel_lp64 mkl_sequential mkl_core mkl_def" >>build.conf && '
+prebuildopts += 'echo "library_dirs = $MKLROOT/lib/intel64_lin" >>build.conf && '
+prebuildopts += 'echo "extra_link_args = -Wl,-rpath=$MKLROOT/lib/intel64_lin" >>build.conf && '
+prebuildopts += 'echo "build.conf is:" && cat build.conf && '
+
+pythonpath = 'lib/python%(pyshortver)s/site-packages'
+
+sanity_check_paths = {
+     'files': ['bin/f2py'],
+     'dirs' : ['bin', 'lib']
+}
+
+moduleclass = 'phys'

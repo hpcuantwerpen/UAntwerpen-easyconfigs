@@ -1,0 +1,23 @@
+# Built with EasyBuild version 3.1.2 on 2017-04-03_11-55-52
+name = 'Mono'
+version = '4.8.0.495'
+
+homepage = 'http://www.mono-project.com/'
+description = """An open source, cross-platform, implementation of C# and the CLR that is
+ binary compatible with Microsoft.NET."""
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+
+source_urls = ['http://download.mono-project.com/sources/mono/']
+sources = [SOURCELOWER_TAR_BZ2]
+
+builddependencies = [
+    ('Autotools', '20161231', '', True),
+    ('CMake',     '3.7.2',    '', True),
+    ('gettext',   '0.19.8.1'),           # Block 3
+]
+
+configopts = "--with-large-heap=yes --without-x"
+
+moduleclass = 'lang'
+

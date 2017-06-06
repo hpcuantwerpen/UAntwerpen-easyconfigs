@@ -1,0 +1,74 @@
+easyblock = 'MakeCp'
+
+name = 'CP2K'
+version = '4.1'
+#versionsuffix = '-bare-FFTW'
+versionsuffix = '-bare'
+
+homepage = 'http://www.cp2k.org/'
+description = ("\nCP2K is a freely available (GPL) program, written in Fortran 95, to perform\n"
+               "atomistic and molecular simulations of solid state, liquid, molecular and\n"
+               "biological systems. It provides a general framework for different methods such as\n"
+               "e.g. density functional theory (DFT) using a mixed Gaussian and plane waves\n"
+               "approach (GPW), and classical pair and many-body potentials.\n"
+               "This version is build using a modified version of the included arch files in\n"
+               "the CP2K distribution. It uses the FFTW library to work around a problem with\n"
+               "the Intel libraries, but does not include any other optional component.")
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+
+sources = [SOURCELOWER_TAR_BZ2]
+source_urls = [SOURCEFORGE_SOURCE]
+
+patches = [
+    'CP2K-4.1_intel-archFile.patch',
+]
+
+dependencies = [ ]
+
+builddependencies = [ ]
+
+start_dir = 'makefiles'
+
+buildopts  = 'ARCH=Linux-x86-64-intel-host VERSION="popt" MKL=1'
+
+# FFTW.
+builddependencies.append( ('FFTW', '3.3.6') )
+buildopts += ' LIBFFTW3ROOT=${EBROOTFFTW}'
+
+# libxsmm. Libxsmm can be build with the standard EasyConfigs
+# builddependencies.append( ('libxsmm', '1.8') )
+# buildopts += ' LIBXSMMROOT=${EBROOTLIBXSMM}'
+
+# libxc. Libxc can be build with the standard EasyConfigs.
+# builddependencies.append( ('libxc', '3.0.0') )
+# buildopts += ' LIBXCROOT=${EBROOTLIBXC}'
+
+# Libint. Libint needs a special EasyConfig that compiles according to the instructions
+# in the CP2K arch file.
+# builddependencies.append( ('Libint', '1.1.6', '-CP2K') )
+# buildopts += ' LIBINTROOT=${EBROOTLIBINT}'
+
+# Run the tests.
+runtest  = 'ARCH=Linux-x86-64-intel-host VERSION="popt" TESTOPTS="-mpiexec mpirun" test ; '
+runtest += 'echo "Testing done." '
+
+# don't use parallel make, results in compilation failure
+# because Fortran module files aren't created before they are needed
+parallel = 1
+
+files_to_copy = [
+    "COPYRIGHT",
+    'data', 
+    'tests', 
+    'regtesting', 
+    (['exe/Linux-x86-64-intel-host/%s.%s' % (x,y) for x in ['cp2k', 'cp2k_shell', 'dbcsr_example_1', 'dbcsr_example_2', 'dbcsr_example_3', 'dbcsr_performance_driver', 'dbcsr_test_csr_conversions', 'dbcsr_unittest', 'graph', 'libcp2k_unittest'] for y in ['popt']  ], 'bin') 
+]
+
+sanity_check_paths = {
+    'files' : ['COPYRIGHT'],
+    'dirs'  : ['bin', 'data', 'tests']
+}
+
+moduleclass = 'chem'
+

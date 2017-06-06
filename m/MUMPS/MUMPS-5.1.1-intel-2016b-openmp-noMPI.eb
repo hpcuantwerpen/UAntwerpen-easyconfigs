@@ -9,16 +9,13 @@ easyblock = 'MakeCp'
 
 name = 'MUMPS'
 version = '5.1.1'
-versionsuffix = '-noOpenMP-noMPI'
+versionsuffix = '-openmp-noMPI'
 
 homepage = 'http://graal.ens-lyon.fr/MUMPS/'
-description = ("A parallel sparse direct solver. This version is compiled using\n"
-               "Makefile.INTEL.SEQ with SCOTCH and METIS, so it does not use MPI. Neither\n"
-               "does it use OpenMP; it is only meant for kwant since this package officially\n"
-               "requires a single core, non-distributed-memory version of MUMPS.")
+description = "A parallel sparse direct solver. This version is compiled using Makefile.INTEL.SEQ with SCOTCH and METIS, so it does not use MPI. It does use OpenMP however."
 
 toolchain = {'name': 'intel', 'version': '2016b'}
-toolchainopts = {'pic': True, 'openmp': False, 'usempi': False}
+toolchainopts = {'pic': True, 'openmp': True, 'usempi': False}
 
 source_urls = ['http://mumps.enseeiht.fr/']
 sources = ['%(name)s_%(version)s.tar.gz']
@@ -39,9 +36,6 @@ buildopts += 'OPTF="$FCFLAGS -nofor_main" '
 buildopts += 'OPTL="$FCFLAGS -nofor_main" '
 buildopts += 'OPTC="$CFLAGS" '
 buildopts += 'MKLROOT="$MKLROOT" '
-buildopts += 'LAPACK="-L$MKLROOT -lmkl_intel_lp64 -lmkl_sequential -lmkl_core" '
-buildopts += 'LIBBLAS="-L$MKLROOT -lmkl_intel_lp64 -lmkl_sequential -lmkl_core" '
-buildopts += 'LIBOTHERS="" '
 
 #
 # Files to copy:

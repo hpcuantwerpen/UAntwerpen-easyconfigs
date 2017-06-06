@@ -1,0 +1,112 @@
+easyblock = 'ConfigureMake'
+
+name = 'worker'
+version = '1.6.7'
+
+#
+# Set the cluster configuration
+#
+# worker needs to find the correct mpirun and therefore uses the toolchain, which is
+# set through the next two variables.
+tcname = 'intel'
+tcver = '2016b'
+# Worker also needs the path to the toolchain modules, which for UAntwerp is constructed
+# from the <cluster>-<os>-pair and the toolchain version number. Therefore the next variable:
+UAcluster = 'hopper'
+UAOS = 'sl6'
+# The number of cores per node is also set in the worker configuration file.
+cores_per_node = 20
+
+#
+# Pretty standard easyconfig part, but don't forget to consider updating the
+# Perl module version numbers.
+#
+
+homepage = 'https://github.com/gjbex/worker'
+description = """The Worker framework has been developed to help deal with parameter exploration experiments
+ that would otherwise result in many jobs, forcing the user resort to scripting to retain her sanity;
+ see also https://vscentrum.be/neutral/documentation/cluster-doc/running-jobs/worker-framework."""
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+source_urls = ['https://github.com/gjbex/worker/archive/']
+sources = ['%(version)s.tar.gz']
+
+builddependencies = [(tcname, tcver)]
+versionsuffix = '-%s-%s' % (tcname, tcver)
+
+osdependencies = [
+  'perl',                                    # We use the system perl.
+  ('perl-devel', 'perl-ExtUtils-ParseXS'),   # Need xsubpp for the installation of Template.
+  'perl-ExtUtils-MakeMaker',                 # Not needed if ExtUtils::MakeMaker is included in the extensions list.
+#  'perl-AppConfig',                          # Not needed if AppConfig is included in the extensions list.
+]
+
+exts_defaultclass = 'PerlModule'
+
+exts_list = [
+#
+# The following ones are Perl core modules, though they appear to not always be installed
+# by the Perl RPMs
+#
+#    ('ExtUtils::MakeMaker', '7.24', {
+#        'source_tmpl': 'ExtUtils-MakeMaker-%(version)s.tar.gz',
+#        'source_urls': ['https://cpan.metacpan.org/authors/id/B/BI/BINGOS'],
+#    }),
+    ('AppConfig', '1.71', {
+        'source_tmpl': 'AppConfig-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/N/NE/NEILB'],
+    }),
+#
+# The following are non-core modules. We cannot rely on them being present in the system PErl.
+#
+    ('Config::General', '2.63', {
+        'source_tmpl': 'Config-General-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/T/TL/TLINDEN'],
+    }),
+    ('IO::Stringy', '2.111', {   # For IO::Scalar
+        'source_tmpl': 'IO-stringy-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/D/DS/DSKOLL'],
+    }),
+    ('Set::Scalar', '1.29', {
+        'source_tmpl': 'Set-Scalar-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/D/DA/DAVIDO'],
+    }),
+    ('Template', '2.26', {
+        'source_tmpl': 'Template-Toolkit-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/A/AB/ABW'],
+    }),
+    ('Text::CSV', '1.93', {
+        'source_tmpl': 'Text-CSV-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI'],
+    }),
+    ('DBI', '1.636', {
+        'source_tmpl': 'DBI-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/T/TI/TIMB'],
+    }),
+    ('DBD::SQLite', '1.54', {
+        'source_tmpl': 'DBD-SQLite-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI'],
+    }),
+    ('Date::Language', '2.30', { # For Date::Parse
+        'source_tmpl': 'TimeDate-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/G/GB/GBARR'],
+    }),
+]
+
+modextrapaths = {
+    'PERL5LIB': ['share/perl5', 'lib64/perl5'],
+}
+
+# adjust worker configuration file
+# note: tweak this to your local setup
+postinstallcmds = [
+    'sed -i "s/ cores_per_node = .*/ cores_per_node = %d/g" %%(installdir)s/conf/worker.conf' % (cores_per_node),
+    'sed -i "s@ qsub = .*@ qsub = `which qsub`@g" %(installdir)s/conf/worker.conf',
+    'sed -i "s/ email = .*/ email = hpc@uantwerpen.be/g" %(installdir)s/conf/worker.conf',
+    'sed -i "s/ unload_modules = .*/ unload_modules = intel/g" %(installdir)s/conf/worker.conf',
+    'sed -i "s@ mpi_module = .*@ mpi_module = %s/%s@g" %%(installdir)s/conf/worker.conf' % (tcname, tcver),
+    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s-%s/%s/all /apps/antwerpen/modules/%s-%s/%s/all@g" %%(installdir)s/conf/worker.conf' % (UAcluster, UAOS, UAOS, UAcluster, UAOS, tcver),
+]
+
+moduleclass = 'tools'
