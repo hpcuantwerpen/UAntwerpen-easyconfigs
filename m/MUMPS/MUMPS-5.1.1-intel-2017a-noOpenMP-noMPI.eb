@@ -17,7 +17,7 @@ description = ("A parallel sparse direct solver. This version is compiled using\
                "does it use OpenMP; it is only meant for kwant since this package officially\n"
                "requires a single core, non-distributed-memory version of MUMPS.")
 
-toolchain = {'name': 'intel', 'version': '2016b'}
+toolchain = {'name': 'intel', 'version': '2017a'}
 toolchainopts = {'pic': True, 'openmp': False, 'usempi': False}
 
 source_urls = ['http://mumps.enseeiht.fr/']
