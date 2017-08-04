@@ -1,0 +1,29 @@
+# Prepared by Kurt Lust, UAntwerp, 2017-08-04
+#
+easyblock = "CMakeMake"
+
+name = 'gtest'
+version = '1.8.0'
+
+homepage = 'https://code.google.com/p/googletest/'
+description = "Google's framework for writing C++ tests on a variety of platforms"
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+# https://github.com/google/googletest/archive/release-1.8.0.zip
+sources = ['release-%(version)s.zip']
+source_urls = ['https://github.com/google/googletest/archive']
+
+builddependencies=[
+    ('CMake', '3.7.2', '', True),
+]
+
+
+#files_to_copy = ['lib', 'include']
+
+sanity_check_paths = {
+    'files': ['lib/libgtest.a', 'lib/libgtest_main.a', 'lib/libgmock.a', 'lib/libgmock_main.a'],
+    'dirs': ['include'],
+}
+
+moduleclass = 'devel'
