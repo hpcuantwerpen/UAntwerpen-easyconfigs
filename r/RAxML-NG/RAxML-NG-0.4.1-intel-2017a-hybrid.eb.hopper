@@ -1,0 +1,59 @@
+easyblock = 'CMakeMake'
+
+name = 'RAxML-NG'
+version = '0.4.1'
+versionsuffix = '-hybrid'
+
+homepage = 'https://github.com/amkozlov/raxml-ng'
+description = ("RAxML-NG is a phylogenetic tree inference tool which uses maximum-likelihood (ML)\n"
+               "optimality criterion. Its search heuristic is based on iteratively performing a\n"
+               "series of Subtree Pruning and Regrafting (SPR) moves, which allows to quickly\n"
+               "navigate to the best-known ML tree. RAxML-NG is a successor of RAxML (Stamatakis\n"
+               "2014) and leverages the highly optimized likelihood computation implemented in\n"
+               "libpll (Flouri et al. 2014).\n"
+               "This version was compiled with support for multithreading and MPI.\n")
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+# Optimization target is provided by the RAxML and PLL-modules configure scripts.
+toolchainopts = {'optarch': False}
+
+# You should not use the source files distributed via GitHub, but generate your own as 
+# otherwise the pllmod library sources are not included.
+# git clone --recursive https://github.com/amkozlov/raxml-ng
+# cd raxml-ng
+# git checkout tags/0.4.1
+# cd raxml-ng
+# Copy the CMakeLists.txt file specifically prepared for compiling with Intel
+# rm -rf .git .gitignore .gitmodules
+# cd ..
+# tar -cf 0.4.1.tar raxml-ng
+# gzip -9 0.4.1.tar.gz
+# cp 0.4.1.tar.gz /apps/antwerpen/sources/r/RAxML-NG
+sources = ['%(version)s.tar.gz']
+# Wrong URL to make sure the sources are not found.
+source_urls = ['https://github.com/amkozlov/raxml-ng/']
+#source_urls = ['https://github.com/amkozlov/raxml-ng/archive/']
+
+builddependencies = [
+    ( 'CMake',     '3.7.2',    '', True ),
+    ( 'Autotools', '20161231', '', True ),
+    ( 'flex',      '2.6.3',    '', True ),
+    ( 'Bison',     '3.0.4',    '', True ),
+    ( 'gtest',     '1.8.0' ),
+]
+
+preconfigopts = "mkdir -p build && cd build && "
+configopts = ' -DUSE_MPI=ON -DENABLE_RAXML_SIMD=AVX -DENABLE_PLLMOD_SIMD=AVX -DCMAKE_CXX_FLAGS_RELEASE="" -DGTEST_ROOT=$EBROOTGTEST .. '
+
+prebuildopts = 'cd build && '
+buildopts = ' && cd .. && mkdir -p %(installdir)s && cp -r bin %(installdir)s/'
+parallel = 1
+
+skipsteps = ['install']
+
+sanity_check_paths = {
+    'files': ["bin/raxml-ng-mpi"],
+    'dirs': [],
+}
+
+moduleclass = 'bio'

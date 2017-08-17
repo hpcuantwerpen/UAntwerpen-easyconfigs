@@ -1,0 +1,198 @@
+cmake_minimum_required (VERSION 2.8.10 FATAL_ERROR)
+
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
+
+set (USE_PTHREADS ON CACHE BOOL "Enable multi-threading support (PTHREADS)")
+set (USE_MPI OFF CACHE BOOL "Enable MPI support")
+set (USE_VCF OFF)
+
+# set both following options to OFF to build a portable binary 
+# (don't worry, libpll will still have full SIMD support!)
+set (ENABLE_RAXML_SIMD  "AUTO" CACHE STRING "Enable SIMD instructions in RAxML: OFF, AUTO, AVX2, AVX, SSE3")
+set (ENABLE_PLLMOD_SIMD "BOTH" CACHE STRING "Enable SIMD instructions in pll-modules (OFF, AVX, SSE3, BOTH)")
+
+# build a static binary
+set(STATIC_BUILD OFF CACHE BOOL "Build static binary")
+
+set(ENABLE_PTHREADS ${USE_PTHREADS})
+
+set (CMAKE_BUILD_TYPE RELEASE CACHE STRING "Build type: RELEASE or DEBUG.")
+set (CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL "Verbose Makefile")
+
+project (raxml-ng C CXX)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  # no support for static linking on Mac
+  set(STATIC_BUILD OFF)
+  # MPI support on Macs seems to be tricky (and unnecessary)
+  set(ENABLE_MPI OFF)
+else()
+  set(ENABLE_MPI ${USE_MPI})
+endif()
+
+#check for minimum compiler versions
+message (STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
+message (STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(RAXML_COMPILER_TARGET_VERSION "4.8")
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS RAXML_COMPILER_TARGET_VERSION)
+    message (FATAL_ERROR "${CMAKE_CXX_COMPILER_ID} compiler too old! Minimum required: ${RAXML_COMPILER_TARGET_VERSION}")
+  endif()
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(RAXML_COMPILER_TARGET_VERSION "3.8")
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS RAXML_COMPILER_TARGET_VERSION)
+    message (FATAL_ERROR "${CMAKE_CXX_COMPILER_ID} compiler too old! Minimum required: ${RAXML_COMPILER_TARGET_VERSION}")
+  endif()
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  message (STATUS "Intel compiler: Mininal version not known.")
+endif()
+
+set (raxml-ng_VERSION_MAJOR 0)
+set (raxml-ng_VERSION_MINOR 1)
+
+# Set options that currently work for all supported compilers
+set (CMAKE_CXX_FLAGS_DEBUG    "-g"  CACHE STRING "Debug compiler options")
+set (CMAKE_CXX_FLAGS_RELEASE  "-O3" CACHE STRING "Release compiler options")
+set (CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+
+
+# Set compiler-dependent options
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+  set (WARN_FLAGS               "-Wall -Wextra")
+  set (CMAKE_CXX_FLAGS          "-std=c++11 ${WARN_FLAGS}")
+
+  set (SIMD_AUTO "-march=native")
+  set (SIMD_AVX2 "-mavx2")
+  set (SIMD_AVX  "-mavx")
+  set (SIMD_SSE3 "-msse3")
+  set (SIMD_OFF  "-msse2")
+
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
+  set (WARN_FLAGS               "-Wall -Wextra")
+  set (CMAKE_CXX_FLAGS          "-std=c++11 ${WARN_FLAGS}")
+
+  set (SIMD_AUTO "-march=native")
+  set (SIMD_AVX2 "-mavx2")
+  set (SIMD_AVX  "-mavx")
+  set (SIMD_SSE3 "-msse3")
+  set (SIMD_OFF  "-msse2")
+
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
+  set (WARN_FLAGS               "-Wall")
+  set (CMAKE_CXX_FLAGS          "${CMAKE_CXX_FLAGS} -std=c++11 ${WARN_FLAGS}")
+
+  set (SIMD_AUTO "-xHost")
+  set (SIMD_AVX2 "-march=core-avx2")
+  set (SIMD_AVX  "-mavx")
+  set (SIMD_SSE3 "-msse3")
+  set (SIMD_OFF  "-msse2")
+
+endif()
+
+# Processing options for ENABLE_RAXML_SIMD
+if (ENABLE_RAXML_SIMD STREQUAL "AUTO")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SIMD_AUTO}")
+  message(STATUS "RAxML SIMD support: Auto-SIMD, using ${SIMD_AUTO} compiler option.")
+elseif (ENABLE_RAXML_SIMD STREQUAL "AVX2")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SIMD_AVX2} -D__AVX2")
+  message(STATUS "RAxML SIMD support: AVX2, using ${SIMD_AVX2} compiler option.")
+elseif (ENABLE_RAXML_SIMD STREQUAL "AVX")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SIMD_AVX} -D__AVX")
+  message(STATUS "RAxML SIMD support: AVX, using ${SIMD_AVX} compiler option.")
+elseif (ENABLE_RAXML_SIMD STREQUAL "AVX2")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SIMD_SSE3} -D__SSE3")
+  message(STATUS "RAxML SIMD support: SSE3, using ${SIMD_SSE3} compiler option.")
+elseif (ENABLE_RAXML_SIMD STREQUAL "OFF")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SIMD_OFF}")
+  message(STATUS "RAxML SIMD support: SIMD off, using ${SIMD_OFF} compiler option, the minimum reasonable for any CPU less than 10 years old.")
+else ()
+  message(SEND_ERROR "RAxML SIMD support: The value ${ENABLE_RAXML_SIMD} is an illegal value for ENABLE_RAXML_SIMD.")
+endif ()
+
+# Processing options for ENABLE_PLLMOD_SIMD
+if(ENABLE_PLLMOD_SIMD STREQUAL "BOTH")
+  set(PLLMOD_AUTOCONF_ARGS "--enable-avx --enable-sse")
+  message(STATUS "LIBPLL SIMD support: Using --enable-avx --enable-sse.")
+elseif(ENABLE_PLLMOD_SIMD STREQUAL "AVX")
+  set(PLLMOD_AUTOCONF_ARGS "--enable-avx")
+  message(STATUS "LIBPLL SIMD support: Using --enable-avx.")
+elseif(ENABLE_PLLMOD_SIMD STREQUAL "SSE3")
+  set(PLLMOD_AUTOCONF_ARGS "--enable-sse")
+  message(STATUS "LIBPLL SIMD support: Using --enable-sse.")
+else()
+  set(PLLMOD_AUTOCONF_ARGS "")
+  message(STATUS "LIBPLL SIMD support: Using neither --enable-avx nor --enable-sse.")
+endif()
+
+# Using pthreads?
+if(ENABLE_PTHREADS)
+  message(STATUS "Pthreads support requested, checking for libraries...")
+  find_package(Threads REQUIRED)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_RAXML_PTHREADS -pthread")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_RAXML_PTHREADS -pthread")
+else()
+  message(STATUS "Pthreads support NOT requested")
+endif()
+
+# Using MPI?
+if(ENABLE_MPI)
+  message(STATUS "MPI support requested, checking for requirements...")
+  find_package(MPI)
+  if(MPI_CXX_FOUND)
+    # set( ENV{OMPI_CXX}            "clang++" PARENT_SCOPE )
+    set(CMAKE_CXX_COMPILER "${MPI_CXX_COMPILER}")
+    include_directories(${MPI_CXX_INCLUDE_PATH})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILER_FLAGS} -D_RAXML_MPI")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
+
+    # disable static build for MPI
+    set(STATIC_BUILD OFF)
+  endif()
+else()
+  message(STATUS "MPI support NOT requested")
+endif()
+
+message(STATUS "Using compiler: ${CMAKE_CXX_COMPILER}")
+if (CMAKE_BUILD_TYPE STREQUAL RELEASE)
+  message(STATUS "Using flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+elseif (CMAKE_BUILD_TYPE STREQUAL DEBUG)
+  message(STATUS "Using flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+else ()
+  message(STATUS "Using flags: ${CMAKE_CXX_FLAGS}")
+endif ()
+
+#include_directories(${PROJECT_SOURCE_DIR}/libs/cereal/include)
+#include_directories(${PROJECT_SOURCE_DIR}/libs/cxxopts/src)
+#include_directories(${PROJECT_SOURCE_DIR}/libs/include/libpll)
+
+
+set(pll_dir ${PROJECT_SOURCE_DIR}/libs/pll-modules/libs/libpll/src)
+set(pll_binary_dir ${PROJECT_SOURCE_DIR}/libs/pll-modules/src/binary)
+set(pll_optimize_dir ${PROJECT_SOURCE_DIR}/libs/pll-modules/src/optimize)
+set(pll_msa_dir ${PROJECT_SOURCE_DIR}/libs/pll-modules/src/msa)
+
+# build dependencies
+set(RAXML_LOCALDEPS_DIR ${PROJECT_BINARY_DIR}/localdeps)
+add_subdirectory(${PROJECT_SOURCE_DIR}/libs)
+
+include_directories(${RAXML_LOCALDEPS_DIR}/include)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/src)
+
+# GTest support present?
+find_package (GTest)
+
+if(GTEST_FOUND)
+    message (STATUS, "GTest found, including unit tests in build process.")
+    enable_testing()
+    add_subdirectory(${PROJECT_SOURCE_DIR}/test/src)
+else()
+    message (STATUS "GTest not found")
+    message (WARNING "Skipping building tests.")
+endif()
+
