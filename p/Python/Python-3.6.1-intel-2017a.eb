@@ -26,7 +26,6 @@ dependencies = [
     ('libxml2', '2.9.4'),      # Needed for lxml
     ('libxslt', '1.1.29'),     # Needed for lxml
     ('cURL',    '7.53.1'),     # Needed for pysam
-    ( 'X11',    '20170129'),
     # OS dependency should be preferred if the os version is more recent then this version,
     # it's nice to have an up to date openssl for security reasons
     # ('OpenSSL', '1.0.2h'),
@@ -52,6 +51,9 @@ exts_list = [
     ('setuptools', '34.3.3', {
         'source_tmpl': '%(name)s-%(version)s.zip',
         'source_urls': ['https://pypi.python.org/packages/source/s/setuptools/'],
+    }),
+    ('wheel', '0.29.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/w/wheel/'],
     }),
     ('pip', '9.0.1', {
         'source_urls': ['https://pypi.python.org/packages/source/p/pip/'],
@@ -180,10 +182,9 @@ exts_list = [
     ('tinyarray', '1.2.0', {
         'source_urls': ['https://pypi.python.org/packages/source/t/tinyarray'],
     }),
-#    ('pypandoc', '1.4', {   # Do not install for now as we do not have pandoc.
-#                            # Just ignore the warnings from packages that want it.
-#        'source_urls': ['https://pypi.python.org/packages/source/p/pypandoc'],
-#    }),
+    ('dev', '0.4.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/d/dev'],
+    }),
 ]
 
 moduleclass = 'lang'
