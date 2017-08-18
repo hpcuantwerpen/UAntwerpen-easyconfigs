@@ -1,14 +1,15 @@
 # Built with EasyBuild version 3.1.2 on 2017-04-06_15-14-09
 name = 'HDF5'
 version = '1.8.18'
+versionsuffix = '-noMPI'
 
 homepage = 'http://www.hdfgroup.org/HDF5/'
 description = """HDF5 is a unique technology suite that makes possible the management of
 extremely large and complex data collections.
-This version is compiled with support for MPI."""
+This version is compiled without support for MPI."""
 
 toolchain = {'name': 'intel', 'version': '2017a'}
-toolchainopts = {'pic': True, 'usempi': True}
+toolchainopts = {'pic': True, 'usempi': False}
 
 source_urls = [
     'https://support.hdfgroup.org/ftp/HDF5/current18/src/',
