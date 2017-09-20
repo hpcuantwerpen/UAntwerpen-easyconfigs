@@ -1,0 +1,29 @@
+# Built with EasyBuild version 3.1.2 on 2017-04-06_15-14-09
+name = 'HDF5'
+version = '1.8.19'
+
+homepage = 'http://www.hdfgroup.org/HDF5/'
+description = """HDF5 is a unique technology suite that makes possible the management of
+extremely large and complex data collections.
+This version is compiled with support for MPI."""
+
+toolchain = {'name': 'intel', 'version': '2018pre'}
+toolchainopts = {'pic': True, 'usempi': True}
+
+source_urls = [
+    'https://support.hdfgroup.org/ftp/HDF5/current18/src/',
+    'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-%(versions)/src/'
+]
+
+sources = [SOURCELOWER_TAR_GZ]
+checksums = ['7f568e2464d4ab0a74d16b23956d900b']
+
+buildopts = 'CXXFLAGS="$CXXFLAGS -DMPICH_IGNORE_CXX_SEEK"'
+
+dependencies = [
+    ('zlib', '1.2.11'),
+    ('Szip', '2.1.1'),
+]
+
+moduleclass = 'data'
+
