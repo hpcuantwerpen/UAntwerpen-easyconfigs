@@ -1,0 +1,77 @@
+easyblock = 'Bundle'
+#
+# Bundle to install netCDF together with the Fortran and both C++ interfaces
+# in a single directory structure. Installing in separate directories/modules
+# has caused trouble in the past with configure scripts expecting all interface
+# libraries to be in the same directory.
+# 
+
+name = 'netCDF'
+version = '4.4.1.1'
+# Version numbers on 20170920
+# netCDF-C:       4.4.1.1
+# netCDF-Fortran: 4.4.4
+# netCDF-4 C++:   4.3.0
+# netCDF-3 C++:   4.2 (legacy C++)
+
+homepage = 'http://www.unidata.ucar.edu/software/netcdf/'
+description = """NetCDF (network Common Data Form) is a set of software libraries and 
+machine-independent data formats that support the creation, access, and sharing
+of array-oriented scientific data.
+This module contains the C, Fortran and both C++-interfaces and supports MPI."""
+
+toolchain = {'name': 'intel', 'version': '2018pre'}
+toolchainopts = {'pic': True, 'usempi': True}
+
+#sources = ['v%(version)s.tar.gz']
+source_urls = [
+    'ftp://ftp.unidata.ucar.edu/pub/netcdf/'
+]
+
+dependencies = [
+    ('HDF5', '1.8.19'),
+    ('cURL', '7.55.1'),
+    ('Szip', '2.1.1'), 
+]
+
+builddependencies = [
+    ('CMake',   '3.9.1',  '', True),
+    ('Doxygen', '1.8.13', '', True),
+]
+
+# make sure both static and shared libs are built
+#configopts = [
+#    "-DBUILD_SHARED_LIBS=OFF ",
+#    "-DBUILD_SHARED_LIBS=ON ",
+#]
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ('netCDF-C', '4.4.1.1', { 
+#       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.4.1.1.tar.gz
+        'sources': ['netcdf-%(version)s.tar.gz'],
+        'start_dir': 'netcdf-%(version)s',
+        'configopts': '--enable-shared --enable-static'
+    }),
+    ('netCDF-Fortran', '4.4.4', { 
+#       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz
+        'sources': ['netcdf-fortran-%(version)s.tar.gz'],
+        'start_dir': 'netcdf-fortran-%(version)s',
+        'configopts': '--enable-shared --enable-static'
+    }),
+    ('netCDF-CXX3', '4.2', { 
+#       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-cxx-4.2.tar.gz
+        'sources': ['netcdf-cxx-%(version)s.tar.gz'],
+        'start_dir': 'netcdf-cxx-%(version)s',
+        'configopts': '--enable-shared --enable-static'
+    }),
+    ('netCDF-CXX4', '4.3.0', { 
+#       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-cxx4-4.3.0.tar.gz
+        'sources': ['netcdf-cxx4-%(version)s.tar.gz'],
+        'start_dir': 'netcdf-cxx4-%(version)s',
+        'configopts': '--enable-shared --enable-static'
+    }),
+]
+
+moduleclass = 'data'
