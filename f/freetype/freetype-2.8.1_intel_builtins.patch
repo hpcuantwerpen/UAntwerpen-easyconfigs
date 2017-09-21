@@ -1,0 +1,35 @@
+diff -ru freetype-2.8.1-orig/src/sfnt/pngshim.c  freetype-2.8.1/src/sfnt/pngshim.c >freetype-2.8.1_intel_builtins.patch
+# Patch for the Intel compiler:
+# - src/sfnt/pngshim.c contains since version 2.8 code that used the gcc builtin
+#   __builtin_shuffle which is not supported by Intel. So this code block
+#   has to be skipped and the "leftover" code has to be executed on the whole
+#   array.
+--- freetype-2.8.1-orig/src/sfnt/pngshim.c	2017-09-16 15:01:48.000000000 +0200
++++ freetype-2.8.1/src/sfnt/pngshim.c	2017-09-21 13:24:02.091072000 +0200
+@@ -61,13 +61,19 @@
+     /* predates clang; the `__BYTE_ORDER__' preprocessor symbol was */
+     /* introduced in gcc 4.6 and clang 3.2, respectively.           */
+     /* `__builtin_shuffle' for gcc was introduced in gcc 4.7.0.     */
+-#if ( ( defined( __GNUC__ )                                &&             \
+-        ( ( __GNUC__ >= 5 )                              ||               \
+-        ( ( __GNUC__ == 4 ) && ( __GNUC_MINOR__ >= 7 ) ) ) )         ||   \
+-      ( defined( __clang__ )                                       &&     \
+-        ( ( __clang_major__ >= 4 )                               ||       \
+-        ( ( __clang_major__ == 3 ) && ( __clang_minor__ >= 2 ) ) ) ) ) && \
+-    defined( __OPTIMIZE__ )                                            && \
++#if ( ( defined( __GNUC__ )                                         &&        \
++        !defined( __ICC )                                           &&        \
++        ( ( __GNUC__ >= 5 )                                      ||           \
++          ( ( __GNUC__ == 4 ) && ( __GNUC_MINOR__ >= 7 ) )                    \
++        )                                                                     \
++      )                                                                 ||    \
++      ( defined( __clang__ )                                         &&       \
++        ( ( __clang_major__ >= 4 )                                ||          \
++          ( ( __clang_major__ == 3 ) && ( __clang_minor__ >= 2 ) )            \
++        )                                                                     \
++      )                                                                       \
++    )                                                                      && \
++    defined( __OPTIMIZE__ )                                                && \
+     __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+ 
+ #ifdef __clang__
