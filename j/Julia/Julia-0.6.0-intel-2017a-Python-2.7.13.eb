@@ -1,0 +1,88 @@
+# Author:: Kurt Lust, VSC UAntwerpen
+# Based on a script by Jack Perdue <j-perdue@tamu.edu> - TAMU HPRC - http://sc.tamu.edu
+
+easyblock = 'ConfigureMake'
+
+name = 'Julia'
+version = '0.6.0'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'http://julialang.org/downloads/'
+description = """
+ Julia is a high-level, high-performance dynamic programming language for
+ technical computing, with syntax that is familiar to users of other technical
+ computing environments. It provides a sophisticated compiler, distributed
+ parallel execution, numerical accuracy, and an extensive mathematical function
+ library.
+"""
+
+source_urls = ['https://github.com/JuliaLang/%(namelower)s/releases/download/v%(version)s']
+sources = ['julia-%(version)s-full.tar.gz']
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'optarch': True, 'pic': True}
+
+builddependencies = [
+    ('Autotools', '20161231', '', True),
+    ('CMake',     '3.9.1',    '', True),
+    ('patchelf',  '0.9',      '', True),
+]
+
+dependencies = [
+    ('bzip2',      '1.0.6'),
+    ('zlib',       '1.2.11'),
+    ('ncurses',    '6.0'),
+    ('Python',     '2.7.13'),
+    ('LLVM',       '3.9.1'),         # Note that LLVM should be compiled with the optional libLLVM.so (-DLLVM_BUILD_LLVM_DYLIB=ON)
+#    ('cURL',       '7.53.1'),
+#    ('GMP',        '6.1.2'),
+#    ('MPFR',       '3.1.5'),
+##    ('AMOS', '3.1.0'),
+##    ('arpack-ng', '3.2.0', '-mt'),
+#    ('libunwind', '1.1'),
+#    ('PCRE2', '10.21'),
+#    #('SuiteSparse', '4.4.6', '-ParMETIS-4.0.3'),  # can't seem to figure out linkage for libumfpack.so
+]
+
+skipsteps = ['configure']
+
+prebuildopts = """
+    echo prefix=%(installdir)s > Make.user
+    cat >> Make.user << EEOOFF
+JULIA_BUILD_MODE=release
+USEICC=1
+USEIFC=1
+USE_INTEL_MKL=1
+USE_INTEL_MKL_FFT=1
+USE_INTEL_LIBM=1
+USE_SYSTEM_ARPACK=0
+USE_SYSTEM_BLAS=0
+USE_SYSTEM_CURL=0
+USE_SYSTEM_DSMFT=0
+USE_SYSTEM_FFTW=0
+USE_SYSTEM_GMP=0
+USE_SYSTEM_LAPACK=0
+USE_SYSTEM_LIBGIT2=0
+USE_SYSTEM_LIBM=0
+USE_SYSTEM_LIBSSH2=0
+USE_SYSTEM_LIBUNWIND=0
+USE_SYSTEM_LIBUV=0
+USE_SYSTEM_LLVM=1
+USE_SYSTEM_MBEDTLS=0
+USE_SYSTEM_MPFR=0
+USE_SYSTEM_OPENLIBM=0
+USE_SYSTEM_OPENSPECFUN=0
+USE_SYSTEM_PATCHELF=1
+USE_SYSTEM_PCRE=0
+USE_SYSTEM_SUITESPARSE=0
+USE_SYSTEM_UTF8PROC=0
+EEOOFF
+"""
+
+sanity_check_paths = {
+    'files': ['bin/julia'],
+    'dirs': ['bin', 'include/julia', 'lib/julia'],
+}
+
+moduleclass = 'lang'
+#  EOF
