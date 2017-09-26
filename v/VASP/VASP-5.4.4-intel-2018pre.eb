@@ -1,0 +1,45 @@
+easyblock = 'MakeCp'
+
+name = 'VASP'
+version = '5.4.4'
+
+homepage = 'http://www.vasp.at'
+description = """The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic 
+scale materials modelling, e.g. electronic structure calculations and 
+quantum-mechanical molecular dynamics, from first principles.
+This module contains non-GPU versions of vasp_std, vasp_gam and vasp_ncl."""
+
+toolchain = {'name': 'intel', 'version': '2018pre'}
+toolchainopts = {'usempi': True}
+
+# Vasp is proprietary software, see http://www.vasp.at/index.php/faqs on how to get access to the code
+sources = ['vasp.5.4.4.tar.gz']
+
+
+prebuildopts  = 'cp arch/makefile.include.linux_intel ./makefile.include && '
+# Adapt the host name.
+prebuildopts += 'sed -i "s|LinuxIFC|UA-Leibniz|" makefile.include && '
+# Adapt the MPI block size
+prebuildopts += 'sed -i "s|DMPI_BLOCK=8000|DMPI_BLOCK=262144|" makefile.include && '
+# Adapt FFLAGS (add memory model)
+prebuildopts += 'sed -i "s|-assume byterecl|-assume byterecl -mcmodel=large -shared-intel|" makefile.include && '
+# Add -xHost to optimization options
+prebuildopts += 'sed -i "s|-O2|-O2 -xHost|" makefile.include && '
+## Add FFT libraries. Doesn't seem to be needed anymore in 5.4.4
+#prebuildopts += 'sed -i "s|LLIBS .*SCALAPACK.*LAPACK.*BLAS.*|& -lfftw3xf_intel|" makefile.include && '
+
+# VASP uses LIBS as a list of folders
+prebuildopts += 'unset LIBS && '
+
+buildopts = 'all'
+
+parallel = 1
+
+files_to_copy = [(['bin/vasp_std', 'bin/vasp_gam', 'bin/vasp_ncl'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/vasp_std', 'bin/vasp_gam', 'bin/vasp_ncl'],
+    'dirs': []
+}
+
+moduleclass = 'phys'
