@@ -1,0 +1,50 @@
+# Built with EasyBuild version 3.2.1 on 2017-07-06_10-35-09
+easyblock = 'ConfigureMake'
+
+name = 'ABINIT'
+version = '8.4.4'
+
+homepage = 'http://www.abinit.org/'
+description = """ABINIT is a package whose main program allows one to find the total energy, charge density and
+ electronic structure of systems made of electrons and nuclei (molecules and periodic solids) within Density Functional
+ Theory (DFT), using pseudopotentials and a planewave or wavelet basis."""
+
+toolchain = {'name': 'intel', 'version': '2018pre'}
+
+# File: https://www.abinit.org/sites/default/files/packages/abinit-8.4.4.tar.gz
+#source_urls = ['http://ftp.abinit.org/']
+source_urls = ['https://www.abinit.org/sites/default/files/packages/']
+sources = [SOURCELOWER_TAR_GZ]
+
+dependencies = [
+    ('netCDF', '4.4.1.1'),
+    ('Python', '2.7.14'),
+]
+
+preconfigopts  = 'export CC=mpiicc && export CXX=mpiicpc && export CPP="mpiicc -P"  && export FC=mpiifort && '
+preconfigopts += 'export FCFLAGS="-O2 -xHost -ftz -fp-speculation=safe -fp-model source -mcmodel=large -shared-intel" && '
+
+patches = [
+    '/apps/antwerpen/sources/a/ABINIT/configure-8.4.2-intel-2016b.patch'
+]
+
+configopts  = '--with-trio-flavor="netcdf" '
+configopts += '--with-dft-flavor="atompaw+libxc+wannier90" '
+configopts += '--with-fc-vendor=intel '
+configopts += '--with-linalg-flavor="mkl+scalapack" '
+configopts += ' --with-linalg-libs="-L$MKLROOT/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_lp64 -liomp5 -lpthread -lm -ldl" '
+configopts += '--enable-mpi=yes --with-mpi-level=2 --enable-mpi-io=yes '
+configopts += '--with-fft-flavor=fftw3-mkl '
+configopts += '--with-fft-libs="-L$MKLROOT/mkl/lib/intel64 -lfftw3xf_intel" '
+configopts += '--with-fft-incs=-I$MKLROOT/mkl/fftw '
+configopts += '--with-netcdf-incs="-I$EBROOTNETCDF/include" '
+configopts += '--with-netcdf-libs="-L$EBROOTNETCDF/lib -lnetcdf -lnetcdff -L$EBROOTHDF5/lib -lhdf5_fortran -lhdf5_hl -lhdf5" '
+configopts += '--enable-gw-dpc="yes" '
+configopts += '--enable-openmp="yes" '
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ['abinit', 'aim', 'cut3d', 'conducti', 'mrgddb', 'mrgscr', 'optic']],
+    'dirs': ['lib/pkgconfig'],
+}
+
+moduleclass = 'chem'
