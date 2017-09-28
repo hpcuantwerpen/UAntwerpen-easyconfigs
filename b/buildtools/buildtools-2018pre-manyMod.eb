@@ -1,0 +1,37 @@
+easyblock = 'Bundle'
+
+name = 'buildtools'
+version = '2018pre'  # Versions available on 20170927
+versionsuffix = "-manyMod"
+
+homepage = 'http://www.gnu.org'
+description = """This bundle collects a number of standard build tools: 
++ GNU Autoconf 2.69    - https://www.gnu.org/software/autoconf
++ GNU Automake 1.15.1  - https://www.gnu.org/software/automake/
++ GNU libtool 2.4.6    - https://www.gnu.org/software/libtool/
++ GNU M4 1.4.18        - https://www.gnu.org/software/m4/
++ GNU make 4.2.1       - https://www.gnu.org/software/make/
+These tools are all build against the system libraries and have been used
+to build several of the 2018pre packages.
+"""
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+dependencies = [
+    ('make',       '4.2.1'),   # 20160610
+    ('M4',         '1.4.18'),  # 20161231
+    ('Autoconf',   '2.69'),    # 20120424
+    ('Automake',   '1.15.1'),  # 20170619
+    ('libtool',    '2.4.6'),   # 20150215
+    ('sed',        '4.4'),     # 20170203
+    ('CMake',      '3.9.3'),   # 20170920
+#    ('SCons',      '3.0.0'),   # 20170918
+    ('NASM',       '2.13.01'), # 20170501
+    ('patchelf',   '0.9'),     # 20160229
+    ('pkg-config', '0.29.2'),  # 20170320
+    ('help2man',   '1.47.5'),  # 20170923
+    ('Doxygen',    '1.8.13'),  # 20161229
+]
+# Pure bundle -- no need to specify 'binutils' used when building GCCcore toolchain as build dependency
+
+moduleclass = 'devel'
