@@ -1,0 +1,163 @@
+# NOTE: EasyBuild doesn't seem to treat builddependencies OK when building bundle components.
+# Doxygen doesn't compile since it does not find the flex and bison executables specified 
+# in the build dependencies.
+# A workaround is to load these modules via preconfigopts and prebuildopts.
+#
+easyblock = 'Bundle'
+#
+# This bundle collects a number of GNU tools useful during the building process
+# and a few other tools.
+#
+# Flex and Bison have been explicitly excluded as these also contain libraries
+# so some packages may want to use toolchain-specific versions.
+#
+
+name = 'buildtools'
+version = '2018pre'
+
+homepage = 'http://www.gnu.org'
+description = """A bundle of often used build tools, GNU and others: autoconf, automake, libtool, 
+M4, make, sed, CMake, NASM, patchelf, pkg-config, help2man and Doxygen"""
+whatis = ["A bundle of often used build tools, GNU and others: autoconf, automake, libtool, M4, make, sed, CMake, NASM, patchelf, pkg-config, help2man and Doxygen"]
+usage = """
+This bundle collects a number of standard tools that are often needed when 
+building software. Many of them are GNU tools.
++ GNU Autoconf 2.69    - https://www.gnu.org/software/autoconf/
++ GNU Automake 1.15.1  - https://www.gnu.org/software/automake/
++ GNU libtool 2.4.6    - https://www.gnu.org/software/libtool/
++ GNU M4 1.4.18        - https://www.gnu.org/software/m4/
++ GNU make 4.2.1       - https://www.gnu.org/software/make/
++ GNU sed 4.4          - https://www.gnu.org/software/sed/
++ CMake 3.9.3          - http://www.cmake.org/
++ NASM 2.13.01         - http://www.nasm.us/
++ patchelf 0.9         - Modify the dynamic linker and RPATH of ELF executables,
+                         http://nixos.org/patchelf.html
++ pkg-config 0.29.2    - https://www.freedesktop.org/wiki/Software/pkg-config/
++ GNU help2man 1.47.5  - https://www.gnu.org/software/help2man/
++ Doxygen 1.8.13       - http://www.doxygen.org/
+These tools are all build against the system libraries and have been used to 
+build several of the 2018pre packages.
+"""
+#
+# Version info:
+# Autoconf   2.69      20120424
+# Automake   1.15.1    20170619
+# CMake      3.9.3     20170920
+# Doxygen    1.8.13    20161229
+# help2man   1.47.5    20170923
+# libtool    2.4.6     20150215
+# M4         1.4.18    20161231
+# Make       4.2.1     20160610
+# NASM       2.13.01   20170501  
+# pkg-config 0.29.2    20170320
+# sed        4.4       20170203
+# Not yet included due to build problems:
+# SCons      3.0.0     20170918
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+source_urls = [GNU_SOURCE]
+
+dependencies = [
+]
+
+builddependencies = [
+    ('flex',  '2.6.4'),  # For Doxygen
+    ('Bison', '3.0.4'),  # For Doxygen
+]
+
+osdependencies = [
+    ('openssl-devel', 'libssl-dev', 'libopenssl-devel'), # For CMake
+    ('ncurses-devel'),                                   # For CMake
+#    ('python'),                                          # Voor SCons
+]
+
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+#    ('SCons', '3.0.0', {  # This does not yet work.
+#        'easyblock':   'PythonPackage',
+#        'sources':     [SOURCELOWER_TAR_GZ],
+#        'source_urls': ['http://prdownloads.sourceforge.net/%(namelower)s'],
+#        'start_dir':   '%(namelower)s-%(version)s',
+#        }),
+    ('Make', '4.2.1', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir': '%(namelower)s-%(version)s'
+        }),
+    ('libtool', '2.4.6', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir': '%(namelower)s-%(version)s'
+        }),
+    ('M4', '1.4.18', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir': '%(namelower)s-%(version)s'
+        }),
+    ('Autoconf', '2.69', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir': '%(namelower)s-%(version)s'
+        }),
+    ('Automake', '1.15.1', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir': '%(namelower)s-%(version)s'
+        }),
+    ('sed', '4.4', {
+        'sources':  [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir': '%(namelower)s-%(version)s'
+        }),
+    ('CMake', '3.9.3', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': ['http://www.cmake.org/files/v%(version_major_minor)s'],
+        'start_dir': '%(namelower)s-%(version)s',
+        'configopts': '-- -DCMAKE_USE_OPENSSL=1'
+        }),
+    ('pkg-config', '0.29.2', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': ['https://pkg-config.freedesktop.org/releases/'],
+        'start_dir': '%(namelower)s-%(version)s',
+        'configopts':  " --with-internal-glib",
+        }),
+    ('NASM', '2.13.01', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': ['http://www.nasm.us/pub/nasm/releasebuilds/%(version)s'],
+        'start_dir': '%(namelower)s-%(version)s'
+        }),
+    ('patchelf', '0.9', {
+        'sources':  ['%(version)s.tar.gz'],
+        'source_urls': ['https://github.com/NixOS/patchelf/archive/'],
+        'start_dir': '%(namelower)s-%(version)s',
+        'preconfigopts': 'sh bootstrap.sh && '
+        }),
+    ('help2man', '1.47.5', {
+        'sources':  [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir': '%(namelower)s-%(version)s'
+        }),
+    ('Doxygen', '1.8.13', {  # Note that the build process already requires CMake!
+        'easyblock': 'EB_Doxygen',
+        'sources':  ['%(namelower)s-%(version)s.src.tar.gz'],
+        'source_urls': ['http://ftp.stack.nl/pub/users/dimitri/'],
+        'start_dir': '%(namelower)s-%(version)s',
+#        'builddependencies': [('flex',  '2.6.4'), ('Bison', '3.0.4')],
+        'preconfigopts': 'module load flex/2.6.4 Bison/3.0.4 && ',   # Workaround for the builddependencies that are not loaded
+        }),
+]
+#
+# Additions to consider:
+# - GNU coreutils: Not only for building, but several programs are used during the build proces of some codes.
+# - SCons: Werkt nog niet.
+#
+
+#parallel = 1
+
+
+
+
+moduleclass = 'devel'
