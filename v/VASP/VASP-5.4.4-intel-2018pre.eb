@@ -4,10 +4,21 @@ name = 'VASP'
 version = '5.4.4'
 
 homepage = 'http://www.vasp.at'
+
 description = """The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic 
 scale materials modelling, e.g. electronic structure calculations and 
 quantum-mechanical molecular dynamics, from first principles.
 This module contains non-GPU versions of vasp_std, vasp_gam and vasp_ncl."""
+
+whatis = ["VASP - Vienna Ab initio Simulation Package - Non-GPU version with vasp_std, vasp_gam and vasp_ncl"]
+
+usage = """The VASP documentation can be found on the VASP web site www.vasp.at.
+Keep in mind that VASP can require a lot of memory and perform a lot of I/O when
+you are not exploiting parallelism sufficiently. Please choose your settings
+and cluster resources carefully to exploit sufficient parallelism and limit I/O.
+If you fail to do so, the result is slower running jobs, a more busy cluster
+and longer wait time for you and your colleagues."""
+
 
 toolchain = {'name': 'intel', 'version': '2018pre'}
 toolchainopts = {'usempi': True}

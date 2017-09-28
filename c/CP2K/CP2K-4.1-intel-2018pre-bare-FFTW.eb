@@ -5,15 +5,21 @@ version = '4.1'
 #versionsuffix = '-bare-FFTW'
 versionsuffix = '-bare'
 
-homepage = 'http://www.cp2k.org/'
-description = ("\nCP2K is a freely available (GPL) program, written in Fortran 95, to perform\n"
-               "atomistic and molecular simulations of solid state, liquid, molecular and\n"
-               "biological systems. It provides a general framework for different methods such as\n"
-               "e.g. density functional theory (DFT) using a mixed Gaussian and plane waves\n"
-               "approach (GPW), and classical pair and many-body potentials.\n"
-               "This version is build using a modified version of the included arch files in\n"
-               "the CP2K distribution. It uses the FFTW library to work around a problem with\n"
-               "the Intel libraries, but does not include any other optional component.")
+homepage = 'https://www.cp2k.org/'
+
+description = """CP2K is a freely available (GPL) program, written in Fortran 95, to perform
+atomistic and molecular simulations of solid state, liquid, molecular and
+biological systems. It provides a general framework for different methods such as
+e.g. density functional theory (DFT) using a mixed Gaussian and plane waves
+approach (GPW), and classical pair and many-body potentials.
+This version is build using a modified version of the included arch files in
+the CP2K distribution. It uses the FFTW library to work around a problem with
+the Intel libraries, but does not include any other optional component."""
+
+whatis = ["CP2K Open Source Molecular Dynamics - Compiled without optional components."]
+usage = """Full documentation of CP2K is available on the CP2K home page https://www.cp2k.org.
+
+Contact UAntwerp VSC support (hpc@uantwerpen.be) if you need optional components."""
 
 toolchain = {'name': 'intel', 'version': '2018pre'}
 
