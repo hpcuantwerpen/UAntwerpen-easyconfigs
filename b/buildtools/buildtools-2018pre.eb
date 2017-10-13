@@ -33,6 +33,7 @@ building software. Many of them are GNU tools.
 + patchelf 0.9         - Modify the dynamic linker and RPATH of ELF executables,
                          http://nixos.org/patchelf.html
 + pkg-config 0.29.2    - https://www.freedesktop.org/wiki/Software/pkg-config/
++ GNU gperf 3.1        - https://www.gnu.org/software/gperf/
 + GNU help2man 1.47.5  - https://www.gnu.org/software/help2man/
 + Doxygen 1.8.13       - http://www.doxygen.org/
 These tools are all build against the system libraries and have been used to 
@@ -50,6 +51,7 @@ build several of the 2018pre packages.
 # Make       4.2.1     20160610
 # NASM       2.13.01   20170501  
 # pkg-config 0.29.2    20170320
+# gperf      3.1       20170105
 # sed        4.4       20170203
 # Not yet included due to build problems:
 # SCons      3.0.0     20170918
@@ -123,6 +125,11 @@ components = [
         'source_urls': ['https://pkg-config.freedesktop.org/releases/'],
         'start_dir': '%(namelower)s-%(version)s',
         'configopts':  " --with-internal-glib",
+        }),
+    ('gperf', '3.1', {
+        'sources':  [SOURCELOWER_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir': '%(namelower)s-%(version)s'
         }),
     ('NASM', '2.13.01', {
         'sources':  [SOURCELOWER_TAR_GZ],

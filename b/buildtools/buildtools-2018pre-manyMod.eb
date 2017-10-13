@@ -6,11 +6,19 @@ versionsuffix = "-manyMod"
 
 homepage = 'http://www.gnu.org'
 description = """This bundle collects a number of standard build tools: 
-+ GNU Autoconf 2.69    - https://www.gnu.org/software/autoconf
++ GNU Autoconf 2.69    - https://www.gnu.org/software/autoconf/
 + GNU Automake 1.15.1  - https://www.gnu.org/software/automake/
 + GNU libtool 2.4.6    - https://www.gnu.org/software/libtool/
 + GNU M4 1.4.18        - https://www.gnu.org/software/m4/
 + GNU make 4.2.1       - https://www.gnu.org/software/make/
++ GNU sed 4.4          - https://www.gnu.org/software/sed/
++ CMake 3.9.3          - http://www.cmake.org/
++ NASM 2.13.01         - http://www.nasm.us/
++ patchelf 0.9         - Modify the dynamic linker and RPATH of ELF executables,
+                         http://nixos.org/patchelf.html
++ pkg-config 0.29.2    - https://www.freedesktop.org/wiki/Software/pkg-config/
++ GNU help2man 1.47.5  - https://www.gnu.org/software/help2man/
++ Doxygen 1.8.13       - http://www.doxygen.org/
 These tools are all build against the system libraries and have been used
 to build several of the 2018pre packages.
 """
@@ -29,6 +37,7 @@ dependencies = [
     ('NASM',       '2.13.01'), # 20170501
     ('patchelf',   '0.9'),     # 20160229
     ('pkg-config', '0.29.2'),  # 20170320
+    ('gperf',      '3.1'),     # 20170105
     ('help2man',   '1.47.5'),  # 20170923
     ('Doxygen',    '1.8.13'),  # 20161229
 ]
