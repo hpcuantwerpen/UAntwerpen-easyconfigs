@@ -1,0 +1,30 @@
+name = 'Boost'
+version = '1.65.1'
+
+homepage = 'http://www.boost.org/'
+description = "Boost provides free peer-reviewed portable C++ source libraries. This version was compiled with Python 3 support."
+
+toolchain = {'name': 'intel', 'version': '2018pre'}
+toolchainopts = {'usempi': True, 'pic': True}
+
+sources = ['%%(namelower)s_%s.tar.gz' % '_'.join(version.split('.'))]
+source_urls = ['https://sourceforge.net/projects/%(namelower)s/files/%(namelower)s/%(version)s']
+
+dependencies = [
+    ('bzip2',  '1.0.6'),
+    ('zlib',   '1.2.11'),
+]
+
+# also build boost_mpi
+boost_mpi = True
+
+# The EasyBlock is not yet adapted for Boost 1.65.0, which has renamed libboost_python.so to 
+# libboost_python3.so. So we define our own sanity checks which is a workaround because God 
+# has decided that a sanity check cannot be skipped.
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['include/boost', 'lib'],
+}
+
+
+moduleclass = 'devel'
