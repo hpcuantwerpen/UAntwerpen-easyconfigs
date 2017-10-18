@@ -1,0 +1,26 @@
+easyblock = 'ConfigureMake'
+
+name = 'fontconfig'
+version = '2.12.6'
+
+homepage = 'http://www.freedesktop.org/software/fontconfig'
+description = """Fontconfig is a library designed to provide system-wide font configuration, customization and
+application access."""
+
+toolchain = {'name': 'intel', 'version': '2018pre'}
+
+source_urls = ['http://www.freedesktop.org/software/fontconfig/release/']
+sources = [SOURCE_TAR_GZ]
+
+dependencies = [
+    ('expat',    '2.2.4'),
+    ('freetype', '2.8.1'),
+]
+
+builddependencies = [
+    ('buildtools', '2018pre', '', True),  # for gperf, needed from version 2.12.4 on.
+]
+
+configopts = '--disable-docs '
+
+moduleclass = 'vis'
