@@ -1,0 +1,56 @@
+easyblock = 'Tarball'
+
+name = 'NAMD'
+version = '2.12'
+versionsuffix = '-verbs'
+
+homepage = 'http://www.ks.uiuc.edu/Research/namd/'
+whatis = [
+    'Description: NAMD is a scalable parallel molecular dynamics code designed for high-performance simulation of large biomolecular systems.',
+    'This module contains the verbs binary as distributed by the developers of the softwarei (verbs = imulti-copy algorithms on InfiniBand, no multithreading).'
+]
+
+
+description = """
+NAMD, recipient of a 2002 Gordon Bell Award and a 2012 Sidney Fernbach Award,
+is a parallel molecular dynamics code designed for high-performance simulation
+of large biomolecular systems. Based on Charm++ parallel objects, NAMD scales
+to hundreds of cores for typical simulations and beyond 500,000 cores for the
+largest simulations. NAMD uses the popular molecular graphics program VMD for
+simulation setup and trajectory analysis, but is also file-compatible with
+AMBER, CHARMM, and X-PLOR. 
+
+NAMD is free for non-commercial use but the the developers request that you
+electronically sign a license when you donwload the software. We have 
+agreed with the developer that we can centrally install the software on the
+condition that every user signs that agreement, basically because it is 
+important for their funding. So you only get access to the software once
+you show that you have signed that license (contact UAntwerp hpc support).
+"""
+
+docurls = [
+    'NAMD 2.12 User Guide: http://www.ks.uiuc.edu/Research/namd/2.12/ug/',
+    'NAMD Wiki: http://www.ks.uiuc.edu/Research/namd/wiki/'
+]
+
+upstream_contacts = [
+    'NAMD Mailing List/forum: http://www.ks.uiuc.edu/Research/namd/mailing_list/',
+    'NAMD bug report instructions: http://www.ks.uiuc.edu/Research/namd/bugreport.html',
+]
+
+docpaths = [ 'notes.txt' ]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+# NAMD registration required.
+# Download the sources from the NAMD web site and put in /apps/antwerpen/sources
+sources = ['%(name)s_%(version)s_Linux-x86_64%(versionsuffix)s.tar.gz']
+
+sanity_check_paths = {
+    'files': ['namd2'],
+    'dirs': ['lib'],
+}
+
+modextrapaths = { 'PATH': '.' }
+
+moduleclass = 'chem'
