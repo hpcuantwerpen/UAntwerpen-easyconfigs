@@ -7,7 +7,7 @@ versionsuffix = '-verbs-smp'
 homepage = 'http://www.ks.uiuc.edu/Research/namd/'
 whatis = [
     'Description: NAMD is a scalable parallel molecular dynamics code designed for high-performance simulation of large biomolecular systems.',
-    'This module contains the verbs-smp binary as distributed by the developers of the softwarei (verbs-smp = hybrid executable with multi-copy algorithms on InfiniBand and multithreading).'
+    'This module contains the verbs-smp binary as distributed by the developers of the software (verbs-smp = hybrid executable with multi-copy algorithms on InfiniBand and multithreading).'
 ]
 
 
@@ -23,6 +23,8 @@ AMBER, CHARMM, and X-PLOR.
 This module contains the verbs-smp binary as distributed by the developers.
 This is a hybrid shared/distributed memory executable using multi-copy
 algorithms on InfiniBand and multithreading for shared memory parallelism.
+This version may use slightly less memory than the verbs version, but may also
+be slightly slower since some cores are lost on the communication threads.
 
 NAMD is free for non-commercial use but the the developers request that you
 electronically sign a license when you donwload the software. We have 
@@ -30,6 +32,19 @@ agreed with the developer that we can centrally install the software on the
 condition that every user signs that agreement, basically because it is 
 important for their funding. So you only get access to the software once
 you show that you have signed that license (contact UAntwerp hpc support).
+"""
+
+examples = """
+One way to run the apoa1 benchmark (after downloading the necessary files)
+on 2 nodes with 28 cores each, and keeping in mind that the NAMD manual
+advises to use 1 core on each node for the communication thread:
+* Node request: Use -L tasks=2:lprocs=28:swap=....
+* Load this NAMD module
+* To run, first prepare a suitable nodelist and then start the executable
+  using 27 (=28-1) worker threads per process and a total of 54(=2*27)
+  worker threads:
+  for node in `sort -u $PBS_NODEFILE`; do echo host $node >>nodelist.$PBS_JOBID; done
+  charmrun +p54 ++ppn 27 ++nodelist nodelist.$PBS_JOBID `which namd2` apoa1.namd
 """
 
 docurls = [
