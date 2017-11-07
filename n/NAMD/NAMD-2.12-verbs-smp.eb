@@ -2,12 +2,12 @@ easyblock = 'Tarball'
 
 name = 'NAMD'
 version = '2.12'
-versionsuffix = '-verbs'
+versionsuffix = '-verbs-smp'
 
 homepage = 'http://www.ks.uiuc.edu/Research/namd/'
 whatis = [
     'Description: NAMD is a scalable parallel molecular dynamics code designed for high-performance simulation of large biomolecular systems.',
-    'This module contains the verbs binary as distributed by the developers of the softwarei (verbs = multi-copy algorithms on InfiniBand, no multithreading).'
+    'This module contains the verbs-smp binary as distributed by the developers of the softwarei (verbs-smp = hybrid executable with multi-copy algorithms on InfiniBand and multithreading).'
 ]
 
 
@@ -20,9 +20,9 @@ largest simulations. NAMD uses the popular molecular graphics program VMD for
 simulation setup and trajectory analysis, but is also file-compatible with
 AMBER, CHARMM, and X-PLOR. 
 
-This module contains the verbs binary as distributed by the developers.
-This is a distributed memory executable, using multi-copy algorithms on
-InfiniBand but just a single computational thread per process.
+This module contains the verbs-smp binary as distributed by the developers.
+This is a hybrid shared/distributed memory executable using multi-copy
+algorithms on InfiniBand and multithreading for shared memory parallelism.
 
 NAMD is free for non-commercial use but the the developers request that you
 electronically sign a license when you donwload the software. We have 
