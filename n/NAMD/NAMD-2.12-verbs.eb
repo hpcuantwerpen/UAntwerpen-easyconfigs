@@ -7,7 +7,7 @@ versionsuffix = '-verbs'
 homepage = 'http://www.ks.uiuc.edu/Research/namd/'
 whatis = [
     'Description: NAMD is a scalable parallel molecular dynamics code designed for high-performance simulation of large biomolecular systems.',
-    'This module contains the verbs binary as distributed by the developers of the softwarei (verbs = multi-copy algorithms on InfiniBand, no multithreading).'
+    'This module contains the verbs binary as distributed by the developers of the software (verbs = multi-copy algorithms on InfiniBand, no multithreading).'
 ]
 
 
@@ -30,6 +30,23 @@ agreed with the developer that we can centrally install the software on the
 condition that every user signs that agreement, basically because it is 
 important for their funding. So you only get access to the software once
 you show that you have signed that license (contact UAntwerp hpc support).
+"""
+
+examples = """
+Running the apoa1 benchmark can be done in multiple ways (after downloading
+the necessary files).
+
+One option is to use mpiexec which will automatically detect the Torque host
+list and use it, but you'll need to load a module containing a mpiexec,
+e.g., the intel/2017a module. On 2 nodes with 28 cores per node, you'd then
+start NAMD using:
+charmrun +p$PBS_NP ++mpiexec `which namd2` apoa1.namd
+
+An alternative is to provide charmrun with a suitable host file, which
+unfortunately has a different format as the Torque host file. Then you don't
+need a mpiexec, so no intel module. The next two lines would do the job:
+for node in `cat $PBS_NODEFILE`; do echo host $node >>nodelist.$PBS_JOBID; done
+charmrun +p$PBS_NP ++nodelist nodelist.$PBS_JOBID `which namd2` apoa1.namd
 """
 
 docurls = [
