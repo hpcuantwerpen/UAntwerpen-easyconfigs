@@ -16,7 +16,8 @@ dependencies = [
     ('BLAST+', '2.6.0', '-Python-2.7.13'), 
     ('MCL', '14.137'), 
     ('FastME', '2.1.5.1'),
-    ('DIAMOND', '0.9.12')
+    ('DIAMOND', '0.9.12'),
+    ('MAFFT', '7.312', '-with-extensions')
 ]
 
 modextrapaths = {'PATH': ''}
