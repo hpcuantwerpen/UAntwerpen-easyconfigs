@@ -1,0 +1,29 @@
+easyblock = "Tarball"
+
+name = 'OrthoFinder'
+version = '1.1.10'
+
+homepage = 'https://github.com/davidemms/OrthoFinder'
+description = """ OrthoFinder: solving fundamental biases in whole genome 
+comparisons dramatically improves orthologous gene group inference accuracy"""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+source_urls = ['https://github.com/davidemms/OrthoFinder/releases/download/']
+sources = ['%(version)s/OrthoFinder-%(version)s.tar.gz']
+
+dependencies = [
+    ('BLAST+', '2.6.0', '-Python-2.7.13'), 
+    ('MCL', '14.137'), 
+    ('FastME', '2.1.5.1'),
+    ('DIAMOND', '0.9.12')
+]
+
+modextrapaths = {'PATH': ''}
+
+sanity_check_paths = {
+    'files': ["orthofinder", "README.md"],
+    'dirs': []
+}
+
+moduleclass = 'bio'
