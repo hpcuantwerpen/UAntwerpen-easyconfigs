@@ -1,0 +1,62 @@
+easyblock = 'ConfigureMake'
+
+name = 'Ghostscript'
+version = '9.22'
+
+homepage = 'http://ghostscript.com'
+whatis = [
+   'Desription: Ghostscript is a versatile processor for PostScript data with the ability to render PostScript to different targets.'
+]
+
+description = """
+Ghostscript is a high quality, high performance Postscript and PDF interpreter
+and rendering engine. The package provides, among others, various commands
+to convert between Postscript files, PDF files and Encapsulated Postscript
+files, but can also render Postscript and PDF to some raster graphics
+files.
+
+Some interesting commands:
+* gs: The Ghostscript interpreter and main workhorse of the package
+* ps2pdf: Postscript to Adobe PDF
+* pdf2ps: Adobe PDF to Postscript
+* ps2epsi: Postscript to Encapsulated Postscript
+
+All commands come with help through man pages.
+"""
+
+examples = """
+Check the manual pages by typing, e.g.,
+  man gs
+at the Linux command prompt after loading this module.
+"""
+
+docurls = [
+    'Web-based documentation: https://www.ghostscript.com/doc/9.22/Readme.htm'
+]
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'pic': True}
+
+source_urls = [
+    'https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%(version_major)s%(version_minor)s/',
+]
+sources = ['ghostscript-%(version)s.tar.gz']
+
+dependencies = [
+    ('zlib', '1.2.11'),
+    ('libpng', '1.6.28'),
+    ('freetype', '2.7.1'),
+    ('libjpeg-turbo', '1.5.1'),
+    ('expat', '2.2.0'),
+    ('GLib', '2.49.7'),
+    ('cairo', '1.15.4'),
+    ('LibTIFF', '4.0.7'),
+]
+
+# Do not use local copies of zlib, jpeg, freetype, and png
+preconfigopts = "mv zlib zlib.no && mv jpeg jpeg.no && mv freetype freetype.no && mv libpng libpng.no && "
+preconfigopts += 'export LIBS="$LIBS -lz" && '
+
+configopts = "--with-system-libtiff --enable-dynamic"
+
+moduleclass = 'tools'
