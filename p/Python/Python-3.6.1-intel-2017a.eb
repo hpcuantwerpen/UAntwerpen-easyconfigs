@@ -2,8 +2,20 @@ name = 'Python'
 version = '3.6.1'
 
 homepage = 'http://python.org/'
-description = """Python is a programming language that lets you work more quickly and integrate your systems
- more effectively."""
+
+#description = """Python is a programming language that lets you work more quickly and integrate your systems more effectively."""
+description = """Python 3.6.2 interpreter with a range of optional packages."""
+
+usage = """This is the Python 3.6 interpreter with several additional packages requested by
+UAntwerp researchers installed.
+
+If you don't find your favourite packages in this module, check the other
+modules that have Python in their name, try to install them in your
+personal directories and/or contact UAntwerp HPC support
+at hpc@uantwerpen.be."""
+
+# No whatis as this would hide the auto-generated message with the extension list.
+#whatis = ["Python interpreter with a range of optional packages."]
 
 toolchain = {'name': 'intel', 'version': '2017a'}
 toolchainopts = {'pic': True}
@@ -189,6 +201,10 @@ exts_list = [
     ('protobuf', '3.4.0', { # Needed for TensorFlow, uses the protobuf module.
         'modulename': 'google.protobuf',
         'source_urls': ['https://pypi.python.org/packages/source/p/protobuf'],
+    }),
+    ('seaborn', '0.8.1', {
+        'source_tmpl': 'seaborn-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/s/seaborn'],
     }),
 ]
 
