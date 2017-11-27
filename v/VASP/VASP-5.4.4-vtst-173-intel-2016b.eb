@@ -1,0 +1,65 @@
+easyblock = 'MakeCp'
+
+name = 'VASP'
+version = '5.4.4-vtst-173'
+
+vtstversion = '173'
+
+homepage = 'http://www.vasp.at'
+
+description = """The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic 
+scale materials modelling, e.g. electronic structure calculations and 
+quantum-mechanical molecular dynamics, from first principles.
+This module contains non-GPU versions of vasp_std, vasp_gam and vasp_ncl,
+including the VTST tools."""
+
+whatis = ["VASP - Vienna Ab initio Simulation Package - Non-GPU version with vasp_std, vasp_gam and vasp_ncl"]
+
+usage = """The VASP documentation can be found on the VASP web site www.vasp.at.
+Keep in mind that VASP can require a lot of memory and perform a lot of I/O when
+you are not exploiting parallelism sufficiently. Please choose your settings
+and cluster resources carefully to exploit sufficient parallelism and limit I/O.
+If you fail to do so, the result is slower running jobs, a more busy cluster
+and longer wait time for you and your colleagues."""
+
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+toolchainopts = {'usempi': True}
+
+# Vasp is proprietary software, see http://www.vasp.at/index.php/faqs on how to get access to the code
+sources = ['vasp.5.4.4.tar.gz']
+
+
+prebuildopts  = 'cp arch/makefile.include.linux_intel ./makefile.include && '
+# Adapt the host name.
+prebuildopts += 'sed -i "s|LinuxIFC|UA-Leibniz-2016b-VTST|" makefile.include && '
+# Adapt the MPI block size
+prebuildopts += 'sed -i "s|DMPI_BLOCK=8000|DMPI_BLOCK=262144|" makefile.include && '
+# Adapt FFLAGS (add memory model)
+prebuildopts += 'sed -i "s|-assume byterecl|-assume byterecl -mcmodel=large -shared-intel|" makefile.include && '
+# Add -xHost to optimization options
+prebuildopts += 'sed -i "s|-O2|-O2 -xHost|" makefile.include && '
+## Add MKL wrapper of fftw
+prebuildopts += 'sed -i "s|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o \$(MKLROOT)/lib/intel64/libfftw3xf_intel.a |" makefile.include && '
+## VTST specific
+prebuildopts += 'sed -i "s|chain.o|bfgs.o dynmat.o instanton.o lbfgs.o sd.o cg.o dimer.o bbm.o fire.o lanczos.o neb.o qm.o opt.o chain.o |" src/.objects && '
+prebuildopts += 'cd src && tar xzf /apps/antwerpen/sources/v/VASP/vtstcode-173.tgz --strip-components=1 && '
+prebuildopts += 'perl -i -0pe \'s/( *)CALL CHAIN_FORCE\(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \& *\n( *)LATT_CUR%A,LATT_CUR%B,IO%IU6\)/\1CALL CHAIN_FORCE(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \&\n\2TSIF,LATT_CUR%A,LATT_CUR%B,IO%IU6\)/\' main.F && '
+prebuildopts += 'patch vasp-5.4.1-mpmd.patch && '
+prebuildopts += 'perl mkbdrpro.pl && cd .. && '
+
+# VASP uses LIBS as a list of folders
+prebuildopts += 'unset LIBS && '
+
+buildopts = 'all'
+
+parallel = 1
+
+files_to_copy = [(['bin/vasp_std', 'bin/vasp_gam', 'bin/vasp_ncl'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/vasp_std', 'bin/vasp_gam', 'bin/vasp_ncl'],
+    'dirs': []
+}
+
+moduleclass = 'phys'
