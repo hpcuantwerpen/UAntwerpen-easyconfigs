@@ -4,6 +4,7 @@ easyblock = 'EB_METISMOD'  # UAntwerp METIS easyblock with support for preconfig
 
 name = 'METIS'
 version = '5.1.0'
+versionsuffix = '-i32-fp64'
 
 homepage = 'http://glaros.dtc.umn.edu/gkhome/metis/metis/overview'
 
@@ -64,6 +65,8 @@ source_urls = [
     'http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD',
 ]
 
+builddependencies = [('buildtools', '2017c', '', True)]
+
 # Unfortunately, the current METIS EasyBlock does not honour the following lines which
 # would be a much more elegant way of setting the accurady of the data types, so we
 # made a minor modification to the EasyBlock.
@@ -71,11 +74,11 @@ source_urls = [
 preconfigopts  = 'sed --in-place=".orig" '
 preconfigopts += '  \'s/#define IDXTYPEWIDTH.*/#define IDXTYPEWIDTH 32/; '
 preconfigopts += '    s/#define REALTYPEWIDTH.*/#define REALTYPEWIDTH 64/\' include/metis.h && '
-
-builddependencies = [('buildtools', '2017c', '', True)]
+#patches = ['METIS-5.1.0-use-doubles.patch']
 
 configopts = ['', 'shared=1']
 
+# Also copy the manual and the license information which are not copied by make install.
 postinstallcmds = [
     'cp -r manual %(installdir)s',
     'cp LICENSE.txt %(installdir)s',
