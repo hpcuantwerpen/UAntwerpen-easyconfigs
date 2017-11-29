@@ -1,0 +1,53 @@
+# Built with EasyBuild version 3.1.2 on 2017-04-06_15-14-09
+name = 'HDF5'
+version = '1.8.19'
+versionsuffix = "-MPI"
+
+homepage = 'http://www.hdfgroup.org/HDF5/'
+
+whatis = [
+    'Description: Tools/librareis for working with large and complex data collections',
+    'This module provides command line tools and static and shared libraries, compiled with MPI support',
+]
+
+description = """
+HDF5 is a data model, library, and file format for storing and managing data. It
+supports an unlimited variety of datatypes, and is designed for flexible and
+efficient I/O and for high volume and complex data. HDF5 is portable and is
+extensible, allowing applications to evolve in their use of HDF5. The HDF5
+Technology suite includes tools and applications for managing, manipulating,
+viewing, and analyzing data in the HDF5 format.
+
+This version is compiled with support for MPI. The module provides a number 
+of command line tools to manipulate HDF5 files and static and dynamic 
+libaries.
+"""
+
+examples = """
+There are examples included in $EBROOTHDF5/share/hdf5_examples.
+"""
+
+docurls = [
+    'Web-based documentation: https://support.hdfgroup.org/HDF5/doc/index.html',
+] 
+
+toolchain = {'name': 'intel', 'version': '2017c'}
+toolchainopts = {'pic': True, 'usempi': True}
+
+source_urls = [
+    'https://support.hdfgroup.org/ftp/HDF5/current18/src/',
+    'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-%(versions)/src/'
+]
+
+sources = [SOURCELOWER_TAR_GZ]
+checksums = ['7f568e2464d4ab0a74d16b23956d900b']
+
+buildopts = 'CXXFLAGS="$CXXFLAGS -DMPICH_IGNORE_CXX_SEEK"'
+
+dependencies = [
+    ('zlib', '1.2.11'),
+    ('Szip', '2.1.1'),
+]
+
+moduleclass = 'data'
+
