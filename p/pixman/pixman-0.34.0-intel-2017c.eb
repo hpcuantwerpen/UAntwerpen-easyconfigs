@@ -1,0 +1,38 @@
+easyblock = 'ConfigureMake'
+
+name = "pixman"
+version = '0.34.0'
+
+homepage = 'http://www.pixman.org/'
+
+whatis = [
+    'Description: A low-level library for pixel manipulation',
+    'The module includes both static and dynamic libraries and supports pkg-config'
+]
+
+description = """
+Pixman is a low-level software library for pixel manipulation, providing
+features such as image compositing and trapezoid rasterization. Important users
+of pixman are the cairo graphics library and the X server.
+
+Pixman is implemented as a library in the C programming language. It runs on
+many platforms, including Linux, BSD Derivatives, MacOS X, and Windows.
+
+Pixman is free and open source software. It is available to be redistributed
+and/or modified under the terms of the MIT license.
+
+Documentation is inexistent.
+"""
+
+toolchain = {'name': 'intel', 'version': '2017c'}
+
+source_urls = ['http://cairographics.org/releases/']
+sources = [SOURCE_TAR_GZ]
+patches = ['pixman-0.34.0_intel-2018-GCC_VECTOR.patch']
+
+sanity_check_paths = {
+    'files': ['lib/libpixman-1.%s' % SHLIB_EXT],
+    'dirs': []
+}
+
+moduleclass = 'vis'
