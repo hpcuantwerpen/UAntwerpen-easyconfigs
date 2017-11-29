@@ -1,0 +1,17 @@
+Patch by Kurt Lust, UAntwerp.
+The intel 2018 compilers support enough of the GCC vector extensions that the 
+configure script detects support and defines HAVE_GCC_VECTOR_EXTENSIONS.
+However, the code in test/utils-prng.c contains vector operations that violate
+type constraints in the Intel compiler and uses the non-supported __builtin_shuffle.
+The patch undefines HAVE_GCC_VECTOR_EXTENSIONS before its first use (which is in a
+header file).
+--- pixman-0.34.0-orig/test/utils-prng.h	2015-06-30 11:48:31.000000000 +0200
++++ pixman-0.34.0/test/utils-prng.h	2017-10-16 15:13:30.623867000 +0200
+@@ -74,6 +74,7 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
++#undef HAVE_GCC_VECTOR_EXTENSIONS
+ 
+ #include "pixman-private.h"
+ 
