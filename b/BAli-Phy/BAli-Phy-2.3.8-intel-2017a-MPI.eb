@@ -7,7 +7,7 @@ versionsuffix = '-MPI'
 homepage = 'http://www.bali-phy.org/'
 whatis = [
     'Desription: BAli-Phy is software that estimates multiple sequence alignments and evolutionary trees from DNA, amino acid, or codon sequences. .',
-    'This module is compiled with MPI support but without OpenMP support.'
+    'This module is a single-threaded executable with MPI support.'
 ]
 
 description = """
@@ -17,10 +17,16 @@ It uses likelihood-based evolutionary models of substitutions and insertions and
 deletions to place gaps. It has been used in published analyses on data sets up
 to 117 taxa.
 
-This module is compiled using MPI (distributed memory parallelism) but without 
-OpenMP (so use one process per core). BAli-Phy does not support hybrid mode.
-This module uses the toolchain Boost library (1.63.0) and includes cairo
-support.
+This module contains single-threaded executables. MPI support was enabled for
+the compilation and some source files contains some MPI commands, but it is not
+clear whether this support is functional. This module uses the toolchain Boost
+library (1.63.0) and includes cairo support.
+"""
+
+usage = """
+See the manual and tutorial on the BAli-Phy web site. BAli-Phy also comes
+with a number of R scripts that are stored in
+$EBROOTBALIMINPHY/bin.
 """
 
 docurls = [

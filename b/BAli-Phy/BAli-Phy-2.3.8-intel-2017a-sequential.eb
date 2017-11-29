@@ -1,0 +1,59 @@
+easyblock = 'ConfigureMake'
+
+name = 'BAli-Phy'
+version = '2.3.8'
+versionsuffix = '-sequential'
+
+homepage = 'http://www.bali-phy.org/'
+whatis = [
+    'Desription: BAli-Phy is software that estimates multiple sequence alignments and evolutionary trees from DNA, amino acid, or codon sequences. .',
+    'This module is compiled is a single-threaded executable without the MPI support that seems to exist in some files.'
+]
+
+description = """
+BAli-Phy is software by Ben Redelings that estimates multiple sequence
+alignments and evolutionary trees from DNA, amino acid, or codon sequences.
+It uses likelihood-based evolutionary models of substitutions and insertions and
+deletions to place gaps. It has been used in published analyses on data sets up
+to 117 taxa.
+
+This module is a single-threaded executable without the MPI support that seems
+to exist in some source files (though it is not clear if that one is 
+functional).  It was compiled using the Boost libraries included with the code
+(version 1.59.0) and with Cairo support.
+"""
+
+usage = """
+See the manual and tutorial on the BAli-Phy web site. BAli-Phy also comes
+with a number of R scripts that are stored in
+$EBROOTBALIMINPHY/bin.
+"""
+
+docurls = [
+    'Web-based documentation: http://www.bali-phy.org/docs.php'
+]
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'pic': True, 'cstd': 'c++14', 'openmp': False, 'usempi': False}
+
+source_urls = [
+    'http://www.bali-phy.org/files/'
+]
+sources = ['bali-phy-%(version)s.tar.gz']
+
+dependencies = [
+    ('cairo', '1.15.4'),
+]
+
+builddependencies = [
+    ('Autotools', '20161231', '', True),
+]
+
+configopts = "--enable-cairo --with-openmp "
+
+postinstallcmds = [
+    'cp -r examples %(installdir)s',
+    'cp -r doc %(installdir)s',
+]
+
+moduleclass = 'bio'

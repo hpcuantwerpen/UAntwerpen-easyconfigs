@@ -1,13 +1,13 @@
 easyblock = 'ConfigureMake'
 
 name = 'BAli-Phy'
-version = '2.3.8'
-versionsuffix = '-OpenMP'
+version = '3.0-beta4'
+versionsuffix = '-sequential'
 
 homepage = 'http://www.bali-phy.org/'
 whatis = [
     'Desription: BAli-Phy is software that estimates multiple sequence alignments and evolutionary trees from DNA, amino acid, or codon sequences. .',
-    'This module is compiled with OpenMP support but without MPI support.'
+    'This module is compiled is a single-threaded executable without MPI support.'
 ]
 
 description = """
@@ -17,9 +17,16 @@ It uses likelihood-based evolutionary models of substitutions and insertions and
 deletions to place gaps. It has been used in published analyses on data sets up
 to 117 taxa.
 
-This module is compiled using OpenMP (shared memory parallelism) but without 
-MPI (so only runs on a single node). It was compiled using the Boost
-libraries included with the code (version 1.59) and with Cairo support.
+This module is a single-threaded executable without the MPI support that seems
+to exist in some source files but does cause compiler errors. It was compiled
+using the Boost libraries included with the code (version 1.64.0) and with
+Cairo support.
+"""
+
+usage = """
+See the manual and tutorial on the BAli-Phy web site. BAli-Phy also comes
+with a number of R scripts that are stored in
+$EBROOTBALIMINPHY/bin.
 """
 
 docurls = [
@@ -27,12 +34,13 @@ docurls = [
 ]
 
 toolchain = {'name': 'intel', 'version': '2017a'}
-toolchainopts = {'pic': True, 'cstd': 'c++14', 'openmp': True, 'usempi': False}
+toolchainopts = {'pic': True, 'cstd': 'c++14', 'openmp': False, 'usempi': False}
 
+# Sources of the beta only via github: https://github.com/bredelings/BAli-Phy/archive/3.0-beta4.tar.gz
 source_urls = [
-    'http://www.bali-phy.org/files/'
+    'https://github.com/bredelings/BAli-Phy/archive/'
 ]
-sources = ['bali-phy-%(version)s.tar.gz']
+sources = ['%(version)s.tar.gz']
 
 dependencies = [
     ('cairo', '1.15.4'),
@@ -42,7 +50,8 @@ builddependencies = [
     ('Autotools', '20161231', '', True),
 ]
 
-configopts = "--enable-cairo --with-openmp "
+preconfigopts = "./bootstrap.sh && "
+configopts = "--enable-cairo "
 
 postinstallcmds = [
     'cp -r examples %(installdir)s',
