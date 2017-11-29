@@ -1,9 +1,8 @@
 easyblock = 'MakeCp'
 
 name = 'VASP'
-version = '5.4.4-vtst-173'
-
-vtstversion = '173'
+version = '5.4.4'
+versionsuffix= '-vtst-173'
 
 homepage = 'http://www.vasp.at'
 
@@ -23,16 +22,21 @@ If you fail to do so, the result is slower running jobs, a more busy cluster
 and longer wait time for you and your colleagues."""
 
 
-toolchain = {'name': 'intel', 'version': '2016b'}
+toolchain = {'name': 'intel', 'version': '2017a'}
 toolchainopts = {'usempi': True}
 
 # Vasp is proprietary software, see http://www.vasp.at/index.php/faqs on how to get access to the code
-sources = ['vasp.5.4.4.tar.gz']
+sources = ['vasp.%(version)s.tar.gz',
+    {
+      'filename': 'vtstcode-173.tgz', 
+      'extract_cmd': "tar xfvz %s --strip-components=1 -C %(builddir)s/%(namelower)s.%(version)s/src"
+    }
+]
 
 
 prebuildopts  = 'cp arch/makefile.include.linux_intel ./makefile.include && '
 # Adapt the host name.
-prebuildopts += 'sed -i "s|LinuxIFC|UA-Leibniz-2016b-VTST|" makefile.include && '
+prebuildopts += 'sed -i "s|LinuxIFC|UA-Leibniz-2017a-VTST|" makefile.include && '
 # Adapt the MPI block size
 prebuildopts += 'sed -i "s|DMPI_BLOCK=8000|DMPI_BLOCK=262144|" makefile.include && '
 # Adapt FFLAGS (add memory model)
@@ -43,10 +47,11 @@ prebuildopts += 'sed -i "s|-O2|-O2 -xHost|" makefile.include && '
 prebuildopts += 'sed -i "s|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o \$(MKLROOT)/lib/intel64/libfftw3xf_intel.a |" makefile.include && '
 ## VTST specific
 prebuildopts += 'sed -i "s|chain.o|bfgs.o dynmat.o instanton.o lbfgs.o sd.o cg.o dimer.o bbm.o fire.o lanczos.o neb.o qm.o opt.o chain.o |" src/.objects && '
-prebuildopts += 'cd src && tar xzf /apps/antwerpen/sources/v/VASP/vtstcode-173.tgz --strip-components=1 && '
-prebuildopts += 'perl -i -0pe \'s/( *)CALL CHAIN_FORCE\(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \& *\n( *)LATT_CUR%A,LATT_CUR%B,IO%IU6\)/\1CALL CHAIN_FORCE(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \&\n\2TSIF,LATT_CUR%A,LATT_CUR%B,IO%IU6\)/\' main.F && '
+prebuildopts += 'cd src && '
+prebuildopts += 'perl -i -0pe \'s/( *)CALL CHAIN_FORCE\(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \& *\n( *)LATT_CUR%A,LATT_CUR%B,IO%IU6\)/$1CALL CHAIN_FORCE(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \&\n$2TSIF,LATT_CUR%A,LATT_CUR%B,IO%IU6\)/\' main.F && '
 prebuildopts += 'patch vasp-5.4.1-mpmd.patch && '
-prebuildopts += 'perl mkbdrpro.pl && cd .. && '
+prebuildopts += 'perl mkbdrpro.pl && '
+prebuildopts += 'cd .. && '
 
 # VASP uses LIBS as a list of folders
 prebuildopts += 'unset LIBS && '
