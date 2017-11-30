@@ -1,0 +1,41 @@
+name = 'SuiteSparse'
+version = '4.4.5'
+
+homepage = 'http://faculty.cse.tamu.edu/davis/suitesparse.html'
+
+whatis = [
+    'Description: Collection of libraries to manipulate sparse matrices',
+    'This module provides an older version specifically for kwant and was compiled with METIS support',
+]
+
+description = """
+SuiteSparse is a collection of libraries manipulate sparse matrices.
+This version is not the most recent one at the time of install but
+is known to work with numpy and kwant.
+
+This module was compiled with support for the METIS graph partitioning
+library.
+"""
+
+toolchain = {'name': 'intel', 'version': '2017c'}
+toolchainopts = {'opt': True, 'unroll': True, 'pic': True}
+
+source_urls = ['http://faculty.cse.tamu.edu/davis/SuiteSparse/']
+sources = [SOURCE_TAR_GZ]
+
+patches = [
+    'SuiteSparse-%(version)s_AMD_GNUMakefile.patch', 
+    'SuiteSparse-%(version)s_UMFPACK_GNUMakefile.patch',
+]
+
+metis = 'METIS'
+metis_ver = '5.1.0'
+metis_ver_suffix = '-i32-fp64'
+versionsuffix = '-%s-%s' % (metis, metis_ver)
+dependencies = [
+    (metis, metis_ver, metis_ver_suffix),
+]
+
+maxparallel = 1
+
+moduleclass = 'numlib'
