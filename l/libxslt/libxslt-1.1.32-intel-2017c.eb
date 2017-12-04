@@ -1,0 +1,48 @@
+easyblock = 'ConfigureMake'
+
+name = 'libxslt'
+version = '1.1.32'
+
+homepage = 'http://xmlsoft.org/xslt'
+
+whatis = [
+   'Description: XSLT C library for the Gnome project',
+   'This module the command line tool and static and shared libraries',
+]
+
+description = """
+Libxslt is the XSLT C library developed for the GNOME project (but usable
+outside of the Gnome platform). XSLT itself is a an XML language to define
+transformation for XML. Libxslt is based on libxml2 the XML C library developed
+for the GNOME project. It also implements most of the EXSLT set of
+processor-portable extensions functions and some of Saxon's evaluate and
+expressions extensions.
+
+People can either embed the library in their application or use xsltproc the
+command line processing tool. This library is free software and can be reused in
+commercial applications.
+
+Besides the xsltproc command line tool, the module also provides static and
+shared libraries.
+"""
+
+docurls = [
+    'Web-based documentation on the home page: http://xmlsoft.org/libxslt/',
+    'Man pages for xsltproc, libxslt and libexslt',
+]
+
+toolchain = {'name': 'intel', 'version': '2017c'}
+
+source_urls = [
+    'http://xmlsoft.org/sources/',
+    'http://xmlsoft.org/sources/old/'
+]
+
+sources = [SOURCELOWER_TAR_GZ]
+
+dependencies = [
+    ('zlib',    '1.2.11'),
+    ('libxml2', '2.9.7'),
+]
+
+moduleclass = 'lib'
