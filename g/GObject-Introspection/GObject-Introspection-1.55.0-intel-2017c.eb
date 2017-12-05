@@ -38,8 +38,8 @@ dependencies = [
 
 builddependencies = [
     ('buildtools', '2017c', '', True),
-    ('flex',       '2.6.4',    '', True),
-    ('Bison',      '3.0.4',    '', True),
+    ('flex',       '2.6.4', '', True),
+    ('Bison',      '3.0.4', '', True),
     ('cairo',      '1.15.8'),
 ]
 
