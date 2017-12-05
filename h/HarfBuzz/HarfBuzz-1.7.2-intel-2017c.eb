@@ -1,0 +1,53 @@
+easyblock = 'ConfigureMake'
+
+name = 'HarfBuzz'
+version = '1.7.2'
+
+homepage = 'http://www.freedesktop.org/wiki/Software/HarfBuzz'
+
+whatis = [
+    'Description: HarfBuzz is an OpenType text shaping engine',
+    'This module provides the command line tools and static and shared libraries'
+]
+
+description = """
+HarfBuzz is an OpenType text shaping engine.
+
+The current HarfBuzz codebase, formerly known as harfbuzz-ng, is versioned 1.x.x
+and is stable and under active maintenance. This is what is used in latest
+versions of Firefox, GNOME, ChromeOS, Chrome, LibreOffice, XeTeX, Android, and
+KDE, among other places.
+
+This module provides the command line tools and static and shared libraries.
+"""
+
+docpaths = [
+    'share/gtk-doc/html/harfbuzz',
+]
+
+toolchain = {'name': 'intel', 'version': '2017c'}
+
+source_urls = ['http://www.freedesktop.org/software/harfbuzz/release/']
+sources = [SOURCELOWER_TAR_BZ2]
+
+dependencies = [
+    ('GLib',     '2.55.0'),
+    ('cairo',    '1.15.8'),
+    ('freetype', '2.8.1'),
+]
+
+builddependencies = [('GObject-Introspection', '1.55.0')]
+
+configopts = "--enable-introspection=yes --with-gobject=yes --enable-static --enable-shared --with-cairo "
+
+modextrapaths = {
+    'GI_TYPELIB_PATH': 'share',
+    'XDG_DATA_DIRS': 'share',
+}
+
+sanity_check_paths = {
+    'files': ['lib/libharfbuzz.%s' % SHLIB_EXT, 'bin/hb-view'],
+    'dirs': []
+}
+
+moduleclass = 'vis'
