@@ -2,21 +2,19 @@ easyblock = 'MakeCp'
 
 name = 'VASP'
 version = '5.4.4'
-vtstversion = '173'
 tcver = '2016b'
-systemstring = 'UA-Leibniz-' + tcver + '-VTST'
-versionsuffix= '-vtst-' + vtstversion
+systemstring = 'UA-Leibniz-' + tcver
 
 homepage = 'http://www.vasp.at'
 
 whatis = [
     'Description: Vienna Ab initio Simulation Package (VASP), for atomic scale materials modelling',
-    'This module provides non-GPU versions of vasp_std, vasp_gam and vasp_ncl with VTST support'
+    'This module provides non-GPU versions of vasp_std, vasp_gam and vasp_ncl'
 ]
 
 description = """
-The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic
-scale materials modelling, e.g. electronic structure calculations and
+The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic 
+scale materials modelling, e.g. electronic structure calculations and 
 quantum-mechanical molecular dynamics, from first principles.
 
 VASP computes an approximate solution to the many-body Schrödinger equation,
@@ -39,8 +37,7 @@ direct inversion of the iterative subspace (RMM-DIIS) or blocked Davidson
 algorithms. These are coupled to highly efficient Broyden and Pulay density
 mixing schemes to speed up the self-consistency cycle.
 
-This module contains non-GPU versions of vasp_std, vasp_gam and vasp_ncl
-wit VTST support.
+This module contains non-GPU versions of vasp_std, vasp_gam and vasp_ncl.
 
 VASP is licensed software. Only members of the avasp group can use VASP.
 
@@ -57,8 +54,7 @@ cluster and longer wait time for you and your colleagues.
 """
 
 docurls = [
-    'Web-based VASP documentation: http://www.vasp.at/index.php/documentation',
-    'Web-based VTST documentation: http://theory.cm.utexas.edu/vtsttools/',
+    'Web-based documentation: http://www.vasp.at/index.php/documentation'
 ]
 
 
@@ -66,12 +62,7 @@ toolchain = {'name': 'intel', 'version': tcver}
 toolchainopts = {'usempi': True}
 
 # Vasp is proprietary software, see http://www.vasp.at/index.php/faqs on how to get access to the code
-sources = ['vasp.%(version)s.tar.gz',
-    {
-      'filename': 'vtstcode-' + vtstversion + '.tgz', 
-      'extract_cmd': "tar xfvz %s --strip-components=1 -C %(builddir)s/%(namelower)s.%(version)s/src"
-    }
-]
+sources = ['vasp.%(version)s.tar.gz']
 
 
 prebuildopts  = 'cp arch/makefile.include.linux_intel ./makefile.include && '
@@ -85,13 +76,7 @@ prebuildopts += 'sed -i "s|-assume byterecl|-assume byterecl -mcmodel=large -sha
 prebuildopts += 'sed -i "s|-O2|-O2 -xHost|" makefile.include && '
 ## Add MKL wrapper of fftw
 prebuildopts += 'sed -i "s|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o \$(MKLROOT)/lib/intel64/libfftw3xf_intel.a |" makefile.include && '
-## VTST specific
-prebuildopts += 'sed -i "s|chain.o|bfgs.o dynmat.o instanton.o lbfgs.o sd.o cg.o dimer.o bbm.o fire.o lanczos.o neb.o qm.o opt.o chain.o |" src/.objects && '
-prebuildopts += 'cd src && '
-prebuildopts += 'perl -i -0pe \'s/( *)CALL CHAIN_FORCE\(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \& *\n( *)LATT_CUR%A,LATT_CUR%B,IO%IU6\)/$1CALL CHAIN_FORCE(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \&\n$2TSIF,LATT_CUR%A,LATT_CUR%B,IO%IU6\)/\' main.F && '
-prebuildopts += 'patch vasp-5.4.1-mpmd.patch && '
-prebuildopts += 'perl mkbdrpro.pl && '
-prebuildopts += 'cd .. && '
+
 
 # VASP uses LIBS as a list of folders
 prebuildopts += 'unset LIBS && '
