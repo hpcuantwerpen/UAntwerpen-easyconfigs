@@ -1,0 +1,69 @@
+easyblock = 'ConfigureMake'
+
+name = 'beagle-lib'
+version = '2.1.2'
+
+homepage = 'https://github.com/beagle-dev/beagle-lib'
+
+whatis = [ 
+    'Description: beagle-lib is a high-performance library that can perform the core calculations at the heart of most Bayesian and Maximum Likelihood phylogenetics packages',
+    'This module contains static libraries with and without SSE support, but no OpenMP support'
+]
+
+description = """
+BEAGLE is a high-performance library that can perform the core calculations at
+the heart of most Bayesian and Maximum Likelihood phylogenetics packages. It can
+make use of highly-parallel processors such as those in graphics cards (GPUs)
+found in many PCs.
+
+The project involves an open API and fast implementations of a library for
+evaluating phylogenetic likelihoods (continuous time Markov processes) of
+biomolecular sequence evolution.
+
+The aim is to provide high performance evaluation 'services' to a wide range of
+phylogenetic software, both Bayesian samplers and Maximum Likelihood optimizers.
+This allows these packages to make use of implementations that make use of
+optimized hardware such as graphics processing units.
+
+This module contains static libraries with and without SSE support. OpenMP 
+support was disabled during the build.
+"""
+
+docurls = [
+    'Journal article: http://sysbio.oxfordjournals.org/content/61/1/170',
+] 
+
+################
+
+toolchain = {'name': 'intel', 'version': '2017c'}
+# Enable OpenMP support. The Beagle code does contain OpenMP pragmas,
+# but since it seems that it is installed only to be used by BEAST and MrBayes
+# since parallelism seems to come from threads in Java in Beast and MPI processes
+# in mrBayes, we leave it disabled for now.
+# OpenMP is also not used in the other Beagle EasyConfigs.
+# toolchainopts = {'openmp': 'True'}
+
+# https://github.com/beagle-dev/beagle-lib/archive/beagle_release_2_1_2.tar.gz
+source_urls = ['https://github.com/beagle-dev/beagle-lib/archive/']
+sources = ['beagle_release_%s.tar.gz' % version.replace('.', '_')]
+
+dependencies = [('Java', '9', '', True)]  # Needed to use beagle-lib with Beast.
+
+builddependencies = [('buildtools', '2017c', '', True)]
+
+# parallel build does not work (to test)
+parallel = 1
+
+preconfigopts = "./autogen.sh && "
+# Tried to enable the generation of man pages, but this does not seem to work...
+configopts = "--enable-doxygen-man --disable-openmp"
+
+sanity_check_paths = {
+    'files': ["include/libhmsbeagle-1/libhmsbeagle/%s" % includefile
+              for includefile in ["beagle.h", "platform.h"]] +
+             ["lib/libhmsbeagle%s.so" % libfile
+              for libfile in ["-cpu", "-cpu-sse", "-jni", ""]],
+    'dirs': []
+}
+
+moduleclass = 'numlib'
