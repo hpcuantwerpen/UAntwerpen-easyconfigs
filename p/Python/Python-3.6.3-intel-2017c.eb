@@ -50,7 +50,7 @@ dependencies = [
     ('libxml2',     '2.9.7'),  # KL 20171204, needed for lxml
     ('libxslt',     '1.1.32'), # KL 20171204, needed for lxml
     ('cURL',        '7.56.1'), # KL 20171204, needed for pysam
-    ('protobuf',    '3.5.0'),  # KL 20171204, needed for protobuf
+#    ('protobuf',    '3.5.0'),  # KL 20171204, needed for protobuf INCLUDED in a separte module to have the binary version.
     # OS dependency should be preferred if the os version is more recent then this version,
     # it's nice to have an up to date openssl for security reasons
     # ('OpenSSL', '1.0.2h'),
@@ -212,10 +212,11 @@ exts_list = [
     ('dev', '0.4.0', {
         'source_urls': ['https://pypi.python.org/packages/source/d/dev'],
     }),
-    ('protobuf', '3.4.0', { # Needed for TensorFlow, uses the protobuf module.
-        'modulename': 'google.protobuf',
-        'source_urls': ['https://pypi.python.org/packages/source/p/protobuf'],
-    }),
+#   We will include this in a separate module to have a proper binary installation.
+#    ('protobuf', '3.4.0', { # Needed for TensorFlow, uses the protobuf module.
+#        'modulename': 'google.protobuf',
+#        'source_urls': ['https://pypi.python.org/packages/source/p/protobuf'],
+#    }),
 ]
 
 moduleclass = 'lang'
