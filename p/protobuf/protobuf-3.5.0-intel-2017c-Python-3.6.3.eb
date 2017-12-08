@@ -1,0 +1,76 @@
+easyblock = 'ConfigureMake'
+
+name = 'protobuf'
+version = '3.5.0'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://developers.google.com/protocol-buffers/ and https://github.com/google/protobuf/'
+whatis = [
+   'Description: Google Protocol Buffers for Python',
+   'The module includes only those parts that are necessary for use with Python',
+]
+
+description = """
+Protocol buffers are Google's language-neutral, platform-neutral, extensible
+mechanism for serializing structured data – think XML, but smaller, faster, and
+simpler. You define how you want your data to be structured once, then you can
+use special generated source code to easily write and read your structured data
+to and from a variety of data streams and using a variety of languages.
+
+Protocol buffers currently supports generated code in Java, Python, Objective-C,
+and C++. With our new proto3 language version, you can also work with Go,
+JavaNano, Ruby, and C#, with more languages to come.
+
+The module includes only those parts that are necessary for use with Python.
+"""
+
+docurls = [
+    'Web-based developer guide: https://developers.google.com/protocol-buffers/docs/overview',
+    'Web-based tutorial overview: https://developers.google.com/protocol-buffers/docs/tutorials',
+]
+
+toolchain = {'name': 'intel', 'version': '2017c'}
+toolchainopts = { 'cstd': 'c++11' }
+
+source_urls = ['https://github.com/google/protobuf/archive/v%(version)s/']
+sources = [SOURCE_TAR_GZ]
+
+dependencies = [
+    ('Python', '3.6.3'),
+]
+
+builddependencies = [
+    ('buildtools', '2017c', '', True),  # For autotools.
+]
+
+#
+# Configure phase
+#
+preconfigopts = './autogen.sh && DIST_LANG=python '
+
+#
+# Build phase
+#
+buildopts  = " && cd python"
+buildopts += " && LD_LIBRARY_PATH=%(builddir)s/protobuf-%(version)s/src/.libs:${LD_LIBRARY_PATH} python setup.py build --cpp_implementation"
+
+#
+# Install phase
+#
+installopts  = " && cd python"
+installopts += " && mkdir -p %(installdir)s/lib/python%(pyshortver)s/site-packages"
+installopts += " && PYTHONPATH=%(installdir)s/lib/python%(pyshortver)s/site-packages setup.py install --prefix=%(installdir)s"
+
+#
+# Sanity check phase
+#
+sanity_check_paths = {
+    'files': ['bin/protoc', 'lib/libprotobuf.%s' % SHLIB_EXT],
+    'dirs': [],
+}
+
+#
+# Generate the module file
+#
+modextrapaths = {'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages'}
+moduleclass = 'devel'
