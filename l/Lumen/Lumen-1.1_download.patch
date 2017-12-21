@@ -1,0 +1,29 @@
+Patch file for Lumen 1.1 by Kurt Lust, UAntwerp
+This patchfile updates the download URLs for fallback libraries
+--- lumen-orig/lib/archive/package.list	2017-11-22 10:52:06.000000000 +0100
++++ lumen/lib/archive/package.list	2017-12-20 14:05:48.833047000 +0100
+@@ -40,14 +40,14 @@
+ #
+ # URL's
+ #
+-url_netcdf=http://qe-forge.org/gf/download/frsrelease/229/1050/$(tarball_netcdf)
+-url_libxc=http://qe-forge.org/gf/download/frsrelease/228/1051/$(tarball_libxc)
+-url_iotk=http://qe-forge.org/gf/download/frsrelease/230/1052/$(tarball_iotk)
+-url_etsf_io=http://qe-forge.org/gf/download/frsrelease/231/1053/$(tarball_etsf)
+-url_lapack=http://qe-forge.org/gf/download/frsrelease/232/1054/$(tarball_lapack)
+-url_blacs=http://qe-forge.org/gf/download/frsrelease/233/1058/$(tarball_blacs)
+-url_scalapack=http://qe-forge.org/gf/download/frsrelease/234/1056/$(tarball_scalapack)
+-url_slatec=http://qe-forge.org/gf/download/frsrelease/235/1057/$(tarball_slatec)
+-url_petsc=http://qe-forge.org/gf/download/frsrelease/236/1059/$(tarball_petsc)
+-url_slepc=http://qe-forge.org/gf/download/frsrelease/237/1060/$(tarball_slepc)
++url_netcdf=https://github.com/yambo-code/yambo/files/783148/$(tarball_netcdf)
++url_libxc=https://github.com/yambo-code/yambo/files/783150/$(tarball_libxc)
++url_iotk=https://github.com/yambo-code/yambo/files/783147/$(tarball_iotk)
++url_etsf_io=https://github.com/yambo-code/yambo/files/845218/$(tarball_etsf_io)
++url_lapack=https://github.com/yambo-code/yambo/files/783151/$(tarball_lapack)
++url_blacs=https://github.com/yambo-code/yambo/files/783152/$(tarball_blacs)
++url_scalapack=https://github.com/yambo-code/yambo/files/783153/$(tarball_scalapack)
++url_slatec=https://github.com/yambo-code/yambo/files/783247/$(tarball_slatec)
++url_petsc=https://github.com/yambo-code/yambo/files/783154/$(tarball_petsc)
++url_slepc=https://github.com/yambo-code/yambo/files/789647/$(tarball_slepc)
+ 
