@@ -212,6 +212,11 @@ exts_list = [
     ('dev', '0.4.0', {
         'source_urls': ['https://pypi.python.org/packages/source/d/dev'],
     }),
+    ('absl-py', '0.1.7', {
+        'modulename': 'absl',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/a/absl-py'],
+    }), 
 #   We will include this in a separate module to have a proper binary installation.
 #    ('protobuf', '3.4.0', { # Needed for TensorFlow, uses the protobuf module.
 #        'modulename': 'google.protobuf',
