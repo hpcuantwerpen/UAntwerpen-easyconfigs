@@ -1,0 +1,37 @@
+--- configure/LINUX-X86_64-INTEL-MPI-FFTW.orig	2018-01-10 11:45:30.520320000 +0100
++++ configure/LINUX-X86_64-INTEL-MPI-FFTW	2018-01-10 11:48:57.070939000 +0100
+@@ -10,12 +10,12 @@
+ #INFO#
+ 
+      IRAT=2
+-     FC='mpif90'
++     FC='mpiifort'
+      CC='icc'
+-     LD='mpif90'
++     LD='mpiifort'
+      FFLAGS_GROMOS='$(FFLAGS) -fixed'
+      FFLAGS_GROMOS_MODULES='$(FFLAGS)'
+-     CPP='/usr/bin/cpp -P -C -traditional'
++     CPP='fpp'
+      CPPFLAGS='-D__Linux -D__INTEL -D__HAS_FFT_FFTW3 -D__HAS_BF_STREAM_IO -D__PARALLEL  '
+      NOOPT_FLAG=' -O1 '
+      NOOPT_OBJS=' jrotation_utils.mod.o '
+@@ -25,14 +25,14 @@
+        FFLAGS='-g -O0 -gen_interfaces -traceback -check all,noarg_temp_created '
+        CFLAGS='-g -O0 '
+      else
+-       FFLAGS='-O2 -I$(MKLROOT)/include/fftw -axAVX'
++       FFLAGS='-O2 -I$(MKLROOT)/include/fftw -xHOST'
+        CFLAGS='-O2'
+      fi
+      if [ $omp ]; then
+-       FFLAGS=${FFLAGS}' -openmp '
+-       LIBS='-mkl=parallel -L$(MKLROOT)/include/fftw -axAVX'
++       FFLAGS=${FFLAGS}' -qopenmp '
++       LIBS='-mkl=parallel -L$(MKLROOT)/include/fftw -xHOST'
+        OMP3_DISABLED=`{ ${FC} -v; } 2>&1 | ${AWK} '{ print ( $2 < "12.0.4" ) ? "true" : "false" }'`
+      else
+-       LIBS='-mkl=sequential -L$(MKLROOT)/include/fftw -axAVX'
++       LIBS='-mkl=sequential -L$(MKLROOT)/include/fftw -xHOST'
+      fi
+      LFLAGS='-static-intel '${LIBS}
