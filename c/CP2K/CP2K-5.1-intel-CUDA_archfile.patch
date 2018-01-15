@@ -1,0 +1,97 @@
+# Patch creates a new archfile to compile a SSMP-version for CP2K with Intel compilers and CUDA support.
+# Created by Kurt Lust, UAntwerpen
+--- cp2k-5.1.orig//arch/Linux-x86-64-intel-cuda.ssmp	1970-01-01 01:00:00.000000000 +0100
++++ cp2k-5.1/arch/Linux-x86-64-intel-cuda.ssmp	2018-01-15 10:51:01.452887000 +0100
+@@ -0,0 +1,92 @@
++# Arch file targeting Linux 64-bit using the Intel tool chain
++#
++PERL     = perl
++CPP      = #cpp
++AR       = xiar -r
++
++# Diagnostic message to be turned off
++DIAG_DISABLE = 8290,8291,10010,10212,11060
++
++CPPFLAGS   := $(NULL)
++CXXFLAGS   := -diag-disable $(DIAG_DISABLE) -std=c++0x
++CFLAGS     := -diag-disable $(DIAG_DISABLE)
++FCFLAGS    := -diag-disable $(DIAG_DISABLE) -free -fpp
++LDFLAGS    := -diag-disable $(DIAG_DISABLE)
++LDFLAGS_C  := -nofor_main
++OPTFLAGS   := $(NULL)
++NVOPTFLAGS := $(NULL)
++NVLAGS     := $(NULL)
++
++OPTFLAGS  += -O2
++OPTFLAGS  += -xHost
++DFLAGS    += -DNDEBUG
++
++CXXFLAGS  += -fp-model precise #-fno-alias -ansi-alias
++CFLAGS    += -fp-model precise #-fno-alias -ansi-alias
++FCFLAGS   += -fp-model source
++LDFLAGS   += #
++
++
++CXX = icpc
++CC  = icc
++FC  = ifort
++LD  = ifort
++
++OPTFLAGS += -qopenmp
++
++# Enable CUDA
++NVCC        = $(EBROOTCUDA)/bin/nvcc -w -Xcompiler="-fpermissive"
++NVOPTFLAGS += -O3 --gpu-architecture sm_60
++DFLAGS     += -D__ACC -D__DBCSR_ACC -D__PW_CUDA -D__HAS_PATCHED_CUFFT_70
++LIBS       += -lcudart -lcublas -lcufft -lrt
++
++# Use built-in libxstream
++DFLAGS  += -D__LIBXSTREAM
++IFLAGS  += -I$(SRCDIR)/acc/mic/libxstream/include
++
++# Select MKL for linear algebra, but we use FFTW for FFT.
++# So we make this possible and enable if LIBFFTW3ROOT is defined.
++DFLAGS  += -D__MKL -D__FFTSG -D__FFTW3
++IFLAGS  +=-I$(MKLROOT)/include -I$(EBROOTFFTW)/include
++ifneq (,$(LIBFFTW3ROOT)) # Use FFTW.
++  IFLAGS += -I$(LIBFFTW3ROOT)/include
++  LIBS += -Wl,--start-group $(LIBFFTW3ROOT)/lib/libfftw3.a $(LIBFFTW3ROOT)/lib/libfftw3_omp.a -Wl,--end-group
++else # FFTW = 0, use FFTW interfaces from MKL
++  IFLAGS += -I$(MKLROOT)/include/fftw
++endif
++LIBS += -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread
++LIBS += -lpthread -lm
++
++DFLAGS  += -D__INTEL -D__HAS_ISO_C_BINDING -D__USE_CP2K_TRACE
++IFLAGS  += # general include paths
++
++# Define __INTEL_COMPILER in case of external preprocessing because some source (pw/fft/fftw3_lib.F)
++# toggles code using this symbol, but of course the cpp preprocessor is not defining this symbol.
++CPPFLAGS  += #-C $(IFLAGS) $(DFLAGS) -D__INTEL_COMPILER -P -traditional
++
++CXXFLAGS  += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
++CFLAGS    += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
++FCFLAGS   += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
++LDFLAGS   += $(OPTFLAGS)
++LDFLAGS_C += $(OPTFLAGS)
++NVFLAGS   += $(NVOPTFLAGS) $(DFLAGS)
++
++LIBS += -lstdc++
++
++# Some files that need to compiled with lesser optimization when using the
++# Intel compilers.
++thermostat_utils.o: thermostat_utils.F
++	$(FC) -c $(FCFLAGS) -O1 $<
++
++mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
++	$(FC) -c $(FCFLAGS) -O0 $<
++
++qs_vxc_atom.o: qs_vxc_atom.F
++	$(FC) -c $(FCFLAGS) -O1 $<
++
++process.o: process.cpp
++	$(CXX) -c $(CXXFLAGS) -O1 $<
++
++transpose.o: transpose.cpp
++	$(CXX) -c $(CXXFLAGS) -O1 $<
++

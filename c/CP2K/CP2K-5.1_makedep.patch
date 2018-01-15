@@ -1,0 +1,13 @@
+# Patch makes sure that main programs in .cu files are also recognized and linked using 
+# Created by Kurt Lust, UAntwerpen
+--- cp2k-5.1.orig/tools/build_utils/makedep.py	2017-01-07 15:55:51.000000000 +0100
++++ cp2k-5.1/tools/build_utils/makedep.py	2018-01-15 10:31:03.791404000 +0100
+@@ -110,7 +110,7 @@
+         deps = collect_pkg_deps(packages, p)
+         makefile += " ".join(["$(LIBDIR)/"+a+archive_ext for a in deps]) + "\n"
+         makefile += "\t" + "$(LD) $(LDFLAGS)"
+-        if(fn.endswith(".c")):
++        if(fn.endswith(".c") or fn.endswith(".cu")):
+             makefile += " $(LDFLAGS_C)"
+         makefile += " -L$(LIBDIR) -o $@ %s.o "%bfn
+         makefile += "$(EXTERNAL_OBJECTS) "
