@@ -5,8 +5,18 @@ version = '2.1.3'
 versionsuffix = '-CPU-Python-%(pyver)s'
 
 homepage = 'https://keras.io/'
-description = """Keras is a minimalist, highly modular neural networks library, written in Python and
-capable of running on top of either TensorFlow or Theano."""
+
+whatis = [
+    "Description: Keras is a Python hihg-level neural networks API",
+    "This module runs Keras on top of the CPU-only version of TensorFlow."
+]
+
+description = """
+Keras is a minimalist, highly modular neural networks library, written in Python
+and capable of running on top of either TensorFlow, CNTK or Theano.
+
+This module supports Keras on top of TensorFlow for regular CPUs.
+"""
 
 toolchain = {'name': 'intel', 'version': '2017c'}
 
