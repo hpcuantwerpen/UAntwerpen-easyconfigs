@@ -1,0 +1,31 @@
+# Patch the sources of tools/reax/mol_fra.c:
+# - Add the include file string.h for strcmp.
+# - Replace close by fclose for consistency (now a mix was used and the correct include file for close is missing)
+--- lammps-stable_11Aug2017-orig/tools/reax/mol_fra.c	2018-01-23 14:04:20.544446000 +0100
++++ lammps-stable_11Aug2017/tools/reax/mol_fra.c	2018-01-31 15:49:38.457202969 +0100
+@@ -3,6 +3,7 @@
+ /*** this code was given to LAMMPS by Sergey Zybin, CalTech ***/
+ 
+ #include <stdio.h>
++#include <string.h>
+ #include <stdlib.h>
+ #include <math.h>
+ 
+@@ -205,7 +206,7 @@
+   Ilatc_z[2]=(a*e-b*d)/det;
+   }
+ 
+-  close(fp);
++  fclose(fp);
+ }
+ 
+ void GetCOdict(char *name) {
+@@ -244,7 +245,7 @@
+   }
+ 
+ 
+-  close(fp);
++  fclose(fp);
+ }
+ void AnalyzeTrajectory(char *name,char *name2) {
+ /***************************************************************************/
