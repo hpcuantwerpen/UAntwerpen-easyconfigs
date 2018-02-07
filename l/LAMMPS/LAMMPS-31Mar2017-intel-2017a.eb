@@ -4,6 +4,7 @@ name = 'LAMMPS'
 version = '31Mar2017'
 
 homepage = 'http://lammps.sandia.gov/'
+
 whatis = [
     "Description: LAMMPS is a classical molecular dynamics code, and an acronym for Large-scale Atomic/Molecular Massively Parallel Simulator",
     "The module contains a MPI binary (lmp_mpi) and serial binary (lmp_serial) with UA customizations, and some of the tools",
@@ -20,46 +21,52 @@ anymore.
 """
 
 toolchain = {'name': 'intel', 'version': '2017a'}
-toolchainopts = {'pic': True, 'openmp': False, 'usempi': True}
+toolchainopts = {'pic': True, 'openmp': False, 'usempi': False}
 
 source_urls = ['https://github.com/lammps/lammps/archive/']
 sources = [
     'stable_%(version)s.tar.gz',
-    'UAextensions_%(version)s.tar.gz'
 ]
-patches = [ '%(name)s-%(version)s_intel.patch' ]
+patches = [ 
+    ('%(name)s_UAextensions_%(version)s.patch',1),
+    ('%(name)s_EasyBuild_%(version)s.patch',1),
+    ('%(name)s_sources_%(version)s.patch',1),
+]
 
 dependencies = [
     ('Voro++',        '0.4.6'),
+#    ('PLUMED',        '2.3.0'),
     ('libjpeg-turbo', '1.5.1'),
     ('libpng',        '1.6.28'),
 ]
+
 osdependencies = [
     ('python-devel'),
 ]
 
-parallel = 1
 
+buildcmds  = 'parallel=$(nproc) && '
 # Note that we use && rather then ; to separate commands so that the build fails
 # if one of the commands fails.
 # Configure phase of the build
-buildcmds  = ''
+#buildcmds += '$EBROOTPLUMED/lib/plumed/patches/patch.sh -e lammps-6Apr13 --shared -p ; '
 buildcmds += 'cd src ; make yes-all no-kim no-poems no-meam no-kokkos no-user-atc no-user-awpmd no-user-quip no-user-h5md no-user-vtk no-gpu no-user-omp no-user-intel no-opt no-user-qmmm no-user-smd no-mscg ; '
 # Build phase: First build the libraries, then MPI and serial versions of LAMMPS.
-buildcmds += 'cd ../lib/colvars && make -j20 -f Makefile.g++ CXX=${CXX} CXXFLAGS="${CXXFLAGS}" ; '
-buildcmds += 'cd ../reax        && make -j20 -f Makefile.ifort F90FLAGS="${F90FLAGS}" ; '
-buildcmds += 'cd ../../src && '
-buildcmds += 'make -j20 mpi CC=${MPICXX} CFLAGS="${CXXFLAGS}" && '
+buildcmds += 'pushd ../lib/colvars && make -j${parallel} -f Makefile.EasyBuild && popd && '
+buildcmds += 'pushd ../lib/reax    && make -j${parallel} -f Makefile.EasyBuild && popd && '
+buildcmds += 'pushd ../lib/voronoi && make -j${parallel} -f Makefile.EasyBuild && popd && '
+buildcmds += 'make -j${parallel} mpi CC=${MPICXX} LINKFLAGS="-O" LIB="-lstdc++ -mkl=cluster" LMP_INC="-DLAMMPS_GZIP -DLAMMPS_JPEG -DLAMMPS_PNG -DLAMMPS_MEMALIGN=64" FFT_INC="-DFFT_MKL" FFT_PATH="" FFT_LIB="" JPG_LIB="-ljpeg -lpng" reax_SYSINC="" reax_SYSLIB="-lifcore -lsvml -limf" reax_SYSPATH="-L${MKLROOT}/../compiler/lib/intel64_lin" && '
 buildcmds += 'make clean-all && make no-mpiio no-user-lb && '
-buildcmds += 'make -j20 serial CC=${CXX} CFLAGS="${CXXFLAGS}" && '
+buildcmds += 'make -j${parallel} serial CC=${CC} LINKFLAGS="-O" LIB="-lstdc++ -mkl=sequential" LMP_INC="-DLAMMPS_GZIP -DLAMMPS_JPEG -DLAMMPS_PNG -DLAMMPS_MEMALIGN=64" FFT_INC="-DFFT_MKL" FFT_PATH="" FFT_LIB="" JPG_LIB="-ljpeg -lpng" reax_SYSINC="" reax_SYSLIB="-lifcore -lsvml -limf" reax_SYSPATH="-L${MKLROOT}/../compiler/lib/intel64_lin" && '
 # Next build some tools.
-buildcmds += 'cd ../tools && ${CXX} -o binary2txt ${CXXFLAGS} binary2txt.cpp && '
-buildcmds += '               ${F90} -o chain ${F90FLAGS} chain.f && '
-buildcmds += '               ${F90} -o micelle2d ${F90FLAGS} micelle2d.f && '
-buildcmds += 'cd colvars  && ${CXX} -o abf_integrate ${CXXFLAGS} abf_integrate.cpp abf_data.cpp && '
-buildcmds += 'cd ../reax  && ${F90} -o bondConnectCheck ${F90FLAGS} bondConnectCheck.f90 && '
-buildcmds += '               ${CC}  -o mol_fra ${CFLAGS} mol_fra.c && '
-buildcmds += 'cd ../../src && '
+buildcmds += 'cd .. && '
+buildcmds += 'pushd tools         && ${CXX} -o binary2txt ${CXXFLAGS} binary2txt.cpp                    && popd && '
+buildcmds += 'pushd tools         && ${F90} -o chain ${F90FLAGS} chain.f                                && popd && '
+buildcmds += 'pushd tools         && ${F90} -o micelle2d ${F90FLAGS} micelle2d.f                        && popd && '
+buildcmds += 'pushd tools/colvars && ${CXX} -o abf_integrate ${CXXFLAGS} abf_integrate.cpp abf_data.cpp && popd && '
+buildcmds += 'pushd tools/reax    && ${F90} -o bondConnectCheck ${F90FLAGS} bondConnectCheck.f90        && popd && '
+buildcmds += 'pushd tools/reax    && ${CC}  -o mol_fra ${CFLAGS} mol_fra.c                              && popd && '
+buildcmds += 'cd src && '
 prebuildopts  = buildcmds
 buildopts  = 'clean-all '
 
@@ -75,7 +82,6 @@ buildopts  = 'clean-all '
 files_to_copy = [
     "LICENSE",
     (["src/lmp_mpi", "src/lmp_serial"], "bin"),
-    "doc", 
     "examples",
     (["tools/binary2txt", "tools/chain", "tools/micelle2d", "tools/colvars/abf_integrate", "tools/reax/bondConnectCheck", "tools/reax/mol_fra", "tools/reax/reaxc_bond.pl"], "bin"),
     (["tools/matlab", "tools/python", "tools/emacs", "tools/vim"], "tools") 
@@ -84,7 +90,7 @@ files_to_copy = [
 sanity_check_paths = {
     'files' : ["LICENSE", "bin/lmp_mpi", "bin/lmp_serial", 
                "bin/binary2txt", "bin/chain", "bin/micelle2d", "bin/abf_integrate", "bin/bondConnectCheck", "bin/mol_fra"],
-    'dirs'  : ["doc", "examples", "tools/matlab", "tools/python", "tools/emacs", "tools/vim"]
+    'dirs'  : ["examples", "tools/matlab", "tools/python", "tools/emacs", "tools/vim"]
 }
 
 moduleclass = 'math'

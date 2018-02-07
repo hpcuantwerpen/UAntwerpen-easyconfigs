@@ -1,31 +1,32 @@
-#! /bin/bash
-
 version=31Mar2017
 toolchain=intel-2017a
-installdir=/scratch/antwerpen/200/vsc20001/LAMMPS/${version}-${toolchain}
+installdir=/scratch/antwerpen/200/vsc20001/LAMMPS-Kurt/${version}-${toolchain}-MKL
+parallel=28
 
 #
 # Offline preparations: We expect a file UAextensions_${version}.tar.gz with a subset
 # of the directory structure of the LAMMPS distribution file and containing the
-# various fix_* and pair_* files contributed by the users in 
+# various fix_* and pair_* files contributed by the users in
 # lammps-stable_${version}/src
 #
 
 #
 # Get the sources
 #
-pushd /apps/antwerpen/sources/l/LAMMPS
-wget https://github.com/lammps/lammps/archive/stable_${version}.tar.gz
-# Creates stable_${version}.tar.gz in that directory.
-popd
-
+if [ ! -f /apps/antwerpen/sources/l/LAMMPS/stable_${version}.tar.gz ]; then
+  pushd /apps/antwerpen/sources/l/LAMMPS
+  wget https://github.com/lammps/lammps/archive/stable_${version}.tar.gz
+  # Creates stable_${version}.tar.gz in that directory.
+  popd
+fi
 
 #
 # Start the installation.
 #
+module load $VSC_INSTITUTE_CLUSTER/2017a
 module load intel/2017a
 module load Voro++/0.4.6-intel-2017a
-module load PLUMED/2.3.0-intel-2017a
+#module load PLUMED/2.3.0-intel-2017a
 module load libjpeg-turbo/1.5.1-intel-2017a
 module load libpng/1.6.28-intel-2017a
 
@@ -44,46 +45,71 @@ export F90FLAGS="-O2 -funroll-loops -fPIC"
 # Untar the package
 tar -xf /apps/antwerpen/sources/l/LAMMPS/stable_${version}.tar.gz
 # Creates the directory lammps-stable_${version}
-# Now also uncompress the UA extensions
-tar -xf /apps/antwerpen/sources/l/LAMMPS/UAextensions_${version}.tar.gz
 
 cd lammps-stable_${version}
 
 ############################################################################################
 # Patch phase
 
+# First add UAntwerpen-specific files
+patch -p1 </apps/antwerpen/sources/l/LAMMPS/LAMMPS_UAextensions_${version}.patch
+
 #
-# First some regular patching. We've redesigned the patches so that they
+# Second some regular patching. We've redesigned the patches so that they
 # could work in a potential EasyConfig.
 # The patch patches various Makefiles:
 # - src/MAKE/Makefile.mpi with a specific configuration for UAntwerp.
 # - src/MAKE/Makefile.serial with a specific configuration for UAntwerp.
 # - lib/reax/Makefile.lammps.ifort
 # - lib/voronoi/Makefile.lammps
-patch -p1 </apps/antwerpen/sources/l/LAMMPS/LAMMPS-${version}_intel.patch
+#patch -p1 </apps/antwerpen/sources/l/LAMMPS/LAMMPS-${version}_intel.patch
+
+# Second: Patches for EasyBuild support
+patch -p1 </apps/antwerpen/sources/l/LAMMPS/LAMMPS_EasyBuild_${version}.patch
+
+# Third: Fix source code problems
+patch -p1 </apps/antwerpen/sources/l/LAMMPS/LAMMPS_sources_${version}.patch
 
 ############################################################################################
 # Configure phase
 
 #
-# PLUMED support is not integrated in LAMMPS, but the developers of PLUMED 
+# PLUMED support is not integrated in LAMMPS, but the developers of PLUMED
 # offer a patching procedure to integrate it in a similar way as other
 # the packages that LAMMPS offers by default.
 # Note that officially only the 6Apr13 version of LAMMPS is supported!
+# Similarly to the UAntwerpen extensions, it also adds 2 files to the
+# LAMMPS sources: fix_plumed.cpp and fix_plumed.h. However, it also
+# makes some changes to 2 Makefile.package files
 #
-$EBROOTPLUMED/lib/plumed/patches/patch.sh -e lammps-6Apr13 --shared -p
+#$EBROOTPLUMED/lib/plumed/patches/patch.sh -e lammps-6Apr13 --shared -p
 
+#
+# LAMMPS configuration
+#
+makeopts='LMP_INC="-DLAMMPS_GZIP -DLAMMPS_JPEG -DLAMMPS_PNG -DLAMMPS_MEMALIGN=64" '
+makeopts+='FFT_INC="-DFFT_MKL " FFT_PATH="" FFT_LIB="" '
+#makeopts+='JPG_INC="-I\$(EBROOTLIBJPEGMINTURBO)/include -I\$(EBROOTLIBPNG)/include" JPG_PATH="-L\$(EBROOTLIBJPEGMINTURBO)/lib -L\$(EBROOTLIBPNG)/lib" JPG_LIB="-ljpeg -lpng" '
+makeopts+='JPG_LIB="-ljpeg -lpng" '
+
+makempiopts='CC=${MPICXX} LINKFLAGS="-O" LIB="-lstdc++ -mkl=cluster" '
+#makeserialopts='CC=${CC} CFLAGS="${CFLAGS}" LINK=${CC} LINKFLAGS="-O" LIB="-lstdc++ -mkl=sequential" '
+makeserialopts='LINKFLAGS="-O" LIB="-lstdc++ -mkl=sequential" '
+
+lammpsreaxopts='reax_SYSINC="" reax_SYSLIB="-lifcore -lsvml -limf" reax_SYSPATH="-L${MKLROOT}/../compiler/lib/intel64_lin" '
+#lammpsvoronoiopts='voronoi_SYSINC="${EBROOTVOROPLUSPLUS}/include/voro++" voronoi_SYSLIB="-lvoro++" voronoi_SYSPATH="-L${EBROOTVOROPLUSPLUS}/lib" '
+lammpsvoronoiopts=''
 #
 # Configure LAMMPS with the packages that will be used
 # We turn on all packages, then turn off a selection that we do not want or
-# that casue conflicts.
+# that cause conflicts.
 #
 cd src
-make yes-all yes-plumed
-# Disable some libraries that we do not have
-make no-kim no-poems no-meam no-kokkos no-user-atc no-user-awpmd no-user-quip no-user-h5md no-user-vtk
-# Other features
-make no-gpu no-user-omp no-user-intel no-opt no-user-qmmm no-user-smd no-mscg
+configstring='yes-all '
+#configstring+='yes-user-plumed '
+configstring+='no-kim no-poems no-meam no-kokkos no-user-atc no-user-awpmd no-user-quip no-user-h5md no-user-vtk '
+configstring+='no-gpu no-user-omp no-user-intel no-opt no-user-qmmm no-user-smd no-mscg'
+make $configstring
 
 ############################################################################################
 # Build phase
@@ -91,35 +117,42 @@ make no-gpu no-user-omp no-user-intel no-opt no-user-qmmm no-user-smd no-mscg
 #
 # Build the software
 #
-cd ../lib/colvars ; make -j20 -f Makefile.g++ CXX=${CXX} CXXFLAGS="${CXXFLAGS}" 
-cd ../reax        ; make -j20 -f Makefile.ifort F90FLAGS="${F90FLAGS}"
-cd ../../src      ; make -j20 mpi CC=${MPICXX} CFLAGS="${CXXFLAGS}"
-# Reconfigure for a serial build
+# - First step: Build the libraries in the lib subdirectory that correspond to the selected
+#   options.
+#
+pushd ../lib/colvars ; make -j$parallel -f Makefile.EasyBuild ; popd
+pushd ../lib/reax    ; make -j$parallel -f Makefile.EasyBuild ; popd
+pushd ../lib/voronoi ; make -j$parallel -f Makefile.EasyBuild ; popd
+#
+# - Second step: Build the mpi version (which corresponds to the settings above)
+#
+eval make -j$parallel mpi ${makempiopts} ${makeopts} ${lammpsreaxopts} ${lammpsvoronoiopts}
+#
+# - Third step: Reconfigure for a serial build and perform that build
+#
 make clean-all
 make no-mpiio no-user-lb
-make -j20 serial CC=${CXX} CFLAGS="${CXXFLAGS}"
+eval make -j$parallel serial ${makeserialopts} ${makeopts} ${lammpsreaxopts} ${lammpsvoronoiopts}
+cd ..
 
 # Try building some tools
-cd ../tools ; ${CXX} -o binary2txt ${CXXFLAGS} binary2txt.cpp
-              ${F90} -o chain ${F90FLAGS} chain.f
-              ${F90} -o micelle2d ${F90FLAGS} micelle2d.f
-cd colvars  ; ${CXX} -o abf_integrate ${CXXFLAGS} abf_integrate.cpp abf_data.cpp
-cd ../reax  ; ${F90} -o bondConnectCheck ${F90FLAGS} bondConnectCheck.f90
-              ${CC} -o mol_fra ${CFLAGS} mol_fra.c
+pushd tools         ; ${CXX} -o binary2txt ${CXXFLAGS} binary2txt.cpp                    ; popd
+pushd tools         ; ${F90} -o chain ${F90FLAGS} chain.f                                ; popd
+pushd tools         ; ${F90} -o micelle2d ${F90FLAGS} micelle2d.f                        ; popd
+pushd tools/colvars ; ${CXX} -o abf_integrate ${CXXFLAGS} abf_integrate.cpp abf_data.cpp ; popd
+pushd tools/reax    ; ${F90} -o bondConnectCheck ${F90FLAGS} bondConnectCheck.f90        ; popd
+pushd tools/reax    ; ${CC} -o mol_fra ${CFLAGS} mol_fra.c                               ; popd
 
 ############################################################################################
 # Install phase
 
-cd ../..
 mkdir -p ${installdir}/bin
 cp LICENSE ${installdir}
 cp src/lmp_mpi src/lmp_serial ${installdir}/bin
 cp -r examples ${installdir}
-cp -r doc ${installdir}
+# doc needs to be generated and this requires tools that we prefer not to have on our system.
+#cp -r doc ${installdir}
 cp tools/binary2txt tools/chain tools/micelle2d tools/colvars/abf_integrate tools/reax/bondConnectCheck tools/reax/mol_fra tools/reax/reaxc_bond.pl ${installdir}/bin
 mkdir -p ${installdir}/tools
 cp -r tools/matlab tools/python tools/emacs tools/vim ${installdir}/tools
 
-#
-# And finally build a module file...
-#

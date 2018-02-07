@@ -1,0 +1,2666 @@
+# This patch file adds a number of UA-specific source files to the LAMMPS sources
+--- /dev/numm	1970-01-01 01:00:00.000000000 +0100
++++ lammps-stable_11Aug2017/src/fix_ljrep.cpp	2018-01-24 11:00:51.613408000 +0100
+@@ -0,0 +1,144 @@
++/* ----------------------------------------------------------------------
++   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
++   http://lammps.sandia.gov, Sandia National Laboratories
++   Steve Plimpton, sjplimp@sandia.gov
++
++   Copyright (2003) Sandia Corporation.  Under the terms of Contract
++   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
++   certain rights in this software.  This software is distributed under
++   the GNU General Public License.
++
++   See the README file in the top-level LAMMPS directory.
++------------------------------------------------------------------------- */
++
++/* ----------------------------------------------------------------------
++   Contributing author: Kristof Bal (University of Antwerp)
++------------------------------------------------------------------------- */
++
++#include "fix_ljrep.h"
++#include "mpi.h"
++#include "stdio.h"
++#include "string.h"
++#include "math.h"
++#include "atom.h"
++#include "force.h"
++#include "update.h"
++#include "group.h"
++#include "modify.h"
++#include "domain.h"
++#include "compute.h"
++#include "memory.h"
++#include "error.h"
++
++using namespace LAMMPS_NS;
++using namespace FixConst;
++
++/* ---------------------------------------------------------------------- */
++
++FixLJREP::FixLJREP(LAMMPS *lmp, int narg, char **arg) :
++  Fix(lmp, narg, arg)
++{
++  if (narg != 6) error->all(FLERR,"Illegal fix ljrep command");
++  
++  nevery = 1;
++  
++  rep_type = force->inumeric(FLERR,arg[3]);
++  rep_cut = force->numeric(FLERR,arg[4]);
++  rep_coeff = force->numeric(FLERR,arg[5]);
++  
++  if (rep_type <= 0) error->all(FLERR,"Illegal fix ljrep command");
++  if (rep_cut <= 0) error->all(FLERR,"Illegal fix ljrep command");
++  if (rep_coeff <= 0) error->all(FLERR,"Illegal fix ljrep command");
++  
++  // create a new compute coord style
++  // id = fix-ID + coord, compute group = fix group
++
++  int n = strlen(id) + 7;
++  id_coord = new char[n];
++  strcpy(id_coord,id);
++  strcat(id_coord,"_coord");
++
++  char **newarg = new char*[4];
++  newarg[0] = id_coord;
++  newarg[1] = group->names[igroup];
++  newarg[2] = (char *) "coord/atom";
++  newarg[3] = arg[4];
++  modify->add_compute(4,newarg);
++  delete [] newarg;
++
++}
++
++/* ---------------------------------------------------------------------- */
++
++FixLJREP::~FixLJREP()
++{
++  modify->delete_compute(id_coord);
++}
++
++/* ---------------------------------------------------------------------- */
++
++int FixLJREP::setmask()
++{
++  int mask = 0;
++  mask |= POST_FORCE;
++  return mask;
++}
++
++/* ---------------------------------------------------------------------- */
++
++void FixLJREP::init()
++{
++  int icompute = modify->find_compute(id_coord);
++  if (icompute < 0)
++    error->all(FLERR,"Coord ID for fix ljrep does not exist");
++  coord = modify->compute[icompute];
++}
++
++/* ---------------------------------------------------------------------- */
++
++void FixLJREP::post_force(int vflag)
++{
++  coord->compute_peratom();
++  
++  double **x = atom->x;
++  double **f = atom->f;
++  int *type = atom->type;
++  int *mask = atom->mask;
++  int nlocal = atom->nlocal;
++  int nall = nlocal + atom->nghost;
++  double xtmp,ytmp,ztmp,delx,dely,delz,fpair;
++  double rsq,r2inv,r6inv,forcelj;
++  double cut12 = pow(rep_cut, 12.0);
++
++  for (int i = 0; i < nlocal; i++) {
++    if (mask[i] & groupbit) {
++      if (type[i] != rep_type) continue;
++      if (coord->vector_atom[i] > 0.01) continue;
++
++      xtmp = x[i][0];
++      ytmp = x[i][1];
++      ztmp = x[i][2];
++    
++      for (int j = 0; j < nall; j++) {
++        if (j == i) continue;
++        if (type[j] != rep_type) continue;
++        delx = xtmp - x[j][0];
++        dely = ytmp - x[j][1];
++        delz = ztmp - x[j][2];
++        domain->minimum_image(delx, dely, delz);
++        rsq = delx*delx + dely*dely + delz*delz;
++		
++        if (rsq < 0.01) continue;
++
++        r2inv = 1.0/rsq;
++        r6inv = r2inv*r2inv*r2inv;
++        forcelj = r6inv * r6inv;
++        fpair = 12.0*rep_coeff*cut12*forcelj*r2inv;
++
++        f[i][0] += delx*fpair;
++        f[i][1] += dely*fpair;
++        f[i][2] += delz*fpair;
++      }
++    }
++  }
++}
+--- /dev/numm	1970-01-01 01:00:00.000000000 +0100
++++ lammps-stable_11Aug2017/src/fix_ljrep.h	2018-01-24 11:01:06.931400000 +0100
+@@ -0,0 +1,56 @@
++/* ----------------------------------------------------------------------
++   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
++   http://lammps.sandia.gov, Sandia National Laboratories
++   Steve Plimpton, sjplimp@sandia.gov
++
++   Copyright (2003) Sandia Corporation.  Under the terms of Contract
++   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
++   certain rights in this software.  This software is distributed under
++   the GNU General Public License.
++
++   See the README file in the top-level LAMMPS directory.
++------------------------------------------------------------------------- */
++
++#ifdef FIX_CLASS
++
++FixStyle(ljrep,FixLJREP)
++
++#else
++
++#ifndef LMP_FIX_LJREP_H
++#define LMP_FIX_LJREP_H
++
++#include "fix.h"
++
++namespace LAMMPS_NS {
++
++class FixLJREP : public Fix {
++ public:
++  FixLJREP(class LAMMPS *, int, char **);
++  ~FixLJREP();
++  int setmask();
++  void init();
++  void post_force(int vflag);
++
++ private:
++  double rep_cut, rep_coeff;
++  int rep_type;
++  char *id_coord;
++  class Compute *coord;
++  class NeighList *list;
++};
++
++}
++
++#endif
++#endif
++
++/* ERROR/WARNING messages:
++
++E: Illegal ... command
++
++Self-explanatory.  Check the input script syntax and compare to the
++documentation for the command.  You can use -echo screen as a
++command-line option when running LAMMPS to see the offending line.
++
++*/
+--- /dev/numm	1970-01-01 01:00:00.000000000 +0100
++++ lammps-stable_11Aug2017/src/fix_tfmc.cpp	2018-01-24 11:02:10.384651159 +0100
+@@ -0,0 +1,291 @@
++/* ----------------------------------------------------------------------
++   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
++   http://lammps.sandia.gov, Sandia National Laboratories
++   Steve Plimpton, sjplimp@sandia.gov
++
++   Copyright (2003) Sandia Corporation.  Under the terms of Contract
++   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
++   certain rights in this software.  This software is distributed under
++   the GNU General Public License.
++
++   See the README file in the top-level LAMMPS directory.
++------------------------------------------------------------------------- */
++
++/* ----------------------------------------------------------------------
++   Contributing author: Kristof Bal (University of Antwerp)
++------------------------------------------------------------------------- */
++
++#include "fix_tfmc.h"
++#include "mpi.h"
++#include "stdio.h"
++#include "string.h"
++#include "math.h"
++#include "atom.h"
++#include "force.h"
++#include "update.h"
++#include "group.h"
++#include "random_mars.h"
++#include "comm.h"
++#include "domain.h"
++#include "memory.h"
++#include "error.h"
++
++using namespace LAMMPS_NS;
++using namespace FixConst;
++
++/* ---------------------------------------------------------------------- */
++
++FixTFMC::FixTFMC(LAMMPS *lmp, int narg, char **arg) :
++  Fix(lmp, narg, arg)
++{
++  if (narg < 6) error->all(FLERR,"Illegal fix tfmc command");
++
++  // although we are not doing MD, we would like to use tfMC as an MD "drop in"
++  time_integrate = 1;
++  
++  d_max = force->numeric(FLERR,arg[3]);
++  T_set = force->numeric(FLERR,arg[4]);
++  seed = force->inumeric(FLERR,arg[5]);
++  
++  if (d_max <= 0) error->all(FLERR,"Fix tfmc displacement length must be > 0");
++  if (T_set <= 0) error->all(FLERR,"Fix tfmc temperature must be > 0");
++  if (seed <= 0) error->all(FLERR,"Illegal fix tfmc random seed");
++
++  // additional keywords
++
++  comflag = 0;
++  rotflag = 0;
++
++  int iarg = 6;
++  while (iarg < narg) {
++    if (strcmp(arg[iarg],"com") == 0) {
++      if (iarg+4 > narg) error->all(FLERR,"Illegal fix tfmc command");
++      comflag = 1;
++      xflag = force->inumeric(FLERR,arg[iarg+1]);
++      yflag = force->inumeric(FLERR,arg[iarg+2]);
++      zflag = force->inumeric(FLERR,arg[iarg+3]);
++      iarg += 4;
++    } else if (strcmp(arg[iarg],"rot") == 0) {
++      if (iarg+1 > narg) error->all(FLERR,"Illegal fix tfmc command");
++      rotflag = 1;
++      iarg += 1;
++    } else error->all(FLERR,"Illegal fix tfmc command");
++  }
++
++  // error checks
++  if (comflag)
++    if (xflag < 0 || xflag > 1 || yflag < 0 || yflag > 1 ||
++        zflag < 0 || zflag > 1) 
++      error->all(FLERR,"Illegal fix tfmc command");
++    if (xflag + yflag + zflag == 0) 
++      comflag = 0;
++
++  if (rotflag) {
++    xd = NULL;
++    nmax = -1;
++  }
++  
++  random_num = new RanMars(lmp,seed + comm->me);
++}
++
++/* ---------------------------------------------------------------------- */
++
++FixTFMC::~FixTFMC()
++{
++  delete random_num;
++  if (rotflag) {
++    memory->destroy(xd);
++    xd = NULL;
++    nmax = -1;
++  }
++}
++
++/* ---------------------------------------------------------------------- */
++
++int FixTFMC::setmask()
++{
++  int mask = 0;
++  mask |= INITIAL_INTEGRATE;
++  mask |= FINAL_INTEGRATE;
++  return mask;
++}
++
++/* ---------------------------------------------------------------------- */
++
++void FixTFMC::init()
++{
++  // obtain lowest mass in the system
++  double *rmass = atom->rmass;
++  double *mass = atom->mass;
++  int *type = atom->type;
++  int *mask = atom->mask;
++  int nlocal = atom->nlocal;
++  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
++  
++  mass_min = -1.0;
++  if (rmass) {
++    for (int i = 0; i < nlocal; i++)
++      if (mask[i] & groupbit) {
++        if (mass_min < 0 || mass_min > rmass[i]) mass_min = rmass[i];
++      }
++  } else {
++    for (int i = 0; i < nlocal; i++)
++      if (mask[i] & groupbit) {
++        if (mass_min < 0 || mass_min > mass[type[i]]) mass_min = mass[type[i]];
++      }
++  }
++}
++
++/* ---------------------------------------------------------------------- */
++
++void FixTFMC::initial_integrate(int vflag)
++{
++  double ftm2v = force->ftm2v;
++  double mvv2e = force->mvv2e;
++  double boltz = force->boltz;
++  double **x = atom->x;
++  double **f = atom->f;
++  double *rmass = atom->rmass;
++  double *mass = atom->mass;
++  double massone;
++  double masstotal;
++  double xcm_d[3], xcm_dall[3];
++  int *type = atom->type;
++  int *mask = atom->mask;
++  int nlocal = atom->nlocal;
++  if (igroup == atom->firstgroup) nlocal = atom->nfirst;
++
++  // in case we wish to track (and zero) the com movement 
++  if (comflag) {
++    xcm_d[0] = 0.0;
++    xcm_d[1] = 0.0;
++    xcm_d[2] = 0.0;
++  }
++
++  // displacement vector, needed to calculate (and zero) rotation
++  if (rotflag && nmax < nlocal) {
++    nmax = nlocal + 1;
++    memory->destroy(xd);
++    memory->create(xd,nmax,3,"tfmc:xd");
++  }
++
++  // generate displacements for each atom
++  for (int i = 0; i < nlocal; i++) {
++    if (mask[i] & groupbit) {
++      // scale max. displacement using relative mass
++      if (rmass) massone = rmass[i];
++      else massone = mass[type[i]];
++      d_i = d_max * pow(mass_min/massone, 0.25);
++      // loops for each component
++      for (int j = 0; j < 3; j++) {
++        P_acc = 0.0;
++        P_ran = 1.0;
++        gamma = f[i][j] * d_i / (2.0*boltz*T_set);
++        gamma_exp = exp(gamma);
++        gamma_expi = 1.0/gamma_exp;
++        // generate displacement using prob. dens.
++        while (P_acc < P_ran) {
++          xi = 2.0*random_num->uniform() - 1.0;
++          P_ran = random_num->uniform();
++          if (xi < 0) {
++            P_acc = exp(2.0*xi*gamma) * gamma_exp - gamma_expi;
++            P_acc = P_acc / (gamma_exp - gamma_expi);
++          } else if (xi > 0) {
++            P_acc = gamma_exp - exp(2.0*xi*gamma) * gamma_expi;
++            P_acc = P_acc / (gamma_exp - gamma_expi);
++          } else {
++            P_acc = 1.0;
++          }
++        }
++        // displace
++        x[i][j] += xi * d_i;
++        if (comflag) xcm_d[j] += xi * d_i * massone;
++        if (rotflag) xd[i][j] = xi * d_i;
++      }
++    }
++  }
++
++  // if post factum zeroing of linear or rotational motion
++  if (comflag || rotflag) masstotal = group->mass(igroup);
++
++  // zero com motion
++  if (comflag == 1 && group->count(igroup) != 0) {
++    MPI_Allreduce(xcm_d,xcm_dall,3,MPI_DOUBLE,MPI_SUM,world);
++    xcm_dall[0] /= masstotal;
++    xcm_dall[1] /= masstotal;
++    xcm_dall[2] /= masstotal;
++    for (int i = 0; i < nlocal; i++) {
++      if (mask[i] & groupbit) {
++        if (xflag) x[i][0] -= xcm_dall[0];
++        if (yflag) x[i][1] -= xcm_dall[1];
++        if (zflag) x[i][2] -= xcm_dall[2];
++      }
++    }
++  }
++
++  // zero rotation
++  if (rotflag == 1 && group->count(igroup) != 0) {
++
++    double dx, dy, dz;
++    double unwrap[3];
++    double cm[3], angmom[3], inertia[3][3], omega[3];
++    tagint *image = atom->image;
++    group->xcm(igroup,masstotal,cm);
++
++    // to zero rotations, we can employ the same principles the 
++	// velocity command uses to zero the angular momentum. of course, 
++	// there is no (conserved) momentum in MC, but we can substitute 
++	// "velocities" by a displacement vector and proceed from there.
++	// this of course requires "forking" group->angmom(), which is 
++	// what we do here.
++
++    double p[3];
++    p[0] = p[1] = p[2] = 0.0;
++
++    for (int i = 0; i < nlocal; i++) {
++      if (mask[i] & groupbit) {
++        domain->unmap(x[i],image[i],unwrap);
++        dx = unwrap[0] - cm[0];
++        dy = unwrap[1] - cm[1];
++        dz = unwrap[2] - cm[2];
++        if (rmass) massone = rmass[i];
++        else massone = mass[type[i]];
++        p[0] += massone * (dy*xd[i][2] - dz*xd[i][1]);
++        p[1] += massone * (dz*xd[i][0] - dx*xd[i][2]);
++        p[2] += massone * (dx*xd[i][1] - dy*xd[i][0]);
++      }
++    }
++    MPI_Allreduce(p,angmom,3,MPI_DOUBLE,MPI_SUM,world);
++   // end "angmom" calculation
++
++    group->inertia(igroup,cm,inertia);
++    group->omega(angmom,inertia,omega);
++
++    // now, get rid of the rotation
++    for (int i = 0; i < nlocal; i++) {
++      if (mask[i] & groupbit) {
++        domain->unmap(x[i],image[i],unwrap);
++        dx = unwrap[0] - cm[0];
++        dy = unwrap[1] - cm[1];
++        dz = unwrap[2] - cm[2];
++        x[i][0] -= omega[1]*dz - omega[2]*dy;
++        x[i][1] -= omega[2]*dx - omega[0]*dz;
++        x[i][2] -= omega[0]*dy - omega[1]*dx;
++      }
++    }
++  }
++}
++
++/* ---------------------------------------------------------------------- */
++
++void FixTFMC::final_integrate()
++{
++  // not needed, leave open for now
++}
++
++/* ---------------------------------------------------------------------- */
++
++void FixTFMC::reset_dt()
++{
++  // not needed, leave open for now
++}
+--- /dev/numm	1970-01-01 01:00:00.000000000 +0100
++++ lammps-stable_11Aug2017/src/fix_tfmc.h	2018-01-24 11:02:18.559540000 +0100
+@@ -0,0 +1,78 @@
++/* ----------------------------------------------------------------------
++   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
++   http://lammps.sandia.gov, Sandia National Laboratories
++   Steve Plimpton, sjplimp@sandia.gov
++
++   Copyright (2003) Sandia Corporation.  Under the terms of Contract
++   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
++   certain rights in this software.  This software is distributed under
++   the GNU General Public License.
++
++   See the README file in the top-level LAMMPS directory.
++------------------------------------------------------------------------- */
++
++#ifdef FIX_CLASS
++
++FixStyle(tfmc,FixTFMC)
++
++#else
++
++#ifndef LMP_FIX_TFMC_H
++#define LMP_FIX_TFMC_H
++
++#include "fix.h"
++
++namespace LAMMPS_NS {
++
++class FixTFMC : public Fix {
++ public:
++  FixTFMC(class LAMMPS *, int, char **);
++  ~FixTFMC();
++  int setmask();
++  void init();
++  void initial_integrate(int);
++  void final_integrate();
++  void reset_dt();
++
++ private:
++  double d_i,xi,gamma,gamma_exp,gamma_expi;
++  double P_acc,P_ran;
++  double d_max;
++  double T_set;
++  double mass_min;
++  double **xd;
++  int mass_require;
++  int seed;
++  int comflag, rotflag, xflag, yflag, zflag;
++  int nmax;
++  class RanMars *random_num;
++};
++
++}
++
++#endif
++#endif
++
++/* ERROR/WARNING messages:
++
++E: Illegal ... command
++
++Self-explanatory.  Check the input script syntax and compare to the
++documentation for the command.  You can use -echo screen as a
++command-line option when running LAMMPS to see the offending line.
++
++E: fix tfmc displacement length must be > 0
++
++Self-explanatory. You can only enter strictly positive displacement lengths.
++
++E: Fix tfmc temperature must be > 0"
++
++Self-explanatory.
++
++E: Illegal fix tfmc random seed
++
++Seeds can only be nonzero positive integers.
++
++
++
++*/
+--- /dev/numm	1970-01-01 01:00:00.000000000 +0100
++++ lammps-stable_11Aug2017/src/pair_rebomos.cpp	2018-01-24 11:02:31.962932973 +0100
+@@ -0,0 +1,1325 @@
++/* ----------------------------------------------------------------------
++   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
++   http://lammps.sandia.gov, Sandia National Laboratories
++   Steve Plimpton, sjplimp@sandia.gov
++
++   Copyright (2003) Sandia Corporation.  Under the terms of Contract
++   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
++   certain rights in this software.  This software is distributed under
++   the GNU General Public License.
++
++   See the README file in the top-level LAMMPS directory.
++------------------------------------------------------------------------- */
++
++/* ----------------------------------------------------------------------
++   References:
++
++   This code:
++   Stewart J A and Spearot D E (2013) Atomistic simulations of nanoindentation on the basal plane of crystalline molybdenum disulfide. Modelling Simul. Mater. Sci. Eng. 21.
++
++   Based on:
++   Liang T, Phillpot S R and Sinnott S B (2009) Parameterization of a reactive many-body potential for Mo–S systems. Phys. Rev. B79 245110.
++   Liang T, Phillpot S R and Sinnott S B (2012) Erratum: Parameterization of a reactive many-body potential for Mo-S systems. (Phys. Rev. B79 245110 (2009)) Phys. Rev. B85 199903(E).
++
++   LAMMPS file contributing authors: James Stewart, Khanh Dang and Douglas Spearot (University of Arkansas)
++------------------------------------------------------------------------- */
++
++#include "math.h"
++#include "stdio.h"
++#include "stdlib.h"
++#include "string.h"
++#include "mpi.h"
++#include "pair_rebomos.h"
++#include "atom.h"
++#include "neighbor.h"
++#include "neigh_request.h"
++#include "force.h"
++#include "comm.h"
++#include "neighbor.h"
++#include "neigh_list.h"
++#include "neigh_request.h"
++#include "math_const.h"
++#include "memory.h"
++#include "error.h"
++
++using namespace LAMMPS_NS;
++using namespace MathConst;
++
++#define MAXLINE 1024
++#define TOL 1.0e-9
++#define PI 3.141592653
++#define PGDELTA 1
++
++/* ---------------------------------------------------------------------- */
++
++PairREBOMoS::PairREBOMoS(LAMMPS *lmp) : Pair(lmp)
++{
++  single_enable = 0;
++  one_coeff = 1;
++  ghostneigh = 1;
++
++  maxlocal = 0;
++  REBO_numneigh = NULL;
++  REBO_firstneigh = NULL;
++  maxpage = 0;
++  pages = NULL;
++  nM = nS = NULL;
++}
++
++/* ----------------------------------------------------------------------
++   Check if allocated, since class can be destructed when incomplete
++------------------------------------------------------------------------- */
++
++PairREBOMoS::~PairREBOMoS()
++{
++  memory->destroy(REBO_numneigh);
++  memory->sfree(REBO_firstneigh);
++  for (int i = 0; i < maxpage; i++) memory->destroy(pages[i]);
++  memory->sfree(pages);
++  memory->destroy(nM);
++  memory->destroy(nS);
++
++  if (allocated) {
++    memory->destroy(setflag);
++    memory->destroy(cutsq);
++    memory->destroy(cutghost);
++
++    memory->destroy(cutljsq);
++    memory->destroy(lj1);
++    memory->destroy(lj2);
++    memory->destroy(lj3);
++    memory->destroy(lj4);
++    delete [] map;
++  }
++}
++
++/* ---------------------------------------------------------------------- */
++
++void PairREBOMoS::compute(int eflag, int vflag)
++{
++  if (eflag || vflag) ev_setup(eflag,vflag);
++  else evflag = vflag_fdotr = vflag_atom = 0;
++
++  REBO_neigh();
++  FREBO(eflag,vflag);
++  if (ljflag) FLJ(eflag,vflag);
++
++  if (vflag_fdotr) virial_fdotr_compute();
++}
++
++/* ----------------------------------------------------------------------
++   allocate all arrays
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::allocate()
++{
++  allocated = 1;
++  int n = atom->ntypes;
++
++  memory->create(setflag,n+1,n+1,"pair:setflag");
++  for (int i = 1; i <= n; i++)
++    for (int j = i; j <= n; j++)
++      setflag[i][j] = 0;
++
++  memory->create(cutsq,n+1,n+1,"pair:cutsq");
++  memory->create(cutghost,n+1,n+1,"pair:cutghost");
++
++  // only sized by M,S = 2 types
++
++  memory->create(cutljsq,2,2,"pair:cutljsq");
++  memory->create(lj1,2,2,"pair:lj1");
++  memory->create(lj2,2,2,"pair:lj2");
++  memory->create(lj3,2,2,"pair:lj3");
++  memory->create(lj4,2,2,"pair:lj4");
++
++  map = new int[n+1];
++}
++
++/* ----------------------------------------------------------------------
++   global settings
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::settings(int narg, char **arg)
++{
++  if (narg != 0) error->all(FLERR,"Illegal pair_style command");
++
++  cutlj = 0;
++  ljflag = 1;
++}
++
++/* ----------------------------------------------------------------------
++   set coeffs for one or more type pairs
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::coeff(int narg, char **arg)
++{
++  if (!allocated) allocate();
++
++  if (narg != 3 + atom->ntypes)
++    error->all(FLERR,"Incorrect args for pair coefficients");
++
++  // insure I,J args are * *
++
++  if (strcmp(arg[0],"*") != 0 || strcmp(arg[1],"*") != 0)
++    error->all(FLERR,"Incorrect args for pair coefficients");
++
++  // read args that map atom types to M and S
++  // map[i] = which element (0,1) the Ith atom type is, -1 if NULL
++
++  for (int i = 3; i < narg; i++) {
++    if (strcmp(arg[i],"NULL") == 0) {
++      map[i-2] = -1;
++      continue;
++    } else if (strcmp(arg[i],"M") == 0) {
++      map[i-2] = 0;
++    } else if (strcmp(arg[i],"S") == 0) {
++      map[i-2] = 1;
++    } else error->all(FLERR,"Incorrect args for pair coefficients");
++  }
++
++  // read potential file and initialize fitting splines
++
++  read_file(arg[2]);
++
++  // clear setflag since coeff() called once with I,J = * *
++
++  int n = atom->ntypes;
++  for (int i = 1; i <= n; i++)
++    for (int j = i; j <= n; j++)
++      setflag[i][j] = 0;
++
++  // set setflag i,j for type pairs where both are mapped to elements
++
++  int count = 0;
++  for (int i = 1; i <= n; i++)
++    for (int j = i; j <= n; j++)
++      if (map[i] >= 0 && map[j] >= 0) {
++        setflag[i][j] = 1;
++        count++;
++      }
++
++  if (count == 0) error->all(FLERR,"Incorrect args for pair coefficients");
++}
++
++/* ----------------------------------------------------------------------
++   init specific to this pair style
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::init_style()
++{
++  if (atom->tag_enable == 0)
++    error->all(FLERR,"Pair style Mo-S REBO requires atom IDs");
++  if (force->newton_pair == 0)
++    error->all(FLERR,"Pair style Mo-S REBO requires newton pair on");
++
++  // need a full neighbor list, including neighbors of ghosts
++
++  int irequest = neighbor->request(this);
++  neighbor->requests[irequest]->half = 0;
++  neighbor->requests[irequest]->full = 1;
++  neighbor->requests[irequest]->ghost = 1;
++
++  // local REBO neighbor list memory
++
++  pgsize = neighbor->pgsize;
++  oneatom = neighbor->oneatom;
++  if (maxpage == 0) add_pages();
++}
++
++/* ----------------------------------------------------------------------
++   init for one type pair i,j and corresponding j,i
++------------------------------------------------------------------------- */
++
++double PairREBOMoS::init_one(int i, int j)
++{
++  if (setflag[i][j] == 0) error->all(FLERR,"All pair coeffs are not set");
++
++  // convert to M,S types
++
++  int ii = map[i];
++  int jj = map[j];
++
++  // use M-M values for these cutoffs since M atoms are biggest
++
++  // cut3rebo = 3 REBO distances
++
++  cut3rebo = 3.0 * rcmax[0][0];
++
++  // cutljrebosq = furthest distance from an owned atom a ghost atom can be
++  //               to need its REBO neighs computed
++  // interaction = M-K-I-J-L-N with I = owned and J = ghost
++  //   this insures N is in the REBO neigh list of L
++  //   since I-J < rcLJmax and J-L < rmax
++
++  double cutljrebo = rcLJmax[0][0] + rcmax[0][0];
++  cutljrebosq = cutljrebo * cutljrebo;
++
++  // cutmax = furthest distance from an owned atom
++  //          at which another atom will feel force, i.e. the ghost cutoff
++  // for REBO term in potential:
++  //   interaction = M-K-I-J-L-N with I = owned and J = ghost
++  //   I to N is max distance = 3 REBO distances
++  // for LJ term in potential:
++  //   short interaction = M-K-I-J-L-N with I = owned, J = ghost, I-J < rcLJmax
++  //   rcLJmax + 2*rcmax, since I-J < rcLJmax and J-L,L-N = REBO distances
++  //   long interaction = I-J with I = owned and J = ghost
++  //   cutlj*sigma, since I-J < LJ cutoff
++  // cutghost = REBO cutoff used in REBO_neigh() for neighbors of ghosts
++
++  double cutmax = cut3rebo;
++  if (ljflag) {
++    cutmax = MAX(cutmax,rcLJmax[0][0] + 2.0*rcmax[0][0]);
++    cutmax = MAX(cutmax,cutlj*sigma[0][0]);
++  }
++
++  cutghost[i][j] = rcmax[ii][jj];
++  cutljsq[ii][jj] = cutlj*sigma[ii][jj] * cutlj*sigma[ii][jj];
++  lj1[ii][jj] = 48.0 * epsilon[ii][jj] * pow(sigma[ii][jj],12.0);
++  lj2[ii][jj] = 24.0 * epsilon[ii][jj] * pow(sigma[ii][jj],6.0);
++  lj3[ii][jj] = 4.0 * epsilon[ii][jj] * pow(sigma[ii][jj],12.0);
++  lj4[ii][jj] = 4.0 * epsilon[ii][jj] * pow(sigma[ii][jj],6.0);
++
++  cutghost[j][i] = cutghost[i][j];
++  cutljsq[jj][ii] = cutljsq[ii][jj];
++  lj1[jj][ii] = lj1[ii][jj];
++  lj2[jj][ii] = lj2[ii][jj];
++  lj3[jj][ii] = lj3[ii][jj];
++  lj4[jj][ii] = lj4[ii][jj];
++
++  return cutmax;
++}
++
++/* ----------------------------------------------------------------------
++   create REBO neighbor list from main neighbor list
++   REBO neighbor list stores neighbors of ghost atoms
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::REBO_neigh()
++{
++  int i,j,ii,jj,n,allnum,jnum,itype,jtype;
++  double xtmp,ytmp,ztmp,delx,dely,delz,rsq,dS;
++  int *ilist,*jlist,*numneigh,**firstneigh;
++  int *neighptr;
++
++  double **x = atom->x;
++  int *type = atom->type;
++  int nlocal = atom->nlocal;
++  int nall = nlocal + atom->nghost;
++
++  if (atom->nmax > maxlocal) {
++    maxlocal = atom->nmax;
++    memory->destroy(REBO_numneigh);
++    memory->sfree(REBO_firstneigh);
++    memory->destroy(nM);
++    memory->destroy(nS);
++    memory->create(REBO_numneigh,maxlocal,"rebomos:numneigh");
++    REBO_firstneigh = (int **) memory->smalloc(maxlocal*sizeof(int *),
++                                               "rebomos:firstneigh");
++    memory->create(nM,maxlocal,"rebomos:nM");
++    memory->create(nS,maxlocal,"rebomos:nS");
++  }
++
++  allnum = list->inum + list->gnum;
++  ilist = list->ilist;
++  numneigh = list->numneigh;
++  firstneigh = list->firstneigh;
++
++  // store all REBO neighs of owned and ghost atoms
++  // scan full neighbor list of I
++
++  int npage = 0;
++  int npnt = 0;
++
++  for (ii = 0; ii < allnum; ii++) {
++    i = ilist[ii];
++
++    if (pgsize - npnt < oneatom) {
++      npnt = 0;
++      npage++;
++      if (npage == maxpage) add_pages();
++    }
++    neighptr = &pages[npage][npnt];
++    n = 0;
++
++    xtmp = x[i][0];
++    ytmp = x[i][1];
++    ztmp = x[i][2];
++    itype = map[type[i]];
++    nM[i] = nS[i] = 0.0;
++    jlist = firstneigh[i];
++    jnum = numneigh[i];
++
++    for (jj = 0; jj < jnum; jj++) {
++      j = jlist[jj];
++      j &= NEIGHMASK;
++      jtype = map[type[j]];
++      delx = xtmp - x[j][0];
++      dely = ytmp - x[j][1];
++      delz = ztmp - x[j][2];
++      rsq = delx*delx + dely*dely + delz*delz;
++
++      if (rsq < rcmaxsq[itype][jtype]) {
++        neighptr[n++] = j;
++        if (jtype == 0)
++          nM[i] += Sp(sqrt(rsq),rcmin[itype][jtype],rcmax[itype][jtype],dS);
++        else
++          nS[i] += Sp(sqrt(rsq),rcmin[itype][jtype],rcmax[itype][jtype],dS);
++      }
++    }
++
++    REBO_firstneigh[i] = neighptr;
++    REBO_numneigh[i] = n;
++    npnt += n;
++    if (npnt >= pgsize)
++      error->one(FLERR,
++                 "Neighbor list overflow, boost neigh_modify one or page");
++  }
++}
++
++/* ----------------------------------------------------------------------
++   REBO forces and energy
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::FREBO(int eflag, int vflag)
++{
++  int i,j,k,m,ii,inum,itype,jtype,itag,jtag;
++  double delx,dely,delz,evdwl,fpair,xtmp,ytmp,ztmp;
++  double rsq,rij,wij;
++  double Qij,Aij,alphaij,VR,pre,dVRdi,VA,term,bij,dVAdi,dVA;
++  double dwij,del[3];
++  int *ilist,*REBO_neighs;
++
++  evdwl = 0.0;
++
++  double **x = atom->x;
++  double **f = atom->f;
++  int *type = atom->type;
++  int *tag = atom->tag;
++  int nlocal = atom->nlocal;
++  int newton_pair = force->newton_pair;
++
++  inum = list->inum;
++  ilist = list->ilist;
++
++  // two-body interactions from REBO neighbor list, skip half of them
++
++  for (ii = 0; ii < inum; ii++) {
++    i = ilist[ii];
++    itag = tag[i];
++    itype = map[type[i]];
++    xtmp = x[i][0];
++    ytmp = x[i][1];
++    ztmp = x[i][2];
++    REBO_neighs = REBO_firstneigh[i];
++
++    for (k = 0; k < REBO_numneigh[i]; k++) {
++      j = REBO_neighs[k];
++      jtag = tag[j];
++
++      if (itag > jtag) {
++        if ((itag+jtag) % 2 == 0) continue;
++      } else if (itag < jtag) {
++        if ((itag+jtag) % 2 == 1) continue;
++      } else {
++        if (x[j][2] < ztmp) continue;
++        if (x[j][2] == ztmp && x[j][1] < ytmp) continue;
++        if (x[j][2] == ztmp && x[j][1] == ytmp && x[j][0] < xtmp) continue;
++      }
++
++      jtype = map[type[j]];
++
++      delx = x[i][0] - x[j][0];
++      dely = x[i][1] - x[j][1];
++      delz = x[i][2] - x[j][2];
++      rsq = delx*delx + dely*dely + delz*delz;
++      rij = sqrt(rsq);
++      wij = Sp(rij,rcmin[itype][jtype],rcmax[itype][jtype],dwij);
++      if (wij <= TOL) continue;
++
++      Qij = Q[itype][jtype];
++      Aij = A[itype][jtype];
++      alphaij = alpha[itype][jtype];
++
++      VR = wij*(1.0+(Qij/rij)) * Aij*exp(-alphaij*rij);
++      pre = wij*Aij * exp(-alphaij*rij);
++      dVRdi = pre * ((-alphaij)-(Qij/rsq)-(Qij*alphaij/rij));
++      dVRdi += VR/wij * dwij;
++
++      VA = dVA = 0.0;
++      VA = -wij * BIJc[itype][jtype] * exp(-Beta[itype][jtype]*rij);
++
++      dVA = -Beta[itype][jtype] * VA;
++      dVA += VA/wij * dwij;
++
++      del[0] = delx;
++      del[1] = dely;
++      del[2] = delz;
++      bij = bondorder(i,j,del,rij,VA,f,vflag_atom);
++      dVAdi = bij*dVA;
++
++      fpair = -(dVRdi+dVAdi) / rij;
++      f[i][0] += delx*fpair;
++      f[i][1] += dely*fpair;
++      f[i][2] += delz*fpair;
++      f[j][0] -= delx*fpair;
++      f[j][1] -= dely*fpair;
++      f[j][2] -= delz*fpair;
++
++      if (eflag) evdwl = VR + bij*VA;
++      if (evflag) ev_tally(i,j,nlocal,newton_pair,
++                           evdwl,0.0,fpair,delx,dely,delz);
++    }
++  }
++}
++
++/* ----------------------------------------------------------------------
++   compute LJ forces and energy
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::FLJ(int eflag, int vflag)
++{
++  int i,j,k,m,ii,jj,kk,mm,inum,jnum,itype,jtype,ktype,mtype,itag,jtag;
++  int atomi,atomj,atomk,atomm;   
++  double evdwl,fpair,xtmp,ytmp,ztmp;          
++  double rsq,best,wik,wkm,cij,rij,dwij,dwik,dwkj,dwkm,dwmj;
++  double delij[3],rijsq,delik[3],rik,deljk[3];
++  double rkj,wkj,dC,VLJ,dVLJ,VA;
++  double vdw,slw,dvdw,dslw,drij;
++  double rljmin,rljmax,sigcut,sigmin,sigwid;
++  double delkm[3],rkm,deljm[3],rmj,wmj,r2inv,r6inv,scale,delscale[3];
++  int *ilist,*jlist,*numneigh,**firstneigh;
++  int *REBO_neighs_i,*REBO_neighs_k;
++  double delikS[3],deljkS[3],delkmS[3],deljmS[3],delimS[3];
++  double rikS,rkjS,rkmS,rmjS,wikS,dwikS;
++  double wkjS,dwkjS,wkmS,dwkmS,wmjS,dwmjS;
++  double fi[3],fj[3],fk[3],fm[3];
++  double c2,c3,dr,drp,r6;
++
++  // I-J interaction from full neighbor list
++  // skip 1/2 of interactions since only consider each pair once              
++
++  evdwl = 0.0;
++  rljmin = 0.0;                          
++  rljmax = 0.0;            
++  sigcut = 0.0;     
++  sigmin = 0.0;     
++  sigwid = 0.0;     
++
++
++  double **x = atom->x;
++  double **f = atom->f;            
++  int *tag = atom->tag;     
++  int *type = atom->type;   
++  int nlocal = atom->nlocal;
++  int newton_pair = force->newton_pair; 
++
++  inum = list->inum;                        
++  ilist = list->ilist;
++  numneigh = list->numneigh;         
++  firstneigh = list->firstneigh;
++
++  // loop over neighbors of my atoms
++
++  for (ii = 0; ii < inum; ii++) {
++    i = ilist[ii];
++    itag = tag[i];
++    itype = map[type[i]];
++    atomi = i;
++    xtmp = x[i][0];
++    ytmp = x[i][1];
++    ztmp = x[i][2];
++    jlist = firstneigh[i];
++    jnum = numneigh[i];
++
++    for (jj = 0; jj < jnum; jj++) {
++      j = jlist[jj];
++      j &= NEIGHMASK;
++      jtag = tag[j];
++
++      if (itag > jtag) {
++        if ((itag+jtag) % 2 == 0) continue;
++      } else if (itag < jtag) {
++        if ((itag+jtag) % 2 == 1) continue;
++      } else {
++        if (x[j][2] < ztmp) continue;
++        if (x[j][2] == ztmp && x[j][1] < ytmp) continue;
++        if (x[j][2] == ztmp && x[j][1] == ytmp && x[j][0] < xtmp) continue;
++      }
++      jtype = map[type[j]];
++      atomj = j;
++
++      delij[0] = xtmp - x[j][0];
++      delij[1] = ytmp - x[j][1];
++      delij[2] = ztmp - x[j][2];
++      rijsq = delij[0]*delij[0] + delij[1]*delij[1] + delij[2]*delij[2];
++      rij = sqrt(rijsq);
++
++      // compute LJ forces and energy
++
++      // Outside Rmax
++      if (rij > rcLJmax[itype][jtype] || rij < rcLJmin[itype][jtype]){
++          VLJ = 0;            
++          dVLJ = 0;                 
++      }
++
++      // Inside Rmax and above 0.95*sigma
++      else if (rij <= rcLJmax[itype][jtype] && rij >= 0.95*sigma[itype][jtype]){
++              r2inv = 1.0/rijsq;           
++              r6inv = r2inv*r2inv*r2inv;
++              VLJ = r6inv*(lj3[itype][jtype]*r6inv-lj4[itype][jtype]);
++              dVLJ = -r6inv*(lj1[itype][jtype]*r6inv - lj2[itype][jtype])/rij;
++      }
++
++      // Below 0.95*sigma
++      else if (rij < 0.95*sigma[itype][jtype] && rij >= rcLJmin[itype][jtype]){
++              dr = 0.95*sigma[itype][jtype] - rcLJmin[itype][jtype];
++              r6 = pow((sigma[itype][jtype]/(0.95*sigma[itype][jtype])),6);
++              vdw = 4*epsilon[itype][jtype]*r6*(r6 - 1.0);
++              dvdw = (-4*epsilon[itype][jtype]/(0.95*sigma[itype][jtype]))*r6*(12.0*r6 - 6.0);
++              c2 = ((3.0/dr)*vdw - dvdw)/dr;
++              c3 = (vdw/(dr*dr) - c2)/dr;
++
++              drp = rij - rcLJmin[itype][jtype];
++              VLJ = drp*drp*(drp*c3 + c2);
++              dVLJ = drp*(3.0*drp*c3 + 2.0*c2);
++      }
++
++      fpair = -dVLJ/rij;
++      f[i][0] += delij[0]*fpair;
++      f[i][1] += delij[1]*fpair;
++      f[i][2] += delij[2]*fpair;
++      f[j][0] -= delij[0]*fpair;
++      f[j][1] -= delij[1]*fpair;
++      f[j][2] -= delij[2]*fpair;
++
++      if (eflag) evdwl = VLJ;
++      if (evflag) ev_tally(i,j,nlocal,newton_pair,
++                           evdwl,0.0,fpair,delij[0],delij[1],delij[2]);
++
++    }
++  }
++}
++
++/* ----------------------------------------------------------------------
++   Bij function
++
++   The bond order term modified the attractive portion of the REBO
++   potential based on the number of atoms around a specific pair
++   and the bond angle between sets of three atoms.
++
++   The functions G(cos(theta)) and P(N) are evaluated and their
++   derivatives are also computed for use in the force calculation.
++------------------------------------------------------------------------- */
++
++double PairREBOMoS::bondorder(int i, int j, double rij[3], double rijmag,
++                              double VA,double **f, int vflag_atom)
++{
++  int atomi,atomj,atomk,atoml;
++  int k,n,l;                 
++  int itype, jtype, ktype, ltype;                 
++  double rik[3], rjl[3], rji[3], rki[3],rlj[3], wji, dwjl, bij;        
++  double NijM,NijS,NjiM,NjiS,wik,dwik,wjl;
++  double rikmag,rjlmag,cosjik,cosijl,g,tmp2;
++  double Etmp,pij,tmp,wij,dwij,dS;
++  double dgdc,pji;
++  double dcosjikdri[3],dcosijldri[3],dcosjikdrk[3];
++  double dp, Nlj;             
++  double dcosjikdrj[3],dcosijldrj[3],dcosijldrl[3];
++  double rjk[3], ril[3];
++  double fi[3],fj[3],fk[3],fl[3];
++  double PijS, PjiS;
++  int *REBO_neighs,*REBO_neighs_i,*REBO_neighs_j,*REBO_neighs_k,*REBO_neighs_l;
++
++  double **x = atom->x;
++  int *type = atom->type;
++
++  atomi = i;
++  atomj = j;
++  itype = map[type[i]];
++  jtype = map[type[j]];
++  wij = Sp(rijmag,rcmin[itype][jtype],rcmax[itype][jtype],dwij);
++  NijM = nM[i];
++  NijS = nS[i];
++  NjiM = nM[j];
++  NjiS = nS[j];
++  bij = 0.0;
++  tmp = 0.0;
++  tmp2 = 0.0;
++  dgdc = 0.0;
++  Etmp = 0.0;
++
++  REBO_neighs = REBO_firstneigh[i];
++  for (k = 0; k < REBO_numneigh[i]; k++) {
++    atomk = REBO_neighs[k];
++    if (atomk != atomj) {
++      ktype = map[type[atomk]];
++      rik[0] = x[atomi][0]-x[atomk][0];
++      rik[1] = x[atomi][1]-x[atomk][1];
++      rik[2] = x[atomi][2]-x[atomk][2];
++      rikmag = sqrt((rik[0]*rik[0])+(rik[1]*rik[1])+(rik[2]*rik[2]));
++      wik = Sp(rikmag,rcmin[itype][ktype],rcmax[itype][ktype],dS);
++      cosjik = ((rij[0]*rik[0])+(rij[1]*rik[1])+(rij[2]*rik[2])) / (rijmag*rikmag);
++      cosjik = MIN(cosjik,1.0);
++      cosjik = MAX(cosjik,-1.0);
++
++      // evaluate g and derivative dg
++
++      g = gSpline(cosjik,itype,&dgdc);
++      Etmp = Etmp+(wik*g);
++    }
++  }
++
++  PijS = 0.0;
++  dp = 0.0;
++  PijS = PijSpline(NijM,NijS,itype,&dp);
++  pij = pow(1.0+Etmp+PijS,-0.5);
++  tmp = -0.5*pow(pij,3.0);
++
++  // derivative calculations
++
++  REBO_neighs = REBO_firstneigh[i];
++  for (k = 0; k < REBO_numneigh[i]; k++) {
++    atomk = REBO_neighs[k];
++    if (atomk != atomj) {
++      ktype = map[type[atomk]];
++      rik[0] = x[atomi][0]-x[atomk][0];
++      rik[1] = x[atomi][1]-x[atomk][1];
++      rik[2] = x[atomi][2]-x[atomk][2];
++      rikmag = sqrt((rik[0]*rik[0])+(rik[1]*rik[1])+(rik[2]*rik[2]));
++      wik = Sp(rikmag,rcmin[itype][ktype],rcmax[itype][ktype],dwik);
++      cosjik = (rij[0]*rik[0] + rij[1]*rik[1] + rij[2]*rik[2]) / (rijmag*rikmag);
++      cosjik = MIN(cosjik,1.0);
++      cosjik = MAX(cosjik,-1.0);
++
++      dcosjikdri[0] = ((rij[0]+rik[0])/(rijmag*rikmag)) -
++        (cosjik*((rij[0]/(rijmag*rijmag))+(rik[0]/(rikmag*rikmag))));
++      dcosjikdri[1] = ((rij[1]+rik[1])/(rijmag*rikmag)) -
++        (cosjik*((rij[1]/(rijmag*rijmag))+(rik[1]/(rikmag*rikmag))));
++      dcosjikdri[2] = ((rij[2]+rik[2])/(rijmag*rikmag)) -
++        (cosjik*((rij[2]/(rijmag*rijmag))+(rik[2]/(rikmag*rikmag))));
++      dcosjikdrk[0] = (-rij[0]/(rijmag*rikmag)) +
++        (cosjik*(rik[0]/(rikmag*rikmag)));
++      dcosjikdrk[1] = (-rij[1]/(rijmag*rikmag)) +
++        (cosjik*(rik[1]/(rikmag*rikmag)));
++      dcosjikdrk[2] = (-rij[2]/(rijmag*rikmag)) +
++        (cosjik*(rik[2]/(rikmag*rikmag)));
++      dcosjikdrj[0] = (-rik[0]/(rijmag*rikmag)) +
++        (cosjik*(rij[0]/(rijmag*rijmag)));
++      dcosjikdrj[1] = (-rik[1]/(rijmag*rikmag)) +
++        (cosjik*(rij[1]/(rijmag*rijmag)));
++      dcosjikdrj[2] = (-rik[2]/(rijmag*rikmag)) +
++        (cosjik*(rij[2]/(rijmag*rijmag)));
++
++      g = gSpline(cosjik,itype,&dgdc);
++      tmp2 = VA*0.5*(tmp*wik*dgdc);
++      fj[0] = -tmp2*dcosjikdrj[0];
++      fj[1] = -tmp2*dcosjikdrj[1];
++      fj[2] = -tmp2*dcosjikdrj[2];
++      fi[0] = -tmp2*dcosjikdri[0];
++      fi[1] = -tmp2*dcosjikdri[1];
++      fi[2] = -tmp2*dcosjikdri[2];
++      fk[0] = -tmp2*dcosjikdrk[0];
++      fk[1] = -tmp2*dcosjikdrk[1];
++      fk[2] = -tmp2*dcosjikdrk[2];
++
++      // coordination forces
++
++      // dwik forces (from partial derivative)
++
++      tmp2 = VA*0.5*(tmp*dwik*g)/rikmag;
++      fi[0] -= tmp2*rik[0];
++      fi[1] -= tmp2*rik[1];
++      fi[2] -= tmp2*rik[2];
++      fk[0] += tmp2*rik[0];
++      fk[1] += tmp2*rik[1];
++      fk[2] += tmp2*rik[2];
++
++      // PIJ forces (from coordination P(N) term)
++
++      tmp2 = VA*0.5*(tmp*dp*dwik)/rikmag;
++      fi[0] -= tmp2*rik[0];
++      fi[1] -= tmp2*rik[1];
++      fi[2] -= tmp2*rik[2];
++      fk[0] += tmp2*rik[0];
++      fk[1] += tmp2*rik[1];
++      fk[2] += tmp2*rik[2];
++
++      // dgdN forces are removed
++
++      f[atomi][0] += fi[0]; f[atomi][1] += fi[1]; f[atomi][2] += fi[2];
++      f[atomj][0] += fj[0]; f[atomj][1] += fj[1]; f[atomj][2] += fj[2];
++      f[atomk][0] += fk[0]; f[atomk][1] += fk[1]; f[atomk][2] += fk[2];
++
++      if (vflag_atom) {
++        rji[0] = -rij[0]; rji[1] = -rij[1]; rji[2] = -rij[2];
++        rki[0] = -rik[0]; rki[1] = -rik[1]; rki[2] = -rik[2];
++        v_tally3(atomi,atomj,atomk,fj,fk,rji,rki);
++      }
++    }
++  }
++
++///////////////////////////////
++      // PIJ force contribution additional term
++      tmp2 = VA*0.5*(tmp*dp*dwij)/rijmag;
++      fi[0] = -tmp2*rij[0];
++      fi[1] = -tmp2*rij[1];
++      fi[2] = -tmp2*rij[2];
++      fj[0] = tmp2*rij[0];
++      fj[1] = tmp2*rij[1];
++      fj[2] = tmp2*rij[2];
++
++      f[atomi][0] += fi[0]; f[atomi][1] += fi[1]; f[atomi][2] += fi[2];
++      f[atomj][0] += fj[0]; f[atomj][1] += fj[1]; f[atomj][2] += fj[2];
++///////////////////////////////
++
++  tmp = 0.0;
++  tmp2 = 0.0;
++  Etmp = 0.0;
++
++  REBO_neighs = REBO_firstneigh[j];
++  for (l = 0; l < REBO_numneigh[j]; l++) {
++    atoml = REBO_neighs[l];
++    if (atoml != atomi) {
++      ltype = map[type[atoml]];
++      rjl[0] = x[atomj][0]-x[atoml][0];
++      rjl[1] = x[atomj][1]-x[atoml][1];
++      rjl[2] = x[atomj][2]-x[atoml][2];
++      rjlmag = sqrt((rjl[0]*rjl[0])+(rjl[1]*rjl[1])+(rjl[2]*rjl[2]));
++      wjl = Sp(rjlmag,rcmin[jtype][ltype],rcmax[jtype][ltype],dS);
++      cosijl = -1.0*((rij[0]*rjl[0])+(rij[1]*rjl[1])+(rij[2]*rjl[2])) / (rijmag*rjlmag);
++      cosijl = MIN(cosijl,1.0);
++      cosijl = MAX(cosijl,-1.0);
++
++      // evaluate g and derivative dg
++
++      g = gSpline(cosijl,jtype,&dgdc);
++      Etmp = Etmp+(wjl*g);
++    }
++  }
++
++  PjiS = 0.0;
++  dp = 0.0;
++  PjiS = PijSpline(NjiM,NjiS,jtype,&dp);
++  pji = pow(1.0+Etmp+PjiS,-0.5);
++  tmp = -0.5*pow(pji,3.0);
++
++  REBO_neighs = REBO_firstneigh[j];
++  for (l = 0; l < REBO_numneigh[j]; l++) {
++    atoml = REBO_neighs[l];
++    if (atoml != atomi) {
++      ltype = map[type[atoml]];
++      rjl[0] = x[atomj][0]-x[atoml][0];
++      rjl[1] = x[atomj][1]-x[atoml][1];
++      rjl[2] = x[atomj][2]-x[atoml][2];
++      rjlmag = sqrt((rjl[0]*rjl[0])+(rjl[1]*rjl[1])+(rjl[2]*rjl[2]));
++      wjl = Sp(rjlmag,rcmin[jtype][ltype],rcmax[jtype][ltype],dwjl);
++      cosijl = (-1.0*((rij[0]*rjl[0])+(rij[1]*rjl[1])+(rij[2]*rjl[2]))) / (rijmag*rjlmag);
++      cosijl = MIN(cosijl,1.0);
++      cosijl = MAX(cosijl,-1.0);
++
++      dcosijldri[0] = (-rjl[0]/(rijmag*rjlmag)) -
++        (cosijl*rij[0]/(rijmag*rijmag));
++      dcosijldri[1] = (-rjl[1]/(rijmag*rjlmag)) -
++        (cosijl*rij[1]/(rijmag*rijmag));
++      dcosijldri[2] = (-rjl[2]/(rijmag*rjlmag)) -
++        (cosijl*rij[2]/(rijmag*rijmag));
++      dcosijldrj[0] = ((-rij[0]+rjl[0])/(rijmag*rjlmag)) +
++        (cosijl*((rij[0]/pow(rijmag,2.0))-(rjl[0]/(rjlmag*rjlmag))));
++      dcosijldrj[1] = ((-rij[1]+rjl[1])/(rijmag*rjlmag)) +
++        (cosijl*((rij[1]/pow(rijmag,2.0))-(rjl[1]/(rjlmag*rjlmag))));
++      dcosijldrj[2] = ((-rij[2]+rjl[2])/(rijmag*rjlmag)) +
++        (cosijl*((rij[2]/pow(rijmag,2.0))-(rjl[2]/(rjlmag*rjlmag))));
++      dcosijldrl[0] = (rij[0]/(rijmag*rjlmag))+(cosijl*rjl[0]/(rjlmag*rjlmag));
++      dcosijldrl[1] = (rij[1]/(rijmag*rjlmag))+(cosijl*rjl[1]/(rjlmag*rjlmag));
++      dcosijldrl[2] = (rij[2]/(rijmag*rjlmag))+(cosijl*rjl[2]/(rjlmag*rjlmag));
++
++      // evaluate g and derivatives dg
++
++      g = gSpline(cosijl,jtype,&dgdc);
++      tmp2 = VA*0.5*(tmp*wjl*dgdc);
++      fi[0] = -tmp2*dcosijldri[0];
++      fi[1] = -tmp2*dcosijldri[1];
++      fi[2] = -tmp2*dcosijldri[2];
++      fj[0] = -tmp2*dcosijldrj[0];
++      fj[1] = -tmp2*dcosijldrj[1];
++      fj[2] = -tmp2*dcosijldrj[2];
++      fl[0] = -tmp2*dcosijldrl[0];
++      fl[1] = -tmp2*dcosijldrl[1];
++      fl[2] = -tmp2*dcosijldrl[2];
++
++      // coordination forces
++
++      // dwik forces (from partial derivative)
++
++      tmp2 = VA*0.5*(tmp*dwjl*g)/rjlmag;
++      fj[0] -= tmp2*rjl[0];
++      fj[1] -= tmp2*rjl[1];
++      fj[2] -= tmp2*rjl[2];
++      fl[0] += tmp2*rjl[0];
++      fl[1] += tmp2*rjl[1];
++      fl[2] += tmp2*rjl[2];
++
++      // PIJ forces (coordination)
++
++      tmp2 = VA*0.5*(tmp*dp*dwjl)/rjlmag;
++      fj[0] -= tmp2*rjl[0];
++      fj[1] -= tmp2*rjl[1];
++      fj[2] -= tmp2*rjl[2];
++      fl[0] += tmp2*rjl[0];
++      fl[1] += tmp2*rjl[1];
++      fl[2] += tmp2*rjl[2];
++
++      // dgdN forces are removed
++
++      f[atomi][0] += fi[0]; f[atomi][1] += fi[1]; f[atomi][2] += fi[2];
++      f[atomj][0] += fj[0]; f[atomj][1] += fj[1]; f[atomj][2] += fj[2];
++      f[atoml][0] += fl[0]; f[atoml][1] += fl[1]; f[atoml][2] += fl[2];
++
++      if (vflag_atom) {
++        rlj[0] = -rjl[0]; rlj[1] = -rjl[1]; rlj[2] = -rjl[2];
++        v_tally3(atomi,atomj,atoml,fi,fl,rij,rlj);
++      }
++    }
++  }
++
++///////////////////////////////
++      // PIJ force contribution additional term
++      tmp2 = VA*0.5*(tmp*dp*dwij)/rijmag;
++      fj[0] = -tmp2*(-rij[0]);
++      fj[1] = -tmp2*(-rij[1]);
++      fj[2] = -tmp2*(-rij[2]);
++      fi[0] = tmp2*(-rij[0]);
++      fi[1] = tmp2*(-rij[1]);
++      fi[2] = tmp2*(-rij[2]);
++
++      // summing over force contributions
++      f[atomi][0] += fi[0]; f[atomi][1] += fi[1]; f[atomi][2] += fi[2];
++      f[atomj][0] += fj[0]; f[atomj][1] += fj[1]; f[atomj][2] += fj[2];
++//////////////////////////////
++
++  bij = (0.5*(pij+pji));
++  return bij;
++}
++
++/* ----------------------------------------------------------------------
++   G calculation
++------------------------------------------------------------------------- */
++
++double PairREBOMoS::gSpline(double costh, int typei, double *dgdc)
++{
++  double g, gcos, psi, gamma;
++  double dgcos, dpsi, dgamma;
++
++  g = 0.0;
++  psi = 0.0;
++  gamma = 0.0;
++  gcos = 0.0;
++  dgcos   = 0.0;
++  dpsi = 0.0;
++  dgamma = 0.0;
++  *dgdc = 0.0;
++
++  if (costh >= -1.0 && costh < 0.5){
++        g = b0[typei] + b1[typei]*costh + b2[typei]*pow(costh,2) + b3[typei]*pow(costh,3) + b4[typei]*pow(costh,4) + b5[typei]*pow(costh,5) + b6[typei]*pow(costh,6);
++        *dgdc = b1[typei] + 2*b2[typei]*costh + 3*b3[typei]*pow(costh,2) + 4*b4[typei]*pow(costh,3) + 5*b5[typei]*pow(costh,4) + 6*b6[typei]*pow(costh,5);
++        }
++  else if (costh >= 0.5 && costh <= 1.0){
++        gcos = b0[typei] + b1[typei]*costh + b2[typei]*pow(costh,2) + b3[typei]*pow(costh,3) + b4[typei]*pow(costh,4) + b5[typei]*pow(costh,5) + b6[typei]*pow(costh,6);
++        dgcos = b1[typei] + 2*b2[typei]*costh + 3*b3[typei]*pow(costh,2) + 4*b4[typei]*pow(costh,3) + 5*b5[typei]*pow(costh,4) + 6*b6[typei]*pow(costh,5);
++
++        psi = 0.5*(1 - cos(2*PI*(costh - 0.5)));
++        dpsi = PI*sin(2*PI*(costh - 0.5));
++
++        gamma = bg0[typei] + bg1[typei]*costh + bg2[typei]*pow(costh,2) + bg3[typei]*pow(costh,3) + bg4[typei]*pow(costh,4) + bg5[typei]*pow(costh,5) + bg6[typei]*pow(costh,6);
++        dgamma = bg1[typei] + 2*bg2[typei]*costh + 3*bg3[typei]*pow(costh,2) + 4*bg4[typei]*pow(costh,3) + 5*bg5[typei]*pow(costh,4) + 6*bg6[typei]*pow(costh,5);
++
++        g = gcos + psi*(gamma - gcos);
++        *dgdc = dgcos + dpsi*(gamma - gcos) + psi*(dgamma - dgcos);
++        }
++
++return g;
++}
++
++/* ----------------------------------------------------------------------
++   Pij calculation
++------------------------------------------------------------------------- */
++
++double PairREBOMoS::PijSpline(double NM, double NS, int typei, double *dp)
++{
++  double Pij;
++  double N;
++
++  N = NM + NS;
++  *dp = 0.0;
++
++  Pij = -a0[typei]*(N - 1) - a1[typei]*exp(-a2[typei]*N) + a3[typei];
++  *dp = -a0[typei] + a1[typei]*a2[typei]*exp(-a2[typei]*N);
++
++  return Pij;
++}
++
++/* ----------------------------------------------------------------------
++   add pages to REBO neighbor list
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::add_pages(int howmany)
++{
++  int toppage = maxpage;
++  maxpage += howmany*PGDELTA;
++
++  pages = (int **)
++    memory->srealloc(pages,maxpage*sizeof(int *),"rebomos:pages");
++  for (int i = toppage; i < maxpage; i++)
++    memory->create(pages[i],pgsize,"rebomos:pages[i]");
++}
++
++/* ----------------------------------------------------------------------
++   read REBO potential file
++------------------------------------------------------------------------- */
++
++void PairREBOMoS::read_file(char *filename)
++{
++  int i,j,k,l,limit;
++  char s[MAXLINE];
++
++  // REBO Parameters (Mo-S REBO)
++
++  double rcmin_MM,rcmin_MS,rcmin_SS,rcmax_MM,rcmax_MS,rcmax_SS;
++  double rcmaxp_MM,rcmaxp_MS,rcmaxp_SS;
++  double Q_MM,Q_MS,Q_SS,alpha_MM,alpha_MS,alpha_SS,A_MM,A_MS,A_SS;
++  double BIJc_MM1,BIJc_MS1,BIJc_SS1;
++  double Beta_MM1,Beta_MS1,Beta_SS1;
++  double M_bg0,M_bg1,M_bg2,M_bg3,M_bg4,M_bg5,M_bg6;
++  double S_bg0,S_bg1,S_bg2,S_bg3,S_bg4,S_bg5,S_bg6;
++  double M_b0,M_b1,M_b2,M_b3,M_b4,M_b5,M_b6;
++  double S_b0,S_b1,S_b2,S_b3,S_b4,S_b5,S_b6;
++  double M_a0,M_a1,M_a2,M_a3;
++  double S_a0,S_a1,S_a2,S_a3;
++
++  // LJ Parameters (Mo-S REBO)
++
++  double rcLJmin_MM,rcLJmin_MS,rcLJmin_SS,rcLJmax_MM,rcLJmax_MS,rcLJmax_SS;
++  double epsilon_MM,epsilon_MS,epsilon_SS;
++  double sigma_MM,sigma_MS,sigma_SS;
++
++  MPI_Comm_rank(world,&me);
++
++  // read file on proc 0
++
++  if (me == 0) {
++    FILE *fp = fopen(filename,"r");
++    if (fp == NULL) {
++      char str[128];
++      sprintf(str,"Cannot open MoS-REBO potential file %s",filename);
++      error->one(FLERR,str);
++    }
++
++    // skip initial comment lines
++
++    while (1) {
++      fgets(s,MAXLINE,fp);
++      if (s[0] != '#') break;
++    }
++
++    // read parameters
++
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&rcmin_MM);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&rcmin_MS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&rcmin_SS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&rcmax_MM);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&rcmax_MS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&rcmax_SS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&Q_MM);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&Q_MS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&Q_SS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&alpha_MM);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&alpha_MS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&alpha_SS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&A_MM);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&A_MS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&A_SS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&BIJc_MM1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&BIJc_MS1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&BIJc_SS1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&Beta_MM1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&Beta_MS1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&Beta_SS1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_b0);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_b1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_b2);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_b3);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_b4);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_b5);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_b6);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_bg0);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_bg1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_bg2);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_bg3);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_bg4);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_bg5);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_bg6);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_b0);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_b1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_b2);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_b3);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_b4);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_b5);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_b6);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_bg0);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_bg1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_bg2);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_bg3);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_bg4);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_bg5);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_bg6);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_a0);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_a1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_a2);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&M_a3);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_a0);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_a1);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_a2);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&S_a3);
++
++    // LJ parameters
++
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&epsilon_MM);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&epsilon_SS);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&sigma_MM);
++    fgets(s,MAXLINE,fp);
++    sscanf(s,"%lg",&sigma_SS);
++
++    fclose(fp);
++  }
++
++  // store read-in values in arrays
++
++  if (me == 0) {
++
++    // REBO
++
++    rcmin[0][0] = rcmin_MM;
++    rcmin[0][1] = rcmin_MS;
++    rcmin[1][0] = rcmin[0][1];
++    rcmin[1][1] = rcmin_SS;
++
++    rcmax[0][0] = rcmax_MM;
++    rcmax[0][1] = rcmax_MS;
++    rcmax[1][0] = rcmax[0][1];
++    rcmax[1][1] = rcmax_SS;
++
++    rcmaxsq[0][0] = rcmax[0][0]*rcmax[0][0];
++    rcmaxsq[1][0] = rcmax[1][0]*rcmax[1][0];
++    rcmaxsq[0][1] = rcmax[0][1]*rcmax[0][1];
++    rcmaxsq[1][1] = rcmax[1][1]*rcmax[1][1];
++
++    Q[0][0] = Q_MM;
++    Q[0][1] = Q_MS;
++    Q[1][0] = Q[0][1];
++    Q[1][1] = Q_SS;
++
++    alpha[0][0] = alpha_MM;
++    alpha[0][1] = alpha_MS;
++    alpha[1][0] = alpha[0][1];
++    alpha[1][1] = alpha_SS;
++
++    A[0][0] = A_MM;
++    A[0][1] = A_MS;
++    A[1][0] = A[0][1];
++    A[1][1] = A_SS;
++
++    BIJc[0][0] = BIJc_MM1;
++    BIJc[0][1] = BIJc_MS1;
++    BIJc[1][0] = BIJc_MS1;
++    BIJc[1][1] = BIJc_SS1;
++
++    Beta[0][0] = Beta_MM1;
++    Beta[0][1] = Beta_MS1;
++    Beta[1][0] = Beta_MS1;
++    Beta[1][1] = Beta_SS1;
++
++    b0[0] = M_b0;
++    b1[0] = M_b1;
++    b2[0] = M_b2;
++    b3[0] = M_b3;
++    b4[0] = M_b4;
++    b5[0] = M_b5;
++    b6[0] = M_b6;
++
++    bg0[0] = M_bg0;
++    bg1[0] = M_bg1;
++    bg2[0] = M_bg2;
++    bg3[0] = M_bg3;
++    bg4[0] = M_bg4;
++    bg5[0] = M_bg5;
++    bg6[0] = M_bg6;
++
++    b0[1] = S_b0;
++    b1[1] = S_b1;
++    b2[1] = S_b2;
++    b3[1] = S_b3;
++    b4[1] = S_b4;
++    b5[1] = S_b5;
++    b6[1] = S_b6;
++
++    bg0[1] = S_bg0;
++    bg1[1] = S_bg1;
++    bg2[1] = S_bg2;
++    bg3[1] = S_bg3;
++    bg4[1] = S_bg4;
++    bg5[1] = S_bg5;
++    bg6[1] = S_bg6;
++
++    a0[0] = M_a0;
++    a1[0] = M_a1;
++    a2[0] = M_a2;
++    a3[0] = M_a3;
++
++    a0[1] = S_a0;
++    a1[1] = S_a1;
++    a2[1] = S_a2;
++    a3[1] = S_a3;
++
++    // LJ
++
++    sigma[0][0] = sigma_MM;
++    sigma[0][1] = (sigma_MM + sigma_SS)/2;
++    sigma[1][0] = sigma[0][1];
++    sigma[1][1] = sigma_SS;
++
++    epsilon[0][0] = epsilon_MM;
++    epsilon[0][1] = sqrt(epsilon_MM*epsilon_SS);
++    epsilon[1][0] = epsilon[0][1];
++    epsilon[1][1] = epsilon_SS;
++
++    rcLJmin[0][0] = rcmin_MM;
++    rcLJmin[0][1] = rcmin_MS;
++    rcLJmin[1][0] = rcmin[0][1];
++    rcLJmin[1][1] = rcmin_SS;
++
++    rcLJmax[0][0] = 2.5*sigma[0][0];
++    rcLJmax[0][1] = 2.5*sigma[0][1];
++    rcLJmax[1][0] = rcLJmax[0][1];
++    rcLJmax[1][1] = 2.5*sigma[1][1];
++
++    rcLJmaxsq[0][0] = rcLJmax[0][0]*rcLJmax[0][0];
++    rcLJmaxsq[1][0] = rcLJmax[1][0]*rcLJmax[1][0];
++    rcLJmaxsq[0][1] = rcLJmax[0][1]*rcLJmax[0][1];
++    rcLJmaxsq[1][1] = rcLJmax[1][1]*rcLJmax[1][1];
++
++  }
++
++  // broadcast read-in and setup values
++
++  MPI_Bcast(&rcmin[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&rcmax[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&rcmaxsq[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&rcmaxp[0][0],4,MPI_DOUBLE,0,world);
++
++  MPI_Bcast(&Q[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&alpha[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&A[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&BIJc[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&Beta[0][0],4,MPI_DOUBLE,0,world);
++
++  MPI_Bcast(&b0[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&b1[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&b2[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&b3[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&b4[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&b5[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&b6[0],2,MPI_DOUBLE,0,world);
++
++  MPI_Bcast(&a0[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&a1[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&a2[0],2,MPI_DOUBLE,0,world);
++  MPI_Bcast(&a3[0],2,MPI_DOUBLE,0,world);
++
++  MPI_Bcast(&bg0[0],1,MPI_DOUBLE,0,world);
++  MPI_Bcast(&bg1[0],1,MPI_DOUBLE,0,world);
++  MPI_Bcast(&bg2[0],1,MPI_DOUBLE,0,world);
++  MPI_Bcast(&bg3[0],1,MPI_DOUBLE,0,world);
++  MPI_Bcast(&bg4[0],1,MPI_DOUBLE,0,world);
++  MPI_Bcast(&bg5[0],1,MPI_DOUBLE,0,world);
++  MPI_Bcast(&bg6[0],1,MPI_DOUBLE,0,world);
++
++  MPI_Bcast(&rcLJmin[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&rcLJmax[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&rcLJmaxsq[0][0],4,MPI_DOUBLE,0,world); 
++  MPI_Bcast(&epsilon[0][0],4,MPI_DOUBLE,0,world);
++  MPI_Bcast(&sigma[0][0],4,MPI_DOUBLE,0,world);
++}
++
++/* ----------------------------------------------------------------------
++   memory usage of local atom-based arrays
++------------------------------------------------------------------------- */
++
++double PairREBOMoS::memory_usage()
++{
++  double bytes = 0.0;
++  bytes += maxlocal * sizeof(int);
++  bytes += maxlocal * sizeof(int *);
++  bytes += maxpage * neighbor->pgsize * sizeof(int);
++  bytes += 3 * maxlocal * sizeof(double);
++  return bytes;
++}
+--- /dev/numm	1970-01-01 01:00:00.000000000 +0100
++++ lammps-stable_11Aug2017/src/pair_rebomos.h	2018-01-24 11:02:40.847796000 +0100
+@@ -0,0 +1,161 @@
++/* ----------------------------------------------------------------------
++   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
++   http://lammps.sandia.gov, Sandia National Laboratories
++   Steve Plimpton, sjplimp@sandia.gov
++
++   Copyright (2003) Sandia Corporation.  Under the terms of Contract
++   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
++   certain rights in this software.  This software is distributed under
++   the GNU General Public License.
++
++   See the README file in the top-level LAMMPS directory.
++------------------------------------------------------------------------- */
++
++#ifdef PAIR_CLASS
++
++PairStyle(rebomos,PairREBOMoS)
++
++#else
++
++#ifndef LMP_PAIR_REBOMOS_H
++#define LMP_PAIR_REBOMOS_H
++#define PI 3.141592653
++
++#include "pair.h"
++#include "math.h"
++#include "math_const.h"
++
++namespace LAMMPS_NS {
++
++class PairREBOMoS : public Pair {
++ public:
++  PairREBOMoS(class LAMMPS *);
++  virtual ~PairREBOMoS();
++  virtual void compute(int, int);
++  virtual void settings(int, char **);
++  void coeff(int, char **);
++  void init_style();
++  double init_one(int, int);
++  double memory_usage();
++
++ protected:
++  int **pages;                     // neighbor list pages
++  int *map;                        // 0 (M), 1 (S), or -1 (NULL) for each type
++
++  int me;
++  int ljflag;
++  int maxlocal;                    // size of numneigh, firstneigh arrays
++  int maxpage;                     // # of pages currently allocated
++  int pgsize;                      // size of neighbor page
++  int oneatom;                     // max # of neighbors for one atom
++
++  double cutlj;                    // user-specified LJ cutoff
++  double cutljrebosq;              // cut for when to compute
++                                   // REBO neighs of ghost atoms
++
++  double **cutljsq;                // LJ cutoffs for M,S types
++  double **lj1,**lj2,**lj3,**lj4;  // pre-computed LJ coeffs for M,S types
++  double cut3rebo;                 // maximum distance for 3rd REBO neigh
++
++  int *REBO_numneigh;              // # of pair neighbors for each atom
++  int **REBO_firstneigh;           // ptr to 1st neighbor of each atom
++  double *closestdistsq;           // closest owned atom dist to each ghost
++  double *nM,*nS;                  // sum of weighting fns with REBO neighs
++
++  double rcmin[2][2],rcmax[2][2],rcmaxsq[2][2],rcmaxp[2][2];
++  double Q[2][2],alpha[2][2],A[2][2],BIJc[2][2],Beta[2][2];
++  double b0[2],b1[2],b2[2],b3[2],b4[2],b5[2],b6[2];
++  double bg0[2],bg1[2],bg2[2],bg3[2],bg4[2],bg5[2],bg6[2];
++  double a0[2],a1[2],a2[2],a3[2];
++  double rcLJmin[2][2],rcLJmax[2][2],rcLJmaxsq[2][2];
++  double epsilon[2][2],sigma[2][2];
++
++  void REBO_neigh();
++  void FREBO(int, int);
++  void FLJ(int, int);
++
++  double bondorder(int, int, double *, double, double, double **, int);
++
++  double gSpline(double, int, double *);
++  double PijSpline(double, double, int, double *);
++
++  void add_pages(int howmany = 1);
++  void read_file(char *);
++
++  void allocate();
++
++  // ----------------------------------------------------------------------
++  // S'(t) and S(t) cutoff functions
++  // added to header for inlining
++  // ----------------------------------------------------------------------
++
++  /* ----------------------------------------------------------------------
++     cutoff function Sprime
++     return cutoff and dX = derivative
++     no side effects
++  ------------------------------------------------------------------------- */
++
++  inline double Sp(double Xij, double Xmin, double Xmax, double &dX) const {
++    double cutoff;
++
++    if (Xij <= Xmin){
++        cutoff = 1.0;                         
++        dX = 0.0;
++    } else if (Xij >=Xmax){
++      cutoff = 0.0;
++      dX = 0.0;
++    } else{
++      cutoff = 0.5*(1.0 + cos(PI*(Xij - Xmin)/(Xmax - Xmin)));       
++      dX = -0.5*PI*sin(PI*(Xij - Xmin)/(Xmax - Xmin))/(Xmax - Xmin);        
++    }
++   return cutoff;
++  }; 
++ };
++}
++  /* ----------------------------------------------------------------------
++     LJ cutoff function Sp2
++     return cutoff and dX = derivative
++     no side effects
++  ------------------------------------------------------------------------- */
++
++#endif
++#endif
++
++/* ERROR/WARNING messages:
++
++E: Illegal ... command
++
++Self-explanatory.  Check the input script syntax and compare to the
++documentation for the command.  You can use -echo screen as a
++command-line option when running LAMMPS to see the offending line.
++
++E: Incorrect args for pair coefficients
++
++Self-explanatory.  Check the input script or data file.
++
++E: Pair style REBOMoS requires atom IDs
++
++This is a requirement to use the REBOMoS potential.
++
++E: Pair style REBOMoS requires newton pair on
++
++See the newton command.  This is a restriction to use the REBOMoS
++potential.
++
++E: All pair coeffs are not set
++
++All pair coefficients must be set in the data file or by the
++pair_coeff command before running a simulation.
++
++E: Neighbor list overflow, boost neigh_modify one or page
++
++There are too many neighbors of a single atom.  Use the neigh_modify
++command to increase the neighbor page size and the max number of
++neighbors allowed for one atom.
++
++E: Cannot open REBOMoS potential file %s
++
++The specified REBOMoS potential file cannot be opened.  Check that the
++path and name are correct.
++
++*/
+--- /dev/numm	1970-01-01 01:00:00.000000000 +0100
++++ lammps-stable_11Aug2017/src/pair_TKC.cpp	2018-01-24 11:02:54.570276250 +0100
+@@ -0,0 +1,521 @@
++/* ----------------------------------------------------------------------
++   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
++   http://lammps.sandia.gov, Sandia National Laboratories
++   Steve Plimpton, sjplimp@sandia.gov
++
++   Copyright (2003) Sandia Corporation.  Under the terms of Contract
++   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
++   certain rights in this software.  This software is distributed under 
++   the GNU General Public License.
++
++   See the README file in the top-level LAMMPS directory.
++------------------------------------------------------------------------- */
++
++#include "math.h"
++#include "stdio.h"
++#include "stdlib.h"
++#include "pair_TKC.h"
++#include "atom.h"
++#include "comm.h"
++#include "force.h"
++#include "neigh_list.h"
++#include "memory.h"
++#include "error.h"
++
++using namespace LAMMPS_NS;
++
++#define MIN(a,b) ((a) < (b) ? (a) : (b))
++#define MAX(a,b) ((a) > (b) ? (a) : (b))
++
++/* ---------------------------------------------------------------------- */
++
++PairTKC::PairTKC(LAMMPS *lmp) : Pair(lmp) {
++  // set comm size needed by this Pair
++
++  comm_forward = 3;
++  comm_reverse = 3;
++}
++
++/* ---------------------------------------------------------------------- */
++
++PairTKC::~PairTKC()
++{
++  if (allocated) {
++//       fprintf (screen,"hiiiiiii 2\n");
++    memory->destroy(setflag);
++    memory->destroy(cutsq);
++
++    memory->destroy(cut);
++    memory->destroy(A);
++    memory->destroy(v);
++    memory->destroy(norm1);
++    memory->destroy1d_offset(n1,0);
++    memory->destroy1d_offset(pv12,0);
++    memory->destroy1d_offset(pv13,0);
++    memory->destroy1d_offset(pv23,0);
++    memory->destroy(offset);
++//    memory->destroy_2d_double_array(alpha);
++//    memory->destroy_2d_double_array(r0);
++//    memory->destroy_2d_double_array(morse1);
++//    memory->destroy_2d_double_array(offset);
++  }
++}
++
++/* ---------------------------------------------------------------------- */
++
++void PairTKC::compute(int eflag, int vflag)
++{
++//     fprintf (screen,"hiiiiiii 3\n");
++  int i,j,ii,jj,inum,jnum,itype,jtype;
++  double xtmp,ytmp,ztmp,delx,dely,delz,evdwl,fpair;
++  double rsq,r,dexp;
++  int *ilist,*jlist,*numneigh,**firstneigh;
++  
++  double z02,z06,r4,r8,t1,rho2,sigma,frho,fpair1,fpair2;
++  double lambda,delta,C0,C2,C4,C; 
++  int cont,cont1,k;
++  double delta2,prodnorm1,prodnorm2,rho1s,rho2s,sigma1,sigma2,es1,es2,frho1,frho2;
++  double dx,dy,dz,dist,nn,xtp,ytp,ztp;
++
++//  A=10.238; 
++  lambda=3.629; delta=0.578; C0=15.71; C2=12.29; C4=4.933; C=3.03; // graphite parameters
++  evdwl = 0.0;
++  if (eflag || vflag) ev_setup(eflag,vflag);
++  else evflag = vflag_fdotr = 0;
++
++  double **x = atom->x;
++  double **f = atom->f;
++  int *type = atom->type;
++  int nlocal = atom->nlocal;
++  int nall = nlocal + atom->nghost;
++  double *special_lj = force->special_lj;
++  int newton_pair = force->newton_pair;
++  //double natoms= atom->natoms;
++  int *tag = atom->tag;
++
++  inum = list->inum;
++  ilist = list->ilist;
++  numneigh = list->numneigh;
++  firstneigh = list->firstneigh;
++
++  //norm1 = memory->create_2d_double_array(nall,3,"pair:norm1");
++ 
++  z02 = z0*z0;
++  z06 = z02*z02*z02;
++  delta2=delta*delta;
++for (i = 0; i < nlocal; i++) {
++    xtp = x[i][0];
++    ytp = x[i][1];
++    ztp = x[i][2];
++    //itype = type[i];
++    //jlist = firstneigh[i];
++    //jnum = numneigh[i];
++
++    cont=0;
++    for (k = 0; k < nall; k++) {
++      dx=x[k][0]-xtp;
++      dy=x[k][1]-ytp;
++      dz=x[k][2]-ztp;
++      dist=dx*dx+dy*dy+dz*dz;
++      if (dist!=0 && dist<4 && cont<3) {
++        v[cont][0]=dx;
++        v[cont][1]=dy;
++        v[cont][2]=dz;
++        cont++;
++      }
++    }
++ //   normale(vett,n);  //[3][3]
++    for (cont1= 0; cont1< 3;cont1++){
++      pv12[cont1]=0;
++      pv13[cont1]=0;
++      pv23[cont1]=0;
++    }
++
++    pv12[0]= v[0][1]*v[1][2]-v[1][1]*v[0][2];
++    pv12[1]= v[0][2]*v[1][0]-v[1][2]*v[0][0];
++    pv12[2]= v[0][0]*v[1][1]-v[1][0]*v[0][1];
++
++    if (cont==3){
++    pv13[0]= v[0][1]*v[2][2]-v[2][1]*v[0][2];
++    pv13[1]= v[0][2]*v[2][0]-v[2][2]*v[0][0];
++    pv13[2]= v[0][0]*v[2][1]-v[2][0]*v[0][1];
++
++    pv23[0]= v[1][1]*v[2][2]-v[2][1]*v[1][2];
++    pv23[1]= v[1][2]*v[2][0]-v[2][2]*v[1][0];
++    pv23[2]= v[1][0]*v[2][1]-v[2][0]*v[1][1];
++    }
++
++    // NEW: CORRECT SIGN
++    if (pv12[2]<0){pv12[0]=-pv12[0];
++        pv12[1]=-pv12[1];
++	pv12[2]=-pv12[2];}
++    if (pv13[2]<0){pv13[0]=-pv13[0];
++        pv13[1]=-pv13[1];
++	pv13[2]=-pv13[2];}
++    if (pv23[2]<0){pv23[0]=-pv23[0];
++	pv23[1]=-pv23[1];
++	pv23[2]=-pv23[2];}
++    //  
++  
++ 
++    if (cont==2){cont=1;}
++    n1[0]= (pv12[0]+pv13[0]+pv23[0])/cont;
++    n1[1]= (pv12[1]+pv13[1]+pv23[1])/cont;
++    n1[2]= (pv12[2]+pv13[2]+pv23[2])/cont;
++
++    nn=sqrt(n1[0]*n1[0]+n1[1]*n1[1]+n1[2]*n1[2]);
++
++    norm1[i][0]=n1[0]/nn;
++    norm1[i][1]=n1[1]/nn;
++    norm1[i][2]=n1[2]/nn;
++
++  }
++
++  comm->forward_comm_pair(this);
++
++  // loop over neighbors of my atoms
++  for (ii = 0; ii < inum; ii++) {
++    i = ilist[ii];
++    xtmp = x[i][0];
++    ytmp = x[i][1];
++    ztmp = x[i][2];
++    itype = type[i];
++    jlist = firstneigh[i];
++    jnum = numneigh[i];
++
++    for (jj = 0; jj < jnum; jj++) {
++      j = jlist[jj];
++      delx = xtmp - x[j][0];
++      dely = ytmp - x[j][1];
++      delz = ztmp - x[j][2];
++      rsq = delx*delx + dely*dely + delz*delz;
++      jtype = type[j];
++
++      if (rsq < cutsq[itype][jtype]) {
++	r = sqrt(rsq);
++	
++	r4 = rsq*rsq;
++	r8 = r4*r4;
++
++	t1 = A[itype][jtype]*z06/r8;
++
++	dexp = exp(-lambda*(r-z0));
++
++        prodnorm1=norm1[i][0]*delx+norm1[i][1]*dely+norm1[i][2]*delz;
++        prodnorm2=norm1[j][0]*delx+norm1[j][1]*dely+norm1[j][2]*delz;
++
++        rho1s = rsq-prodnorm1*prodnorm1;
++        rho2s = rsq-prodnorm2*prodnorm2;
++
++        sigma1 = rho1s/delta2;
++        sigma2 = rho2s/delta2;
++ 
++        
++        es1=exp(-sigma1)*(C2+2*C4*sigma1);
++        es2=exp(-sigma2)*(C2+2*C4*sigma2);
++
++        frho1 = exp(-sigma1)*(C0+C2*sigma1+C4*sigma1*sigma1);
++        frho2 = exp(-sigma2)*(C0+C2*sigma2+C4*sigma2*sigma2);
++        
++        fpair = -(6*t1+dexp*(-lambda*(C+frho1+frho2)/r+2*(es1+es2-frho1-frho2)/delta2)); 
++        fpair1 = 2*dexp*prodnorm1*(es1-frho1)/delta2;
++        fpair2 = 2*dexp*prodnorm2*(es2-frho2)/delta2;
++
++        f[i][0] += (delx*fpair+norm1[i][0]*fpair1+norm1[j][0]*fpair2)*0.001;
++        f[i][1] += (dely*fpair+norm1[i][1]*fpair1+norm1[j][1]*fpair2)*0.001;
++        f[i][2] += (delz*fpair+norm1[i][2]*fpair1+norm1[j][2]*fpair2)*0.001;
++  
++	//rho2 = rsq-delz*delz;
++	//sigma = rho2/(delta*delta);
++	//frho = exp(-sigma)*(C0+C2*sigma+C4*sigma*sigma);
++
++	//fpair = -(6*t1-2*lambda*dexp*(C/2+frho)/r);
++	//fpair1 = -(4*dexp*(exp(-sigma)*(C2+2*C4*sigma)-frho)/(delta*delta));   
++	
++	//f[i][0] += delx*(fpair+fpair1)*0.001;
++	//f[i][1] += dely*(fpair+fpair1)*0.001;
++	//f[i][2] += delz*fpair*0.001;
++// 		      fprintf (screen,"hiiiiiii 3k2\n");
++	if (newton_pair || j < nlocal) {
++          f[j][0] -= (delx*fpair+norm1[i][0]*fpair1+norm1[j][0]*fpair2)*0.001;
++          f[j][1] -= (dely*fpair+norm1[i][1]*fpair1+norm1[j][1]*fpair2)*0.001;
++          f[j][2] -= (delz*fpair+norm1[i][2]*fpair1+norm1[j][2]*fpair2)*0.001;
++
++	  //f[j][0] -= delx*(fpair+fpair1)*0.001;
++	  //f[j][1] -= dely*(fpair+fpair1)*0.001;
++	  //f[j][2] -= delz*fpair*0.001;
++	}
++	if (eflag) {
++          evdwl = (-t1*rsq +dexp*(C+frho1+frho2)+offset[itype][jtype])*0.001; 
++	}
++
++	if (evflag) ev_tally(i,j,nlocal,newton_pair,
++			     evdwl,0.0,fpair,delx,dely,delz);
++      }
++    }
++  }
++  if (vflag_fdotr) virial_fdotr_compute();
++}
++
++/* ----------------------------------------------------------------------
++   allocate all arrays 
++------------------------------------------------------------------------- */
++
++void PairTKC::allocate()
++{
++  allocated = 1;
++  int n = atom->ntypes;
++  //int nmax = atom->nmax;
++  int nlocal = atom->nlocal;
++  //int nall = nlocal + atom->nghost;
++
++
++ // setflag = memory->create_2d_int_array(n+1,n+1,"pair:setflag");
++  memory->create(setflag,n+1,n+1,"pair:setflag");
++  for (int i = 1; i <= n; i++)
++    for (int j = i; j <= n; j++)
++      setflag[i][j] = 0;
++
++  cutsq = memory->create(cutsq,n+1,n+1,"pair:cutsq");
++
++  memory->create(cut,n+1,n+1,"pair:cut");
++  memory->create(A,n+1,n+1,"pair:A");
++  memory->create(v,3,3,"pair:v");
++  memory->create1d_offset(n1,0,2,"pair:n1");  
++  memory->create1d_offset(pv12,0,2,"pair:pv12");
++  memory->create1d_offset(pv13,0,2,"pair:pv13");
++  memory->create1d_offset(pv23,0,2,"pair:pv23");
++  memory->create(norm1,nlocal+6000,3,"pair:norm1");
++  memory->create(offset,n+1,n+1,"pair:offset");  
++    
++//     cutsq = memory->create_2d_double_array(n+1,n+1,"pair:cutsq");
++// 
++//   cut = memory->create_2d_double_array(n+1,n+1,"pair:cut");
++//   A = memory->create_2d_double_array(n+1,n+1,"pair:A");
++//   v = memory->create_2d_double_array(3,3,"pair:v");
++//   n1 = memory->create_1d_double_array(0,2,"pair:n1");  
++//   pv12 = memory->create_1d_double_array(0,2,"pair:pv12");
++//   pv13 = memory->create_1d_double_array(0,2,"pair:pv13");
++//   pv23 = memory->create_1d_double_array(0,2,"pair:pv23");
++//   norm1 = memory->create_2d_double_array(nlocal+6000,3,"pair:norm1");
++
++//  d0 = memory->create_2d_double_array(n+1,n+1,"pair:d0");
++//  alpha = memory->create_2d_double_array(n+1,n+1,"pair:alpha");
++//  r0 = memory->create_2d_double_array(n+1,n+1,"pair:r0");
++//  morse1 = memory->create_2d_double_array(n+1,n+1,"pair:morse1");
++//  offset = memory->create_2d_double_array(n+1,n+1,"pair:offset");
++}
++
++/* ----------------------------------------------------------------------
++   global settings 
++------------------------------------------------------------------------- */
++
++void PairTKC::settings(int narg, char **arg)
++{
++//     fprintf (screen,"hiiiiiii 5\n");
++  if (narg != 2) error->all(FLERR,"Illegal pair_style command");
++
++  cut_global = force->numeric(FLERR,arg[0]);
++  z0 = force->numeric(FLERR,arg[1]);
++
++  // reset cutoffs that have been explicitly set
++
++  if (allocated) {
++   int i,j;
++    for (i = 1; i <= atom->ntypes; i++)
++      for (j = i+1; j <= atom->ntypes; j++)
++	if (setflag[i][j]) cut[i][j] = cut_global;
++  }
++}
++
++/* ----------------------------------------------------------------------
++   set coeffs for one or more type pairs
++------------------------------------------------------------------------- */
++
++void PairTKC::coeff(int narg, char **arg)
++{
++//     fprintf (screen,"hiiiiiii 6\n");
++  if (narg < 3 || narg > 4) error->all(FLERR,"Incorrect args for pair coefficients");
++//  if (narg != 1 + atom->ntypes) error->all("Incorrect args for pair coefficients");
++  if (!allocated) allocate();
++
++  int ilo,ihi,jlo,jhi;
++  force->bounds(FLERR,arg[0],atom->ntypes,ilo,ihi);
++  force->bounds(FLERR,arg[1],atom->ntypes,jlo,jhi);
++  
++  double A_one = force->numeric(FLERR,arg[2]);
++//  double d0_one = force->numeric(arg[2]);
++//  double alpha_one = force->numeric(arg[3]);
++//  double r0_one = force->numeric(arg[4]);
++
++  double cut_one = cut_global;
++  if (narg == 4) cut_one = force->numeric(FLERR,arg[3]);
++
++  int count = 0;
++  for (int i = ilo; i <= ihi; i++) {
++    for (int j = MAX(jlo,i); j <= jhi; j++) {
++        A[i][j] = A_one;
++//      d0[i][j] = d0_one;
++//      alpha[i][j] = alpha_one;
++//      r0[i][j] = r0_one;
++      cut[i][j] = cut_one;
++      setflag[i][j] = 1;
++      count++;
++    }
++  }
++
++  if (count == 0) error->all(FLERR,"Incorrect args for pair coefficients");
++}
++
++
++/* ----------------------------------------------------------------------
++   init for one type pair i,j and corresponding j,i
++------------------------------------------------------------------------- */
++
++double PairTKC::init_one(int i, int j)
++{
++  if (setflag[i][j] == 0) error->all(FLERR,"All pair coeffs are not set");
++
++  if (offset_flag) {
++    offset[i][j] = A[i][j]*pow((z0/cut[i][j]),6);
++  } else offset[i][j] = 0.0;
++    A[j][i] = A[i][j];
++    offset[j][i] = offset[i][j];
++//
++  return cut[i][j];
++}
++
++/* ---------------------------------------------------------------------- */
++
++int PairTKC::pack_comm(int n, int *list, double *buf, int pbc_flag, int *pbc)
++{
++  int i,j,m;
++
++  m = 0;
++  for (i = 0; i < n; i++) {
++    j = list[i];
++    buf[m++] = norm1[j][0];
++    buf[m++] = norm1[j][1];
++    buf[m++] = norm1[j][2];
++  }
++  return 3;
++}
++
++/* ---------------------------------------------------------------------- */
++
++void PairTKC::unpack_comm(int n, int first, double *buf)
++{
++  int i,m,last;
++
++  m = 0;
++  last = first + n;
++  for (i = first; i < last; i++) {
++    norm1[i][0] = buf[m++];
++    norm1[i][1] = buf[m++];
++    norm1[i][2] = buf[m++];
++  }
++}
++
++/* ---------------------------------------------------------------------- */
++
++/* ----------------------------------------------------------------------
++   proc 0 writes to restart file
++------------------------------------------------------------------------- */
++
++void PairTKC::write_restart(FILE *fp)
++{
++  write_restart_settings(fp);
++
++  int i,j;
++  for (i = 1; i <= atom->ntypes; i++)
++    for (j = i; j <= atom->ntypes; j++) {
++      fwrite(&setflag[i][j],sizeof(int),1,fp);
++      if (setflag[i][j]) {
++        fwrite(&A[i][j],sizeof(double),1,fp);
++//	fwrite(&d0[i][j],sizeof(double),1,fp);
++//	fwrite(&alpha[i][j],sizeof(double),1,fp);
++//	fwrite(&r0[i][j],sizeof(double),1,fp);
++	fwrite(&cut[i][j],sizeof(double),1,fp);
++      }
++    }
++}
++//
++///* ----------------------------------------------------------------------
++//   proc 0 reads from restart file, bcasts
++//------------------------------------------------------------------------- */
++//
++void PairTKC::read_restart(FILE *fp)
++{
++  read_restart_settings(fp);
++
++  allocate();
++
++  int i,j;
++  int me = comm->me;
++  for (i = 1; i <= atom->ntypes; i++)
++    for (j = i; j <= atom->ntypes; j++) {
++      if (me == 0) fread(&setflag[i][j],sizeof(int),1,fp);
++      MPI_Bcast(&setflag[i][j],1,MPI_INT,0,world);
++      if (setflag[i][j]) {
++	if (me == 0) {
++          fread(&A[i][j],sizeof(double),1,fp);
++//	  fread(&d0[i][j],sizeof(double),1,fp);
++//	  fread(&alpha[i][j],sizeof(double),1,fp);
++//	  fread(&r0[i][j],sizeof(double),1,fp);
++	  fread(&cut[i][j],sizeof(double),1,fp);
++	}
++        MPI_Bcast(&A[i][j],1,MPI_DOUBLE,0,world);
++//	MPI_Bcast(&d0[i][j],1,MPI_DOUBLE,0,world);
++//	MPI_Bcast(&alpha[i][j],1,MPI_DOUBLE,0,world);
++//	MPI_Bcast(&r0[i][j],1,MPI_DOUBLE,0,world);
++	MPI_Bcast(&cut[i][j],1,MPI_DOUBLE,0,world);
++      }
++    }
++}
++//
++///* ----------------------------------------------------------------------
++//   proc 0 writes to restart file
++//------------------------------------------------------------------------- */
++//
++void PairTKC::write_restart_settings(FILE *fp)
++{
++  fwrite(&cut_global,sizeof(double),1,fp);
++  fwrite(&z0,sizeof(double),1,fp);
++  fwrite(&offset_flag,sizeof(int),1,fp);
++//  fwrite(&mix_flag,sizeof(int),1,fp);
++}
++
++///* ----------------------------------------------------------------------
++//   proc 0 reads from restart file, bcasts
++//------------------------------------------------------------------------- */
++//
++void PairTKC::read_restart_settings(FILE *fp)
++{
++  if (comm->me == 0) {
++    fread(&cut_global,sizeof(double),1,fp);
++    fread(&z0,sizeof(double),1,fp);
++    fread(&offset_flag,sizeof(int),1,fp);
++//    fread(&mix_flag,sizeof(int),1,fp);
++  }
++  MPI_Bcast(&cut_global,1,MPI_DOUBLE,0,world);
++  MPI_Bcast(&z0,1,MPI_DOUBLE,0,world);
++  MPI_Bcast(&offset_flag,1,MPI_INT,0,world);
++//  MPI_Bcast(&mix_flag,1,MPI_INT,0,world);
++}
++
++/* ---------------------------------------------------------------------- */
++
++//double PairTKC::single(int i, int j, int itype, int jtype, double rsq,
++//			 double factor_coul, double factor_lj,
++//			 double &fforce)
++//{
++//  double r,dr,dexp,phi;
++//
++//  r = sqrt(rsq);
++//  dr = r - r0[itype][jtype];
++//  dexp = exp(-alpha[itype][jtype] * dr);
++//  fforce = factor_lj * morse1[itype][jtype] * (dexp*dexp - dexp) / r;
++//  
++//  phi = d0[itype][jtype] * (dexp*dexp - 2.0*dexp) - offset[itype][jtype];
++//  return factor_lj*phi;
++//}
+--- /dev/numm	1970-01-01 01:00:00.000000000 +0100
++++ lammps-stable_11Aug2017/src/pair_TKC.h	2018-01-24 11:03:35.697558000 +0100
+@@ -0,0 +1,65 @@
++/* ----------------------------------------------------------------------
++   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
++   http://lammps.sandia.gov, Sandia National Laboratories
++   Steve Plimpton, sjplimp@sandia.gov
++
++   Copyright (2003) Sandia Corporation.  Under the terms of Contract
++   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
++   certain rights in this software.  This software is distributed under 
++   the GNU General Public License.
++
++   See the README file in the top-level LAMMPS directory.
++------------------------------------------------------------------------- */
++
++#ifdef PAIR_CLASS
++
++PairStyle(TKC,PairTKC)
++
++#else
++
++#ifndef LMP_PAIR_TKC_H
++#define LMP_PAIR_TKC_H
++
++#include "pair.h"
++
++namespace LAMMPS_NS {
++ 
++class PairTKC : public Pair {
++ public:
++  PairTKC(class LAMMPS *);
++  ~PairTKC();
++  void compute(int, int);
++  void settings(int, char **);
++  void coeff(int, char **);
++  double init_one(int, int);
++  virtual int pack_comm(int, int *, double *, int, int *);
++  virtual void unpack_comm(int, int, double *);
++  void write_restart(FILE *);
++  void read_restart(FILE *);
++  void write_restart_settings(FILE *);
++  void read_restart_settings(FILE *);
++//  void normale(double [][3],double []);
++//  double single(int, int, int, int, double, double, double, double &);
++
++ protected:
++  double cut_global;
++  double z0;
++  double **cut;
++  double **A;
++  double **v;
++  double **norm1;
++  double *n1;
++  double *pv12;
++  double *pv13;
++  double *pv23;
++//  double **d0,**alpha,**r0;
++//  double **morse1;
++  double **offset;
++
++  void allocate();
++};
++
++}
++
++#endif
++#endif
