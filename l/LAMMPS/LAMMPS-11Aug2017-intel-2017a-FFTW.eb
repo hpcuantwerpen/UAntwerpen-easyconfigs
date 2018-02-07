@@ -46,9 +46,7 @@ osdependencies = [
     ('python-devel'),
 ]
 
-parallel = 1
-
-buildcmds  = 'parallel=28 && '
+buildcmds  = 'parallel=$(nproc) && '
 # Note that we use && rather then ; to separate commands so that the build fails
 # if one of the commands fails.
 # Configure phase of the build
