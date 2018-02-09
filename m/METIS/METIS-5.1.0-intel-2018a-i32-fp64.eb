@@ -1,0 +1,81 @@
+# Before calling EasyBuild, use
+# export EASYBUILD_INCLUDE_EASYBLOCKS=/apps/antwerpen/easybuild/github/UAntwerpen-easyblocks/\*/\*.py
+easyblock = 'EB_METISMOD'  # UAntwerp METIS easyblock with support for preconfigopts.
+
+name = 'METIS'
+version = '5.1.0'
+versionsuffix = '-i32-fp64'
+
+homepage = 'http://glaros.dtc.umn.edu/gkhome/metis/metis/overview'
+
+whatis = [ 
+    'Description: Serial graph partitioning and fill-reducing matrix ordering.',
+    'This module is compiled with 32-bit signed integers and double precision floating point and contains the tools and static and shared libraries.',
+]
+
+description = """
+METIS is a set of serial programs for partitioning graphs, partitioning finite
+element meshes, and producing fill reducing orderings for sparse matrices. The
+algorithms implemented in METIS are based on the multilevel recursive-bisection,
+multilevel k-way, and multi-constraint partitioning schemes developed in the
+Digital Technology Center at the University of Minnesota.
+
+This module is compiled with 32-bit signed integers for the elementary data
+type that hold information about vertices and their adjacency list (so the 
+number of vertices and the total number of edges is restricted to 2^31-1), 
+and double precision floating point.
+
+Note that the authors advise to use another package of theirs, hMETIS, if
+the quality of the partitioning is more important than the computational
+efficiency.
+"""
+
+usage = """
+The METIS package contains both the METIS library and a number of command line
+tools.
+
+The command line tools are:
++ gpmetis:  Partitions a graph into a specified number of parts
++ mpmetis:  Partitions a mesh into a specified number of parts
++ ndmetis:  Computes a fill-reducing ordering of the vertices of the graph using 
+            multilevel nested dissection
++ m2gmetis: Converts a mesh into a graph that is compatible with METIS
++ graphchk: Checks the graph for format correctness and consistency
+Each of these commands supports the --help command line optioni except graphchk.
+Further info is available in the PDF manual.
+
+The API is fully documented in the PDF manual.
+"""
+
+docurls = [
+    'Online 5.1 manual (PDF): http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf',
+]
+
+docpaths = [
+    'manual/manual.pdf',
+]
+
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+toolchainopts = {'pic': True}
+
+sources = [SOURCELOWER_TAR_GZ]
+source_urls = [
+    'http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis',
+    'http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD',
+]
+
+builddependencies = [('buildtools', '2018a', '', True)]
+
+# Unfortunately, the current METIS EasyBlock does not honour the following lines which
+# would be a much more elegant way of setting the accurady of the data types, so we
+# made a minor modification to the EasyBlock.
+# Set the data types for integers and floating point.
+preconfigopts  = 'sed --in-place=".orig" '
+preconfigopts += '  \'s/#define IDXTYPEWIDTH.*/#define IDXTYPEWIDTH 32/; '
+preconfigopts += '    s/#define REALTYPEWIDTH.*/#define REALTYPEWIDTH 64/\' include/metis.h && '
+#patches = ['METIS-5.1.0-use-doubles.patch']
+
+configopts = ['', 'shared=1']
+
+moduleclass = 'math'
