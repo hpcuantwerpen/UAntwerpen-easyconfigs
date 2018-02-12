@@ -1,0 +1,49 @@
+name = 'libxml2'
+version = '2.9.7'
+
+homepage = 'http://xmlsoft.org/'
+
+whatis = [
+    'The XML C parter and toolkit of Gnome, but usable outside of the Gnome platform also',
+    'This module provides command line tools and static and shared libraries',
+]
+
+description = """
+Libxml2 is the XML C parser and toolkit developed for the Gnome project (but
+usable outside of the Gnome platform), it is free software available under the
+MIT License. XML itself is a metalanguage to design markup languages, i.e. text
+language where semantic and structure are added to the content using extra
+"markup" information enclosed between angle brackets. HTML is the most
+well-known markup language. Though the library is written in C a variety of
+language bindings make it available in other environments.
+
+This module provides command line tools and static and shared libraries.
+"""
+
+usage = """
+The module provides a number of command line tools
++ xmlcatalog: Parse and manipulate XML or SGML catalog files
++ xmllint:    Comand-line XML parser
++ xml-config: Provides information about the installed version of the library
+xmlcatalog and xmllint also support --help
+
+The library API is documented on the libxml website.
+"""
+
+docurls = [
+    'Web-based documentation: http://xmlsoft.org/html/index.html',
+    'Man pages for the command line tools and libxml',
+]
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+toolchainopts = {'pic': True}
+
+source_urls = [
+    'http://xmlsoft.org/sources/',
+    'http://xmlsoft.org/sources/old/'
+]
+sources = [SOURCELOWER_TAR_GZ]
+
+dependencies = [('zlib', '1.2.11')]
+
+moduleclass = 'lib'
