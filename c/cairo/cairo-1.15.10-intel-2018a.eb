@@ -1,0 +1,80 @@
+easyblock = 'ConfigureMake'
+
+name = 'cairo'
+version = '1.15.10'
+
+homepage = 'http://cairographics.org'
+
+whatis = [
+    'Description: 2D graphics library with support for multiple output devices',
+    'This module includes command line tools for debugging Cairo applications and static and shared libraries',
+]
+
+description = """i
+Cairo is a 2D graphics library with support for multiple output devices.
+Currently supported output targets include the X Window System (via both Xlib
+and XCB), Quartz, Win32, image buffers, PostScript, PDF, and SVG file output.
+Experimental backends include OpenGL and DirectFB.
+
+Cairo is designed to produce consistent output on all output media while taking
+advantage of display hardware acceleration when available (eg. through the X
+Render Extension).
+
+The cairo API provides operations similar to the drawing operators of PostScript
+and PDF. Operations in cairo including stroking and filling cubic Bézier
+splines, transforming and compositing translucent images, and antialiased text
+rendering. All drawing operations can be transformed by any affine
+transformation (scale, rotation, shear, etc.)
+
+Cairo is implemented as a library written in the C programming language, but
+bindings are available for several different programming languages.
+
+Cairo is free software and is available to be redistributed and/or modified
+under the terms of either the GNU Lesser General Public License (LGPL)
+version 2.1 or the Mozilla Public License (MPL) version 1.1 at your option.
+
+This module provides the command line tools cairo-sphinx and cairo-trace and
+static and shared libraries.
+"""
+
+docurls = [
+    'Web-based documentation: https://www.cairographics.org/documentation/',
+]
+
+docpaths = [
+    'share/gtk-doc/html/cairo',
+]
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+source_urls = ['http://cairographics.org/snapshots/']
+sources = [SOURCE_TAR_XZ]
+
+dependencies = [
+    ('bzip2',    '1.0.6'),
+    ('zlib',     '1.2.11'),
+    ('libpng',   '1.6.34'),
+    ('freetype', '2.9'),
+    ('pixman',   '0.34.0'),
+    ('expat',    '2.2.5'),
+    ('GLib',     '2.55.1'),
+    ('X11',      '20171215'),
+]
+
+# disable symbol lookup, which requires -lbfd, to avoid link issues with (non-PIC) libiberty.a provided by GCC
+configopts = "--enable-symbol-lookup=no --enable-gobject=yes --enable-svg=yes --enable-tee=yes --enable-xlib-xcb "
+
+# workaround for "hidden symbol .* in .* is referenced by DSO" and "ld: final link failed: Bad value"
+buildopts = 'LD="$CC" LDFLAGS="$LDFLAGS -shared-intel"'
+
+sanity_check_paths = {
+    'files': ['bin/cairo-trace', 'lib/cairo/libcairo-trace.so', 'lib/cairo/libcairo-trace.a',
+              'lib/libcairo.a', 'lib/libcairo-gobject.a', 'lib/libcairo-script-interpreter.a',
+              'lib/libcairo-gobject.so', 'lib/libcairo-script-interpreter.so', 'lib/libcairo.so'] +
+             ['include/cairo/cairo%s.h' % x for x in ['', '-deprecated', '-features', '-ft', '-gobject', '-pdf', '-ps',
+                                                      '-script', '-script-interpreter', '-svg', '-version', '-xcb',
+                                                      '-xlib', '-xlib-xrender']],
+    'dirs': ['lib/pkgconfig'],
+}
+
+moduleclass = 'vis'
