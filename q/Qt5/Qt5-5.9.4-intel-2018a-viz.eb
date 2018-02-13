@@ -1,0 +1,68 @@
+easyblock = 'EB_Qtmod'
+
+name = 'Qt5'
+version = '5.9.4'
+versionsuffix = '-viz'
+
+homepage = 'http://qt.io/'
+
+whatis = [
+    'Description: Qt is a comprehensive cross-platform C++ application framework',
+    'This module is compiled for use on the Leibniz visualization node and may not work on other nodes',
+]
+
+description = """
+Qt is a cross-platform GUI development library. It supports not only Windows,
+macOS and Linux, but also tablet/phone operating systems such as Android and
+iOS and is used in many embedded devices. It is a popular choice for 
+developing good-looking cross-platform GUI applications. 
+
+Note Qt is pronounced "Cute".
+
+It is installed with the (L)GPL license.
+
+This module is compiled for use on the Leibniz visualization node and may not
+work on other nodes.
+"""
+
+docurls = [
+    'Web-based documentation: http://doc.qt.io/qt-5/',
+]
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+source_urls = [
+    'http://download.qt.io/official_releases/qt/%(version_major_minor)s/%(version)s/single/',
+    'http://download.qt.io/archive/qt/%(version_major_minor)s/%(version)s/single/'
+]
+sources = ['qt-everywhere-opensource-src-%(version)s.tar.xz']
+
+patches = ['Qt5-5.7.1_fix-nan-inf.patch']
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+osdependencies = [
+    ('mesa-libGL'),
+    ('mesa-libGL-devel'),
+    ('mesa-libEGL'),
+    ('mesa-libEGL-devel'),
+    ('mesa-libGLU'),
+    ('mesa-libGLU-devel'),
+]
+
+# qtgamepad needs recent kernel/libevdev (fails on RHEL 6.x)
+configopts = '-skip qtgamepad'
+
+dependencies = [
+    ('GLib',           '2.55.1'),      # Also imports PCRE, though Qt5 also contains its own alternative
+    ('HarfBuzz',       '1.7.5'),       # Can do without, Qt5 contains its own alternative
+    ('libjpeg-turbo',  '1.5.3'),       # Can do without, Qt5 contains its own alternative
+    ('libpng',         '1.6.34'),      # Can do without, Qt5 contains its own alternative
+#    ('SQLite',         '3.21'),        # UPDATE: Qt5 doesn find this one BEFORE Can do without, Qt5 contains its own alternative
+    ('X11',            '20171215'),    # Loads fontconfig and freetype, used by Qt5, tough Qt5 also provides its own freetype alternative
+#    ('libGLU',         '9.0.0'),
+]
+
+moduleclass = 'devel'
