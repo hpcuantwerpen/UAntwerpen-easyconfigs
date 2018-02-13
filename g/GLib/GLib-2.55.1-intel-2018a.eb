@@ -1,0 +1,61 @@
+easyblock = 'ConfigureMake'
+
+name = 'GLib'
+version = '2.55.1'
+
+homepage = 'http://www.gtk.org/'
+
+whatis = [
+    'Description: One of the GTK+ base libraries',
+    'The module provides a number of command line utilities and static and shared libraries',
+]
+
+description = """
+GLib provides the core application building blocks for libraries and
+applications written in C. It provides the core object system used in GNOME,
+the main loop implementation, and a large set of utility functions for strings
+and common data structures.
+
+The module provides a number of command line utilities and staqtic and shared
+libraries.
+"""
+
+docurls= [
+    'Web-based documentation: https://developer.gnome.org/glib/',
+]
+
+docpaths = [
+    'share/gtk-doc/html/glib',
+    'share/gtk-doc/html/gobject',
+    'share/gtk-doc/html/gio'
+]
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+toolchainopts = {'pic': True}
+
+source_urls = [FTPGNOME_SOURCE]
+sources = [SOURCELOWER_TAR_XZ]
+
+dependencies = [
+    ('libffi',     '3.2.1'),
+    ('gettext',    '0.19.8.1'),
+    ('libxml2',    '2.9.7'),
+    ('PCRE',       '8.41'),
+    ('util-linux', '2.31'),
+]
+
+builddependencies = [
+#    ('Python', '2.7.13')
+]
+
+configopts  = "--disable-maintainer-mode --disable-silent-rules --disable-libelf --disable-systemtap "
+configopts += "--enable-static --enable-shared"
+
+postinstallcmds = ["sed -i -e 's|#!.*python|#!/usr/bin/env python|' %(installdir)s/bin/*"]
+
+sanity_check_paths = {
+    'files': ['lib/libglib-%(version_major)s.0.a', 'lib/libglib-%%(version_major)s.0.%s' % SHLIB_EXT],
+    'dirs': ['bin', 'include'],
+}
+
+moduleclass = 'vis'
