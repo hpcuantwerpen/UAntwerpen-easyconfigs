@@ -1,0 +1,82 @@
+easyblock = 'MakeCp'
+
+name = 'Lumen'
+version = '1.2'
+
+homepage = 'http://www.attaccalite.com/lumen/'
+
+whatis = [ 
+    'Description: Lumen is a code based on Yambo 4.1.3 that implements a new approach to study non-linear response in solids and nanostructures based on a real-time evolution of an effective Schödinger equation.',
+    'This module contains binaries only'
+]
+
+description = """
+Lumen is a code based on Yambo 4.1.3 that implements a new approach to study
+non-linear response in solids and nanostructures based on a real-time evolution
+of an effective Schödinger equation. 
+
+Notice that all the non-linear implementation of Lumen will be soon included in
+the official Yambo distribution, so if you are not in hurry to use it, just wait
+for the new version of Yambo. 
+
+This module contains binaries for Lumen, compiled with MPI and OpenMP support.
+"""
+
+docurls = [
+    "Web-based tutorials on http://www.attaccalite.com/lumen/tutorials.html",
+    "Yambo, the code on which Lumen is based: http://www.yambo-code.org/",
+]
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+toolchainopts = {'usempi': 'True', 'openmp': 'True'}
+
+# Source file: http://www.attaccalite.com/lumen/code/lumen-1.1.tgz
+source_urls = ['http://www.attaccalite.com/lumen/code']
+sources = [SOURCELOWER_TGZ]
+patches = ['Lumen-1.1_download.patch']
+
+dependencies = [ 
+    ('netCDF', '4.6.0', '-MPI'),
+    ('FFTW',   '3.3.7'),
+]
+
+docpaths = [ 
+    'doc',
+]
+
+with_configure = True
+preconfigopts  = 'PFC=$MPIF90 FPP="fpp -free" '
+configopts  = '--enable-msgs-comps '
+configopts += '--enable-open-mp '
+configopts += '--enable-iotk '
+configopts += '--enable-etsf-io '
+configopts += '--enable-netcdf-LFS --enable-netcdf-hdf5 '
+configopts += '--with-netcdf-path=$EBROOTNETCDF --with-netcdff-path=$EBROOTNETCDF --with-hdf5-path=$EBROOTHDF5 '
+configopts += '--with-blas-libs="-lmkl_blas95_lp64 -Wl,--start-group -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -Wl,--end-group -liomp5 -lm -ldl" '
+configopts += '--with-lapack-libs="-lmkl_lapack95_lp64" '
+configopts += '--with-scalapack-libs="-lmkl_scalapack_lp64" '
+configopts += '--with-blacs-libs="-lmkl_blacs_intelmpi_lp64" '
+configopts += '--with-fft-path=$EBROOTFFTW '
+
+buildopts = 'all'
+
+files_to_copy = [
+    'bin',
+    'doc',
+    'PythonPP',
+    'AUTHORS',
+    'AUTHORS.yambo',
+    'README',
+    'README.yambo',
+    'release-notes',
+    'COPYING',
+]
+
+sanity_check_paths = {
+    'files' : ['bin/lumen', 'bin/lumen_lu', 'bin/lumen_ph', 'COPYING'],
+    'dirs'  : ['bin', 'doc', 'PythonPP']
+}
+
+modextrapaths = {'PYTHONPATH': ['PythonPP']}
+
+moduleclass = 'chem'
