@@ -1,0 +1,55 @@
+easyblock = 'PythonPackage'
+
+name          = 'Tensorflow'
+version       = '1.4.0'
+pyver         = '3.6.4'
+versionsuffix = '-CPU-Python-%(pyver)s'
+
+homepage = 'https://www.tensorflow.org/'
+
+whatis = [
+"Description: Tensorflow is an open-source library for machine intelligence",
+"This module provides the non-GPU-accelerated libraries build by Intel, so works on all nodes but does not use the GPU"
+]
+
+description = """
+An open-source software library for Machine Intelligence.
+
+This module does not use the GPUs and is for CPU computing only.
+It contains a module compiled by Intel for its processors and so should run
+fairly efficient on our systems. 
+
+Tensorflow doesn't compile properly with our compilers.  Blame Google for a
+lousy build process with tools that lack the transparancy needed to easily
+solve build problems.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+pycpver = ''.join(pyver.split('.')[:2])
+
+# this is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+
+dependencies = [
+    ('Python',   pyver),
+    ('protobuf', '3.5.1', '-Python-%(pyver)s'),
+]
+
+source_urls = ['https://anaconda.org/intel/tensorflow/%(version)s/download']
+sources = ['tensorflow-%(version)s-cp%(pycpver)s-cp%(pycpver)sm-linux_x86_64.whl' % {'version': version, 'pycpver': pycpver}]
+
+use_pip = True
+unpack_sources = False
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = True
+
+sanity_check_paths = {
+    'files': ['bin/tensorboard'],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'
