@@ -1,0 +1,67 @@
+#easyblock = 'PythonPackage'
+easyblock = 'Bundle'
+
+name = 'vsc-mympirun'
+version = '4.0.2'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/hpcugent/vsc-mympirun'
+
+whatis = [
+    "Description: A substitute for mpirun with some advantages in certain scenarios",
+]
+
+description = """
+The module contains a replacement for the mpirun command that offers some
+advantages, e.g., job scripts that can be made more portable between different
+MPI implementations or easier starting of hybrid applications.
+
+The code is developed by HPC-UGent. It is not clear however to what extent
+it works well with the new Torque NUMA resource syntax (the -L instead of -l)
+in all corner cases that can occur. We advise users who want to start hybrid
+applications with the Torque NUMA-aware resource syntax favoured on the
+UAntwerp clusters to have a look at the torque-tools module instead and in 
+particular the torque-ost-per-line command in that module (which contains
+man pages).
+
+Run mympirun --help for more information on the mympirun command. There 
+are also some instructions on the home page of the package.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+# this is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+
+dependencies = [
+    ('Python',   '2.7.14'),
+]
+
+exts_list = [
+    ('vsc-install', '0.10.26', { 
+        'modulename'  : 'vsc.install',
+        'source_urls' : ['https://pypi.python.org/packages/source/v/vsc-install'],
+        'sources'     : [SOURCE_TAR_GZ],
+    }),
+    ('vsc-base', '2.5.8', {
+        'modulename'  : 'vsc.utils.fancylogger',
+        'source_urls' : ['https://pypi.python.org/packages/source/v/vsc-base'],
+        'sources'     : [SOURCE_TAR_GZ],
+    }),
+    ('vsc-mympirun', '4.0.2', {
+        'modulename'  : 'vsc.mympirun',
+        'source_urls' : ['https://pypi.python.org/packages/source/v/vsc-mympirun'],
+        'sources'     : [SOURCE_TAR_GZ]
+    }),
+]
+
+# we ship something in bin/fake
+modextrapaths = {'PATH': 'bin/fake'}
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+sanity_check_paths = {
+    'files': ['bin/mympirun'],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'tools'
