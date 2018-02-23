@@ -28,4 +28,8 @@ sanity_check_paths = {
     'dirs': ['bin', 'man']
 }
 
+modextravars = {
+    'DSSP': '%(installdir)s/bin/mkdssp',
+}
+
 moduleclass = 'bio'
