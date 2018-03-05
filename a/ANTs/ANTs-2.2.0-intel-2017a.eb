@@ -17,7 +17,7 @@ sources = ['v%(version)s.tar.gz']
 builddependencies = [('CMake', '3.7.2', '', True)]
 
 skipsteps = ['install']
-buildopts = ' && mkdir -p %(installdir)s && cp -r * %(installdir)s/'
+buildopts = ' && mkdir -p %(installdir)s && cp -r * %(installdir)s/ && cp -p ../ANTs-%(version)s/Scripts/* %(installdir)s/bin '
 
 parallel = 1
 
