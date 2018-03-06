@@ -1,0 +1,29 @@
+easyblock = "PythonPackage"
+
+name = 'PyAMG'
+version = '3.3.2'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'http://pyamg.org'
+description = """PyAMG is a library of Algebraic Multigrid (AMG) solvers with a convenient Python interface."""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+source_urls = [PYPI_LOWER_SOURCE]
+sources = [SOURCELOWER_TAR_GZ]
+
+options = {'modulename': 'pyamg'}
+
+pyver = '2.7.13'
+pyshortver = '.'.join(pyver.split('.')[:2])
+
+dependencies = [
+    ('Python', pyver),
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ['lib/python%(pyshortver)s/site-packages/pyamg-%(version)s-py%(pyshortver)s-linux-x86_64.egg']
+}
+
+moduleclass = 'math'
