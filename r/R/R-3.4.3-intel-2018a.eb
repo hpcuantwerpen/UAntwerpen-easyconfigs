@@ -54,6 +54,7 @@ dependencies = [
     ('PROJ',          '4.9.3'),   # for rgdal
     ('GMP',           '6.1.2'),   # for igraph
     ('Boost',         '1.66.0'),  # for mzR
+    ('JAGS',          '4.3.0'),   # for R2jags
     # OS dependency should be preferred if the os version is more recent then this version,
     # it's nice to have an up to date openssl for security reasons
     # ('OpenSSL', '1.0.2h'),
