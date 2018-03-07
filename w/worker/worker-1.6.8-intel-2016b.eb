@@ -2,7 +2,7 @@
 easyblock = 'ConfigureMake'
 
 name = 'worker'
-version = '1.6.7'
+version = '1.6.8'
 
 #
 # Set the cluster configuration
@@ -10,7 +10,7 @@ version = '1.6.7'
 # worker needs to find the correct mpirun and therefore uses the toolchain, which is
 # set through the next two variables.
 tcname = 'intel'
-tcver = '2017a'
+tcver = '2016b'
 # Worker also needs the path to the toolchain modules, which for UAntwerp is constructed
 # from the <cluster>-<os>-pair and the toolchain version number. Therefore the next variable:
 UAcluster = 'leibniz'
@@ -37,14 +37,14 @@ or http://worker.readthedocs.io/en/latest/.
 
 Note that Torque uses MPI internally, but it maintains a link to the appropriate
 executable internally so the toolchain will not be loaded at runtime. Loading
-another toolchain than the on indicated in the name of the module is not
+another toolchain than the on indicated in the name of the module is not 
 guaranteed to always work though.
 """
 
 docurls = [
     'Worker documentation site: http://worker.readthedocs.io/en/latest/',
     'VSC web site: https://vscentrum.be/neutral/documentation/cluster-doc/running-jobs/worker-framework',
-]
+] 
 
 toolchain = {'name': 'dummy', 'version': ''}
 
