@@ -1,0 +1,59 @@
+##
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+#
+# Author:    Stephane Thiell <sthiell@stanford.edu>
+###
+
+easyblock = 'ConfigureMake'
+
+name = 'LAME'
+version = '3.100'
+
+homepage = 'http://lame.sourceforge.net/'
+
+whatis = [
+    "Description: LAME is a high quality MPEG Audio Layer III (mp3) encoder",
+    "This module provides the lame command line tool and static and shared libraries",
+]
+
+description = """
+LAME is a high quality MPEG Audio Layer III (MP3) encoder licensed under the
+LGPL.
+
+This module provides the command line tool lame and static and shared 
+libraries
+"""
+
+examples = """
+Run lame with the --help option to get some help on the command line options
+of the lame command line tool. There is also a manual page for the lame
+command.
+
+The API is very poorly documented (basically through the source code).
+"""
+
+docurls = [
+    "Web-baased documentation: http://lame.sourceforge.net/using.php",
+    "Man page for lame (section 1)",
+]
+
+docpaths = [
+    'share/doc/lame/html'
+]
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+source_urls = ['https://sourceforge.net/projects/lame/files/lame/%(version_major_minor)s/']
+sources = [SOURCELOWER_TAR_GZ]
+
+dependencies = [('ncurses', '6.0')]
+
+# configure is broken: add workaround to find libncurses...
+configure_cmd_prefix = "FRONTEND_LDADD='-L${EBROOTNCURSES}/lib' "
+
+sanity_check_paths = {
+    'files': ['bin/lame', 'include/lame/lame.h', 'lib/libmp3lame.%s' % SHLIB_EXT],
+    'dirs': [],
+}
+
+moduleclass = 'data'

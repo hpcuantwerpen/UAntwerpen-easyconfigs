@@ -1,0 +1,54 @@
+easyblock = 'CMakeMake'
+
+name = 'x265'
+version = '2.6'
+
+homepage = 'http://x265.org/'
+
+whatis = [
+    "Description: x265 is a free library and application for H.265 AVC encoding, made by the VideoLAN organization",
+    "This module provides both the command line tool and static and shared libraries"
+]
+
+description = """
+x265 is a free software library and application for encoding video streams into
+the H.265 AVC compression format, and is released under the terms of the 
+GNU GPL. It is developed by the VideoLAN organization.
+
+This module provides the encodign tool x265 and static and shared libraries.
+"""
+
+examples = """
+Documentation for the x265 command line tool is available through the --help
+command line option.
+
+Both the command line tool and API are also documented on the web.
+"""
+
+docurls = [
+    'Web-based documentaqtion: http://x265.readthedocs.io/en/default/',
+]
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+
+source_urls = [
+    'http://ftp.videolan.org/pub/videolan/x265/',
+    'http://download.videolan.org/pub/videolan/x265/',
+]
+sources = ['%(name)s_%(version)s.tar.gz']
+checksums = ['4d318be1f19b58985432a144bd054572']
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True)  # For CMake and Yasm. Yasm was mentioned in the dependencies but is likely only a build dependency...
+]
+
+start_dir = 'source'
+
+installopts = ' && cp ../COPYING %(installdir)s'
+
+sanity_check_paths = {
+    'files': ['bin/x265', 'include/x265_config.h', 'include/x265.h', 'lib/libx265.a', 'lib/libx265.%s' % SHLIB_EXT],
+    'dirs': [],
+}
+
+moduleclass = 'vis'
