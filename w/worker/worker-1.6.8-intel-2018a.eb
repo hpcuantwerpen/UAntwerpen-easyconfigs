@@ -126,6 +126,7 @@ postinstallcmds = [
     'sed -i "s/ unload_modules = .*/ unload_modules = intel/g" %(installdir)s/conf/worker.conf',
     'sed -i "s@ mpi_module = .*@ mpi_module = %s/%s@g" %%(installdir)s/conf/worker.conf' % (tcname, tcver),
     'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s-%s/%s/all /apps/antwerpen/modules/%s-%s/%s/all@g" %%(installdir)s/conf/worker.conf' % (UAcluster, UAOS, UAOS, UAcluster, UAOS, tcver),
+    'sed -i "s/\\(mpirun_options =.*\\)/\\1 -genv I_MPI_WAIT_MODE 1/" %(installdir)s/conf/worker.conf',
 ]
 
 moduleclass = 'tools'
