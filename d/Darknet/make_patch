@@ -1,0 +1,4 @@
+patchfile=darknet_makefile_easybuild.patch
+echo "Patch file for Darknet by Kurt Lust, UAntwerp"                           >$patchfile
+echo "This patchfile updates the Makefile to integrate better with EasyBuild" >>$patchfile
+diff -u darknet-orig/Makefile darknet/Makefile                                >>$patchfile

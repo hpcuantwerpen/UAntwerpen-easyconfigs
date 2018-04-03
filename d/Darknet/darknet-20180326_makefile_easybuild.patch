@@ -1,0 +1,144 @@
+Patch file for Darknet by Kurt Lust, UAntwerp
+This patchfile updates the Makefile to integrate better with EasyBuild
+--- darknet-orig/Makefile	2018-03-26 14:19:14.000000000 +0200
++++ darknet/Makefile	2018-04-03 15:09:30.207548000 +0200
+@@ -1,17 +1,19 @@
+-GPU=0
+-CUDNN=0
+-OPENCV=0
+-OPENMP=0
+-DEBUG=0
+-
+-ARCH= -gencode arch=compute_30,code=sm_30 \
+-      -gencode arch=compute_35,code=sm_35 \
+-      -gencode arch=compute_50,code=[sm_50,compute_50] \
+-      -gencode arch=compute_52,code=[sm_52,compute_52]
++# Adaptation of the Darknet Makefile to make it more compatible with EasyBuild.
++#
++# - Defining EBROOTCUDA enables CUDA support
++# - Defining EBROOTCUDNN enables support for cuDNN
++# - Defining EBROOTOPENCV enables support for OpenCV
++# - OpenMP and debug support is enabled through cflags.
++
++#ARCH= -gencode arch=compute_30,code=sm_30 \
++#      -gencode arch=compute_35,code=sm_35 \
++#      -gencode arch=compute_50,code=[sm_50,compute_50] \
++#      -gencode arch=compute_52,code=[sm_52,compute_52]
+ #      -gencode arch=compute_20,code=[sm_20,sm_21] \ This one is deprecated?
+ 
+ # This is what I use, uncomment if you know your arch and want to specify
+ # ARCH= -gencode arch=compute_52,code=compute_52
++ARCH?=-gencode arch=compute_60,code=compute_60
+ 
+ VPATH=./src/:./examples
+ SLIB=libdarknet.so
+@@ -19,47 +21,38 @@
+ EXEC=darknet
+ OBJDIR=./obj/
+ 
+-CC=gcc
+-NVCC=nvcc 
+-AR=ar
+-ARFLAGS=rcs
+-OPTS=-Ofast
+-LDFLAGS= -lm -pthread 
++INSTALLDIR?=./INSTALL
++CC?=gcc
++NVCC?=nvcc 
++CUDA_NVCC_FLAGS?=--gpu-architecture=compute_30 --gpu-code=sm_30 -ccbin `which $(CC)`
++ARi?=ar
++ARFLAGS?=rcs
++LDFLAGS?= -lm -pthread 
++CFLAGS?=-Wall -Wno-unused-result -Wno-unknown-pragmas -Wfatal-errors -fPIC
+ COMMON= -Iinclude/ -Isrc/
+-CFLAGS=-Wall -Wno-unused-result -Wno-unknown-pragmas -Wfatal-errors -fPIC
+ 
+-ifeq ($(OPENMP), 1) 
+-CFLAGS+= -fopenmp
+-endif
+-
+-ifeq ($(DEBUG), 1) 
+-OPTS=-O0 -g
+-endif
+-
+-CFLAGS+=$(OPTS)
+-
+-ifeq ($(OPENCV), 1) 
++ifdef EBROOTOPENCV
+ COMMON+= -DOPENCV
+ CFLAGS+= -DOPENCV
+ LDFLAGS+= `pkg-config --libs opencv` 
+ COMMON+= `pkg-config --cflags opencv` 
+ endif
+ 
+-ifeq ($(GPU), 1) 
+-COMMON+= -DGPU -I/usr/local/cuda/include/
++ifdef EBROOTCUDA
++COMMON+= -DGPU -I$(EBROOTCUDA)/include/
+ CFLAGS+= -DGPU
+-LDFLAGS+= -L/usr/local/cuda/lib64 -lcuda -lcudart -lcublas -lcurand
++LDFLAGS+= -L$(EBROOTCUDA)/lib64 -lcuda -lcudart -lcublas -lcurand
+ endif
+ 
+-ifeq ($(CUDNN), 1) 
++ifdef EBROOTCUDNN
+ COMMON+= -DCUDNN 
+ CFLAGS+= -DCUDNN
+-LDFLAGS+= -lcudnn
++LDFLAGS+= -L$(EBROOTCUDNN)/lib64 -lcudnn
+ endif
+ 
+ OBJ=gemm.o utils.o cuda.o deconvolutional_layer.o convolutional_layer.o list.o image.o activations.o im2col.o col2im.o blas.o crop_layer.o dropout_layer.o maxpool_layer.o softmax_layer.o data.o matrix.o network.o connected_layer.o cost_layer.o parser.o option_list.o detection_layer.o route_layer.o upsample_layer.o box.o normalization_layer.o avgpool_layer.o layer.o local_layer.o shortcut_layer.o logistic_layer.o activation_layer.o rnn_layer.o gru_layer.o crnn_layer.o demo.o batchnorm_layer.o region_layer.o reorg_layer.o tree.o  lstm_layer.o l2norm_layer.o yolo_layer.o
+ EXECOBJA=captcha.o lsd.o super.o art.o tag.o cifar.o go.o rnn.o segmenter.o regressor.o classifier.o coco.o yolo.o detector.o nightmare.o darknet.o
+-ifeq ($(GPU), 1) 
++ifdef EBROOTCUDA
+ LDFLAGS+= -lstdc++ 
+ OBJ+=convolutional_kernels.o deconvolutional_kernels.o activation_kernels.o im2col_kernels.o col2im_kernels.o blas_kernels.o crop_layer_kernels.o dropout_layer_kernels.o maxpool_layer_kernels.o avgpool_layer_kernels.o
+ endif
+@@ -69,7 +62,8 @@
+ DEPS = $(wildcard src/*.h) Makefile include/darknet.h
+ 
+ #all: obj backup results $(SLIB) $(ALIB) $(EXEC)
+-all: obj  results $(SLIB) $(ALIB) $(EXEC)
++#all: obj  results $(SLIB) $(ALIB) $(EXEC)
++all: obj $(SLIB) $(ALIB) $(EXEC)
+ 
+ 
+ $(EXEC): $(EXECOBJ) $(ALIB)
+@@ -85,7 +79,7 @@
+ 	$(CC) $(COMMON) $(CFLAGS) -c $< -o $@
+ 
+ $(OBJDIR)%.o: %.cu $(DEPS)
+-	$(NVCC) $(ARCH) $(COMMON) --compiler-options "$(CFLAGS)" -c $< -o $@
++	$(NVCC) $(ARCH) $(COMMON) $(CUDA_NVCC_FLAGS) --compiler-options "$(CFLAGS)" -c $< -o $@
+ 
+ obj:
+ 	mkdir -p obj
+@@ -94,6 +88,27 @@
+ results:
+ 	mkdir -p results
+ 
++install:
++	-@mkdir -p $(INSTALLDIR)
++	-@mkdir -p $(INSTALLDIR)/bin
++	-@mkdir -p $(INSTALLDIR)/lib
++	-@mkdir -p $(INSTALLDIR)/include
++	-@mkdir -p $(INSTALLDIR)/scripts
++	-@mkdir -p $(INSTALLDIR)/python
++	-@mkdir -p $(INSTALLDIR)/cfg
++	-@mkdir -p $(INSTALLDIR)/data
++	-@cp    README.md  $(INSTALLDIR)
++	-@cp    $(EXEC)    $(INSTALLDIR)/bin
++	-@cp    $(SLIB)    $(INSTALLDIR)/lib
++	-@cp    $(ALIB)    $(INSTALLDIR)/lib
++	-@cp    include/*  $(INSTALLDIR)/include
++	-@cp    scripts/*  $(INSTALLDIR)/scripts
++	-@cp    python/*   $(INSTALLDIR)/python
++	-@cp    cfg/*      $(INSTALLDIR)/cfg
++	-@cp -r data/*     $(INSTALLDIR)/data
++	-@if test -d weights ; then mkdir -p $(INSTALLDIR)/weights; cp weights/* $(INSTALLDIR)/weights ; fi
++	-@echo "Darknet installed in $(INSTALLDIR)."
++
+ .PHONY: clean
+ 
+ clean:

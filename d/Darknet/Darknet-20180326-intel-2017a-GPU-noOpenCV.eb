@@ -1,0 +1,73 @@
+easyblock = 'ConfigureMake'
+
+name = 'Darknet'
+version = '20180326'
+versionsuffix = '-GPU-noOpenCV'
+
+homepage = 'https://pjreddie.com/darknet/'
+
+whatis = [
+    'Description: Darknet is a Open Source Neural Network package written in C.',
+    'This package provides the GPU darknet binaries and several config/weight files, including for Yolo, but without OpenCV'
+]
+
+description = """
+Darknet is an open source neural network framework written in C and CUDA. It is
+fast, easy to install, and supports CPU and GPU computation. 
+
+This module supports GPU computation and contains config and weight files
+for some networks, including for YOLO. The CPU code uses OpenMP parallelism.
+OpenCV is not included.
+"""
+
+usage = """
+As this is an OpenMP-enabled code, don't forget to select the number of threads
+by setting OMP_NUM_THREADS.
+
+Some hints:
+- Configuration files are in $EBROOTDARKNET/cfg
+- Example data files are in $EBROOTDARKNET/data
+- Some weight files have already been downloaded and put in 
+  $EBROOTDARKNET/weights
+"""
+
+examples = """
+After loading the module:
+darknet classifier predict $EBROOTDARKNET/cfg/imagenet1k.data $EBROOTDARKNET/cfg/extraction.cfg $EBROOTDARKNET/weights/extraction.weights  $EBROOTDARKNET/data/dog.jpg
+"""
+
+toolchain = {'name': 'intel', 'version': '2017a'}
+toolchainopts = {'pic': True, 'openmp': True, 'usempi': False}
+
+# Darknet is only available on GitHub. First make the necessary source files
+# using the scripts in /apps/antwerpen/d/Darknet. There are two source files:
+# - One contains the Darknet code
+# - The other one contains a number of weight files.
+sources = [
+    'darknet-%(version)s.tar.gz',
+    'darknet-weights-%(version)s.tar.gz',
+]
+patches = [
+    'darknet-%(version)s_makefile_easybuild.patch'
+]
+
+dependencies = [
+#    ('OpenCV', '3.4.1', '-CPU-noGUI'),
+    ('CUDA',          '9.1.85',            '', True),
+    ('cuDNN',         '7.0.5-CUDA-9.1.85', '', True),
+
+]
+
+skipsteps = ['configure']
+
+parallel = 1
+
+buildopts = 'CUDA_NVCC_FLAGS="--gpu-architecture=compute_60 --gpu-code=sm_60 -ccbin `which icc`"'
+installopts = 'INSTALLDIR=%(installdir)s'
+
+sanity_check_paths = {
+    'files': ['bin/darknet', 'lib/libdarknet.a', 'lib/libdarknet.%s' % SHLIB_EXT],
+    'dirs':  ['cfg'],
+}
+
+moduleclass = 'tools'

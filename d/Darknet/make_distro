@@ -1,0 +1,21 @@
+#!/bin/bash
+
+distrodate=$(date +%Y%m%d)
+
+git clone https://github.com/pjreddie/darknet.git
+tar -cf darknet-${distrodate}.tar --exclude-vcs darknet
+gzip -9 darknet-${distrodate}.tar
+
+pushd darknet
+mkdir weights
+cd weights
+
+wget https://pjreddie.com/media/files/yolov3.weights
+wget https://pjreddie.com/media/files/extraction.weights
+wget https://pjreddie.com/media/files/go.weights
+wget https://pjreddie.com/media/files/tiny.weights
+
+popd
+tar -cf darknet-weights-${distrodate}.tar darknet/weights
+gzip -9 darknet-weights-${distrodate}.tar
+
