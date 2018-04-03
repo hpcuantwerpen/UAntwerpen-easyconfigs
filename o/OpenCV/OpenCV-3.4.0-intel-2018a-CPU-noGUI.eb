@@ -1,0 +1,104 @@
+# NOTE KL: OpenCV 3.4.1 was out when we installed this one, but it does contain bugs that stop
+# C programs from compiling correctly, hence a return to 3.4.0.
+easyblock = 'CMakeMake'
+
+name = 'OpenCV'
+version = '3.4.0'
+#versionsuffix = '-Python-%(pyver)s'
+versionsuffix = '-CPU-noGUI'
+
+homepage = 'http://opencv.org/'
+whatis = [
+    "Description: OpenCV is an open source computer vision and machine learning library",
+    "This module contains the CPU-only libraries without any GUI and without Python, Matlab and Java support"
+]
+
+description = """
+OpenCV (Open Source Computer Vision Library) is an open source computer vision
+and machine learning software library. OpenCV was built to provide a common
+infrastructure for computer vision applications and to accelerate the use of
+machine perception in the commercial products.
+
+This module provides a fairly minimal installation with the following
+restrictions:
+* It is CPU-only, the GPU code is not included
+* It does not include the Qt or GTK GUIs
+* Python support is not included
+* Java support is not included
+* Matlab support is not included
+* The parallel framework used is OpenMP
+"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+source_urls = [
+    'https://github.com/Itseez/opencv/archive/',
+    # The Hash is version dependent! see 3rdparty/ippicv/downloader.cmake
+    'https://raw.githubusercontent.com/Itseez/opencv_3rdparty/81a676001ca8075ada498583e4166079e5744668/ippicv',
+]
+sources = [
+    '%(version)s.zip',
+    {'filename': 'ippicv_linux_20151201.tgz', 'extract_cmd': "cp %s %(builddir)s"},
+]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True), # For CMake
+]
+
+dependencies = [
+#    ('Python',        '3.6.4'),
+    ('zlib',          '1.2.11'),
+    ('FFmpeg',        '3.4.2'),
+    ('libjpeg-turbo', '1.5.3'),
+    ('libpng',        '1.6.34'),
+    ('LibTIFF',       '4.0.9'),
+    ('JasPer',        '2.0.14'),
+#    ('Java',          '1.8.0_144', '', True),
+#    ('ant',           '1.10.1', '-Java-%(javaver)s', True),
+    ('GLib',          '2.55.1'),
+#    ('GTK+',          '2.24.31'),
+]
+
+separate_build_dir = True
+
+preconfigopts = 'export IPPROOT=$EBROOTICC/ipp && '
+
+# The destination directory is "linux-<MD5>" see 3rdparty/ippicv/downloader.cmake
+ippicv_dir = '3rdparty/ippicv/downloads/linux-808b791a6eac9ed78d32a7666804320e/'
+preconfigopts = "mkdir -p %s && cp -a ../*.tgz %s && " % (ippicv_dir, ippicv_dir)
+
+configopts = '-DCMAKE_BUILD_TYPE=RELEASE '
+configopts += '-DBUILD_PYTHON_SUPPORT=OFF '
+configopts += '-DBUILD_NEW_PYTHON_SUPPORT=OFF '
+configopts += '-DBUILD_JAVA=OFF '
+configopts += '-DWITH_MATLAB=OFF '
+configopts += '-DZLIB_LIBRARY=$EBROOTZLIB/lib/libz.%s ' % SHLIB_EXT
+configopts += '-DZLIB_INCLUDE_DIR=$EBROOTZLIB/include '
+configopts += '-DTIFF_LIBRARY=$EBROOTLIBTIFF/lib/libtiff.%s ' % SHLIB_EXT
+configopts += '-DTIFF_INCLUDE_DIR=$EBROOTLIBTIFF/include '
+configopts += '-DPNG_LIBRARY=$EBROOTLIBPNG/lib/libpng.%s ' % SHLIB_EXT
+configopts += '-DPNG_INCLUDE_DIR=$EBROOTLIBPNG/include '
+configopts += '-DJPEG_LIBRARY=$EBROOTLIBJPEGMINTURBO/lib/libjpeg.%s ' % SHLIB_EXT
+configopts += '-DJPEG_INCLUDE_DIR=$EBROOTLIBJPEGMINTURBO/include '
+configopts += '-DJASPER_LIBRARY=$EBROOTJASPER/lib/libjasper.a '
+configopts += '-DJASPER_INCLUDE_DIR=$EBROOTJASPER/include '
+configopts += '-DWITH_WEBP=ON '
+configopts += '-DWITH_IPP=ON '
+configopts += '-DWITH_OPENMP=ON '
+configopts += '-DWITH_CUDA=OFF '
+configopts += '-DWITH_QT=OFF '
+configopts += '-DWITH_GTK=OFF '
+configopts += '-DWITH_VTK=OFF '
+
+postinstallcmds = [
+    "mkdir -p %(installdir)s/lib",
+    "cp 3rdparty/ippicv/ippicv_lnx/lib/intel64/libippicv.* %(installdir)s/lib"
+]
+
+sanity_check_paths = {
+    'files': ['lib64/libopencv_core.%s' % SHLIB_EXT, 'lib/libippicv.a'] +
+             ['bin/opencv_%s' % x for x in ['annotation', 'createsamples', 'traincascade']],
+    'dirs': ['include']
+}
+
+moduleclass = 'vis'
