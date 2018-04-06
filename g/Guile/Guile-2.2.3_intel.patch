@@ -1,0 +1,26 @@
+# Patches to compile Guile 2.2 with the Intel compilers (tested with version 2017)
+# The patch is not essential, it just removes a few GNU-specific command line 
+# options that produce warnings when compiling with the Intel compilers.
+# Written by Kurt Lust, UAntwerp.
+--- guile-2.2.0-orig/configure	2017-03-15 09:57:48.000000000 +0100
++++ guile-2.2.0-new/configure	2017-03-28 11:52:43.666152845 +0200
+@@ -54694,7 +54694,7 @@
+ 
+     POTENTIAL_GCC_CFLAGS="-Wall -Wmissing-prototypes \
+       -Wdeclaration-after-statement -Wpointer-arith \
+-      -Wswitch-enum -fno-strict-aliasing -fwrapv"
++      -fno-strict-aliasing -fwrapv"
+     # Do this here so we don't screw up any of the tests above that might
+     # not be "warning free"
+     if test "${GUILE_ERROR_ON_WARNING}" = yes
+--- guile-2.2.0-orig/configure.ac	2017-03-14 15:54:09.000000000 +0100
++++ guile-2.2.0-new/configure.ac	2017-03-28 11:42:40.772026199 +0200
+@@ -1603,7 +1603,7 @@
+ 
+     POTENTIAL_GCC_CFLAGS="-Wall -Wmissing-prototypes \
+       -Wdeclaration-after-statement -Wpointer-arith \
+-      -Wswitch-enum -fno-strict-aliasing -fwrapv"
++      -fno-strict-aliasing -fwrapv"
+     # Do this here so we don't screw up any of the tests above that might
+     # not be "warning free"
+     if test "${GUILE_ERROR_ON_WARNING}" = yes
