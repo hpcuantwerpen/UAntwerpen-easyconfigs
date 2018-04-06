@@ -1,0 +1,28 @@
+easyblock = "Toolchain"
+
+name = 'gompi'
+version = '2018a'
+
+homepage = '(none)'
+
+whatis = [
+    "Description: Toolchain including the GNU Compiler Collection. OpenBLAS and OpenMPI"
+]
+
+description = """
+GNU Compiler Collection (GCC) based compiler toolchain, including OpenBLAS and
+OpenMPI for MPI support. The toolchain is equivalent to the standard VSC
+version of the toolchain except for minor updates of binutils and Open MPI.
+"""
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+gccver = '6.4.0-2.29.1'
+
+# compiler toolchain dependencies
+dependencies = [
+    ('GCC', gccver),  # includes both GCC and binutils
+    ('OpenMPI', '2.1.3', '', ('GCC', gccver)),
+]
+
+moduleclass = 'toolchain'
