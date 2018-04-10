@@ -1,0 +1,92 @@
+easyblock = 'Bundle'
+
+name = 'Guile'
+version = '2.2.3'
+versionsuffix = '-bundle'
+
+homepage = 'https://www.gnu.org/software/guile/'
+
+whatis = [
+   "Description: GNU Guile programming language",
+   "This module provides static libraries only, and the binaries"
+]
+
+description = """
+Guile is a programming language, designed to help programmers create flexible
+applications that can be extended by users or other programmers with plug-ins,
+modules, or scripts. With Guile you can create applications and games for the
+desktop, the Web, the command-line, and more.
+
+It is an implementation of the Scheme programming language, supporting the
+Revided5 and most of the Revised6 language reports, as well as many SRFIs. It
+also comes with a library of modules that offer additional features, like an
+HTTP server and client, XML parsing, and object-oriented programming.
+
+This module is compiled against the system libraries and contains all
+dependencies that are not installed on the system in its directories, so
+no other modules are loaded.
+"""
+
+docurls = [
+    "Web-based documentation on https://www.gnu.org/software/guile/learn/",
+    "Manual page for the guile command (section 1)",
+    "texinfo-based documentation: info guile",
+]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+builddependencies = [
+    ('buildtools', '2018a'),
+]
+
+default_easyblock = 'ConfigureMake'
+
+guile_preconfigopts  = 'LIBFFI_CFLAGS="-I%(installdir)s/lib/libffi-3.2.1/include" LIBFFI_FLAGS="-L%(installdir)s -lffi" '
+guile_preconfigopts += 'BDW_GC_CFLAGS="-I%(installdir)s/include" BDW_GC_LIBS="-L%(installdir)s/lib -lgc -lpthread" '
+guile_configopts  = '--with-libgmp-prefix=%(installdir)s '
+guile_configopts += '--with-libunistring-prefix=%(installdir)s '
+guile_configopts += '--disable-shared '
+
+components = [
+    ('gc', '7.6.4', {
+        'sources':       [SOURCE_TAR_GZ, 'libatomic_ops-7_4_4.tar.gz'],
+        'source_urls':   ['http://hboehm.info/gc/gc_source/', 'https://github.com/ivmai/libatomic_ops/archive/'],
+        'start_dir':     '%(name)s-%(version)s',
+        'preconfigopts': "ln -s %(builddir)s/libatomic_ops*/ libatomic_ops && ",
+        'configopts':    '--enable-threads=posix --enable-static --disable-shared',
+    }),
+    ('GMP', '6.1.2', {
+        'sources':     [SOURCELOWER_TAR_BZ2],
+        'source_urls': ['http://ftp.gnu.org/gnu/gmp'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--enable-cxx --enable-static --disable-shared'
+    }),
+    ('libffi', '3.2.1', {
+        'sources':      [SOURCELOWER_TAR_GZ],
+        'source_urls':  [ 'ftp://sourceware.org/pub/libffi/', 'http://www.mirrorservice.org/sites/sourceware.org/pub/libffi/'],
+        'start_dir':    '%(name)s-%(version)s',
+        'configopts':   '--enable-static --disable-shared'
+    }),
+    ('libunistring', '0.9.9', {
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'start_dir':   '%(name)s-%(version)s',
+        'configopts':   '--enable-static --disable-shared',
+        'parallel':    1
+    }),
+    ('Guile', '2.2.3', {
+        'sources':       [SOURCELOWER_TAR_XZ],
+        'source_urls':   [GNU_SOURCE],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': guile_preconfigopts,
+        'configopts':    guile_configopts,
+    }),
+]
+
+sanity_check_paths = {
+    'files': ['bin/guild', 'bin/guile', 'bin/guile-config',
+              'bin/guile-snarf', 'bin/guile-tools'],
+    'dirs': ['lib/guile/%(version_major_minor)s/ccache'],
+}
+
+moduleclass = 'lang'
