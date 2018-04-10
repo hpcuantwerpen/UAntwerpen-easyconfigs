@@ -41,11 +41,13 @@ builddependencies = [
 
 default_easyblock = 'ConfigureMake'
 
-guile_preconfigopts  = 'LIBFFI_CFLAGS="-I%(installdir)s/lib/libffi-3.2.1/include" LIBFFI_FLAGS="-L%(installdir)s -lffi" '
+guile_preconfigopts  = 'module load buildtools/2018a ; '
+guile_preconfigopts += 'LIBFFI_CFLAGS="-I%(installdir)s/lib/libffi-3.2.1/include" LIBFFI_FLAGS="-L%(installdir)s -lffi" '
 guile_preconfigopts += 'BDW_GC_CFLAGS="-I%(installdir)s/include" BDW_GC_LIBS="-L%(installdir)s/lib -lgc -lpthread" '
 guile_configopts  = '--with-libgmp-prefix=%(installdir)s '
 guile_configopts += '--with-libunistring-prefix=%(installdir)s '
 guile_configopts += '--disable-shared '
+guile_prebuildopts = 'module load buildtools/2018a ; '
 
 components = [
     ('gc', '7.6.4', {
@@ -80,6 +82,7 @@ components = [
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': guile_preconfigopts,
         'configopts':    guile_configopts,
+        'prebuildopts':  guile_prebuildopts,
     }),
 ]
 

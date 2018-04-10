@@ -50,14 +50,14 @@ builddependencies = [
 dependencies = [
 ]
 
-preconfigopts  = 'module load GuileDep/2.2.3-bundle ; '
+preconfigopts  = 'module load GuileDep/2.2.3-bundle ; module load buildtools/2018a ; '
 preconfigopts += 'LIBFFI_CFLAGS="-I$EBROOTGUILEDEP/lib/libffi-3.2.1/include" LIBFFI_LIBS="-L$EBROOTGUILEDEP/lib64 -lffi" '
 preconfigopts += 'BDW_GC_CFLAGS="-I$EBROOTGUILEDEP/include" BDW_GC_LIBS="-I$EBROOTGUILEDEP/lib -lgc -lpthread" '
-configopts  = '--with-libgmp-prefix=$EBROOTGMP '
-configopts += '--with-libunistring-prefix=$EBROOTLIBUNISTRING '
+configopts  = '--with-libgmp-prefix=$EBROOTGUILEDEP '
+configopts += '--with-libunistring-prefix=$EBROOTGUILEDEP '
 configopts += '--disable-shared --disable-static '
 
-prebuildopts  = 'module load GuileDep/2.2.3-bundle ; '
+prebuildopts  = 'module load GuileDep/2.2.3-bundle ; module load buildtools/2018a ; '
 
 sanity_check_paths = {
     'files': ['bin/guild', 'bin/guile', 'bin/guile-config',
