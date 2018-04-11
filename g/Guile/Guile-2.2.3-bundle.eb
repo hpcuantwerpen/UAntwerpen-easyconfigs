@@ -1,7 +1,8 @@
 easyblock = 'Bundle'
 
 name = 'Guile'
-version = '2.2.3'
+guile_version = '2.2.3'
+version = guile_version
 versionsuffix = '-bundle'
 
 homepage = 'https://www.gnu.org/software/guile/'
@@ -42,47 +43,75 @@ builddependencies = [
 default_easyblock = 'ConfigureMake'
 
 guile_preconfigopts  = 'module load buildtools/2018a ; '
-guile_preconfigopts += 'LIBFFI_CFLAGS="-I%(installdir)s/lib/libffi-3.2.1/include" LIBFFI_FLAGS="-L%(installdir)s -lffi" '
+guile_preconfigopts += 'CPATH="%(installdir)s/include:$CPATH" LDFLAGS="-L%(installdir)s/lib -L%(installdir)s/lib64" '
+guile_preconfigopts += 'LIBFFI_CFLAGS="-I%(installdir)s/lib/libffi-3.2.1/include" LIBFFI_FLAGS="-L%(installdir)s/lib64 -lffi" '
 guile_preconfigopts += 'BDW_GC_CFLAGS="-I%(installdir)s/include" BDW_GC_LIBS="-L%(installdir)s/lib -lgc -lpthread" '
 guile_configopts  = '--with-libgmp-prefix=%(installdir)s '
 guile_configopts += '--with-libunistring-prefix=%(installdir)s '
-guile_configopts += '--disable-shared '
+guile_configopts += '--enable-shared '
 guile_prebuildopts = 'module load buildtools/2018a ; '
 
+ncurses_version = '6.1'
+libreadline_version = '7.0'
+GMP_version = '6.1.2'
+libffi_version = '3.2.1'
+libunistring_version = '0.9.9'
+
 components = [
+    ('ncurses', ncurses_version, {
+        'sources': [SOURCE_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'patches':     ['ncurses-%(version)s_gcc-5.patch'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--with-shared --enable-overwrite', # First build: default build.
+    }),
+    ('ncurses', ncurses_version, {
+        'sources': [SOURCE_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'patches':     ['ncurses-%(version)s_gcc-5.patch'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--with-shared --enable-overwrite --enable-ext-colors --enable-widec --includedir=%(installdir)s/include/ncursesw/' # Second build: the UTF-8 enabled version (ncursesw)
+    }),
+    ('libreadline', libreadline_version, {
+        'sources': ['readline-%(version)s.tar.gz'],
+        'source_urls': ['http://ftp.gnu.org/gnu/readline'],
+        'start_dir':   'readline-%(version)s',
+        'preconfigopts': "LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS='-L%(installdir)s/lib -lncurses'",
+    }),
     ('gc', '7.6.4', {
         'sources':       [SOURCE_TAR_GZ, 'libatomic_ops-7_4_4.tar.gz'],
         'source_urls':   ['http://hboehm.info/gc/gc_source/', 'https://github.com/ivmai/libatomic_ops/archive/'],
         'start_dir':     '%(name)s-%(version)s',
         'preconfigopts': "ln -s %(builddir)s/libatomic_ops*/ libatomic_ops && ",
-        'configopts':    '--enable-threads=posix --enable-static --disable-shared',
+        'configopts':    '--enable-threads=posix --disable-static --enable-shared',
     }),
-    ('GMP', '6.1.2', {
+    ('GMP', GMP_version, {
         'sources':     [SOURCELOWER_TAR_BZ2],
         'source_urls': ['http://ftp.gnu.org/gnu/gmp'],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--enable-cxx --enable-static --disable-shared'
+        'configopts':  '--enable-cxx --disable-static --enable-shared'
     }),
-    ('libffi', '3.2.1', {
+    ('libffi', libffi_version, {
         'sources':      [SOURCELOWER_TAR_GZ],
         'source_urls':  [ 'ftp://sourceware.org/pub/libffi/', 'http://www.mirrorservice.org/sites/sourceware.org/pub/libffi/'],
         'start_dir':    '%(name)s-%(version)s',
-        'configopts':   '--enable-static --disable-shared'
+        'configopts':   '--disable-static --enable-shared'
     }),
-    ('libunistring', '0.9.9', {
+    ('libunistring', libunistring_version, {
         'sources':     [SOURCELOWER_TAR_XZ],
         'source_urls': [GNU_SOURCE],
         'start_dir':   '%(name)s-%(version)s',
-        'configopts':   '--enable-static --disable-shared',
+        'configopts':   '--disable-static --enable-shared',
         'parallel':    1
     }),
-    ('Guile', '2.2.3', {
+    ('Guile', guile_version, {
         'sources':       [SOURCELOWER_TAR_XZ],
         'source_urls':   [GNU_SOURCE],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': guile_preconfigopts,
         'configopts':    guile_configopts,
         'prebuildopts':  guile_prebuildopts,
+        'buildopts':     ' V=1 '
     }),
 ]
 
