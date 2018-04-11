@@ -39,10 +39,10 @@ patches = ['Guile-%(version)s_intel.patch']
 builddependencies = [
     ('buildtools', '%(toolchain_version)s', '', True),
     ('gettext',    '0.19.8.1'),
-    ('ncurses',    '6.1'),
-    ('libreadline',  '7.0'),
 ]
 dependencies = [
+    ('ncurses',      '6.1'),   # Doesn't show up when you do ldd on the executable, but is used by the extensions
+    ('libreadline',  '7.0'),   # Doesn't show up when you do ldd on the executable, but is used by the extensions
     ('libunistring', '0.9.8'),
     ('libffi',       '3.2.1'),
     ('gc',           '7.6.4'), 

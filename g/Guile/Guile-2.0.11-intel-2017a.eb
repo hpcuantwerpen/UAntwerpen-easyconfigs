@@ -16,10 +16,10 @@ builddependencies = [
     ('Autotools',    '20161231', '', True),
     ('pkg-config',   '0.29.1', '', True),
     ('gettext',      '0.19.8.1'),
-    ('ncurses',      '6.0'),
-    ( 'libreadline', '7.0'),
 ]
 dependencies = [
+    ('ncurses',      '6.0'),    # Doesn't show up when you do ldd on the executable, but is used by the extensions
+    ('libreadline',  '7.0'),    # Doesn't show up when you do ldd on the executable, but is used by the extensions
     ('libunistring', '0.9.7'),
     ('libffi',       '3.2.1'),
     ('gc',           '7.6.0'), 
