@@ -1,0 +1,35 @@
+easyblock = 'ConfigureMake'
+
+name = 'Guile-ncurses'
+version = '2.2'
+
+homepage = 'https://www.gnu.org/software/guile-ncurses'
+whatis = [
+    "Description: ncurses bindings for GNU Guile."
+]
+
+description= """
+Guile-Ncurses is a library for Guile Scheme that provides functions
+for creating text user interfaces. The text user interface
+functionality is built on the ncurses libraries: curses, form, panel,
+and menu.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+source_urls = ['https://ftpmirror.gnu.org/guile-ncurses/']
+sources = ['guile-ncurses-%(version)s.tar.gz']
+
+dependencies = [('Guile', '2.2.3'),
+                ('ncurses', '6.1')]
+
+easyblock = 'ConfigureMake'
+configopts = ['--with-gnu-filesystem-hierarchy GUILE=$EBROOTGUILE/bin/guile GUILD=$EBROOTGUILE/bin/guild']
+
+moduleclass = 'lang'
+
+modextrapaths = {
+    'GUILE_LOAD_COMPILED_PATH': 'lib/guile/2.2/site-ccache', # For pre-compiled scheme code.
+    'LD_LIBRARY_PATH': 'lib/guile/2.2', # For runtime-linked guile-ncurses.so
+}
+
