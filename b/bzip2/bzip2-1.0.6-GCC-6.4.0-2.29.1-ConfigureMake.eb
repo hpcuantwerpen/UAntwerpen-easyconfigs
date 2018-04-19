@@ -1,0 +1,58 @@
+# bzip2 EasyConfig gebaseerd op de ConfigureMake EasyBlock i.p.v. de 
+# bzip2-specifieke EasyBlock omdat die laatste niet in een bundle past.
+# Bundles blijken te checken op namen van parameters en kennen de nieuwe
+# parameters die in gespecialiseerde EasyBlocks gedefinieerd worden niet,
+# en genereren zo (onterecht) foutmeldingen.
+easyblock = 'ConfigureMake'
+name = 'bzip2'
+version = '1.0.6'
+versionsuffix = '-ConfigureMake'
+
+homepage = 'http://www.bzip.org/'
+
+whatis = [
+    'Description: bzip2 is a freely available, patent free, high-quality data compressor.',
+    'The module contains both executables and libraries.'
+]
+
+description = """
+bzip2 is a freely available, patent free, high-quality data compressor. It
+typically compresses files to within 10% to 15% of the best available techniques
+(the PPM family of statistical compressors), whilst being around twice as fast
+at compression and six times faster at decompression.
+"""
+
+usage = """
+Check the man pages for the available commands or the web-based documentation for the 
+library functions.
+"""
+
+docurls = [
+    'Web-based documentation: http://www.bzip.org/docs.html',
+    'Man pages available for bzcmp, bzdiff, bzegrep, bzfgrep, bzgrep, bzip2, bunzip2, bzless and bzmore',
+]
+
+toolchain = {'name': 'GCC', 'version': '6.4.0-2.29.1'}
+toolchainopts = {'pic': True}
+
+sources = [SOURCE_TAR_GZ]
+source_urls = ['http://www.bzip.org/%(version)s']
+
+skipsteps = ['configure']
+
+buildopts  = 'CC="$CC" '
+buildopts += 'CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" '
+buildopts += '; '
+buildopts += 'make -f Makefile-libbz2_so '
+buildopts += 'CC="$CC" '
+buildopts += 'CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" '
+
+installopts = 'PREFIX="%(installdir)s" '
+
+postinstallcmds = [
+    'cp libbz2.so.%(version)s %(installdir)s/lib',
+    'cd %(installdir)s/lib ; ln -s libbz2.so.%(version)s libbz2.so.1.0',
+    'cd %(installdir)s/lib ; ln -s libbz2.so.%(version)s libbz2.so'
+] 
+
+moduleclass = 'tools'
