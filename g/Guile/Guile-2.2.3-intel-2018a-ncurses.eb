@@ -1,0 +1,102 @@
+# Guile and Guile-Ncurses installed as a Bundle.
+# I've also tried adapting Guile bare with extensions, but the extension syntax
+# doesn't seem to be powerful enough to deal with ConfigureMake-style extensions.
+# They produce an internal error in the constructor of the ConfigureMake EasyBlock.
+easyblock = 'Bundle'
+
+guile_version = '2.2.3'
+guile_ncurses_version = '2.2'
+
+name = 'Guile'
+version = guile_version
+versionsuffix = '-ncurses'
+
+homepage = 'https://www.gnu.org/software/guile/'
+
+whatis = [
+   "Description: GNU Guile programming language, with the Ncurses package",
+   "This module provides static and shared libraries, and the binaries"
+]
+
+description = """
+Guile is a programming language, designed to help programmers create flexible
+applications that can be extended by users or other programmers with plug-ins,
+modules, or scripts. With Guile you can create applications and games for the
+desktop, the Web, the command-line, and more.
+
+It is an implementation of the Scheme programming language, supporting the 
+Revided5 and most of the Revised6 language reports, as well as many SRFIs. It
+also comes with a library of modules that offer additional features, like an
+HTTP server and client, XML parsing, and object-oriented programming.
+
+This module contains Guile with the Guile-Ncurses package installed. The
+module provides static and shared libraries and the binaries.
+"""
+
+docurls = [
+    "Web-based documentation on https://www.gnu.org/software/guile/learn/",
+    "Manual page for the guile command (section 1)",
+    "texinfo-based documentation: info guile and info guile-curses",
+] 
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+# As we're sure that ncurses and libreadline is linked statically, they only have to be 
+# build dependencies.
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+    ('gettext',    '0.19.8.1'),
+]
+
+dependencies = [
+    ('ncurses',      '6.1'),   # Doesn't show up when you do ldd on the executable, but is used by the extensions
+    ('libreadline',  '7.0'),   # Doesn't show up when you do ldd on the executable, but is used by the extensions
+    ('libunistring', '0.9.8'),
+    ('libffi',       '3.2.1'),
+    ('gc',           '7.6.4'), 
+    ('GMP',          '6.1.2'),
+]
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ('Guile', '2.2.3', {
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'patches':     ['Guile-%(version)s_intel.patch'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'installopts': ' ; ' + \
+                       'cd %(installdir)s/bin ; ' + \
+                       'ln -s guile        guile2 ; ' + \
+                       'ln -s guild        guild2 ; ' + \
+                       'ln -s guild        guile2-tools ; ' + \
+                       'ln -s guild        guile-tools2 ; ' + \
+                       'ln -s guile-config guile2-config ; ' + \
+                       'ln -s guile-config guile-config2'
+        # postinstallcmds not honoured in a bundle???
+    }),
+    ('Guile-Ncurses', '2.2', {
+        'sources':        [SOURCELOWER_TAR_GZ],
+        'source_urls':    [GNU_SOURCE], 
+        'start_dir':      '%(namelower)s-%(version)s',
+        'preconfigopts':  'PATH="%(installdir)s/bin:$PATH" ' +  \
+                          'LD_LIBRARY_PATH="%(installdir)s/lib:$LD_LIBRARY_PATH" ' + \
+                          'LIBRARY_PATH="%(installdir)s/lib:$LIBRARY_PATH" ' \
+                          'PKG_CONFIG_PATH="%(installdir)s/lib/pkgconfig:$PKG_CONFIG_PATH" ',
+        'prebuildopts':   'PATH="%(installdir)s/bin:$PATH" ' +  \
+                          'LD_LIBRARY_PATH="%(installdir)s/lib:$LD_LIBRARY_PATH" ' + \
+                          'LIBRARY_PATH="%(installdir)s/lib:$LIBRARY_PATH" ',
+        'preinstallopts': 'PATH="%(installdir)s/bin:$PATH" ' +  \
+                          'LD_LIBRARY_PATH="%(installdir)s/lib:$LD_LIBRARY_PATH" ' + \
+                          'LIBRARY_PATH="%(installdir)s/lib:$LIBRARY_PATH" ',
+    })
+] 
+
+sanity_check_paths = {
+    'files': ['bin/guild', 'bin/guile', 'bin/guile-config', 'bin/guile-snarf', 'bin/guile-tools',
+              'include/guile/%(version_major_minor)s/libguile.h',
+              'lib/libguile-%(version_major_minor)s.a', 'lib/libguile-%%(version_major_minor)s.%s' % SHLIB_EXT],
+    'dirs': ['include/guile/%(version_major_minor)s/libguile', 'lib/guile/%(version_major_minor)s/ccache'],
+}
+
+moduleclass = 'lang'

@@ -2,12 +2,13 @@ easyblock = 'ConfigureMake'
 
 name = 'Guile'
 version = '2.2.3'
+versionsuffix = '-bare'
 
 homepage = 'https://www.gnu.org/software/guile/'
 
 whatis = [
    "Description: GNU Guile programming language",
-   "This module provides static and shared libraries, and the binaries"
+   "This module provides static and shared libraries, and the binaries, without optional packages"
 ]
 
 description = """
@@ -20,6 +21,9 @@ It is an implementation of the Scheme programming language, supporting the
 Revided5 and most of the Revised6 language reports, as well as many SRFIs. It
 also comes with a library of modules that offer additional features, like an
 HTTP server and client, XML parsing, and object-oriented programming.
+
+This module provides static and shared libraries and the Guile binaries and
+scripts, without any optional module.
 """
 
 docurls = [
@@ -48,6 +52,15 @@ dependencies = [
     ('gc',           '7.6.4'), 
     ('GMP',          '6.1.2'),
 ]
+
+postinstallcmds = [
+    'cd %(installdir)s/bin ; ln -s guile        guile2',
+    'cd %(installdir)s/bin ; ln -s guild        guild2',
+    'cd %(installdir)s/bin ; ln -s guild        guile2-tools',
+    'cd %(installdir)s/bin ; ln -s guild        guile-tools2',
+    'cd %(installdir)s/bin ; ln -s guile-config guile2-config',
+    'cd %(installdir)s/bin ; ln -s guile-config guile-config2',
+] 
 
 sanity_check_paths = {
     'files': ['bin/guild', 'bin/guile', 'bin/guile-config', 'bin/guile-snarf', 'bin/guile-tools',

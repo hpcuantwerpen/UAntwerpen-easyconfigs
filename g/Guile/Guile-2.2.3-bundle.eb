@@ -42,10 +42,6 @@ builddependencies = [
 
 default_easyblock = 'ConfigureMake'
 
-guile_preconfigopts  = 'module load buildtools/2018a ; '
-guile_preconfigopts += 'CPATH="%(installdir)s/include:$CPATH" LDFLAGS="-L%(installdir)s/lib -L%(installdir)s/lib64" '
-guile_preconfigopts += 'LIBFFI_CFLAGS="-I%(installdir)s/lib/libffi-3.2.1/include" LIBFFI_FLAGS="-L%(installdir)s/lib64 -lffi" '
-guile_preconfigopts += 'BDW_GC_CFLAGS="-I%(installdir)s/include" BDW_GC_LIBS="-L%(installdir)s/lib -lgc -lpthread" '
 guile_configopts  = '--with-libgmp-prefix=%(installdir)s '
 guile_configopts += '--with-libunistring-prefix=%(installdir)s '
 guile_configopts += '--enable-shared '
@@ -56,6 +52,7 @@ libreadline_version = '7.0'
 GMP_version = '6.1.2'
 libffi_version = '3.2.1'
 libunistring_version = '0.9.9'
+guile_ncurses_version = '2.2'
 
 components = [
     ('ncurses', ncurses_version, {
@@ -105,14 +102,46 @@ components = [
         'parallel':    1
     }),
     ('Guile', guile_version, {
-        'sources':       [SOURCELOWER_TAR_XZ],
-        'source_urls':   [GNU_SOURCE],
-        'start_dir':     '%(namelower)s-%(version)s',
-        'preconfigopts': guile_preconfigopts,
-        'configopts':    guile_configopts,
-        'prebuildopts':  guile_prebuildopts,
-        'buildopts':     ' V=1 '
+        'sources':        [SOURCELOWER_TAR_XZ],
+        'source_urls':    [GNU_SOURCE],
+        'start_dir':      '%(namelower)s-%(version)s',
+        'preconfigopts':  'module load buildtools/2018a ; ' + \
+                          'CPATH="%(installdir)s/include:$CPATH" LDFLAGS="-L%(installdir)s/lib -L%(installdir)s/lib64" ' + \
+                          'LIBFFI_CFLAGS="-I%(installdir)s/lib/libffi-3.2.1/include" LIBFFI_FLAGS="-L%(installdir)s/lib64 -lffi" ' + \
+                          'BDW_GC_CFLAGS="-I%(installdir)s/include" BDW_GC_LIBS="-L%(installdir)s/lib -lgc -lpthread" ',
+        'configopts':     '--with-libgmp-prefix=%(installdir)s ' + \
+                          '--with-libunistring-prefix=%(installdir)s ' + \
+                          '--enable-shared ',
+        'prebuildopts':   'module load buildtools/2018a ; ',
+        'buildopts':      ' V=1 ',
+        'preinstallopts': 'module load buildtools/2018a ; ',
+        'installopts':    ' ; ' + \
+                          'cd %(installdir)s/bin ; ' + \
+                          'ln -s guile        guile2 ; ' + \
+                          'ln -s guild        guild2 ; ' + \
+                          'ln -s guild        guile2-tools ; ' + \
+                          'ln -s guild        guile-tools2 ; ' + \
+                          'ln -s guile-config guile2-config ; ' + \
+                          'ln -s guile-config guile-config2'
     }),
+    ('Guile-Ncurses', '2.2', {
+        'sources':        [SOURCELOWER_TAR_GZ],
+        'source_urls':    [GNU_SOURCE],
+        'start_dir':      '%(namelower)s-%(version)s',
+        'preconfigopts':  'module load buildtools/2018a ; ' + \
+                          'PATH="%(installdir)s/bin:$PATH" ' +  \
+                          'LD_LIBRARY_PATH="%(installdir)s/lib:$LD_LIBRARY_PATH" ' + \
+                          'LIBRARY_PATH="%(installdir)s/lib:$LIBRARY_PATH" ' + \
+                          'PKG_CONFIG_PATH="%(installdir)s/lib/pkgconfig:$PKG_CONFIG_PATH" ',
+        'prebuildopts':   'module load buildtools/2018a ; ' + \
+                          'PATH="%(installdir)s/bin:$PATH" ' +  \
+                          'LD_LIBRARY_PATH="%(installdir)s/lib:$LD_LIBRARY_PATH" ' + \
+                          'LIBRARY_PATH="%(installdir)s/lib:$LIBRARY_PATH" ',
+        'preinstallopts': 'module load buildtools/2018a ; ' + \
+                          'PATH="%(installdir)s/bin:$PATH" ' +  \
+                          'LD_LIBRARY_PATH="%(installdir)s/lib:$LD_LIBRARY_PATH" ' + \
+                          'LIBRARY_PATH="%(installdir)s/lib:$LIBRARY_PATH" ',
+    })
 ]
 
 sanity_check_paths = {
