@@ -1,0 +1,60 @@
+--- src/Makefile.org	2016-08-25 19:53:38.000000000 +0200
++++ src/Makefile	2018-04-25 10:22:32.416684846 +0200
+@@ -111,18 +111,18 @@
+ #     sp + no MKL + no OpenMP + no MPI
+ 
+ # define the following:
+-PRECISION	= sp
+-CXFFTMKL.f	= cxfft3_mkl_fake.f90
+-CXFFTMKL.o	= cxfft3_mkl_fake.o
+-MKLM		=
+-DOMP		=
+-OPENMP		=
+-MPI.f		= mpi_fake.f90
+-MPI.o		= mpi_fake.o
+-DMPI		=
+-FC		= gfortran
+-FFLAGS		= -O2
+-LFLAGS	 	=
++#PRECISION	= sp
++#CXFFTMKL.f	= cxfft3_mkl_fake.f90
++#CXFFTMKL.o	= cxfft3_mkl_fake.o
++#MKLM		=
++#DOMP		=
++#OPENMP		=
++#MPI.f		= mpi_fake.f90
++#MPI.o		= mpi_fake.o
++#DMPI		=
++#FC		= gfortran
++#FFLAGS		= -O2
++#LFLAGS	 	=
+ 
+ #----------------------------------------------------------------------
+ # 2.a  g95 compiler
+@@ -278,6 +278,26 @@
+ #FFLAGS		= -O2
+ #LFLAGS		= -traceback -lmkl_em64t -lmkl_intel_thread -lmkl_core \
+ #		-lguide -lpthread -lmkl_intel_lp64 -lmpi
++#
++#
++
++#----------------------------------------------------------------------
++# 9.  ifort compiler
++#     dp + MKL + OpenMP + MPI
++# 
++PRECISION      = dp
++CXFFTMKL.f     = $(MKL_f)
++CXFFTMKL.o     = $(MKL_o)
++MKLM           = $(MKL_m)
++DOMP           = -Dopenmp
++OPENMP         = -qopenmp
++MPI.f          = $(MPI_f)
++MPI.o          = $(MPI_o)
++DMPI           = -Dmpi
++FC             = mpiifort
++FFLAGS         = -O2
++LFLAGS         = -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread \
++                 -lmkl_core -lmkl_blacs_intelmpi_lp64 -liomp5 -lpthread -lm -ldl
+ 
+ #******************************************************************************
+ #
