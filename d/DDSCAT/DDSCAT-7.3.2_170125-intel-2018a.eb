@@ -1,0 +1,52 @@
+easyblock = 'MakeCp'
+
+name = 'DDSCAT'
+version = '7.3.2_170125'
+tcver = '2018a'
+
+homepage = 'http://ddscat.wikidot.com'
+
+whatis = [
+    'Description: Discrete Dipole Scattering (DDSCAT) is a Fortran code for calculating scattering and absorption of light by irregular particles and periodic arrangement of irregular particles.'
+]
+
+description = """
+Discrete Dipole Scattering (DDSCAT) is a Fortran code for calculating scattering 
+and absorption of light by irregular particles and periodic arrangement of 
+irregular particles.
+
+"""
+
+usage = """
+The DDSCAT documentation can be found on the DDSCAT web site ddscat.wikidot.com 
+"""
+
+docurls = [
+    'Web-based documentation: http://ddscat.wikidot.com/user-guide'
+]
+
+patches = [
+    'Makefile-%(version)s.patch',
+]
+
+
+toolchain = {'name': 'intel', 'version': tcver}
+toolchainopts = {'usempi': True,'openmp': True}
+
+sources = ['ddscat%(version)s.tgz']
+
+# cp MKL's mkl_dfti.f90 to src
+prebuildopts  = 'cp -p ${MKLROOT}/include/mkl_dfti.f90 src && cd src && '
+
+buildopts = 'all'
+
+parallel = 1
+
+files_to_copy = [(['src/ddscat', 'src/calltarget', 'src/ddpostprocess', 'src/vtrconvert'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/ddscat', 'bin/calltarget', 'bin/ddpostprocess', 'bin/vtrconvert'],
+    'dirs': []
+}
+
+moduleclass = 'phys'
