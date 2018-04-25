@@ -1,0 +1,110 @@
+easyblock = 'MakeCp'
+
+name = 'VASP'
+version = '5.4.4'
+vtstversion = '173'
+tcver = '2018a'
+systemstring = 'UA-Leibniz-' + tcver + '-VTST'
+versionsuffix= '-vtst-' + vtstversion
+
+homepage = 'http://www.vasp.at'
+
+whatis = [
+    'Description: Vienna Ab initio Simulation Package (VASP), for atomic scale materials modelling',
+    'This module provides non-GPU versions of vasp_std, vasp_gam and vasp_ncl with VTST support'
+]
+
+description = """
+The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic
+scale materials modelling, e.g. electronic structure calculations and
+quantum-mechanical molecular dynamics, from first principles.
+
+VASP computes an approximate solution to the many-body Schrödinger equation,
+either within density functional theory (DFT), solving the Kohn-Sham equations,
+or within the Hartree-Fock (HF) approximation, solving the Roothaan equations.
+Hybrid functionals that mix the Hartree-Fock approach with density functional
+theory are implemented as well. Furthermore, Green's functions methods (GW
+quasiparticles, and ACFDT-RPA) and many-body perturbation theory (2nd-order
+Møller-Plesset) are available in VASP.
+
+In VASP, central quantities, like the one-electron orbitals, the electronic
+charge density, and the local potential are expressed in plane wave basis sets.
+The interactions between the electrons and ions are described using
+norm-conserving or ultrasoft pseudopotentials, or the projector-augmented-wave
+method.
+
+To determine the electronic groundstate, VASP makes use of efficient iterative
+matrix diagonalisation techniques, like the residual minimisation method with
+direct inversion of the iterative subspace (RMM-DIIS) or blocked Davidson
+algorithms. These are coupled to highly efficient Broyden and Pulay density
+mixing schemes to speed up the self-consistency cycle.
+
+This module contains non-GPU versions of vasp_std, vasp_gam and vasp_ncl
+wit VTST support.
+
+VASP is licensed software. Only members of the avasp group can use VASP.
+
+"""
+description += 'The system string used in the results is ' + systemstring + '.'
+
+usage = """
+The VASP documentation can be found on the VASP web site www.vasp.at.
+Keep in mind that VASP can require a lot of memory and perform a lot of I/O
+when you are not exploiting parallelism sufficiently. Please choose your
+settings and cluster resources carefully to exploit sufficient parallelism and
+limit I/O. If you fail to do so, the result is slower running jobs, a more busy
+cluster and longer wait time for you and your colleagues.
+"""
+
+docurls = [
+    'Web-based VASP documentation: http://www.vasp.at/index.php/documentation',
+    'Web-based VTST documentation: http://theory.cm.utexas.edu/vtsttools/',
+]
+
+
+toolchain = {'name': 'intel', 'version': tcver}
+toolchainopts = {'usempi': True}
+
+# Vasp is proprietary software, see http://www.vasp.at/index.php/faqs on how to get access to the code
+sources = ['vasp.%(version)s.tar.gz',
+    {
+      'filename': 'vtstcode-' + vtstversion + '.tgz', 
+      'extract_cmd': "tar xfvz %s --strip-components=1 -C %(builddir)s/%(namelower)s.%(version)s/src"
+    }
+]
+
+
+prebuildopts  = 'cp arch/makefile.include.linux_intel ./makefile.include && '
+# Adapt the host name.
+prebuildopts += 'sed -i "s|LinuxIFC|' + systemstring + '|" makefile.include && '
+# Adapt the MPI block size
+prebuildopts += 'sed -i "s|DMPI_BLOCK=8000|DMPI_BLOCK=262144|" makefile.include && '
+# Adapt FFLAGS (add memory model)
+prebuildopts += 'sed -i "s|-assume byterecl|-assume byterecl -mcmodel=large -shared-intel|" makefile.include && '
+# Add -xHost to optimization options
+prebuildopts += 'sed -i "s|-O2|-O2 -xHost|" makefile.include && '
+## Add MKL wrapper of fftw
+prebuildopts += 'sed -i "s|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o \$(MKLROOT)/lib/intel64/libfftw3xf_intel.a |" makefile.include && '
+## VTST specific
+prebuildopts += 'sed -i "s|chain.o|bfgs.o dynmat.o instanton.o lbfgs.o sd.o cg.o dimer.o bbm.o fire.o lanczos.o neb.o qm.o opt.o chain.o |" src/.objects && '
+prebuildopts += 'cd src && '
+prebuildopts += 'perl -i -0pe \'s/( *)CALL CHAIN_FORCE\(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \& *\n( *)LATT_CUR%A,LATT_CUR%B,IO%IU6\)/$1CALL CHAIN_FORCE(T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, \&\n$2TSIF,LATT_CUR%A,LATT_CUR%B,IO%IU6\)/\' main.F && '
+prebuildopts += 'patch vasp-5.4.1-mpmd.patch && '
+prebuildopts += 'perl mkbdrpro.pl && '
+prebuildopts += 'cd .. && '
+
+# VASP uses LIBS as a list of folders
+prebuildopts += 'unset LIBS && '
+
+buildopts = 'all'
+
+parallel = 1
+
+files_to_copy = [(['bin/vasp_std', 'bin/vasp_gam', 'bin/vasp_ncl'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/vasp_std', 'bin/vasp_gam', 'bin/vasp_ncl'],
+    'dirs': []
+}
+
+moduleclass = 'phys'
