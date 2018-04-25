@@ -1,0 +1,59 @@
+easyblock = 'MakeCp'
+
+name = 'p7zip'
+version = '16.02'
+
+homepage = 'http://p7zip.sourceforge.net/'
+
+whatis = [
+    "Description: Linux port of the 7-zip 7z and 7za commands.",
+    "Keywords: 7-zip, 7zip, compression, archive"
+]
+
+description = """
+7-zip is a file archiver with high compression ration originally developed for
+Windows. It does not only support its own 7z format based on LZMA and LZMA2
+compression, but also several other popular compressed file formats, some
+for packing and unpacking, others only for unpacking.
+
+p7zip is a quick port of the command line tools of the Windows 7zip package
+(7z.exe and 7za.exe). These tools can be used to decompress archives (also
+multi-file 7-zip archives) created on Windows machines.
+"""
+
+docurls = [
+    "Web site for the Windows utilities: https://www.7-zip.org/"
+]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+source_urls = [SOURCEFORGE_SOURCE]
+sources = ['p7zip_%(version)s_src_all.tar.bz2']
+
+prebuildopts = "cp makefile.linux_amd64  makefile.linux &&"
+buildopts = 'all3'
+
+files_to_copy = [
+    (['bin/7za', 'bin/7zr', 'bin/7zCon.sfx'], 'bin'),  # stand-alone binaries
+    (['bin/7z', 'bin/7z.%s' % SHLIB_EXT, 'bin/Codecs'], 'libexec'),  # 7z requires 7z.so plugin in same directory
+]
+
+# put script in place for 7z, since it *must* be called full path, to ensure that 7z.so is found in the same directory
+# see also http://sourceforge.net/p/p7zip/discussion/383044/thread/5e4085ab/
+postinstallcmds = [
+    "echo '#!/bin/sh\n%(installdir)s/libexec/7z $@' > %(installdir)s/bin/7z",
+    "chmod +x %(installdir)s/bin/7z",  # set execution bits according to current umask
+]
+
+sanity_check_paths = {
+    'files': ['bin/7z', 'bin/7za', 'bin/7zCon.sfx', 'bin/7zr', 'libexec/7z', 'libexec/7z.%s' % SHLIB_EXT],
+    'dirs': ['libexec/Codecs'],
+}
+
+# check whether 7z script works
+sanity_check_commands = [
+    ('7z', '--help'),  # print help, exit 0
+    ('7z', "x || test $? -gt 0"),  # missing argument, exit code > 0
+]
+
+moduleclass = 'tools'
