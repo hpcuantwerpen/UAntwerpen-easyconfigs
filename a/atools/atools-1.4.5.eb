@@ -1,0 +1,19 @@
+easyblock = 'ConfigureMake'
+
+name = 'atools'
+version = '1.4.5'
+
+homepage = 'https://github.com/gjbex/atools'
+description = """Tools to make using job arrays a lot more convenient."""
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+sources = [SOURCE_TAR_GZ]
+source_urls = ['https://github.com/gjbex/atools/archive']
+
+sanity_check_paths = {
+    'files': ['bin/acreate', 'bin/aenv', 'bin/aload', 'bin/alog', 'bin/arange', 'bin/areduce'],
+    'dirs': ['lib/vsc/atools']
+}
+
+moduleclass = 'tools'
