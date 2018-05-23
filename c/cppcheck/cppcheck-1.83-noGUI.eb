@@ -1,0 +1,59 @@
+name = 'cppcheck'
+version = '1.83'
+versionsuffix = "-noGUI"
+
+homepage = 'http://cppcheck.sourceforge.net/'
+
+whatis = [
+    'Description: Cppcheck is a static analysis tool for C/C++ code',
+    'This module is compiled using the system compiler and libraries and does not include the GUI'
+]
+
+description = """
+Cppcheck is a static analysis tool for C/C++ code. It provides unique code
+analysis to detect bugs and focuses on detecting undefined behaviour and 
+angerous coding constructs. The goal is to detect only real errors in the code
+(i.e. have very few false positives).
+
+Cppcheck has a strong focus on detecting undefined behaviour.
+* Dead pointers
+* Division by zero
+* Integer overflows
+* Invalid bit shift operands
+* Invalid conversions
+* Invalid usage of STL
+* Memory management
+* Null pointer dereferences
+* Out of bounds checking
+* Uninitialized variables
+* Writing const data
+
+For a complete list of checks, see https://sourceforge.net/p/cppcheck/wiki/ListOfChecks/
+
+This module is compiled using the system compiler and libraries and does not
+include the GUI.
+"""
+
+docurls = [
+    'PDF manual available at http://cppcheck.sourceforge.net/manual.pdf',
+]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+toolchainopts = {'pic': True}
+
+source_urls = [SOURCEFORGE_SOURCE]
+sources = ['%(name)s-%(version)s.tar.bz2']
+
+dependencies = [
+]
+
+osdependencies = [
+    ('pcre-devel'),
+]
+
+have_rules = True
+build_gui = False
+
+buildopts = 'CXXFLAGS="$CXXFLAGS -std=c++11"'
+
+moduleclass = 'lang'
