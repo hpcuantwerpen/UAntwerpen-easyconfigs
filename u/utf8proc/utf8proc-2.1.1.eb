@@ -1,0 +1,39 @@
+easyblock = 'ConfigureMake'
+
+name = 'utf8proc'
+version = '2.1.1'
+
+homepage = 'https://github.com/JuliaStrings/utf8proc'
+
+whatis = [
+    "Description: utf8proc is a library providing Unicode operations",
+]
+
+description = """
+utf8proc is a small, clean C library that provides Unicode normalization,
+case-folding, and other operations for data in the UTF-8 encoding. It was
+initially developed by Jan Behrens and the rest of the Public Software Group,
+who deserve nearly all of the credit for this package. With the blessing of the
+Public Software Group, the Julia developers have taken over development of
+utf8proc, since the original developers have moved to other projects.
+
+The utf8proc package is licensed under the free/open-source MIT "expat" license
+(plus certain Unicode data governed by the similarly permissive Unicode data
+license).
+"""
+
+source_urls = ["https://github.com/JuliaStrings/utf8proc/archive/"]
+sources = [ "v%(version)s.tar.gz"]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+installopts = "prefix=%(installdir)s "
+
+skipsteps = ['configure']
+
+sanity_check_paths = {
+    'files': ['lib/libutf8proc.a', 'include/utf8proc.h'],
+    'dirs': [],
+}
+
+moduleclass = 'devel'

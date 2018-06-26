@@ -1,0 +1,61 @@
+easyblock = 'ConfigureMake'
+
+name = 'Subversion'
+version = '1.10.0'
+versionsuffix = "-modules"
+
+homepage = 'http://subversion.apache.org/'
+
+whatis = [
+    "Description: Subversion is an open source version control system.",
+]
+
+description = """
+Subversion is an open source version control system.
+
+Note that this version was compiled without Gnome or KDE integration.
+"""
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+source_urls = [
+    'http://apache.belnet.be/%(namelower)s',
+    'http://www.eu.apache.org/dist/%(namelower)s',
+    'http://www.us.apache.org/dist/%(namelower)s',
+    'http://archive.apache.org/dist/%(namelower)s',
+]
+sources = [SOURCELOWER_TAR_BZ2]
+
+dependencies = [
+    ('utf8proc', '2.1.1'),
+    ('APR', '1.6.3'),
+    ('APR-util', '1.6.1'),
+    ('SQLite', '3.24.0'),
+    ('zlib', '1.2.11'),
+    ('Serf', '1.3.9'),
+]
+
+# Note: To check for specifying the build dependencies:
+# - The package does use expat
+# - The package does need PCRE
+# - The package does need the SSL libraries
+
+configopts  = ""
+configopts += "--with-apr=$EBROOTAPR "
+configopts += "--with-apr-util=$EBROOTAPRMINUTIL "
+configopts += "--with-zlib=$EBROOTZLIB "
+configopts += "--with-lz4=internal "    # System lz4 library was too old on CentOS 7
+configopts += "--with-serf=$EBROOTSERF "
+
+
+moduleload = "module load utf8proc/2.1.1 SQLite/3.24.0 APR/1.6.3 APR-util/1.6.1 Serf/1.3.9 zlib/1.2.11 ; "
+preconfigopts = moduleload
+prebuildopts = moduleload
+preinstallopts = moduleload
+
+sanity_check_paths = {
+    'files': ["bin/svn", "bin/svnversion"],
+    'dirs': [],
+}
+
+moduleclass = 'tools'
