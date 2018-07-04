@@ -1,0 +1,75 @@
+easyblock = 'PythonPackage'
+
+name = 'pybinding'
+version = '0.9.4'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/dean0x7d/pybinding'
+
+whatis = [
+    "Name: pybinding",
+    "Version: %s" % (version),
+    "Category: Python package",
+    "Description: Pybinding is a Python package for numerical tight-binding calculations in solid state physics. ",
+    "URL: %s"% (homepage),
+]
+
+description = """
+Pybinding is a Python package for numerical tight-binding calculations in solid
+state physics. The main features include:
+
+* Declarative model construction - The user just needs to describe what the
+  model should be, but not how to build it. Pybinding will take care of the
+  numerical details of building the Hamiltonian matrix so users can concentrate
+   on the physics, i.e. the quantum properties of the model.
+* Fast compute - Pybinding’s implementation of the kernel polynomial method
+  allows for very fast calculation of various physical properties of
+  tight-binding systems. Exact diagonalization is also available through the
+  use of scipy’s eigenvalue solvers. The framework is very flexible and allows
+  the addition of user-defined computation routines.
+* Result analysis and visualization - The package contains utility functions
+  for post-processing the raw result data. The included plotting functions are
+  tailored for tight-binding problems to help visualize the model structure and
+  to make sense of the results.
+
+The main interface is written in Python with the aim to be as user-friendly and
+flexible as possible. Under the hood, C++11 is used to accelerate demanding
+tasks to deliver high performance with low memory usage.
+"""
+
+docurls = [
+    'http://docs.pybinding.site/en/stable/',
+]
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+source_urls = [PYPI_SOURCE]
+sources = [SOURCE_TAR_GZ]
+
+dependencies = [
+    ('Python', '3.6.6'),
+]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+pythonpath = 'lib/python%(pyshortver)s/site-packages'
+
+# For Intel:
+# prebuildopts =  'VERBOSE=1 '
+# prebuildopts += 'CFLAGS+='-wdi1682" '
+# prebuildopts += 'CXXFLAGS+='-wdi1682" '
+prebuildopts =  'VERBOSE=1 '
+prebuildopts += 'CC="gcc"  CFLAGS="-march=native" '    # Pybinding currently does not compile with icc/icpc, so enforce gcc/g++
+prebuildopts += 'CXX="g++" CXXFLAGS="-march=native" '  # The pybinding cmake recipes automatically add -O3 -fPIC -stc=c++11
+#prebuildopts += 'CMAKE_CXX_COMPILER="g++" CMAKE_CXX_FLAGS+="-O3 -march=native" '
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+#modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'phys'
