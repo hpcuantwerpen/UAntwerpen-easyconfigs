@@ -14,7 +14,7 @@ whatis = [
 
 description = """
 SuiteSparse is a collection of libraries manipulate sparse matrices maintained
-by Tum Davis (University of Florida). The package includes routines for LU
+by Tim Davis (University of Florida). The package includes routines for LU
 factorization, Cholesky factorization and QR decomposition.
 
 Compiled with support for the METIS graph partitioner and with support for OpenMP.

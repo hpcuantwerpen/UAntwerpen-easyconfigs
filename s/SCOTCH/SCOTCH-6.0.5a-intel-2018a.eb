@@ -1,0 +1,15 @@
+name = 'SCOTCH'
+version = '6.0.5a'
+
+homepage = 'http://gforge.inria.fr/projects/scotch/'
+description = """Software package and libraries for sequential and parallel graph partitioning,
+static mapping, and sparse matrix block ordering, and sequential mesh and hypergraph partitioning."""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+toolchainopts = {'pic': True}
+
+# https://gforge.inria.fr/frs/download.php/file/37401/scotch_6.0.5a.tar.gz
+source_urls = ['http://gforge.inria.fr/frs/download.php/file/37401/']
+sources = ['%(namelower)s_%(version)s.tar.gz']
+
+moduleclass = 'math'
