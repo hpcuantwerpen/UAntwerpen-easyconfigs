@@ -1,0 +1,77 @@
+easyblock = 'MakeCp'
+
+name = 'TELEMAC'
+version = 'v6p3r2'
+
+homepage = 'http://www.opentelemac.org/'
+description = ("TELEMAC-MASCARET is an integrated suite of solvers for use in the field of\n"
+               "free-surface flow.")
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+# Prepare a TAR-file in /apps/antwerpen/sources according to the guidelines in the OneNote.
+# Then run this EasyConfig.
+sources = ['TELEMAC-%(version)s-svn.tar.gz']
+
+patches = [
+    ('TELEMAC_easybuild_config.%(version)s.patch',1),
+    ('TELEMAC_runcode.%(version)s.patch',1),
+]
+
+dependencies = [ 
+    ('netCDF', '4.6.0', '-MPI'),
+    ('Python', '2.7.14'),
+]
+
+builddependencies = [ 
+    ('CMake', '3.7.2', '', True),
+]
+
+prebuildopts  = ''
+
+# root variable is required in TELEMAC v6.
+prebuildopts += 'sed -i "s|BUILDROOT|%(builddir)s/%(version)s|" configs/systel.easybuild.cfg && ' 
+#
+prebuildopts += 'echo "The builddir is: " && '
+prebuildopts += 'echo %(builddir)s && '
+prebuildopts += 'export HOMETEL=`pwd` && '
+# First build the included METIS library.
+prebuildopts += 'pushd optionals/metis-5.1.0/build && '
+prebuildopts += 'CC=icc CXX=icpc cmake ../CMakeLists.txt && '
+prebuildopts += 'cd .. && '
+prebuildopts += 'make && '
+prebuildopts += 'popd && '
+# Next we'll start the compile of TELEMAC through the Makefile in the patch file.
+prebuildopts += 'PATH=$HOMETEL/scripts/python27:$PATH SYSTELCFG=$HOMETEL/configs/systel.easybuild.cfg '
+
+# Don't use parallel make as we don't know the effect of starting
+# the compile script multiple times simultaneously.
+parallel = 1
+
+buildopts = [ '-f Makefile' ]
+
+files_to_copy = [
+    'README.txt',
+    'builds',
+    'configs',
+    'documentation',
+    'examples',
+    'optionals',
+    'scripts',
+    'sources'
+]
+
+sanity_check_paths = {
+    'files' : ['README.txt'],
+    'dirs'  : ['builds']
+}
+
+# root variable is required in TELEMAC v6.
+postinstallcmds = ["sed -i -e 's|root:.*|root:       %(installdir)s|' %(installdir)s/configs/systel.easybuild.cfg"]
+
+modextrapaths = {
+    'PYTHONPATH': 'scripts/python27',
+    'PATH':  'scripts/python27'
+}
+
+moduleclass = 'math'

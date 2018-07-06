@@ -1,0 +1,21 @@
+--- v6p3r2/scripts/python27/runcode.py.org	2014-10-30 23:21:47.000000000 +0100
++++ v6p3r2/scripts/python27/runcode.py	2018-07-05 12:50:08.052742180 +0200
+@@ -901,7 +901,7 @@
+          except Exception as e:
+             raise Exception([filterMessage({'name':'runCAS','msg':'could not compile: ' + path.basename(useFile)},e,options.bypass)])  # only one item here
+          print ' re-copying: ',path.basename(useFile),exename
+-         shutil.copy2(path.basename(useFile),useFile)
++         #shutil.copy2(path.basename(useFile),useFile)
+          shutil.move(path.basename(useFile),exename) # rename executable because of firewall issues
+    
+    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+@@ -936,7 +936,8 @@
+             mpi = mpi.replace('<wdir>',CASFiles[name]['wir'])
+             CASFiles[name]['mpi'] = mpi
+             if not options.split:
+-               CASFiles[name]['run'] = mpi.replace('<exename>',path.basename(CASFiles[name]['exe']))
++               #CASFiles[name]['run'] = mpi.replace('<exename>',path.basename(CASFiles[name]['exe']))
++               CASFiles[name]['run'] = mpi.replace('<exename>',CASFiles[name]['exe'])
+             # ~~> no file handling necessary if hpcpass
+             if hpcpass: continue
+             # ~~> Creating the HOST file
