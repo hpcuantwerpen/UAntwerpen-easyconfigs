@@ -49,4 +49,8 @@ configopts = '--enable-threads --with-tcl=$EBROOTTCL/lib CFLAGS="-I$EBROOTTCL/in
 
 start_dir = 'unix'
 
+postinstallcmds = [
+    'cd %(installdir)s/bin ; ln -s wish%(version_major_minor)s wish',
+]
+
 moduleclass = 'vis'

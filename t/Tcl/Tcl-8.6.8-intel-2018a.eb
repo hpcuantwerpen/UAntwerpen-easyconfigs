@@ -40,4 +40,8 @@ runtest = 'test'
 
 start_dir = 'unix'
 
+postinstallcmds = [
+    'cd %(installdir)s/bin ; ln -s tclsh%(version_major_minor)s tclsh',
+] 
+
 moduleclass = 'lang'
