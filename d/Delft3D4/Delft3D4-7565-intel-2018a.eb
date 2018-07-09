@@ -1,0 +1,94 @@
+easyblock = 'ConfigureMake'
+
+name = 'Delft3D4'
+version = '7565'
+
+homepage = 'https://oss.deltares.nl/web/delft3d'
+
+whatis = [
+    'Description: The Open Source version of Delft3D 4 (structured, regular grids)',
+    'For this package, Delft3D is compiled as a hybrid MPI/OpenMP application'
+]
+
+description = """
+Delft3D 4 is an integrated suite, simulating 2D/3D flow, sediment transport and
+morphology, waves and water quality.
+
+This package contains the Open Source version of the Delft3D 4 Suite for 
+structured, regular grids (so without some of the pre- and postprocessing
+tools). The package was compiled with both MPI and OpenMP support enabled.
+
+The version number of this module is actually derived from the tag in the source
+code repository as Delft3D is composed from many components each with a 
+different version number. Some important components of this version are:
+* flow2d3d: 6.02.14
+* flow2d3d_openda: 2.01.00
+* wave: 3.05.04
+* d_hydro: 3.01.00
+* part: 3.80.00
+* waq: 5.06.00
+"""
+
+#usage = """
+#As this is an OpenMP-enabled code, don't forget to select the number of threads
+#by setting OMP_NUM_THREADS.
+#"""
+
+#examples = """
+#After loading the module:
+#darknet classifier predict $EBROOTDARKNET/cfg/imagenet1k.data $EBROOTDARKNET/cfg/extraction.cfg $EBROOTDARKNET/weights/extraction.weights  $EBROOTDARKNET/data/dog.jpg
+#"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+# The application actually uses MPI, but to make sure CC etc point to the non-MPI compiler, I set usempi to False.
+toolchainopts = {'pic': True, 'openmp': True, 'usempi': False}
+
+# Delft3D requires registration and should be downloaded via Subversion
+# So first make a suitable source tar file:
+# - Get the sources via svn, e.g., svn co https://svn.oss.deltares.nl/repos/delft3d/branches/releases/7565/ --username XXXX
+# - Give the directory a reasonable name, create the tar file etc
+#   mv 7565 Delft3D-7565
+#   tar -cf Delft3D-7565.tar Delft3D-7565
+#   bzip2 Delft3D-7565.tar
+# - Put this where EasyBuild expects to find already downloaded sources.
+sources = [SOURCE_TAR_BZ2]
+patches = [ ]
+
+dependencies = [
+    ('expat',  '2.2.5'),
+    ('netCDF', '4.6.0', '-MPI'),
+#    ('Tcl',    '8.6.8'),
+]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+    ('flex',       '2.6.4',                 '', True),
+    ('Bison',      '3.0.4',                 '', True),
+]
+
+parallel = 1
+start_dir = 'src'
+
+preconfigopts  = './autogen.sh && '
+preconfigopts += 'NETCDF_FORTRAN_LIBS="-L${EBROOTNETCDF}/lib -lnetcdff -lnetcdf" NETCDF_LIBS="-L${EBROOTNETCDF}/lib -lnetcdf" '
+configopts = '--with-mpi --with-netcdf'
+
+installopts = "ds-install"
+
+postinstallcmds = [
+    'echo "#! /bin/env tclsh" | cat - engines_gpl/d_hydro/scripts/create_config_xml.tcl > %(installdir)s/bin/create_config_xml.tcl ; chmod a+x  %(installdir)s/bin/create_config_xml.tcl',
+    'mkdir -p %(installdir)s/share/matlab/tools',
+    'cp engines_gpl/flow2d3d/scripts/meteo_old2new.m %(installdir)s/share/matlab/tools',
+] 
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['bin', 'lib'],
+}
+
+modextravars = { 
+    'D3D_HOME': '%(installdir)s',
+    'ARCH':     'lnx64',
+} 
+
+moduleclass = 'tools'
