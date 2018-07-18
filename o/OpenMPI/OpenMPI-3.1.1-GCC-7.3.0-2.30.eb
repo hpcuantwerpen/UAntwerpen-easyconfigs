@@ -1,0 +1,96 @@
+easyblock = 'ConfigureMake'
+
+name = 'OpenMPI'
+version = '3.1.1'
+
+homepage = 'http://www.open-mpi.org/'
+
+whatis = [
+    "Description: Open MPI is an open source MPI-3.1 implementation",
+    "This module provides a full Open MPI intallation with explicit support for Mellanox InfiniBand but without CUDA support",
+    "Keywords: MPI, Mellanox, MXM, hcoll, InfiniBand",
+]
+
+description = """
+The Open MPI Project is an open source Message Passing Interface implementation
+that is developed and maintained by a consortium of academic, research, and
+industry partners. Open MPI is therefore able to combine the expertise,
+technologies, and resources from all across the High Performance Computing
+community in order to build the best MPI library available. Open MPI offers
+advantages for system and software vendors, application developers and computer
+science researchers.
+
+This version of Open MPI is fully MPI 3.1 compliant (though note that the
+Open MPI version numbers do not refer to the Open MPI standard!). The Open MPI
+implementation also serves as the basis for some commercial MPI implementations.
+Mellanox MPI is just a version of Open MPI compiled by Mellanox as they
+contribute all their patches to the Open MPI project. IBM Spectrum MPI
+is also derived from this code base.
+
+This module provides a full Open MPI intallation with explicit support for
+Mellanox InfiniBand (MXM and hcoll) but without CUDA support.
+"""
+
+docurls = [
+    "Web-based documentation: https://www.open-mpi.org/doc/v%(version_major_minor)s/",
+]
+
+
+toolchain = {'name': 'GCC', 'version': '7.3.0-2.30'}
+
+source_urls = ['http://www.open-mpi.org/software/ompi/v%(version_major_minor)s/downloads']
+sources = [SOURCELOWER_TAR_GZ]
+checksums = ['846bb7ed2aa0c96fc0594423e7b21904ee4f160dcfd62b8a0d1274256fbf25ce']
+
+# needed for --with-verbs
+osdependencies = [
+    ('libibverbs-dev', 'libibverbs-devel'),
+    ('moab-torque-devel'),
+    ('hwloc-devel'),
+    ('numactl-devel'),
+    ('libxml2-devel'),
+    ('munge-devel'),
+]
+
+builddependencies = [
+    ('buildtools', '2018b', '', True),
+]
+
+dependencies = [
+]
+
+configopts  = '--enable-shared --enable-mpi-thread-multiple --with-verbs '
+configopts += '--enable-mpirun-prefix-by-default '  # suppress failure modes in relation to mpirun path
+configopts += '--without-ucx '                      # hard disable UCX, to dance around bug (https://github.com/open-mpi/ompi/issues/4345)
+configopts += '--without-cuda '
+
+# Include Mellanox libraries.
+configopts += '--disable-wrapper-rpath '            # Taken from the Mellanox configuration in contrib/platform/mellanox/optimized
+configopts += '--disable-wrapper-runpath '          # Now also needed wjem dosab;e-wrapper-rpath is used.
+# - Use knem for fast intra-node transfers (at least for larger messages)
+configopts += '--with-knem=/opt/knem-1.1.2.90mlnx3 '
+# - Mellanox communication library
+osdependencies.append( ('mxm') )
+configopts += '--with-mxm=/opt/mellanox/mxm '
+# - Enable Mellanox FCA 3.5/hcoll collectives support on newer Mellanox switches
+osdependencies.append( ('hcoll') )
+osdependencies.append( ('opensm-devel') )           # Uses libosmcomp.so.
+configopts += '--with-hcoll=/opt/mellanox/hcoll '
+
+# to enable SLURM integration (site-specific)
+# configopts += '--with-slurm --with-pmi=/usr/include/slurm --with-pmi-libdir=/usr'
+configopts += '--without-slurm '
+configopts += '--without-loadleveler '
+configopts += '--without-lsf '
+configopts += '--without-sge '
+configopts += '--with-tm '
+
+libs = ["mpi_mpifh", "mpi", "ompitrace", "open-pal", "open-rte"]
+sanity_check_paths = {
+    'files': ["bin/%s" % binfile for binfile in ["ompi_info", "opal_wrapper", "orterun"]] +
+             ["lib/lib%s.%s" % (libfile, SHLIB_EXT) for libfile in libs] +
+             ["include/%s.h" % x for x in ["mpi-ext", "mpif-config", "mpif", "mpi", "mpi_portable_platform"]],
+    'dirs': [],
+}
+
+moduleclass = 'mpi'
