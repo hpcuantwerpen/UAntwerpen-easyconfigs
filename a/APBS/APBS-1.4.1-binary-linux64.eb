@@ -1,0 +1,49 @@
+name = 'APBS'
+version = '1.4.1'
+versionsuffix = '-binary-linux64'
+
+easyblock = 'PackedBinary'
+
+homepage = 'http://www.poissonboltzmann.org/apbs'
+
+whatis = [
+    "Description: iAPBS is a solver for the continuum electrostatics equations for large biomolecular assemblages",
+    "This module contains APBS only (not PDB2PQR), installed from the binary distribution",
+    "WARNING: The binary distribution is not properly optimized for our clusters and one of the components in it looks particularly bad, so this package should only be used for short, small calculations",
+]
+
+description = """
+APBS solves the equations of continuum electrostatics for large biomolecular
+assemblages. This software was designed “from the ground up” using modern design
+principles to ensure its ability to interface with other computational packages
+and evolve as methods and applications change over time. The APBS code is
+accompanied by extensive documentation for both users and programmers and is
+supported by a variety of utilities for preparing calculations and analyzing
+results. Finally, the free, open-source APBS license ensures its accessibility
+to the entire biomedical community.
+
+This package is installed from the binary distribution on SourceForge. That
+distribution is only optimized for older CPUs and does not properly support
+the CPUs of neither hopper nor leibniz. Moreover, rather than using an
+optimized BLAS library, it seems to rely on one compiled from the reference
+implementation which is 10-100 times slower than a proper modern 
+implementation. Hence this package should only be used for short, small
+computations as it is very likely extremely inefficient.
+"""
+
+docurls = [
+    "Online documentation: https://readthedocs.org/projects/apbs-pdb2pqr/",
+    "Examples in $EBROOTAPBS/share/apbs/examples",
+]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+source_urls = [SOURCEFORGE_SOURCE]
+sources = ['%(name)s-%(version)s%(versionsuffix)s.tgz']
+
+sanity_check_paths = {
+    'files': ['bin/apbs'],
+    'dirs': []
+}
+
+moduleclass = 'bio'

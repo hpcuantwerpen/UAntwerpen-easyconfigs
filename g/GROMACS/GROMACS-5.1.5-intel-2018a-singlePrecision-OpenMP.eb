@@ -1,0 +1,57 @@
+# This EasyConfig is meant to generate a version of GROMACS suitable for use
+# with g_mmpbsa which unfortunately failed to install so far.
+name = 'GROMACS'
+version = '5.1.5'
+versionsuffix = '-singlePrecision-OpenMP'
+
+homepage = 'http://www.gromacs.org'
+
+whatis = [
+    'Description: GROMACS is a versatile molecular dynamic package developed for parallel supercomputers',
+    'This module contains a single precision version (the default precision) compiled for use as a OpenMP application without MPI support or any site-specific extras',
+]
+
+description = """
+GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the
+Newtonian equations of motion for systems with hundreds to millions of particles.
+
+It is primarily designed for biochemical molecules like proteins, lipids and
+nucleic acids that have a lot of complicated bonded interactions, but since
+GROMACS is extremely fast at calculating the nonbonded interactions (that
+usually dominate simulations) many groups are also using it for research on
+non-biological systems, e.g. polymers.
+
+GROMACS is very well optimised for modern computers provided you use a 
+sufficiently recent version as some routines rely on hand-coded optimisations
+for specific CPUs. Note that the 5.1 version is the first version that contains
+these optimizations for the clusters in use at UAntwerp, though we still advise
+to use the newer 2016 and 2018 version whenever possible as the GROMACS HPC 
+optimizations have evolved significantly.
+
+This module contains a single precision version (the default precision) compiled
+for use as a OpenMP application but without MPI support or any site-specific
+extras. So this module is only suited for single node runs!
+"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+toolchainopts = {'openmp': True, 'usempi': False}
+
+source_urls = ['ftp://ftp.gromacs.org/pub/gromacs/']
+sources = [SOURCELOWER_TAR_GZ]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),  # for CMake
+    ('libxml2', '2.9.7')
+]
+
+dependencies = [
+#    ('Boost', '1.66.0', '-Python-2.7.14'),
+    ('Boost', '1.66.0'),
+]
+
+double_precision = False     # The default of the EasyBlock is actually single precision, but just to be clear...
+mpiexec = 'mpirun'           # 'mpirun' is the default and OK for us.
+mpiexec_numproc_flag = '-np' # Again the default so not really needed.
+mpi_numprocs = 0             # 0 is the default in the EasyBlock, here to remind you of its existence.
+
+moduleclass = 'bio'

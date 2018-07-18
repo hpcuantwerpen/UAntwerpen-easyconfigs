@@ -1,0 +1,88 @@
+easyblock = 'CMakeMake'
+#
+# Note: We need to build a source file for APBS ourselves as the downloaded
+# source file does not contain some of the dependencies that the build process
+# assumes to be present. 
+# For the version number, we take the date of the last commit to the master
+# branch of the github, unless we revert to a specific version tag.:
+# version=20180319i
+# git clone https://github.com/Electrostatics/apbs-pdb2pqr.git
+# cd apbs-pdb2pqr
+# git submodule init
+# git submodule update
+# find . -name ".git*" -exec /bin/rm -rf '{}' \;
+# find . -name "*travis*" -exec /bin/rm -rf '{}' \;mv apbs apbs-$version
+# tar -cf apbs-$version.tar apbs-$versionbzip2 apbs-$version.tar
+# mkdir -p /apps/antwerpen/sources/a/APBS
+# mv apbs-$version.tar.bz2 /apps/antwerpen/sources/a/APBS
+# And for a specific version tag, add before git submodule init:
+# git reset --hard "apbs-1.5"
+
+name = 'APBS'
+version = '20180319'
+
+homepage = 'http://www.poissonboltzmann.org/'
+
+whatis = [
+    "Description: iAPBS is a solver for the continuum electrostatics equations for large biomolecular assemblages",
+    "This module contains APBS only (not PDB2PQR), with FETK and TABI-PB but without GeoFlow and PB-AM",
+]
+
+description = """
+APBS solves the equations of continuum electrostatics for large biomolecular
+assemblages. This software was designed “from the ground up” using modern design
+principles to ensure its ability to interface with other computational packages
+and evolve as methods and applications change over time. The APBS code is
+accompanied by extensive documentation for both users and programmers and is
+supported by a variety of utilities for preparing calculations and analyzing
+results. Finally, the free, open-source APBS license ensures its accessibility
+to the entire biomedical community.
+
+This module contains APBS only and without the GeoFlow and PB-AM extensions
+as these didn't compile correctly. TABI-PB and FETK are included.
+"""
+
+docurls = [
+    "Online documentation: https://readthedocs.org/projects/apbs-pdb2pqr/",
+    "Examples in $EBROOTAPBS/share/apbs/examples",
+] 
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+# MPI and OpenMP are actually set through CMake build options.
+#toolchainopts = {'usempi': True, 'openmp': True}
+
+sources = [SOURCELOWER_TAR_BZ2]
+
+dependencies = [
+    ( 'libreadline', '7.0'),
+#    ( 'Boost',       '1.66.0' ),   # For GeoFlow
+] 
+
+builddependencies = [
+    ( 'buildtools', '%(toolchain_version)s', '', True ),  # For recent CMake
+]
+
+configopts  = "-DENABLE_MPI=ON -DENABLE_OPENMP=ON "
+configopts += "-DENABLE_GEOFLOW=OFF "
+configopts += "-DENABLE_PBAM=OFF "
+configopts += "-DENABLE_BEM=ON "
+configopts += "-DENABLE_FETK=ON "
+configopts += "-DENABLE_PYTHON=OFF "
+configopts += "-DGET_MSMS=ON "
+configopts += "-DGET_NanoShaper=ON "
+
+# One of the components does not build correctly with a parallel build.
+parallel = 1
+
+# Do some cleanup in the subdirectories.
+postinstallcmds = [
+    '/bin/mv %(installdir)s/share/apbs/tools/bin/* %(installdir)s/bin',
+    'cd %(installdir)s/share/apbs/tools ; /bin/rm -rf bin osx windows CMakeFiles cmake_install.cmake Makefile github manip mesh',
+]
+
+sanity_check_paths = {
+    'files': ['bin/apbs'],
+    'dirs':  ['bin', 'lib', 'include', 'share/apbs'],
+}
+
+moduleclass = 'bio'

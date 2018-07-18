@@ -1,0 +1,40 @@
+Patch by Kurt Lust, UAntwerp.
+* Backported a modification to CMakeLists.txt from 1.5
+* Removed a type warning in a C source file by properly including the OS header
+  files and adding the appropriate type cast.
+Create patch: diff -ru apbs-1.4.2.1/src/CMakeLists.txt.orig apbs-1.4.2.1/src/CMakeLists.txt >apbs-1.4.2.1.patch
+              diff -ru apbs-1.4.2.1/contrib/iapbs/src/apbs_driver.c.orig apbs-1.4.2.1/contrib/iapbs/src/apbs_driver.c >>apbs-1.4.2.1.patch
+--- apbs-1.4.2.1/src/CMakeLists.txt.orig	2018-07-16 16:37:01.923183000 +0200
++++ apbs-1.4.2.1/src/CMakeLists.txt	2018-07-16 16:37:14.315616000 +0200
+@@ -69,8 +69,8 @@
+     )
+ 
+ if(ENABLE_iAPBS)
+-    ADD_LIBRARY(apbs_routines routines.c routines.h)
+-    INSTALL(TARGETS apbs_routines DESTINATION ${LIBRARY_INSTALL_PATH})
++#    ADD_LIBRARY(apbs_routines routines.c routines.h)
++#    INSTALL(TARGETS apbs_routines DESTINATION ${LIBRARY_INSTALL_PATH})
+     INSTALL(FILES apbscfg.h DESTINATION ${HEADER_INSTALL_PATH})
+ endif()
+ 
+--- apbs-1.4.2.1/contrib/iapbs/src/apbs_driver.c.orig	2018-07-17 09:39:09.590930000 +0200
++++ apbs-1.4.2.1/contrib/iapbs/src/apbs_driver.c	2018-07-17 09:40:14.581151451 +0200
+@@ -8,6 +8,9 @@
+  *
+  */
+   
++#include <sys/types.h>
++#include <unistd.h>
++
+ #include "apbs.h"  
+ #include "routines.h"
+ #include "generic/nosh.h"  
+@@ -935,7 +938,7 @@
+ 
+     if(i_param[11] == 1){
+ //      strcat(string, "write pot dx iapbs-pot\n");
+-      sprintf(string, "%swrite pot dx iapbs-pot-%d\n", string, getpid());
++      sprintf(string, "%swrite pot dx iapbs-pot-%d\n", string, (int) getpid());
+     }
+     if(i_param[12] == 1){
+       strcat(string, "write charge dx iapbs-charge\n");
