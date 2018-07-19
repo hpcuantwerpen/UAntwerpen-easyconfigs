@@ -10,7 +10,7 @@ description = """Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and
 toolchain = {'name': 'dummy', 'version': 'dummy'}
 
 gccver = '7.3.0'
-binutilsver = '2.30.1'
+binutilsver = '2.30'
 gccsuff = '-GCC-%s-%s' % (gccver, binutilsver)
 dependencies = [
     ('GCCcore',  gccver),
