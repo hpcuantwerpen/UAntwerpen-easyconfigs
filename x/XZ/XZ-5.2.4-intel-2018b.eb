@@ -1,0 +1,83 @@
+easyblock = 'ConfigureMake'
+
+name = 'XZ'
+version = '5.2.4'
+
+homepage = 'http://tukaani.org/xz/'
+
+whatis = [
+    'Description: XZ data compression libraries and utilities',
+    'This module provides the XZ command line utilities and static and shared libraries',
+]
+
+description = """
+XZ Utils is free general-purpose data compression software with a high
+compression ratio. XZ Utils were written for POSIX-like systems, but also work
+on some not-so-POSIX systems. XZ Utils are the successor to LZMA Utils.
+
+The core of the XZ Utils compression code is based on LZMA SDK, but it has been
+modified quite a lot to be suitable for XZ Utils. The primary compression
+algorithm is currently LZMA2, which is used inside the .xz container format.
+With typical files, XZ Utils create 30 % smaller output than gzip and 15 %
+smaller output than bzip2.
+
+XZ Utils consist of several components:
+* liblzma is a compression library with an API similar to that of zlib.
+* xz is a command line tool with syntax similar to that of gzip.
+* xzdec is a decompression-only tool smaller than the full-featured xz tool.
+* A set of shell scripts (xzgrep, xzdiff, etc.) have been adapted from gzip to
+  ease viewing, grepping, and comparing compressed files.
+* Emulation of command line tools of LZMA Utils eases transition from LZMA Utils
+  to XZ Utils.
+
+While liblzma has a zlib-like API, liblzma doesn't include any file I/O
+functions. A separate I/O library is planned, which would abstract handling of
+.gz, .bz2, and .xz files with an easy to use API.
+
+This module provides both the command line utilities and static and shared
+libraries.
+"""
+
+usage = """
+The main command line tools are:
+* Compression/decompression tools for .xz and .lzma: xz, unxz, xzcat, lzma,
+  unlzma and lzcat
+* A smaller decompression-only tool for .xz and .lzma: xzdec and lzmadec
+* Comparison of compressed files: xzcmp, xzdiff, lzcmp and lzdiff
+* Grep-like searching in compressed files: xzgrep, xzegrep, xzfgrep, 
+  lzgrep, lzegrep, lzfgrep
+* Viewing compressed text files: xzless, xzmore, lzless and lzmore.
+
+The API is poorly documented. One should check the include files for more
+information on the API.
+"""
+
+docurls = [
+    'Man pages for the command line tools',
+]
+
+docpaths = [
+    'share/doc/xz'
+]
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+sources = [SOURCELOWER_TAR_BZ2]
+source_urls = ['http://tukaani.org/xz/']
+
+patches = ['XZ-%(version)s_compat-libs.patch']
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+    ('gettext',    '0.19.8.1'),
+]
+
+# may become useful in non-x86 archs
+# configopts = ' --disable-assembler '
+
+sanity_check_paths = {
+    'files': ["bin/xz", "bin/lzmainfo"],
+    'dirs': []
+}
+
+moduleclass = 'tools'
