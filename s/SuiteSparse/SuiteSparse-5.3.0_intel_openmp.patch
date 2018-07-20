@@ -1,0 +1,15 @@
+Patch written by Kurt Lust
+Intel compilers switched from -openmp to -qopenmp in recent versions. This change has
+been implemented only partially in the SuiteSparse_config.mk file, which is corrected
+by this patch.
+--- SuiteSparse_config/SuiteSparse_config.mk.orig	2018-07-20 10:57:51.908900000 +0200
++++ SuiteSparse_config/SuiteSparse_config.mk	2018-07-20 10:58:05.178801381 +0200
+@@ -119,7 +119,7 @@
+             CC = icc -D_GNU_SOURCE
+             CXX = $(CC)
+             CFOPENMP = -qopenmp -I$(MKLROOT)/include
+-	    LDFLAGS += -openmp
++	    LDFLAGS += -qopenmp
+             LDLIBS += -lm -lirc
+         endif
+         ifneq ($(shell which ifort 2>/dev/null),)
