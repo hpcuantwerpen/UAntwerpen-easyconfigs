@@ -1,0 +1,60 @@
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+# Author: Pablo Escobar Lopez
+# Swiss Institute of Bioinformatics
+# Biozentrum - University of Basel
+# 7.305 modified by:
+# Adam Huffman
+# The Francis Crick Institute
+
+easyblock = 'ConfigureMake'
+
+name = 'MAFFT'
+version = '7.402'
+versionsuffix = '-with-extensions'
+
+homepage = 'http://mafft.cbrc.jp/alignment/software/'
+
+whatis = [
+    "Description: MAFFT is a multiple sequence alignment program",
+    "This module provides only binaries",
+]
+
+description = """
+MAFFT is a multiple sequence alignment program for unix-like operating systems.
+It offers a range of multiple alignment methods, L-INS-i (accurate; for
+alignment of <∼200 sequences), FFT-NS-2 (fast; for alignment of <∼30,000
+sequences), etc.
+
+The module provides only binaries. The main commands mafft and mafft-homologs
+are documented through man pages. The extensions (in this version only a 
+single executable) are also installed.
+"""
+
+docurls = [
+    "man pages for mafft and mafft-homologs (section 1)",
+]
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+source_urls = ['https://mafft.cbrc.jp/alignment/software/']
+sources = ['%(namelower)s-%(version)s%(versionsuffix)s-src.tgz']
+
+skipsteps = ['configure']
+start_dir = 'core'
+
+buildopts = ' && cd ../extensions && make clean && make -j $(nproc)'
+installopts = 'PREFIX=%(installdir)s && cd ../extensions && make install PREFIX=%(installdir)s'
+
+# Remove two files of which a second copy was put in the wrong directory.
+postinstallcmds = [
+    '/bin/rm %(installdir)s/libexec/mafft/mafft.1 %(installdir)s/libexec/mafft/mafft-homologs.1',
+]
+
+modextrapaths = {'MAFFT_BINARIES': 'libexec/mafft'}
+
+sanity_check_paths = {
+    'files': ['bin/mafft', 'libexec/mafft/mxscarnamod'],  # mxscarnamod is the extension that is build.
+    'dirs': [],
+}
+
+moduleclass = 'bio'

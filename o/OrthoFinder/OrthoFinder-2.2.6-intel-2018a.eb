@@ -1,0 +1,57 @@
+easyblock = "Tarball"
+
+name = 'OrthoFinder'
+version = '2.2.6'
+
+homepage = 'https://github.com/davidemms/OrthoFinder'
+
+whatis = [
+    "Description: OrthoFinder: ccurate inference of orthogroups, orthologues, gene trees and rooted species tree",
+]
+
+description = """
+OrthoFinder is a fast, accurate and comprehensive analysis tool for comparative
+genomics. It finds orthologues and orthogroups infers rooted gene trees for all
+orthogroups and infers a rooted species tree for the species being analysed.
+OrthoFinder also provides comprehensive statistics for comparative genomic
+analyses. OrthoFinder is simple to use and all you need to run it is a set of
+protein sequence files (one per species) in FASTA format.
+
+More details about OrthoFinder are in the paper:
+Emms, D.M. and Kelly, S. (2015) OrthoFinder: solving fundamental biases in whole
+genome comparisons dramatically improves orthogroup inference accuracy. Genome
+Biology 16:157
+
+The module provides the orthofinder executable and the Python tool
+convert_tree_ids.py. Example data is provided in 
+$EBROOTORTHOFINDER/ExampleData. Documentation is available on the package
+homepage.
+"""
+
+docurls = [
+    "Downloadable PDF manual at https://github.com/davidemms/OrthoFinder/blob/master/OrthoFinder-manual.pdf",
+    "Downloadable PDF short options sheet at https://github.com/davidemms/OrthoFinder/blob/master/OrthoFinder-options.pdf",
+]
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+source_urls = ['https://github.com/davidemms/OrthoFinder/releases/download/']
+sources = ['v%(version)s/OrthoFinder-%(version)s.tar.gz']
+
+dependencies = [
+    ('BLAST+',   '2.7.1', '-Python-2.7.14'), 
+    ('MCL',     '14.137'), 
+    ('FastME',  '2.1.6.1'),
+    ('DIAMOND', '0.9.22'),
+    ('MAFFT',   '7.402',  '-with-extensions')
+]
+
+modextrapaths = {'PATH': ''}      # Because the executables are not put in a bin subdirectory.
+modextrapaths = {'PATH': 'tools'} # A Python script included with OrthoFinder
+
+sanity_check_paths = {
+    'files': ["orthofinder", "README.md"],
+    'dirs': []
+}
+
+moduleclass = 'bio'
