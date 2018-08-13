@@ -1,0 +1,57 @@
+easyblock = 'MakeCp'
+
+name = 'LMDB'
+version = '0.9.22'
+
+homepage = 'https://symas.com/lmdb/'
+
+whatis = [
+    "Description: LMDB is the OpenLDAP Lightning Memory-Mapped Database",
+    "This module provides both a static and a shared library"
+]
+
+description = """
+Lightning Memory-Mapped Database (LMDB) is a software library that provides a
+high-performance embedded transactional database in the form of a key-value
+store. LMDB is written in C with API bindings for several programming languages.
+LMDB stores arbitrary key/data pairs as byte arrays, has a range-based search
+capability, supports multiple data items for a single key and has a special mode
+for appending records at the end of the database (MDB_APPEND) which gives a
+dramatic write performance increase over other similar stores. LMDB is not
+a relational database, it is strictly a key-value store like Berkeley DB and dbm.
+
+LMDB may also be used concurrently in a multi-threaded or multi-processing
+environment, with read performance scaling linearly by design. LMDB databases
+may have only one writer at a time, however unlike many similar key-value
+databases, write transactions do not block readers, nor do readers block
+writers. LMDB is also unusual in that multiple applications on the same system
+may simultaneously open and use the same LMDB store, as a means to scale up
+performance. Also, LMDB does not require a transaction log (thereby increasing
+write performance by not needing to write data twice) because it maintains data
+integrity inherently by design.
+
+The library is developed by SYMAS for OpenLDAP.
+
+This module provides both a static and a shared library.
+"""
+
+docurls = [
+    "Web-based documentation on http://www.lmdb.tech/doc/",
+] 
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+source_urls = ['https://github.com/LMDB/lmdb/archive/']
+sources = ['%(name)s_%(version)s.tar.gz']
+
+files_to_copy = [
+    (['liblmdb.a', 'liblmdb.%s' % SHLIB_EXT], 'lib'),
+    (['lmdb.h'], 'include')
+]
+
+sanity_check_paths = {
+    'files': ['include/lmdb.h', 'lib/liblmdb.a', 'lib/liblmdb.%s' % SHLIB_EXT],
+    'dirs': [],
+}
+
+moduleclass = 'devel'
