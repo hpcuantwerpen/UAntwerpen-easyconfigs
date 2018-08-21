@@ -57,7 +57,7 @@ patches = [ ]
 dependencies = [
     ('expat',  '2.2.5'),
     ('netCDF', '4.6.0', '-MPI'),
-#    ('Tcl',    '8.6.8'),
+#    ('Tcl',    '8.6.8'),   # System Tcl seems to be enough to run the included Tcl scripts.
 ]
 
 builddependencies = [
@@ -76,7 +76,9 @@ configopts = '--with-mpi --with-netcdf'
 installopts = "ds-install"
 
 postinstallcmds = [
-    'echo "#! /bin/env tclsh" | cat - engines_gpl/d_hydro/scripts/create_config_xml.tcl > %(installdir)s/bin/create_config_xml.tcl ; chmod a+x  %(installdir)s/bin/create_config_xml.tcl',
+    'echo "#! /bin/env tclsh" | cat - engines_gpl/d_hydro/scripts/create_config_xml.tcl > %(installdir)s/bin/create_config_xml.tcl ; ' +
+    'echo -e "\\n#\\n# Main program\\n#\\nset result [ createConfigXML {*}\\$argv ]\\nif {\\$result != \\"\\"} { puts \\$result }" >> %(installdir)s/bin/create_config_xml.tcl; ' +
+    'chmod a+x  %(installdir)s/bin/create_config_xml.tcl',
     'mkdir -p %(installdir)s/share/matlab/tools',
     'cp engines_gpl/flow2d3d/scripts/meteo_old2new.m %(installdir)s/share/matlab/tools',
 ] 
