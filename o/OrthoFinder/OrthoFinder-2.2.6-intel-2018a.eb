@@ -46,8 +46,10 @@ dependencies = [
     ('MAFFT',   '7.402',  '-with-extensions')
 ]
 
-modextrapaths = {'PATH': ''}      # Because the executables are not put in a bin subdirectory.
-modextrapaths = {'PATH': 'tools'} # A Python script included with OrthoFinder
+modextrapaths = {
+    'PATH': '',        # Because the executables are not put in a bin subdirectory.
+    'PATH': 'tools'    # A Python script included with OrthoFinder
+}
 
 sanity_check_paths = {
     'files': ["orthofinder", "README.md"],
