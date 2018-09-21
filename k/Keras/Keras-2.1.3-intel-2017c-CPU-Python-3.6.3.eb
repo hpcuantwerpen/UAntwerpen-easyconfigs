@@ -7,7 +7,7 @@ versionsuffix = '-CPU-Python-%(pyver)s'
 homepage = 'https://keras.io/'
 
 whatis = [
-    "Description: Keras is a Python hihg-level neural networks API",
+    "Description: Keras is a Python high-level neural networks API",
     "This module runs Keras on top of the CPU-only version of TensorFlow."
 ]
 
