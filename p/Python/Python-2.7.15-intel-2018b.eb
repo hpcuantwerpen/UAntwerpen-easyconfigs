@@ -239,6 +239,13 @@ exts_list = [
     ('memory_profiler', '0.52.0', {
         'source_urls': ['https://pypi.python.org/packages/source/m/memory_profiler'],
     }),
+#
+# Requested by Yannick Engelman
+#
+    ('mpmath', '1.0.0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/m/mpmath'],
+    }),
 ]
 
 moduleclass = 'lang'
