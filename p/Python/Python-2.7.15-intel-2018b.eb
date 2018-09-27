@@ -2,6 +2,8 @@ name = 'Python'
 version = '2.7.15'
 #versionsuffix = '-test'
 
+pymaj = ''.join(version.split('.')[:1])
+
 homepage = 'http://python.org/'
 
 whatis = [
@@ -238,6 +240,20 @@ exts_list = [
     }),
     ('memory_profiler', '0.52.0', {
         'source_urls': ['https://pypi.python.org/packages/source/m/memory_profiler'],
+    }),
+# Some packages for TensorFlow that may be useful to others also and for which
+# TensorFlow is not too picky on the version number.
+    ('astar', '0.9', {
+        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': pymaj},
+        'source_urls':    ['https://pypi.python.org/packages/source/a/astar'],
+        'use_pip':        True,
+        'unpack_sources': False,
+    }),
+    ('gast', '0.2.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/g/gast'],
+    }),
+    ('termcolor', '1.1.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/t/termcolor'],
     }),
 #
 # Requested by Yannick Engelman

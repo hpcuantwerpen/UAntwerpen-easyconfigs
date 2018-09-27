@@ -2,6 +2,8 @@ name = 'Python'
 version = '2.7.14'
 #versionsuffix = '-test'
 
+pymaj = ''.join(version.split('.')[:1])
+
 homepage = 'http://python.org/'
 
 whatis = [
@@ -26,8 +28,6 @@ To get a list of installed Python packages, load this module file and then
 execute
 pydoc modules
 """
-
-
 
 toolchain = {'name': 'intel', 'version': '2018a'}
 toolchainopts = {'pic': True}
@@ -215,6 +215,32 @@ exts_list = [
 #    ('dev', '0.4.0', {
 #        'source_urls': ['https://pypi.python.org/packages/source/d/dev'],
 #    }),
+# Some packages for TensorFlow that may be useful to others also and for which
+# TensorFlow is not too picky on the version number.
+    ('absl-py', '0.3.0', {
+        'modulename': 'absl',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/a/absl-py'],
+    }),
+    ('astar', '0.9', {
+        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': pymaj},
+        'source_urls':    ['https://pypi.python.org/packages/source/a/astar'],
+        'use_pip':        True,
+        'unpack_sources': False,
+    }),
+    ('gast', '0.2.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/g/gast'],
+    }),
+    ('termcolor', '1.1.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/t/termcolor'],
+    }),
+#
+# Requested by Yannick Engelman
+#
+    ('mpmath', '1.0.0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/m/mpmath'],
+    }),
 ]
 
 moduleclass = 'lang'
