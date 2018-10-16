@@ -1,0 +1,40 @@
+# NOTE: You need to load the Java/8 module by hand before running this EasyConfig as
+# EasyBuild does not load the dependencies for modules build with the dummy toolchain.
+# Simply neglect the warning about the module already being loaded when running EasyBuild.
+#
+# Also, version 0.17.2 of Bazel does not build with Java/9. Java/8 is a hard requirement
+# according to the Bazel web site.:
+#
+name = 'Bazel'
+version = '0.17.2'
+
+homepage = 'http://bazel.build/'
+
+whatis = [
+    "Description: Bazel is a build tool that builds code quickly and reliably, used to build the majority of Google's software."
+]
+
+description = """
+Bazel is a build tool that builds code quickly and reliably. 
+It is used to build the majority of Google's software.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': '6.4.0'}
+
+source_urls = ['https://github.com/bazelbuild/bazel/releases/download/%(version)s']
+sources = ['%(namelower)s-%(version)s-dist.zip']
+patches = ['%(name)s-%(version)s_remove_define_DATE.patch']
+checksums = [
+    'b6e87acfa0a405bb8b3417c58477b66d5bc27dc0d31ba6fa12bc255b9278d33b',  # bazel-0.17.2-dist.zip
+    'e2ac95693835f71518133b664747365cc1cf1cd90fffa9b585799db967b1c951',  # Bazel-0.17.2_remove_define_DATE.patch
+]
+
+builddependencies = [
+    ( 'binutils', '2.29.1', '', ('GCCcore', '6.4.0'))
+]
+
+dependencies = [
+    ('Java', '8', '', True)
+]
+
+moduleclass = 'devel'

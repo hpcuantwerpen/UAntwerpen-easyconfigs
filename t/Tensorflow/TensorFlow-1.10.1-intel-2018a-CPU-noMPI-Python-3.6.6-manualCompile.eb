@@ -1,0 +1,93 @@
+# The EasyBlock for TensorFlow didn't work well on our systems. It failed in 
+# several configurations. Moreover, compiling with Intel requires many patches
+# to the code that were not available for this version. Hence we did a manual
+# build of the TensorFlow wheel first (see instructions in the OneNote) and 
+# use this EasyConfig only for the final installation of the wheel and some
+# dependencies.
+# NOTE: One problem with the approach taken here is that the TensorFlow wheel
+# will be store in /apps/antwerpen/sources/t/TensorFlow/extensions so if a new
+# version is generated, e.g., for a different cluster, the newer will not be 
+# used unless the older is deleted first in the /apss/antwerpen/sources tree!
+easyblock = 'Bundle'
+
+name          = 'TensorFlow'
+version       = '1.10.1'
+pyver         = '3.6.6'
+versionsuffix = '-CPU-noMPI-Python-%(pyver)s'
+cluster       = 'leibniz'
+#cluster       = 'hopper'
+
+homepage = 'https://www.tensorflow.org/'
+
+whatis = [
+"Description: Tensorflow is an open-source library for machine intelligence",
+"This module provides the non-GPU-accelerated libraries build by Intel, so works on all nodes but does not use the GPU"
+]
+
+description = """
+TensorFlow is an open source software library for high performance numerical
+computation. Its flexible architecture allows easy deployment of computation
+across a variety of platforms (CPUs, GPUs, TPUs), and from desktops to clusters
+of servers to mobile and edge devices. Originally developed by researchers and
+engineers from the Google Brain team within Google's AI organization, it comes
+with strong support for machine learning and deep learning and the flexible
+numerical computation core is used across many other scientific domains.
+
+This module does not use the GPUs and is for CPU computing only.
+It contains a module compiled according to instructions from Intel, hence 
+should run fairly efficient on our systems.
+
+Tensorflow doesn't always compile properly with our compilers and needs several
+patches. Blame Google for a lousy build process with tools that lack the
+transparancy needed to easily solve build problems and for producing code that
+has several portability problems. Please report all problems with this module
+to the UAntwerp HPC support team as we cannot correct problems we don't know
+about.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+pycpver = ''.join(pyver.split('.')[:2])
+pymaj   = ''.join(pyver.split('.')[:1])
+
+# this is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+
+dependencies = [
+    ('Python',   pyver),
+    ('protobuf', '3.6.1', '-Python-%(pyver)s'),
+]
+
+#source_urls = ['https://anaconda.org/intel/tensorflow/%(version)s/download']
+#sources = ['tensorflow-%(version)s-cp%(pycpver)s-cp%(pycpver)sm-linux_x86_64.whl' % {'version': version, 'pycpver': pycpver}]
+
+#use_pip = True
+#unpack_sources = False
+
+exts_list = [
+    ('tensorboard', '1.11.0', {
+        'source_tmpl': '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': pymaj},
+        'source_urls': ['https://pypi.python.org/packages/source/t/tensorboard'],
+        'use_pip':        True,
+        'unpack_sources': False,
+    }),
+    ('tensorflow', '1.10.1', { 
+        'source_tmpl': '%%(name)s-%%(version)s-cp%(pycpv)s-cp%(pycpv)sm-linux_x86_64.whl' % {'pycpv': pycpver},
+        'source_urls': ['file:///scratch/antwerpen/200/vsc20001/TensorFlow-Kurt/%(clu)s-tensorflow-1.10.1/tensorflow_pkg' % { 'clu': cluster}],
+        'use_pip':        True,
+        'unpack_sources': False,
+    }),
+]
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = True
+
+sanity_check_paths = {
+#    'files': ['bin/tensorboard'],
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'
