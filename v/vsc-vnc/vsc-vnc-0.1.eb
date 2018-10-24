@@ -1,0 +1,39 @@
+easyblock = 'Tarball'
+# Textcomment...
+
+name = 'vsc-vnc'
+version = '0.1'
+
+homepage = 'https://github.com/hpcuantwerpen/vsc-vnc'
+whatis = [
+    'Description: vsc-vnc contains commands to make it easier to use VNC, including starting VNC with the Xfce desktop',
+]
+
+description = """
+vsc-vnc was created to make starting VNC sessions easier on the clusters at
+UAntwerpen.
+
+Commands:
+* vnc-xfce : Start the VNC server with with Xfce as the window
+  manager/desktop (Xfce.org). 
+"""
+
+#docurls = [
+#    'Man pages for all commands in section 1, starting page: vsc-vnc',
+#]
+
+upstream_contacts = [
+    'New features? Contact hpc@uantwerpen.be',
+]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+source_urls = ['https://github.com/hpcuantwerpen/vsc-vnc/archive/']
+sources = ['v%(version)s.tar.gz']
+
+sanity_check_paths = {
+    'files': [ 'bin/vnc-xfce' ],
+    'dirs':  [ 'bin', 'vnc-config' ],
+}
+
+moduleclass = 'tools'
