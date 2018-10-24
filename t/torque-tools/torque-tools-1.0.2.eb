@@ -69,7 +69,8 @@ upstream_contacts = [
 
 toolchain = {'name': 'dummy', 'version': 'dummy'}
 
-sources = ['%(name)s-%(version)s.tar.bz2']
+source_urls = ['https://github.com/hpcuantwerpen/torque-tools/archive/']
+sources = ['v%(version)s.tar.gz']
 
 sanity_check_paths = {
     'files': [ 'bin/torque-%s' % x for x in [ 'tasks', 'lprocs', 'hoststring', 'host-per-line', 'hosts-parallel' ] ],
