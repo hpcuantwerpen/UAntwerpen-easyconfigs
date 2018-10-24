@@ -33,8 +33,9 @@ toolchain = {'name': 'intel', 'version': '2018b'}
 # or OpenMP options enabled even if the sources don't use these.
 toolchainopts = {'usempi': False,'openmp': False}
 
-# You need to manually download the CPMD source file and necessary patch files.
-sources = ['%(name)s-%(version)s.tar.bz2']
+# Downloading from GitHub releases..
+source_urls = ['https://github.com/hpcuantwerpen/vsc-tutorial/archive/']
+sources = ['v%(version)s.tar.gz']
 
 prebuildopts = 'cd src ; '
 buildopts = 'OMPFLAG=-qopenmp -R '
