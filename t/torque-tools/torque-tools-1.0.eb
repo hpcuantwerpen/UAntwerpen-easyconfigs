@@ -1,0 +1,79 @@
+easyblock = 'Tarball'
+
+name = 'torque-tools'
+version = '1.0'
+
+homepage = 'https://vscentrum.be/'
+whatis = [
+    'Description: torque-tools provides tools to extract job information from Torque when using the version 2 syntax, usefull in job scripts to start various types of jobs.',
+]
+
+description = """
+torque-tools provides a set of tools to query job information from Torque and
+is specifically meant for job scripts that use the version 2 resource syntax
+(aka NUMA-aware) syntax from Torque. The purpose is to offer a set of tools
+that help to make the core of job scripts as independent from the actual
+resource request as possible to ease reuse of scripts with a different
+node/core configuration. They can also be used to get a list of hosts
+in the allocation in formats suitable for various programs, such as
+mpirun (in particular for hybrid applications where mpirun fails to
+get sufficient information from Torque), charm++ applications or
+GNU parallel.
+
+Commands:
+- torque-tasks: Prints the number of tasks in all or selected task groups
+- torque-lprocs: Prints the number of lprocs per task in all or selected task
+  groups
+- torque-host-per-line: Prints for each task in all or a selected task group
+  the assigned host, one per line. When stored in a file, the output can be
+  used with mpirun -machinefile to start hybrid applications.
+- torque-hoststring: Prints for each task in all or a selected task group the
+  assigned host, as a comma-separated string of hosts for each task.
+- torque-parallel: Generates a host list in the format required by GNU
+  parallel. Currently this command does not yet support the generation of
+  an individual host list for a single task group.
+"""
+
+usage = """
+Check the man pages after loading the module, e.g.,
+man torque-tools
+
+Note that these tools only work in Torque jobs. In particular, they rely on the
+$PBS_JOBID environment variable to figure out for which job they should generate
+the requested information.
+"""
+
+examples = """
+Starting of a hybrid OpenMP/MPI program with Intel MPI: Assuming the number
+of tasks in the resource request is the number of MPI ranks and lprocs is the
+number of threads per MPI rank, the following lines will often work as the
+core of your job script (after loading the appropriate modules including this
+one and going to the right directory)
+
+export OMP_NUM_THREADS=$(torque-lprocs)
+torque-host-per-line >machinefile.$PBS_JOBID
+mpirun -np $(torque-tasks) -machinefile machinefile.$PBS_JOBID add_name_of_executable
+/bin/rm machinefile.$PBS_JOBID
+
+And in fact, the -np $(torque-tasks) can even be omitted  as mpirun will by
+default start one process per line in the machine file.
+"""
+
+docurls = [
+    'Man pages for all commands in section 1, starting page: torque-tools',
+]
+
+upstream_contacts = [
+    'New features? Contact hpc@uantwerpen.be',
+]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+sources = ['%(name)s-%(version)s.tar.gz']
+
+sanity_check_paths = {
+    'files': [ 'bin/torque-%s' % x for x in [ 'tasks', 'lprocs', 'hoststring', 'host-per-line', 'hosts-parallel' ] ],
+    'dirs':  [ 'bin', 'man/man1' ],
+}
+
+moduleclass = 'tools'
