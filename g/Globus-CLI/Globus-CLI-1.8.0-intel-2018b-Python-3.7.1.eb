@@ -7,12 +7,17 @@ versionsuffix = '-Python-%(pyver)s'
 homepage = 'https://www.globus.org/'
 
 whatis = [
-    "Description: Globus-SDK provides Python wrappers to the Globus Connect REST API",
+    "Description: Globus-CLI provides the Globus command line interface and the Globus SDK, Python wrappers to the Globus Connect REST API",
+    "Keywords: Globus CLI, Globus SDK",
 ]
 
 
 description = """
-This SDK provides a convenient Pythonic interface to Globus REST APIs, includingi
+The Globus Command Line Interface (CLI) is mostly a wrapper around the Python
+SDK which is also included in this module. It provides the globus command
+which by itself has many subcommands.
+
+The SDK provides a convenient Pythonic interface to Globus REST APIs, includingi
 the Transfer API and the Globus Auth API. Documentation for the REST APIs is
 available at https://docs.globus.org.
 
@@ -21,8 +26,13 @@ POST, and DELETE operations, and a high level interface providing helper methods
 for common API resources.
 """
 
+examples = """
+See https://docs.globus.org/cli/examples/.
+"""
+
 docurls = [
-    'Python package on readthedocs: https://globus-sdk-python.readthedocs.io/en/1.6.0/',
+    'CLI documentation: https://docs.globus.org/cli/',
+    'Python SDK on readthedocs: https://globus-sdk-python.readthedocs.io/en/1.6.0/',
     'REST APIs: https://docs.globus.org',
 ]
 
@@ -33,7 +43,7 @@ toolchain = {'name': 'intel', 'version': '2018b'}
 #checksums = ['5e63e7dc18fd13dcc3cb46ab3de019375b9d62c6c3a845a99f34b6928251f4c2']
 
 dependencies = [
-    ('Python', '3.7.0'),
+    ('Python', '3.7.1'),
 ]
 
 exts_defaultclass = 'PythonPackage'
