@@ -50,17 +50,16 @@ toolchain = {'name': 'intel', 'version': '2018b'}
 
 
 dependencies = [
-    ('Python', '3.7.0'),
+    ('Python', '3.7.1'),
 ]
 
 exts_defaultclass = 'PythonPackage'
 
 exts_list = [
-#    ('PrettyTable', '0.7.2', {
-#        'source_tmpl': '%(namelower)s-%(version)s.zip',
-    ('prettytable', '0.7.2', {  # PyPi name is PRettyTable, but the source file is a lowercase name.
-        'source_urls': ['https://pypi.python.org/packages/source/p/prettytable'],
-    }),
+# PrettyTable is included in the UAntwerp Python module since version 3.7.1
+#    ('prettytable', '0.7.2', {  # PyPi name is PrettyTable, but the source file is a lowercase name.
+#        'source_urls': ['https://pypi.python.org/packages/source/p/prettytable'],
+#    }),
     ('xmlrunner', '1.7.7', {
         'source_urls':  ['https://pypi.python.org/packages/source/x/xmlrunner'],
    }),
