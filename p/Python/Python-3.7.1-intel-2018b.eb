@@ -19,7 +19,7 @@ personal directories and/or contact UAntwerp HPC support
 at hpc@uantwerpen.be.
 
 Compared to Python 3 in earlier toolchains, pysam is missing since it fails to
-compile with Intel and with the GNU compilers in combination with Python 3.7.
+compile with Intel and with the GNU compilers in combination with Python %(version_major_minor)s.
 """
 
 usage = """
