@@ -1,0 +1,44 @@
+easyblock = 'ConfigureMake'
+
+name = 'MCL'
+version = '14.137'
+
+homepage = 'http://micans.org/mcl/'
+
+whatis = [
+    "Description: MCL is an implementation of the Markov Cluster Algorithm by Stijn van Dongen (CWI)",
+    "This package consists of executables and documentation only",
+]
+
+description = """
+The MCL algorithm is short for the Markov Cluster Algorithm, a fast and scalable
+unsupervised cluster algorithm for graphs (also known as networks) based on
+simulation of (stochastic) flow in graphs.
+
+The software is licensed under the GNU General Public License, version 3. It
+implies that the source code is available, and the license gives you the freedom
+to study the code and modify it in any way that you see fit. If you pass parts
+or all of the code, compiled parts of the code, or a derived product on to
+others, you have to make the code available to them on the same conditions.
+The authors do ask though to quote a number of publications when using the
+software, see https://micans.org/mcl/index.html?sec_license.
+
+The package consists of executables only, no libraries. Documentation is
+provided through man pages and the package homepage.
+"""
+
+docurls = [
+    "man pages (sections 1, 5 and 7) - try 'man mcl' as a starting point",
+]
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+source_urls = ['http://micans.org/%(namelower)s/src/']
+sources = ['%(namelower)s-%(version_major)s-%(version_minor)s.tar.gz']
+
+sanity_check_paths = {
+    'files': ['bin/mcl'],
+    'dirs': ['share']
+}
+
+moduleclass = 'bio'
