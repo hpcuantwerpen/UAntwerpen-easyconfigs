@@ -1,0 +1,83 @@
+--- configure.orig	2018-11-28 10:59:14.027596000 +0100
++++ configure	2018-11-28 11:04:29.440296080 +0100
+@@ -16183,7 +16183,7 @@
+       abi_cc_version_hnt="default"
+       abi_sys_spec_hnt="default"
+       CFLAGS_HINTS='-vec-report0'
+-      CC_LDFLAGS_HINTS='-static-libgcc -static-intel'
++#      CC_LDFLAGS_HINTS='-static-libgcc -static-intel'
+       CFLAGS_PIC='-fPIC'
+       ;;
+   esac   # [case: abi_cc_vendor, indent: 0, item: True]
+@@ -16254,7 +16254,7 @@
+       abi_cxx_version_hnt="default"
+       abi_sys_spec_hnt="default"
+       CXXFLAGS_HINTS='-vec-report0'
+-      CXX_LDFLAGS_HINTS='-static-libgcc -static-intel'
++#      CXX_LDFLAGS_HINTS='-static-libgcc -static-intel'
+       CXXFLAGS_PIC='-fPIC'
+       ;;
+   esac   # [case: abi_cxx_vendor, indent: 0, item: True]
+@@ -16439,7 +16439,7 @@
+               FCFLAGS_HINTS='-extend_source'
+               FCFLAGS_PIC='-fPIC'
+               FCFLAGS_FREEFORM='-free'
+-              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
++#              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
+               FCFLAGS_OPENMP='-qopenmp'
+               FCFLAGS_BIGENDIAN='-convert big_endian'
+               FCFLAGS_FIXEDFORM='-fixed'
+@@ -16453,7 +16453,7 @@
+               FCFLAGS_MODDIR='-module $(abinit_moddir)'
+               FCFLAGS_PIC='-fPIC'
+               FCFLAGS_HINTS='-extend-source -noaltparam -nofpscomp'
+-              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
++#              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
+               FCFLAGS_OPENMP='-qopenmp'
+               ;;
+           esac   # [case: abi_sys_spec, indent: 4, item: True]
+@@ -16493,7 +16493,7 @@
+               FCFLAGS_HINTS='-extend_source'
+               FCFLAGS_PIC='-fPIC'
+               FCFLAGS_FREEFORM='-free'
+-              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
++#              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
+               FCFLAGS_OPENMP='-qopenmp'
+               FCFLAGS_BIGENDIAN='-convert big_endian'
+               FCFLAGS_FIXEDFORM='-fixed'
+@@ -16507,7 +16507,7 @@
+               FCFLAGS_MODDIR='-module $(abinit_moddir)'
+               FCFLAGS_PIC='-fPIC'
+               FCFLAGS_HINTS='-extend-source -noaltparam -nofpscomp'
+-              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
++#              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
+               FCFLAGS_OPENMP='-qopenmp'
+               ;;
+           esac   # [case: abi_sys_spec, indent: 4, item: True]
+@@ -16520,7 +16520,7 @@
+               FCFLAGS_HINTS='-extend_source'
+               FCFLAGS_PIC='-fPIC'
+               FCFLAGS_FREEFORM='-free'
+-              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
++#              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
+               FCFLAGS_OPENMP='-qopenmp'
+               FCFLAGS_BIGENDIAN='-convert big_endian'
+               FCFLAGS_FIXEDFORM='-fixed'
+@@ -16534,7 +16534,7 @@
+               FCFLAGS_MODDIR='-module $(abinit_moddir)'
+               FCFLAGS_PIC='-fPIC'
+               FCFLAGS_HINTS='-extend-source -noaltparam -nofpscomp'
+-              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
++#              FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
+               FCFLAGS_OPENMP='-qopenmp'
+               ;;
+           esac   # [case: abi_sys_spec, indent: 4, item: True]
+@@ -16548,7 +16548,7 @@
+           FCFLAGS_MODDIR='-module $(abinit_moddir)'
+           FCFLAGS_PIC='-fPIC'
+           FCFLAGS_HINTS='-extend-source -vec-report0 -noaltparam -nofpscomp'
+-          FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
++#          FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
+           FCFLAGS_OPENMP='-openmp'
+           ;;
+       esac   # [case: abi_fc_version, indent: 2, item: True]
