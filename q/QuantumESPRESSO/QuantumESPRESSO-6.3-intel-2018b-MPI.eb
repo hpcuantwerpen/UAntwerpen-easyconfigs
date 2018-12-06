@@ -2,6 +2,8 @@ name = 'QuantumESPRESSO'
 version = '6.3'
 versionsuffix = '-MPI'
 
+wannier90_version = '2.1.0'
+
 homepage = 'https://www.quantum-espresso.org/'
 whatis = [
     "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
@@ -18,7 +20,11 @@ This module provides regular MPI executables, so it is not suitable to run
 in hybrid mode. See chapter 3 of the user guide for information on parallelism
 in QuantumESPRESSO.
 
-Not all plugins supported in some of the other QuantumESPRESSO modules are 
+Installed plugins:
+* qe-gipaw %(version)s
+* wannier90 %(wv)s
+
+Other plugins supported in some of the other QuantumESPRESSO modules are 
 supported by this module:
 * No clear word on the compatibility of WanT with QE 6.3. The main web page is
   out of date with the version number and the release notes on the new 
@@ -28,21 +34,23 @@ supported by this module:
   was done (West 3.1.1 was the newest version at that time).
 * According to some sources, Yambo should be compatible. However, it does not
   compile without errors so has not been included.
-"""
+""" % { 'version': version, 'wv': wannier90_version }
 
 toolchain = {'name': 'intel', 'version': '2018b'}
 toolchainopts = {'usempi': True}
 
 # major part of this list was determined from espresso/install/plugins_list
 sources = [
-    { 'filename': 'qe-%(version)s.tar.gz',
+    { 'filename':    'qe-%(version)s.tar.gz',
       'source_urls': ['https://github.com/QEF/q-e/releases/download/qe-%(version)s/'] 
     },
     # QE-GIPAW - Copy this to the archive directory as %(version)s.tar.gz, but presumably done in the EasyBlock?
-    { 'filename': 'qe-gipaw-%(version)s.tar.gz', 'download_filename': '%(version)s.tar.gz',
-      'source_urls': ['https://github.com/dceresoli/qe-gipaw/archive/'] },
+    { 'filename':          'qe-gipaw-%(version)s.tar.gz', 
+      'download_filename': '%(version)s.tar.gz',
+      'source_urls':       ['https://github.com/dceresoli/qe-gipaw/archive/'] },
     # Wannier - Copy this to the archive directory, but presumably done in the EasyBlock?
-    { 'filename': 'wannier90-2.1.0.tar.gz', 'source_urls': ['http://www.wannier.org/code/'] },
+    { 'filename':    'wannier90-%(wv)s.tar.gz' % {'wv': wannier90_version}, 
+      'source_urls': ['http://www.wannier.org/code/'] },
     ## PLUMED
     ## must be downloaded manually from
     ## http://qe-forge.org/gf/project/q-e/scmsvn/?action=browse&path=%2F%2Acheckout%2A%2Ftags%2FQE-5.2.1%2Fespresso%2Farchive%2Fplumed-1.3-qe.tar.gz&revision=11758
