@@ -1,0 +1,109 @@
+name = 'QuantumESPRESSO'
+version = '6.3'
+versionsuffix = '-MPI'
+
+homepage = 'https://www.quantum-espresso.org/'
+whatis = [
+    "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
+    "This module contains the regular MPI executables.",
+]
+
+description = """
+Quantum ESPRESSO  is an integrated suite of computer codes for
+electronic-structure calculations and materials modeling at the nanoscale.  It
+is based on density-functional theory, plane waves, and pseudopotentials (both
+norm-conserving and ultrasoft).
+
+This module provides regular MPI executables, so it is not suitable to run
+in hybrid mode. See chapter 3 of the user guide for information on parallelism
+in QuantumESPRESSO.
+
+Not all plugins supported in some of the other QuantumESPRESSO modules are 
+supported by this module:
+* No clear word on the compatibility of WanT with QE 6.3. The main web page is
+  out of date with the version number and the release notes on the new 
+  development site give zero information. Since the plugin does not compile
+  without errors it has not been included.
+* West (www.west-code.org) did not yet support QE 6.3 when this installation
+  was done (West 3.1.1 was the newest version at that time).
+* According to some sources, Yambo should be compatible. However, it does not
+  compile without errors so has not been included.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+toolchainopts = {'usempi': True}
+
+# major part of this list was determined from espresso/install/plugins_list
+sources = [
+    { 'filename': 'qe-%(version)s.tar.gz',
+      'source_urls': ['https://github.com/QEF/q-e/releases/download/qe-%(version)s/'] 
+    },
+    # QE-GIPAW - Copy this to the archive directory as %(version)s.tar.gz, but presumably done in the EasyBlock?
+    { 'filename': 'qe-gipaw-%(version)s.tar.gz', 'download_filename': '%(version)s.tar.gz',
+      'source_urls': ['https://github.com/dceresoli/qe-gipaw/archive/'] },
+    # Wannier - Copy this to the archive directory, but presumably done in the EasyBlock?
+    { 'filename': 'wannier90-2.1.0.tar.gz', 'source_urls': ['http://www.wannier.org/code/'] },
+    ## PLUMED
+    ## must be downloaded manually from
+    ## http://qe-forge.org/gf/project/q-e/scmsvn/?action=browse&path=%2F%2Acheckout%2A%2Ftags%2FQE-5.2.1%2Fespresso%2Farchive%2Fplumed-1.3-qe.tar.gz&revision=11758
+    ## gets updated without changes to filename, cfr. http://qe-forge.org/pipermail/q-e-commits/2015-June/007359.html
+    # 'plumed-1.3-qe-r11758.tar.gz',
+    # WanT - Wannier Transport
+    # https://github.com/QEF/want/archive/want-2.6.0.tar.gz
+    # Does not currently work.
+#    { 'filename': 'want-2.6.0.tar.gz', 'source_urls': ['https://github.com/QEF/want/archive/'] },
+    # WEST - Without Empty STates
+    # http://greatfire.uchicago.edu/west-public/West/-/archive/v3.1.1/West-v3.1.1.tar.bz2
+    # West has to be version 2.0.1: http://www.west-code.org/download/West/v2.0.1/West-2.0.1.tar.gz
+    # Does not compile correctly at the moment.
+    # { 'filename': 'West-2.0.1.tar.gz', 'source_urls': ['http://www.west-code.org/download/West/v2.0.1/'] },
+    # { 'filename': 'West-v3.1.1.tar.bz2', 'source_urls': ['http://greatfire.uchicago.edu/west-public/West/-/archive/v3.1.1/'] },
+    # YAMBO
+    # https://github.com/yambo-code/yambo/archive/4.3.1.tar.gz
+    # Yambo does not compile correctly at the moment.
+#    { 'filename': 'yambo-4.3.1.tar.gz', 'download_filename': '4.3.1.tar.gz',
+#      'source_urls': ['https://github.com/yambo-code/yambo/archive/'] },
+]
+source_urls = [ ]
+
+patches = [
+    '%(name)s-%(version)s_drop_LIBS_before_configure_of_fox.patch'
+#    'QuantumESPRESSO-5.4.0_yambo-fixes.patch',
+]
+
+# source checksums with shasum -a 256 
+checksums = [
+    '5d15f7cbb30ccb2e2e6722bc1cdf10a3aae909ae786654b0990068ed1846ad65',  # qe-6.3.tar.gz
+    '090edfcc186047a12c596ec13fdb29c187ab33d91a44c08371f23e779bb15f1e',  # qe-gipaw-6.3.tar.gz
+    'ee90108d4bc4aa6a1cf16d72abebcb3087cf6c1007d22dda269eb7e7076bddca',  # wannier90-2.1.0.tar.gz
+    # 'f094031c6d13a0e00022daf4d7c847c7',  # plumed-1.3-qe-r11758.tar.gz
+#    '484b83dc8bf5e4804b532cde4cd1d1966d59ffeec19bd20b6c20f091b3a623df',  # want-2.6.0.tar.gz
+#    '267aa8d0532e96d439840c771c27ca5c973e1d2f6b7e610a6359eb751e76108a',  # West-2.0.1.tar.bz2
+    # '2fe342730965bf142fc888a0c344ff4edc60b04521ffdafe3503e889648f4229',  # West-v3.1.1.tar.bz2
+#    '3d59fb8b7b619cb3396276fc4dddeda19c93aff9d1b238533e2324698b13f6ec',  # yambo-4.3.1.tgz
+    # QuantumESPRESSO-6.3_drop_LIBS_before_configure_of_fox.patch
+    '714fef8be920a5a7c6afe81a7364978c00d76d6d39f79b8b18862c1598ea6af3',
+]
+
+dependencies = [
+    ('FFTW', '3.3.8'),                   # The Intel FFTW interface lacks .f03 header files that are needed.
+    ('HDF5',  '1.10.2',         '-MPI'), # 1.8 which we have in this toolchain did not work.
+    ('ELPA',  '2016.11.001.pre'),        # Taken from recent UGhent EasyConfigs
+    ('libxc', '4.2.3'),                  # Taken from recent UGhent EasyConfigs
+]
+
+# add plumed and uncomment the lines in sources and checksums if the package is downloaded manually
+#buildopts = 'all w90 epw gipaw want west yambo xspectra'  # plumed
+#buildopts = 'all'
+buildopts = 'all gwl xspectra couple epw gipaw w90'
+
+# parallel build tends to fail
+parallel = 1
+
+# Save the make.inc file for future reference.
+postinstallcmds = [
+    'mkdir -p %(installdir)s/easybuild',
+    'cp %(builddir)s/qe-%(version)s/make.inc %(installdir)s/easybuild',
+]
+
+moduleclass = 'chem'
