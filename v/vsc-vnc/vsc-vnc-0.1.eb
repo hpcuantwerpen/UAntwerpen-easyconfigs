@@ -36,4 +36,9 @@ sanity_check_paths = {
     'dirs':  [ 'bin', 'vnc-config' ],
 }
 
+allow_prepend_abs_path = True
+modextrapaths = {
+    'PATH': '/opt/TurboVNC/bin',
+}
+
 moduleclass = 'tools'
