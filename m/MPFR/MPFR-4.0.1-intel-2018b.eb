@@ -1,0 +1,49 @@
+easyblock = 'ConfigureMake'
+
+name = 'MPFR'
+version = '4.0.1'
+
+homepage = 'http://www.mpfr.org'
+
+whatis = [
+    'Description: The MPFR library is a C library for multiple-precision floating-point computations with correct rounding.',
+    'This module provides both static and shared libraries',
+]
+
+description = """
+The MPFR library is a C library for multiple-precision floating-point
+computations with correct rounding. MPFR is based on the GMP multiple-precision
+library.
+
+The main goal of MPFR is to provide a library for multiple-precision
+floating-point computation which is both efficient and has a well-defined
+semantics. It copies the good ideas from the ANSI/IEEE-754 standard for
+double-precision floating-point arithmetic (53-bit significand).
+
+MPFR is free. It is distributed under the GNU Lesser General Public License
+(GNU Lesser GPL), version 3 or later.\
+
+The module provides both static and shared libraries.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+toolchainopts = {'defaultprec': False}
+
+source_urls = ['http://www.mpfr.org/mpfr-%(version)s/']
+sources = [SOURCELOWER_TAR_XZ]
+checksums = ['67874a60826303ee2fb6affc6dc0ddd3e749e9bfcb4c8655e3953d0458a6e16e']
+patches = ['MPFR-%(version)s_remove_mieee-fp_option.patch']
+
+
+dependencies = [
+    ('GMP', '6.1.2'),
+]
+
+runtest = 'check'
+
+sanity_check_paths = {
+    'files': ['lib/libmpfr.%s' % SHLIB_EXT, 'lib/libmpfr.a', 'include/mpfr.h'],
+    'dirs': [],
+}
+
+moduleclass = 'math'

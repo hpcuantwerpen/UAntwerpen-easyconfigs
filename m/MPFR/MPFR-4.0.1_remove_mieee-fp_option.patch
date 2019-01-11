@@ -1,0 +1,18 @@
+# Patch to adapt MPFR for the Intel compilers.
+# The configure script adds some options of its own to CFLAGS that are
+# GNU compiler options anymway. One of these, -mieee-fp conflicts with
+# the floating point accuracy options that EasyBuild tries to set, leading
+# to a fake failure in one of the tests for a header file (limits.h).
+# This patch of configure again removes that option.
+# Developed by Kurt Lust @ VSC/UAntwerp.
+--- mpfr-4.0.1/configure.orig	2018-02-07 13:57:46.000000000 +0100
++++ mpfr-4.0.1/configure	2019-01-11 15:14:52.192925000 +0100
+@@ -13434,7 +13434,7 @@
+ 
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+- CFLAGS="-fp_port -mieee-fp -wd1572 -wd265 -wd186 -wd239 $CFLAGS"
++ CFLAGS="-fp_port -wd1572 -wd265 -wd186 -wd239 $CFLAGS"
+ 
+ else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
