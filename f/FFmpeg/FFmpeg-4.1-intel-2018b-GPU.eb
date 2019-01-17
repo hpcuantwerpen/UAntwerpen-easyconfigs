@@ -1,0 +1,80 @@
+easyblock = 'ConfigureMake'
+
+name = 'FFmpeg'
+version = '4.1'
+versionsuffix = '-GPU'
+
+homepage = 'https://www.ffmpeg.org/'
+
+whatis = [
+    "Description: ffmpeg is a library/program to record, convert and stream audio and video",
+    "This module provides the various commands and static and shared libraries",
+]
+
+description = """
+FFmpeg is the leading multimedia framework, able to decode, encode, transcode,
+mux, demux, stream, filter and play pretty much anything that humans and
+machines have created. It supports the most obscure ancient formats up to the
+cutting edge. No matter if they were designed by some standards committee, the
+community or a corporation. It is also highly portable: FFmpeg compiles, runs,
+and passes our testing infrastructure FATE across Linux, Mac OS X, Microsoft
+Windows, the BSDs, Solaris, etc. under a wide variety of build environments,
+machine architectures, and configurations.
+
+It contains libavcodec, libavutil, libavformat, libavfilter, libavdevice,
+libswscale and libswresample which can be used by applications. As well as
+ffmpeg, ffserver, ffplay and ffprobe which can be used by end users for
+transcoding, streaming and playing.
+
+The FFmpeg project tries to provide the best technically possible solution for
+developers of applications and end users alike. To achieve this we combine the
+best free software options available. We slightly favor our own code to keep
+the dependencies on other libs low and to maximize code sharing between parts
+of FFmpeg. Wherever the question of "best" cannot be answered we support both
+options so the end user can choose.
+
+The module provides all the ffmpeg commands and static and shared libraries.
+"""
+
+docurls = [
+    "Web-based documentation: http://ffmpeg.org/documentation.html",
+    "Man pages for the commands (section 1) and libraries (section 3)",
+]
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+source_urls = ['http://ffmpeg.org/releases/']
+sources = [SOURCELOWER_TAR_BZ2]
+
+dependencies = [
+    ('zlib',       '1.2.11'),
+    ('bzip2',      '1.0.6'),
+    ('x264',       '20180212'),
+    ('LAME',       '3.100'),
+    ('x265',       '2.8'),
+    ('X11',        '20180604'),
+# GPU-specific
+    ('CUDA',       '10.0',    '', True),
+]
+
+builddependencies = [
+    ( 'buildtools', '%(toolchain_version)s', '', True), # For NASM, was in the dependency list but should only be a build dependency
+]
+
+# Code options
+configopts  = '--enable-pic --enable-shared --enable-static --cc="$CC" --cxx="$CXX" '
+# Enable GPU-specific options
+configopts += '--enable-cuda-sdk '
+# Software licenses
+configopts += '--enable-gpl --enable-version3 --enable-nonfree '
+# Enable/disable components
+configopts += '--enable-libx264 --enable-libx265 --enable-libmp3lame '
+
+sanity_check_paths = {
+    'files': ['bin/ff%s' % x for x in ['mpeg', 'probe']] +
+             ['lib/lib%s.%s' % (x, y) for x in ['avdevice', 'avfilter', 'avformat', 'avcodec', 'avutil',
+                                                'postproc', 'swresample', 'swscale'] for y in [SHLIB_EXT, 'a']],
+    'dirs': ['include']
+}
+
+moduleclass = 'vis'
