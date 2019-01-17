@@ -1,0 +1,89 @@
+# The test for MKL assumes that the location of the compiler is passed through
+# CMake variables, however setup.py doesn't allow to set these variables. Moreover
+# the environment variable MKLROOT should be a robust mechanism to find the MKL the
+# MKL libraries if the Intel compilers are used in the proper way. This patch uses
+# MKLROOT if it is set.
+# The patch also corrects another bug that causes the wrong directory to be searched
+# For libiomp5.so.
+# Developed by Kurt Lust (VSC/UAntwerp)
+--- pytorch-1.0.0.orig/cmake/Modules/FindMKL.cmake	2019-01-09 15:26:15.167575000 +0100
++++ pytorch-1.0.0/cmake/Modules/FindMKL.cmake	2019-01-15 11:06:19.246531626 +0100
+@@ -25,23 +25,33 @@
+ INCLUDE(CheckTypeSize)
+ INCLUDE(CheckFunctionExists)
+ 
++# Print a message
++message(STATUS "FindMKL.cmake - Start search for MKL libraries")
++
+ # Intel Compiler Suite
+-SET(INTEL_COMPILER_DIR "/opt/intel" CACHE STRING
+-  "Root directory of the Intel Compiler Suite (contains ipp, mkl, etc.)")
+-SET(INTEL_MKL_DIR "/opt/intel/mkl" CACHE STRING
+-  "Root directory of the Intel MKL (standalone)")
++IF(DEFINED ENV{MKLROOT})
++  SET(INTEL_MKL_DIR      $ENV{MKLROOT})
++  SET(INTEL_COMPILER_DIR "$ENV{MKLROOT}/..")
++ELSE()
++  SET(INTEL_COMPILER_DIR "/opt/intel" CACHE STRING
++    "Root directory of the Intel Compiler Suite (contains ipp, mkl, etc.)")
++  SET(INTEL_MKL_DIR "/opt/intel/mkl" CACHE STRING
++    "Root directory of the Intel MKL (standalone)")
++ENDIF()
+ SET(INTEL_MKL_SEQUENTIAL OFF CACHE BOOL
+   "Force using the sequential (non threaded) libraries")
++message(AUTHOR_WARNING "FindMKL.cmake - INTEL_MKL_DIR is ${INTEL_MKL_DIR}")
++message(AUTHOR_WARNING "FindMKL.cmake - INTEL_COMPILER_DIR is ${INTEL_COMPILER_DIR}")
+ 
+ # Checks
+ CHECK_TYPE_SIZE("void*" SIZE_OF_VOIDP)
+ IF ("${SIZE_OF_VOIDP}" EQUAL 8)
+-  SET(mklvers "intel64")
+-  SET(iccvers "intel64")
++  SET(mklvers "intel64_lin")
++  SET(iccvers "intel64_lin")
+   SET(mkl64s "_lp64")
+ ELSE ("${SIZE_OF_VOIDP}" EQUAL 8)
+-  SET(mklvers "32")
+-  SET(iccvers "ia32")
++  SET(mklvers "32_lin")
++  SET(iccvers "ia32_lin")
+   SET(mkl64s)
+ ENDIF ("${SIZE_OF_VOIDP}" EQUAL 8)
+ IF(CMAKE_COMPILER_IS_GNUCC)
+@@ -81,7 +91,8 @@
+ IF (EXISTS ${INTEL_COMPILER_DIR})
+   # TODO: diagnostic if dir does not exist
+   SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
+-    "${INTEL_COMPILER_DIR}/lib/${iccvers}")
++    "${INTEL_COMPILER_DIR}/compiler/lib/${iccvers}")
++  message(AUTHOR_WARNING "FindMKL.cmake: CMAKE_LIBRARY_PATH set to [${CMAKE_LIBRARY_PATH}]")
+   IF(MSVC)
+     SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
+       "${INTEL_COMPILER_DIR}/compiler/lib/${iccvers}")
+@@ -96,6 +107,7 @@
+     "${INTEL_MKL_DIR}/include")
+   SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
+     "${INTEL_MKL_DIR}/lib/${mklvers}")
++  message(AUTHOR_WARNING "FindMKL.cmake: CMAKE_LIBRARY_PATH set to [${CMAKE_LIBRARY_PATH}]")
+   IF (MSVC)
+     SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
+       "${INTEL_MKL_DIR}/lib/${iccvers}")
+@@ -126,7 +138,8 @@
+       set(__list "${_elem}")
+     endif(__list)
+   endforeach(_elem)
+-  message(STATUS "Checking for [${__list}]")
++  #message(STATUS "Checking for [${__list}]")
++  message(STATUS "Checking for [${__list}] in [${CMAKE_LIBRARY_PATH}]")
+   FOREACH(_library ${_list})
+     SET(_combined_name ${_combined_name}_${_library})
+     IF(_libraries_work)
+@@ -294,5 +307,8 @@
+   ENDIF(MKL_FOUND)
+ ENDIF(NOT MKL_FIND_QUIETLY)
+ 
++# Print a message
++message(STATUS "FindMKL.cmake - End search for MKL libraries")
++
+ # Do nothing if MKL_FOUND was set before!
+ ENDIF (NOT MKL_FOUND)

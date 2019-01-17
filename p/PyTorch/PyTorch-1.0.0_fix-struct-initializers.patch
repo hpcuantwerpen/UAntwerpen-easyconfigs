@@ -1,0 +1,124 @@
+# PyTorch uses C-style struct initializers in some files that are not part
+# of current C++ standards (but are considered for C++20). The Intel compilers
+# don't support these (probably unless selecting the gnu++98 dialect?).
+# Patch originally developed for v0.3.1 by wpoely86@gmail.com
+# Ported to v1.0.0 by Kurt Lust (VSC/UAntwerp)
+--- pytorch-1.0.0.orig/torch/lib/THD/base/init_methods/InitMethodFile.cpp	2019-01-09 15:26:09.079024000 +0100
++++ pytorch-1.0.0/torch/lib/THD/base/init_methods/InitMethodFile.cpp	2019-01-09 15:33:47.774778000 +0100
+@@ -226,20 +226,16 @@
+   config.world_size = world_size;
+   if (config.rank == 0) {
+     config.public_address = discoverWorkers(listen_socket, world_size);
+-    config.master = {
+-        .listen_socket = listen_socket,
+-        .listen_port = master_port,
+-    };
++    config.master.listen_socket = listen_socket;
++    config.master.listen_port = master_port;
+   } else {
+     ::close(listen_socket);
+ 
+     std::string master_address;
+     std::tie(master_address, config.public_address) =
+         discoverMaster(master_addrs, master_port);
+-    config.worker = {
+-        .master_addr = master_address,
+-        .master_port = master_port,
+-    };
++    config.worker.master_addr = master_address;
++    config.worker.master_port = master_port;
+   }
+ 
+   return config;
+--- pytorch-1.0.0.orig/torch/lib/THD/base/init_methods/InitMethodTCP.cpp	2019-01-09 15:26:09.103204000 +0100
++++ pytorch-1.0.0/torch/lib/THD/base/init_methods/InitMethodTCP.cpp	2019-01-09 15:39:09.818349126 +0100
+@@ -315,20 +315,16 @@
+       config.world_size = world_size;
+       if (config.rank == 0) {
+         listen_socket_guard.release();
+-        config.master = {
+-            .listen_socket = listen_socket,
+-            .listen_port = master_msg.port,
+-        };
++        config.master.listen_socket = listen_socket;
++        config.master.listen_port = master_msg.port;
+ 
+         config.public_address = discoverWorkers(listen_socket, world_size);
+       } else {
+         std::string master_address;
+         std::tie(master_address, config.public_address) =
+             discoverMaster(master_msg.addresses, master_msg.port);
+-        config.worker = {
+-            .master_addr = master_address,
+-            .master_port = master_msg.port,
+-        };
++        config.worker.master_addr = master_address;
++        config.worker.master_port = master_msg.port;
+       }
+       break;
+     }
+--- pytorch-1.0.0.orig/torch/lib/THD/base/data_channels/DataChannelTCP.cpp	2019-01-09 15:26:09.197174000 +0100
++++ pytorch-1.0.0/torch/lib/THD/base/data_channels/DataChannelTCP.cpp	2019-01-09 15:46:57.925600866 +0100
+@@ -69,20 +69,16 @@
+     _socket = config.master.listen_socket;
+     _port = config.master.listen_port;
+ 
+-    _processes[0] = {
+-        .rank = 0,
+-        .address = "",
+-        .port = 0,
+-        .socket = -1,
+-    };
++    _processes[0].rank = 0;
++    _processes[0].address = "";
++    _processes[0].port = 0;
++    _processes[0].socket = -1;
+   } else { // WORKER
+     // add master
+-    _processes[0] = {
+-        .rank = 0,
+-        .address = config.worker.master_addr,
+-        .port = config.worker.master_port,
+-        .socket = -1,
+-    };
++    _processes[0].rank = 0;
++    _processes[0].address = config.worker.master_addr;
++    _processes[0].port = config.worker.master_port;
++    _processes[0].socket = -1
+   }
+ }
+ 
+@@ -113,12 +109,10 @@
+     port_type p_port = recv_value<port_type>(master.socket);
+     std::string p_address = recv_string(master.socket);
+ 
+-    _processes[p_rank] = {
+-        .rank = p_rank,
+-        .address = p_address,
+-        .port = p_port,
+-        .socket = -1,
+-    };
++    _processes[p_rank].rank = p_rank;
++    _processes[p_rank].address = p_address;
++    _processes[p_rank].port = p_port;
++    _processes[p_rank].socket = -1;
+   }
+ 
+   /*
+@@ -179,12 +173,10 @@
+           std::to_string(p_rank));
+     }
+ 
+-    _processes[p_rank] = {
+-        .rank = p_rank,
+-        .address = p_address,
+-        .port = p_port,
+-        .socket = p_socket,
+-    };
++    _processes[p_rank].rank = p_rank;
++    _processes[p_rank].address = p_address;
++    _processes[p_rank].port = p_port;
++    _processes[p_rank].socket = p_socket;
+   }
+ 
+   // send informations about processes to all workers

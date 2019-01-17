@@ -1,0 +1,349 @@
+# Configuring PyTorch uses a thre-layer process:
+# - setup.py: Standard install script for Python modules. It gets a lot of 
+#   information via environment variables. However, it is not clear if the 
+#   list at the start of that file is complete.
+# - tools/build_pytorch_libs.sh: Shell script called by setup.py. Information
+#   is passed between setup.py and this script in a very inconsistent way.
+#   Some information is passed through environment variables, other through
+#   command line options.
+# - CMake system to do the actual configuration. CMake is called from 
+#   build_pytorch_libs.sh. 
+# One problem is the the CMake scrips have a lot more parameters that can
+# be set than are currently set through setup.py and build_pytorch_libs.sh.
+# Setting an additional parameter requires making changes to setup.py and
+# build_pytorch_libs.sh too. In the long run it may be better to switch to
+# a CMakeMake configuration process.
+#
+# Some general problems
+# - setup.py is in a terrible state. The documentation about variables that
+#   can be set in the comments at the top of setup.py doesn't correspond to
+#   the variables that I can find in the code...
+#
+# Some problems with the Intel compilers:
+# - The Google benchmark code contains code that is not legal in C++
+#   (or one line which may be legal in C++17, but compiling the whole
+#   project in C++17-mode doesn't seem to be an option either). So some
+#   errors have to be disabled.
+# - The C10 component of PyTorch causes problems.
+# Several other errors or warnings have been fixed through patches.
+#
+# We are still in the phase of trying to build the most minimal install
+# possible before adding often necessary features.
+# Kurt Lust, VSC/UAntwerp
+easyblock = 'PythonPackage'
+
+name = 'PyTorch'
+version = '1.0.0'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'http://pytorch.org/'
+description = """Tensors and Dynamic neural networks in Python with strong GPU acceleration.
+PyTorch is a deep learning framework that puts Python first."""
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+pytorchdir = 'pytorch-%(version)s'
+extract_cmd_pattern = 'tar -C %s/%s --strip-components=1 -xf %%s'
+
+# PyTorch pulls in a bunch of submodules which don't have releases.
+# We download the submodule revisions from their repos.
+# determine commit of additional sources via 
+# https://github.com/pytorch/pytorch/tree/v1.0.0/third_party
+# Following the link: last part of the URL is the full commit 
+# number we are interested in for the dictionary commits.
+commits = {
+    'FP16':                 '34d4bf01bbf7376f2baa71b8fa148b18524d45cf',
+    'FXdiv':                'b742d1143724d646cd0f914646f1240eacf5bd73',
+    'NNPACK':               '1e005b0c2777f39972a4ac15bea03e0e315a3d92',
+    'QNNPACK':              'ef05e87cef6b8e719989ce875b5e1c9fdb304c05',
+    'benchmark':            '505be96ab23056580a3a2315abba048f4428b04e',
+    'cpuinfo':              'c342292afb040c868849bc15e96ab894dceba2bc',
+#    'cub': , # GPU-only
+    'Eigen':                'f59336cee358f92b959de6a0daf07c4ab2318022',
+    'fbgemm':               '0d5a159b944252e70a677236b570f291943e0543',
+    'gemmlowp':             '8416bab644641a5c0a81ecf91a5cda804af0aee1',
+    'gloo':                 'cdeb59d5c82e5401445b4c051bb396f6738d4a19',
+    'googletest':           '2fe3bd994b3189899d93f1d5a881e725e046fdc2',
+    'ideep':                'dedff8fb8193fe3a1ea893d4bc852f8ea395b6b3',
+#    'nccl': , # GPU-only
+    'neon2sse':             '97a126f08ce318023be604d03f88bf0820a9464a',
+    'onnx':                 '42804705bdbf179d1a98394008417e1392013547',
+    'onnx-tensorrt':        'fa0964e8477fc004ee2f49ee77ffce0bf7f711a9',
+    'protobuf':             '2761122b810fe8861004ae785cc3ab39f384d342',
+    'psimd':                '90a938f30ba414ada2f4b00674ee9631d7d85e19',
+    'pthreadpool':          '13da0b4c21d17f94150713366420baaf1b5a46f4',
+    'pybind11':             '5c8746ff135abb390bf95944be593e895a586a50',
+    'clang-cindex-python3': '6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5',
+    'python-enum':          '4cfedc426c4e2fc52e3f5c2b4297e15ed8d6b8c7',
+    'python-PeachPy':       '07d8fde8ac45d7705129475c0f94ed8925b93473',
+    'python-six':           '15e31431af97e5e64b80af0a3f598d382bcdd49a',
+    'sleef':                '6ff7a135a1e31979d1e1844a2e7171dfbd34f54f',
+    'zstd':                 'aec56a52fbab207fc639a1937d1e708a282edca8',
+}
+
+sources = [
+    { # PyTorch itself
+        'source_urls': ['https://github.com/pytorch/pytorch/archive'],
+        'download_filename': 'v%(version)s.tar.gz',  
+        'filename': 'pytorch-%(version)s.tar.gz',  
+    },
+    # ComputeLibrary not needed (ARM library)
+    { # FP16 - Header-only library for conversion to/from half-precision floating point formats
+        'source_urls':       ['https://github.com/Maratyszcza/FP16/archive'],
+        'download_filename': '%s.tar.gz'         % commits['FP16'],
+        'filename':          'FP16-%s.tar.gz'    % commits['FP16'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/FP16'),
+    },
+    { # FXdiv - Header-only library for division via fixed-point multiplication by inverse
+        'source_urls':       ['https://github.com/Maratyszcza/FXdiv/archive'],
+        'download_filename': '%s.tar.gz'         % commits['FXdiv'],
+        'filename':          'FXdiv-%s.tar.gz'   % commits['FXdiv'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/FXdiv'),
+    },
+    { # NNPACK - Acceleration package for neural networks on multi-core CPUs
+        'source_urls':       ['https://github.com/Maratyszcza/NNPACK/archive'],
+        'download_filename': '%s.tar.gz'         % commits['NNPACK'],
+        'filename':          'NNPACK-%s.tar.gz'  % commits['NNPACK'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/NNPACK'),
+    },
+    { # QNNPACK - Acceleration package for neural networks on multi-core CPUs
+        'source_urls':       ['https://github.com/pytorch/QNNPACK/archive'],
+        'download_filename': '%s.tar.gz'         % commits['QNNPACK'],
+        'filename':          'QNNPACK-%s.tar.gz' % commits['QNNPACK'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/QNNPACK'),
+    },
+    { # bemchmark - A microbenchmark support library
+        'source_urls':       ['https://github.com/google/benchmark/archive'],
+        'download_filename': '%s.tar.gz'           % commits['benchmark'],
+        'filename':          'benchmark-%s.tar.gz' % commits['benchmark'],
+        'extract_cmd':       extract_cmd_pattern   % (pytorchdir, 'third_party/benchmark'),
+    },
+    { # cpuinfo - CPU INFOrmation library (x86/x86-64/ARM/ARM64, Linux/Windows/Android/macOS/iOS)
+        'source_urls':       ['https://github.com/pytorch/cpuinfo/archive'],
+        'download_filename': '%s.tar.gz'         % commits['cpuinfo'],
+        'filename':          'cpuinfo-%s.tar.gz' % commits['cpuinfo'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/cpuinfo'),
+    },
+    # cub not included for the CPU version.
+    { # Eigen
+        'source_urls':       ['https://github.com/eigenteam/eigen-git-mirror/archive'],
+        'download_filename': '%s.tar.gz'         % commits['Eigen'],
+        'filename':          'eigen-%s.tar.gz'   % commits['Eigen'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/eigen'),
+    },
+    { # fbgemm - FB (Facebook) + GEMM (General Matrix-Matrix Multiplication)
+        'source_urls':       ['https://github.com/pytorch/fbgemm/archive'],
+        'download_filename': '%s.tar.gz'         % commits['fbgemm'],
+        'filename':          'fbgemm-%s.tar.gz'  % commits['fbgemm'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/fbgemm'),
+    },
+    { # Low-precision matrix multiplication
+        'source_urls':       ['https://github.com/google/gemmlowp/archive'],
+        'download_filename': '%s.tar.gz'          % commits['gemmlowp'],
+        'filename':          'gemmlowp-%s.tar.gz' % commits['gemmlowp'],
+        'extract_cmd':       extract_cmd_pattern  % (pytorchdir, 'third_party/gemmlowp/gemmlowp'),
+    },
+    { # gloo - Collective communications library with various primitives for multi-machine training.
+        'source_urls':       ['https://github.com/facebookincubator/gloo/archive'],
+        'download_filename': '%s.tar.gz'         % commits['gloo'],
+        'filename':          'gloo-%s.tar.gz'    % commits['gloo'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/gloo'),
+    },
+    { # googletest - Google Testing and Mocking Framework
+        'source_urls':       ['https://github.com/google/googletest/archive'],
+        'download_filename': '%s.tar.gz'            % commits['googletest'],
+        'filename':          'googletest-%s.tar.gz' % commits['googletest'],
+        'extract_cmd':       extract_cmd_pattern    % (pytorchdir, 'third_party/googletest'),
+    },
+    { # ideep - A Chainer module providing numpy like API and DNN acceleration using MKL-DNN.
+        'source_urls':       ['https://github.com/intel/ideep/archive'],
+        'download_filename': '%s.tar.gz'         % commits['ideep'],
+        'filename':          'ideep-%s.tar.gz'   % commits['ideep'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/ideep'),
+    },
+    # ios-cmake not needed
+    # miniz-2.0.8 is included in the PyTorch distribution
+    # nccl: GPU-only
+    { # neon2sse - The NEON_2_SSE.h file is intended to simplify ARM->IA32 porting. 
+        'source_urls':       ['https://github.com/intel/ARM_NEON_2_x86_SSE/archive'],
+        'download_filename': '%s.tar.gz'          % commits['neon2sse'],
+        'filename':          'neon2sse-%s.tar.gz' % commits['neon2sse'],
+        'extract_cmd':       extract_cmd_pattern  % (pytorchdir, 'third_party/neon2sse'),
+    },
+    { # onnx - Open Neural Network Exchange https://onnx.ai/
+        'source_urls':       ['https://github.com/onnx/onnx/archive'],
+        'download_filename': '%s.tar.gz'         % commits['onnx'],
+        'filename':          'onnx-%s.tar.gz'    % commits['onnx'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/onnx'),
+    },
+    { # onnx-tenrort - TensorRT backend for ONNX
+        'source_urls':       ['https://github.com/onnx/onnx-tensorrt/archive'],
+        'download_filename': '%s.tar.gz'               % commits['onnx-tensorrt'],
+        'filename':          'onnx-tensorrt-%s.tar.gz' % commits['onnx-tensorrt'],
+        'extract_cmd':       extract_cmd_pattern       % (pytorchdir, 'third_party/onnx-tensorrt'),
+    },
+    { # protobuf - Protocol Buffers - Google's data interchange format
+        'source_urls':       ['https://github.com/google/protobuf/archive'],
+        'download_filename': '%s.tar.gz'          % commits['protobuf'],
+        'filename':          'protobuf-%s.tar.gz' % commits['protobuf'],
+        'extract_cmd':       extract_cmd_pattern  % (pytorchdir, 'third_party/protobuf'),
+    },
+    { # psimd - Portable 128-bit SIMD intrinsics
+        'source_urls':       ['https://github.com/Maratyszcza/psimd/archive'],
+        'download_filename': '%s.tar.gz'         % commits['psimd'],
+        'filename':          'psimd-%s.tar.gz'   % commits['psimd'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/psimd'),
+    },
+    { # pthreadpool - pthread-based thread pool for C/C++
+        'source_urls':       ['https://github.com/Maratyszcza/pthreadpool/archive'],
+        'download_filename': '%s.tar.gz'             % commits['pthreadpool'],
+        'filename':          'pthreadpool-%s.tar.gz' % commits['pthreadpool'],
+        'extract_cmd':       extract_cmd_pattern     % (pytorchdir, 'third_party/pthreadpool'),
+    },
+    { # pybind11 - Seamless operability between C++11 and Python
+        'source_urls':       ['https://github.com/pybind/pybind11/archive'],
+        'download_filename': '%s.tar.gz'          % commits['pybind11'],
+        'filename':          'pybind11-%s.tar.gz' % commits['pybind11'],
+        'extract_cmd':       extract_cmd_pattern  % (pytorchdir, 'third_party/pybind11'),
+    },
+    { # Addition to pybind11
+        'source_urls':       ['https://github.com/wjakob/clang-cindex-python3/archive'],
+        'download_filename': '%s.tar.gz'                      % commits['clang-cindex-python3'],
+        'filename':          'clang-cindex-python3-%s.tar.gz' % commits['clang-cindex-python3'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/pybind11/tools/clang'),
+    },
+    { # python-enum - Mirror of enum34 package (PeachPy dependency) from PyPI to be used in submodules
+        'source_urls':       ['https://github.com/PeachPy/enum34/archive'],
+        'download_filename': '%s.tar.gz'             % commits['python-enum'],
+        'filename':          'python-enum-%s.tar.gz' % commits['python-enum'],
+        'extract_cmd':       extract_cmd_pattern     % (pytorchdir, 'third_party/python-enum'),
+    },
+    { # python-PeachPy - x86-64 assembler embedded in Python
+        'source_urls':       ['https://github.com/Maratyszcza/PeachPy/archive'],
+        'download_filename': '%s.tar.gz'         % commits['python-PeachPy'],
+        'filename':          'PeachPy-%s.tar.gz' % commits['python-PeachPy'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/python-peachpy'),
+    },
+    { # python-six - Python 2 and 3 compatibility library
+        'source_urls':       ['https://github.com/benjaminp/six/archive'],
+        'download_filename': '%s.tar.gz'            % commits['python-six'],
+        'filename':          'python-six-%s.tar.gz' % commits['python-six'],
+        'extract_cmd':       extract_cmd_pattern    % (pytorchdir, 'third_party/python-six'),
+    },
+    { # sleef - SIMD Library for Evaluating Elementary Functions, vectorized libm and DFT
+        'source_urls':       ['https://github.com/shibatch/sleef/archive'],
+        'download_filename': '%s.tar.gz'         % commits['sleef'],
+        'filename':          'sleef-%s.tar.gz'   % commits['sleef'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/sleef'),
+    },
+    { # zstd - Zstandard - Fast real-time compression algorithm
+        'source_urls':       ['https://github.com/facebook/zstd/archive'],
+        'download_filename': '%s.tar.gz'         % commits['zstd'],
+        'filename':          'zstd-%s.tar.gz'    % commits['zstd'],
+        'extract_cmd':       extract_cmd_pattern % (pytorchdir, 'third_party/zstd'),
+    },
+]
+
+patches = [
+    'PyTorch-%(version)s_fix-struct-initializers.patch',
+    'PyTorch-%(version)s_fix-AVX.patch',
+    'PyTorch-%(version)s_fix-FindMKL.patch',
+    'PyTorch-%(version)s_fix-Dependencies.patch',
+    'PyTorch-%(version)s_fix-setup.patch',
+]
+
+# The order of the checksums is important.
+# They have to correspond to the order of the downloads above!
+checksums = [
+    'f360b7954e441bc5c4b36c49e711697a5c351de8b146c2982809385e3b3cfdcb', #  pytorch-1.0.0.tar.gz
+    'dacd927f345c40163532e65ed3ea796d190f4efdd125838401a35e8147e55313', #  FP16-34d4bf01bbf7376f2baa71b8fa148b18524d45cf.tar.gz
+    '07625551202a1f35fe5e826669ad495962b26f6a139290e90b321c5996f002ef', #  FXdiv-b742d1143724d646cd0f914646f1240eacf5bd73.tar.gz
+    '02d278559609982f2dbd973f265caf674274ac7a61ddd867c4956176252d940e', #  NNPACK-1e005b0c2777f39972a4ac15bea03e0e315a3d92.tar.gz
+    'dc0c9ca760bb1bf858dd1aebaf1471b8437c1b2ef9a9b6acaf302fa14b04194f', #  QNNPACK-ef05e87cef6b8e719989ce875b5e1c9fdb304c05.tar.gz
+    '0de43b6eaddd356f1d6cd164f73f37faf2f6c96fd684e1f7ea543ce49c1d144e', #  benchmark-505be96ab23056580a3a2315abba048f4428b04e.tar.gz
+    '9d2f12f72bd9efd09b7eedf883edb25d9d9cdef61899ca4800107cfc0b9ea9b1', #  cpuinfo-c342292afb040c868849bc15e96ab894dceba2bc.tar.gz
+    'fd9e9f0d6ef407a162f5f283c52d3c271efc1092377274abe1e30dff83dbc1a4', #  eigen-f59336cee358f92b959de6a0daf07c4ab2318022.tar.gz
+    '2b610fd54c6f03d4ba39ceec38bb1ccf3546bc78c384449d5167f7634212c096', #  fbgemm-0d5a159b944252e70a677236b570f291943e0543.tar.gz
+    'e12e096e986221d96d55185e870397b3717b625d6c5d155fbd9a7be314bed06a', #  gemmlowp-8416bab644641a5c0a81ecf91a5cda804af0aee1.tar.gz
+    'f02a6f256d238288382920f6a34c0e6c7e66f6b9635c0ef0e5840147887b64b3', #  gloo-cdeb59d5c82e5401445b4c051bb396f6738d4a19.tar.gz
+    'd0d447b4feeedca837a0d46a289d4223089b32ac2f84545fa4982755cc8919be', #  googletest-2fe3bd994b3189899d93f1d5a881e725e046fdc2.tar.gz
+    '00f3ca77beb92ed73e2e68847f50fd3d35d32a89ef8f7a04ba177e54bc041bbd', #  ideep-dedff8fb8193fe3a1ea893d4bc852f8ea395b6b3.tar.gz
+    '2713f5d97ab6fdde6fd9625a5bcd82bc3d7cd92f506b20c27d5e06f2bc996836', #  neon2sse-97a126f08ce318023be604d03f88bf0820a9464a.tar.gz
+    'b9520d6ce9f8b9928bf517696ea62fd03308fd21dafdebfec7aeb8894b3813ab', #  onnx-42804705bdbf179d1a98394008417e1392013547.tar.gz
+    'a809bfc5dc5d8e42c3e2f14e1062a4ada007713b3d6d25089c39d914869bcb61', #  onnx-tensorrt-fa0964e8477fc004ee2f49ee77ffce0bf7f711a9.tar.gz
+    'd293a86f4c82a31990b89be2b9787df045e3f6b86378e9950e5e1145d4a08e6a', #  protobuf-2761122b810fe8861004ae785cc3ab39f384d342.tar.gz
+    'afd27417c6df1c85f79a68361055dd3adc292174913c39c1f58b698b9cfd7926', #  psimd-90a938f30ba414ada2f4b00674ee9631d7d85e19.tar.gz
+    '90ab4f60ae0e99c0172dd5201dccc6de6c8f384a21b3d959588f4c1e00beec0f', #  pthreadpool-13da0b4c21d17f94150713366420baaf1b5a46f4.tar.gz
+    'ffe077d0fccc34aa95c2aba7a3abadbdc2a480c44a238879381733d38322e921', #  pybind11-5c8746ff135abb390bf95944be593e895a586a50.tar.gz
+    '828e0d6238e2129a9e08071750dc16ba10e38eacf96f21b8a71e501c2085b282', #  clang-cindex-python3-6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5.tar.gz
+    '4fe3f5640686512dfa125dca7f8201a0318b6739fe3e9a516c37d9d7740af566', #  python-enum-4cfedc426c4e2fc52e3f5c2b4297e15ed8d6b8c7.tar.gz
+    '13100c3deed300bbf16f87d8af3539f432462bfef9d38f0c7e3e387dc2e88676', #  PeachPy-07d8fde8ac45d7705129475c0f94ed8925b93473.tar.gz
+    'b296916bb8dd9db59471a7bf7e273dcb2adf580299df1d0708f8112dd5bf0e52', #  python-six-15e31431af97e5e64b80af0a3f598d382bcdd49a.tar.gz
+    'f822489cbbf3cd09db578ea7ac9af40a9d3184f8ff95cb98e8b33b71ed5d89f8', #  sleef-6ff7a135a1e31979d1e1844a2e7171dfbd34f54f.tar.gz
+    'fc05493c1ba7937eb350c69ebcf7a0b82c420d840cfe06de84bdecfd1332bce6', #  zstd-aec56a52fbab207fc639a1937d1e708a282edca8.tar.gz
+]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True), # For CMake
+]
+
+dependencies = [
+    ('Python', '3.7.1'),
+#    ('PyYAML', '3.13', versionsuffix),  # Included in the UAntwerp Python modules since 3.7.1
+]
+
+prebuildopts  = ''
+prebuildopts += 'CFLAGS+=" -wd2196,1875,2259" && '
+
+# This environment is needed to prevent setup.py from invoking git to determine version.
+prebuildopts += 'PYTORCH_BUILD_VERSION=%(version)s PYTORCH_BUILD_NUMBER=1 ' 
+
+# The following line is for debug purposes only and can be deleted for production
+# If it is omitted, the configuration scripts will use the number of virtual cores
+# for make -j.
+#prebuildopts += 'MAX_JOBS=1 '              # maximum number of compile jobs
+
+# CUDA/GPU support
+prebuildopts += 'USE_CUDA=0 '              # Enables/disables CUDA build
+prebuildopts += 'USECUDNN=0 '              # Enables/disables cuDNN build
+prebuildopts += 'USE_SYSTEM_NCCL=0 '       # Enables/disables the use of system-wide nccl if 1 (but uses own version)
+# Check setup.py for other CUDA variables when building with CUDA support..
+prebuildopts += 'USE_ROCM=0 '              # Enables/disables ROCM (Open CL?) support. One cannot use both CUDA and ROCM in a single build.
+prebuildopts += 'NO_MIOPEN=1 '             # Disables the MIOpen build
+
+# Shared memory
+prebuildopts += 'USE_OPENMP=ON '
+
+# Distributed computing
+prebuildopts += 'USE_DISTRIBUTED=0 '       # Enables/disables distributed computing
+prebuildopts += 'USE_GLOO_IBVERBS=0 '      # Use Gloo IB verbs for distributed.
+
+# Torch configuration
+prebuildopts += 'BUILD_CAFFE2_OPS=0 '      # Enables/disables Caffe2 operators build
+prebuildopts += 'BUILD_BINARY=0 '          # Build C++ binaries
+prebuildopts += 'BUILD_TEST=0 '            # Build tests???
+
+# Included packages
+prebuildopts += 'USE_FBGEMM=0 '            # Setting NO_FBGEMM to 0 is not enough to enable FBGEMM...
+prebuildopts += 'NO_NNPACK=1 '             # Disables NNPACK build if 1, USE_NNPACK not yet supported by nnpack.py
+prebuildopts += 'NO_QNNPACK=1 '            # Disables QNNPACK build if 1, USE_QNNPACK not yet supported by qnnpack.py
+
+# External packages
+prebuildopts += 'NO_MKLDNN=1 '             # Disables the use of MKLDNN if 1
+prebuildopts += 'USE_FFMPEG=0 '            # Enables/disables the use of ffmpeg
+prebuildopts += 'USE_OPENCV=0 '            # Enables/disables OpenCV support
+prebuildopts += 'USE_LEVELDB=0 '           # Enables/disables use of LevelDB for storage
+prebuildopts += 'USE_LMDB=0 '              # Enables/disables use of LMDB for storage
+
+runtest = 'export PYTHONPATH=%(builddir)s/%(namelower)s-%(version)s/build/lib.linux-x86_64-%(pyshortver)s:$PYTHONPATH '
+# skip test subsuites that include hanging/failing tests for now
+runtest += '&& python test/run_test.py --exclude autograd jit sparse torch utils --verbose'
+
+options = {'modulename': 'torch'}
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'devel'

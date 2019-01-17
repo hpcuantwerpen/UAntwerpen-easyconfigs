@@ -1,0 +1,46 @@
+# Fixes setup.py:
+# - Ensures that -DUSE_NCCL is added when calling cmake to avoid a warning from the
+#   cmake process when CUDA is not used.
+#   This also requires a change in tools/build_pytorch_libs.sh.
+# - Makes similar changes to set USE_MOBILE_OPENGL and USE_METAL to OFF when calling
+#   cmake to suppress warnings on Linux and some other systems that don't support
+#   these options.
+--- pytorch-1.0.0.orig/setup.py	2019-01-09 15:25:33.285326000 +0100
++++ pytorch-1.0.0/setup.py	2019-01-15 15:18:45.654982168 +0100
+@@ -378,6 +378,12 @@
+         build_libs_cmd += ['--use-gloo-ibverbs']
+     if not RERUN_CMAKE:
+         build_libs_cmd += ['--dont-rerun-cmake']
++    if IS_WINDOWS or IS_DARWIN or IS_LINUX or IS_PPC or IS_ARM:
++        my_env["USE_MOBILE_OPENGL"] = "OFF"
++        my_env["USE_METAL"] = "OFF"
++    else:
++        my_env["USE_MOBILE_OPENGL"] = "ON"
++        my_env["USE_METAL"] = "ON"
+ 
+     my_env["BUILD_TORCH"] = "ON"
+     my_env["BUILD_PYTHON"] = "ON"
+@@ -390,6 +396,7 @@
+     my_env["USE_OPENCV"] = "ON" if USE_OPENCV else "OFF"
+     my_env["USE_FFMPEG"] = "ON" if USE_FFMPEG else "OFF"
+     my_env["USE_DISTRIBUTED"] = "ON" if USE_DISTRIBUTED else "OFF"
++    my_env["USE_NCCL"] = "ON" if USE_NCCL else "OFF"
+     my_env["USE_SYSTEM_NCCL"] = "ON" if USE_SYSTEM_NCCL else "OFF"
+ 
+     try:
+--- pytorch-1.0.0.orig/tools/build_pytorch_libs.sh	2019-01-09 15:26:13.339391000 +0100
++++ pytorch-1.0.0/tools/build_pytorch_libs.sh	2019-01-15 15:20:17.487590178 +0100
+@@ -213,10 +213,13 @@
+ 		       -DBUILD_CAFFE2_OPS=$BUILD_CAFFE2_OPS \
+ 		       -DONNX_NAMESPACE=$ONNX_NAMESPACE \
+ 		       -DUSE_CUDA=$USE_CUDA \
++                       -DUSE_MOBILE_OPENGL=$USE_MOBILE_OPENGL \
++                       -DUSE_METAL=$USE_METAL \
+ 		       -DUSE_DISTRIBUTED=$USE_DISTRIBUTED \
+ 		       -DUSE_FBGEMM=$USE_FBGEMM \
+ 		       -DUSE_NUMPY=$USE_NUMPY \
+ 		       -DNUMPY_INCLUDE_DIR=$NUMPY_INCLUDE_DIR \
++                       -DUSE_NCCL=$USE_NCCL \
+ 		       -DUSE_SYSTEM_NCCL=$USE_SYSTEM_NCCL \
+ 		       -DNCCL_INCLUDE_DIR=$NCCL_INCLUDE_DIR \
+ 		       -DNCCL_ROOT_DIR=$NCCL_ROOT_DIR \
