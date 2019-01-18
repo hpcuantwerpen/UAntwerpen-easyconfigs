@@ -5,6 +5,7 @@
 # - Makes similar changes to set USE_MOBILE_OPENGL and USE_METAL to OFF when calling
 #   cmake to suppress warnings on Linux and some other systems that don't support
 #   these options.
+# Developed by Kurt Lust (VSC/UAntwerp)
 --- pytorch-1.0.0.orig/setup.py	2019-01-09 15:25:33.285326000 +0100
 +++ pytorch-1.0.0/setup.py	2019-01-15 15:18:45.654982168 +0100
 @@ -378,6 +378,12 @@

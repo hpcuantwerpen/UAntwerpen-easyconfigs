@@ -250,6 +250,7 @@ patches = [
     'PyTorch-%(version)s_fix-FindMKL.patch',
     'PyTorch-%(version)s_fix-Dependencies.patch',
     'PyTorch-%(version)s_fix-setup.patch',
+    'PyTorch-%(version)s_fix-depthwise3x3_conv_op.patch',
 ]
 
 # The order of the checksums is important.
