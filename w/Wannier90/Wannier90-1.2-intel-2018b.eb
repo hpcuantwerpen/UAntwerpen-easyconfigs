@@ -1,12 +1,12 @@
 easyblock = 'MakeCp'
 
 name = 'Wannier90'
-version = '2.1.0'
+version = '1.2'
 
 homepage = 'http://www.wannier.org'
 whatis = [
     "Description: Wannier90 is a tool for obtaining maximally-localised Wannier functions."
-    "This module provides MPI-enabled executables",
+    "This module provides an ancient version of Wannier90 without proper support for parallel computing, switch to 2.1.0 or later if possible",
 ]
 
 description = """
@@ -28,44 +28,61 @@ model Hamiltonians for large-scale systems, in linear-scaling quantum Monte
 Carlo calculations, and for efficient computation of material properties, such
 as the anomalous Hall coefficient.
 
-From version 2.0 on, Wannier90 supports parallel (MPI) execution for
-band-structure interpolation and the calculation of properties such as density
-of states, Berry curvature and orbital magnetisation.
-
 Wannier90 is freely available under the GNU General Public License.
 
-The programs were compiled with MPI support and single-threaded libraries.
+Please cite
+
+[ref] A. A. Mostofi, J. R. Yates, Y.-S. Lee, I. Souza, D. Vanderbilt
+      and N. Marzari, "Wannier90: A Tool for Obtaining Maximally-Localised
+      Wannier Functions", Computer Physics Communications 178, 685 (2008)
+
+in any publications arising from the use of this code.
+
+For the method please cite
+
+[ref] "Maximally Localized Generalised Wannier
+       Functions for Composite Energy Bands"
+       N. Marzari and D. Vanderbilt
+       Phys. Rev. B 56 12847 (1997)
+
+[ref] "Maximally Localized Wannier Functions
+       for Entangled Energy Bands"
+       I. Souza, N. Marzari and D. Vanderbilt
+       Phys. Rev. B 65 035109 (2001)
+
+This version is an ancient version of Wannier90 without proper support for
+parallel computing mostly meant to be used from a suitably compiled VASP.
+Please request and switch to a newer version (2.1.0) if you want to use
+Wannier90 as a stand-alone program.
 """
 
 toolchain = {'name': 'intel', 'version': '2018b'}
 toolchainopts = {'usempi': True}
 # Wannier supports MPI, but the 2.1.0 code does not contain OpenMP pragmas.
 
+# Download: http://www.wannier.org/code/wannier90-1.2.tar.gz
 sources = [SOURCELOWER_TAR_GZ]
 source_urls = ['http://www.wannier.org/code']
-checksums = ['07a81c002b41d6d0f97857e55c57d769']
 
-prebuildopts = 'cp ./config/make.inc.ifort ./make.inc && '
+prebuildopts = 'cp ./config/make.sys.ifort ./make.sys && '
 
 # The buildopts overwrite a number of variables set in make.inc
-buildopts  = 'all F90=$F90 MPIF90=$MPIF90 FCOPTS="$FFLAGS" LDOPTS="$FFLAGS" '
+buildopts  = 'all F90=$F90 FCOPTS="$FFLAGS" LDOPTS="$FFLAGS" '
 buildopts += 'LIBDIR="$LAPACK_LIB_DIR" LIBS="$LIBLAPACK" '
-buildopts += 'COMMS=mpi'
 buildopts += '&& $F90 $FFLAGS utility/PL_assessment/PL_assess.f90 -o PL_assess.x'
 parallel = 1
 
 files_to_copy = [
-    (['wannier90.x', 'postw90.x', 'w90chk2chk.x'], 'bin'), 
-    (['utility/w90vdw/w90vdw.x'],                  'bin'),
-    (['utility/kmesh.pl'],                         'bin'),
-    (['libwannier.a'],                             'lib'),
+    (['wannier90.x', 'PL_assess.x'], 'bin'), 
+    (['utility/kmesh.pl'],           'bin'),
+    (['libwannier.a'],               'lib'),
     'examples',
     'pseudo',
-    'LICENSE',
+    'LICENCE',
 ]
 
 sanity_check_paths = {
-    'files': ['bin/wannier90.x', 'bin/postw90.x', 'lib/libwannier.a'],
+    'files': ['bin/wannier90.x', 'lib/libwannier.a'],
     'dirs': ['examples', 'pseudo']
 }
 
