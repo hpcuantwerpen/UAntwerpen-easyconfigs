@@ -1,0 +1,35 @@
+name = 'binutils'
+version = '2.31.1'
+
+homepage = 'http://directory.fsf.org/project/binutils/'
+
+whatis = [
+    "Description: GNU binutils compiled with the GCCcore toolchain.",
+]
+
+description = """
+The GNU binutils are a diverse collection of binary tools. It is complementary
+to the GNU Compiler Collection and contains a lot of tools to work with
+object files and executables.
+
+The binaries in this module were built with the GCCcore toolchain. The module
+is mostly meant to be used as a component of the GCC toolchain, so users
+preferably load the GCC toolchain instead of this module.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': '8.2.0'}
+
+source_urls = [GNU_SOURCE]
+sources =     [SOURCE_TAR_XZ]
+checksums =   ['5d20086ecf5752cc7d9134246e9588fa201740d540f7eb84d795b1f7a93bca86']
+
+builddependencies = [
+    ('flex',    '2.6.4',  '', True),
+    ('Bison',   '3.0.4',  '', True),
+    # zlib required, but being linked in statically, so not a runtime dep
+    ('zlib',    '1.2.11', '', True),
+    # use same binutils version that was used when building GCC toolchain, to 'bootstrap' this binutils
+    ('binutils', version, '', True)
+]
+
+moduleclass = 'tools'
