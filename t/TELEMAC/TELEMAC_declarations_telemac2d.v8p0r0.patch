@@ -1,0 +1,19 @@
+*** v8p0r0/sources/telemac2d/declarations_telemac2d.f.orig	2018-01-11 16:10:33.000000000 +0100
+--- v8p0r0/sources/telemac2d/declarations_telemac2d.f	2018-05-25 09:40:21.690648789 +0200
+***************
+*** 696,702 ****
+  !
+  !     MAXIMUM NUMBER OF OUTPUT VARIABLES
+  !
+!       INTEGER, PARAMETER :: MAXVAR = 100
+  !
+  !     MAXIMUM NUMBER OF TRACERS
+  !
+--- 696,702 ----
+  !
+  !     MAXIMUM NUMBER OF OUTPUT VARIABLES
+  !
+!       INTEGER, PARAMETER :: MAXVAR = 1000
+  !
+  !     MAXIMUM NUMBER OF TRACERS
+  !
