@@ -1,0 +1,89 @@
+easyblock = 'MakeCp'
+
+name = 'Wannier90'
+version = '1.2'
+
+homepage = 'http://www.wannier.org'
+whatis = [
+    "Description: Wannier90 is a tool for obtaining maximally-localised Wannier functions."
+    "This module provides an ancient version of Wannier90 without proper support for parallel computing, switch to 2.1.0 or later if possible",
+]
+
+description = """
+Wannier90  is a program for calculating maximally-localised Wannier functions
+(MLWFs) from a set of Bloch energy bands that may or may not be attached to or
+mixed with other bands. The formalism works by minimising the total spread of
+the MLWFs in real space. This is done in the space of unitary matrices that
+describe rotations of the Bloch bands at each k-point. As a result, wannier90
+is independent of the basis set used in the underlying calculation to obtain the
+Bloch states. Therefore, it may be interfaced straightforwardly to any
+electronic structure code. The locality of MLWFs can be exploited to compute
+band-structure, density of states and Fermi surfaces at modest computational
+cost. Furthermore, wannier90  is able to output MLWFs for visualisation and
+other post-processing purposes. Wannier functions are already used in a wide
+variety of applications. These include analysis of chemical bonding in real
+space; calculation of dielectric properties via the modern theory of
+polarisation; and as an accurate and minimal basis set in the construction of
+model Hamiltonians for large-scale systems, in linear-scaling quantum Monte
+Carlo calculations, and for efficient computation of material properties, such
+as the anomalous Hall coefficient.
+
+Wannier90 is freely available under the GNU General Public License.
+
+Please cite
+
+[ref] A. A. Mostofi, J. R. Yates, Y.-S. Lee, I. Souza, D. Vanderbilt
+      and N. Marzari, "Wannier90: A Tool for Obtaining Maximally-Localised
+      Wannier Functions", Computer Physics Communications 178, 685 (2008)
+
+in any publications arising from the use of this code.
+
+For the method please cite
+
+[ref] "Maximally Localized Generalised Wannier
+       Functions for Composite Energy Bands"
+       N. Marzari and D. Vanderbilt
+       Phys. Rev. B 56 12847 (1997)
+
+[ref] "Maximally Localized Wannier Functions
+       for Entangled Energy Bands"
+       I. Souza, N. Marzari and D. Vanderbilt
+       Phys. Rev. B 65 035109 (2001)
+
+This version is an ancient version of Wannier90 without proper support for
+parallel computing mostly meant to be used from a suitably compiled VASP.
+Please request and switch to a newer version (2.1.0) if you want to use
+Wannier90 as a stand-alone program.
+"""
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+toolchainopts = {'usempi': True}
+# Wannier supports MPI, but the 2.1.0 code does not contain OpenMP pragmas.
+
+# Download: http://www.wannier.org/code/wannier90-1.2.tar.gz
+sources = [SOURCELOWER_TAR_GZ]
+source_urls = ['http://www.wannier.org/code']
+
+prebuildopts = 'cp ./config/make.sys.ifort ./make.sys && '
+
+# The buildopts overwrite a number of variables set in make.inc
+buildopts  = 'all F90=$F90 FCOPTS="$FFLAGS" LDOPTS="$FFLAGS" '
+buildopts += 'LIBDIR="$LAPACK_LIB_DIR" LIBS="$LIBLAPACK" '
+buildopts += '&& $F90 $FFLAGS utility/PL_assessment/PL_assess.f90 -o PL_assess.x'
+parallel = 1
+
+files_to_copy = [
+    (['wannier90.x', 'PL_assess.x'], 'bin'), 
+    (['utility/kmesh.pl'],           'bin'),
+    (['libwannier.a'],               'lib'),
+    'examples',
+    'pseudo',
+    'LICENCE',
+]
+
+sanity_check_paths = {
+    'files': ['bin/wannier90.x', 'lib/libwannier.a'],
+    'dirs': ['examples', 'pseudo']
+}
+
+moduleclass = 'chem'
