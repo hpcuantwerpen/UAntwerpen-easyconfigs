@@ -36,6 +36,13 @@ toolchain = {'name': 'intel', 'version': '2018a'}
 source_urls = ['http://micans.org/%(namelower)s/src/']
 sources = ['%(namelower)s-%(version_major)s-%(version_minor)s.tar.gz']
 
+
+# see https://github.com/sanger-pathogens/Roary/issues/217 for more information
+postinstallcmds = [
+     'cp -p src/alien/oxygen/src/mclblastline %(installdir)s/bin',
+     'cp -p src/alien/oxygen/src/mcxdeblast %(installdir)s/bin',
+]
+
 sanity_check_paths = {
     'files': ['bin/mcl'],
     'dirs': ['share']
