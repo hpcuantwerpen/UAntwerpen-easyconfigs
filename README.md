@@ -15,6 +15,6 @@ in multiple ways.
   [netCDF modules](https://github.com/hpcuantwerpen/UAntwerpen-easyconfigs/tree/master/n/netCDF)
   that include the base libraries and the Fortran and dual C++ interfaces in a single module.
 
-See the [Wiki of this repository](/hpcuantwerpen/UAntwerpen-easyconfigs/wiki) for more informaton.
+See the [Wiki of this repository](https://github.com/hpcuantwerpen/UAntwerpen-easyconfigs/wiki) for more informaton.
 
 It may be useful to also check our ["EasyBuild - The Missing Manual" OneNote](https://1drv.ms/f/s!AjGZCXJ9iRp3iptoom8jWWypyVu_0g).
