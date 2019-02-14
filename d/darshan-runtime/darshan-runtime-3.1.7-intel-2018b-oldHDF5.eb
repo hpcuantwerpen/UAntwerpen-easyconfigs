@@ -1,0 +1,85 @@
+# Written by Kurt Lust @ UAntwerp, partly based on a file from the 
+# JSC public easybuild repository at https://github.com/easybuilders/jsc.
+easyblock = "ConfigureMake"
+name = "darshan-runtime"
+version = "3.1.7"
+versionsuffix = "-oldHDF5"
+
+homepage = 'http://www.mcs.anl.gov/research/projects/darshan/'
+
+whatis = [ 
+    "Description: darshan-runtime is the instrumentation module for the Darshan HPC I/O Characterization Tool",
+    "Keywords: I/O, profiler, profiling",
+]
+
+description = """
+Darshan is designed to capture an accurate picture of
+application I/O behavior, including properties such as patterns of
+access within files, with minimum overhead. The name is taken from a
+Sanskrit word for "sight" or "vision".
+
+Darshan can be used to investigate and tune the I/O behavior of
+complex HPC applications.  In addition, Darshan's lightweight design
+makes it suitable for full time deployment for workload
+characterization of large systems.  We hope that such studies will
+help the storage research community to better serve the needs of
+scientific computing.
+
+Darshan was originally developed on the IBM Blue Gene series of
+computers deployed at the Argonne Leadership Computing Facility, but
+it is portable across a wide variety of platforms include the Cray
+XE6, Cray XC30, and Linux clusters.  Darshan routinely instruments
+jobs using up to 786,432 compute cores on the Mira system at ALCF.
+"""
+
+usage = """
+Instrumentation of shared executables is enabled by the LD_PRELOAD
+mechanism, in particular by preloading libdarshan.so. The location 
+where the log files will be written is set by the environment
+variable DARSHAN_LOG_PATH, e.g., 
+
+export DARSHAN_LOG_PATH=$VSC_SCRATCH/path/to/your/logdir
+LD_PRELOAD=$EBROOTDARSHANMINRUNTIME/lib/libdarshan.so \
+mpirun ./executable
+
+Note:
+Darshan works well for C and C++ programs and should now work with
+Intel Fortran programs also.
+"""
+
+docurls = [
+    'Web-based documentation: https://www.mcs.anl.gov/research/projects/darshan/docs/darshan3-runtime.html',
+]
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+toolchainopts = {'usempi': True} 
+
+source_urls = ['ftp://ftp.mcs.anl.gov/pub/darshan/releases']
+sources     = ['darshan-%(version)s.tar.gz']
+checksums   = ['9ba535df292727ac1e8025bdf2dc42942715205cad8319d925723fd88709e8d6']
+
+# In case the system zlib cannot be found or you really want all dependencies...
+# Note however that every explicit dependency is a source of conflicts with the
+# user code to be monitored...
+#dependencies = [ ('zlib', '1.2.11') ]
+
+start_dir = 'darshan-runtime'
+# The test in configure that should set HAVE_MPIIO_CONST produces the wrong result.
+preconfigopts = 'CFLAGS="$CFLAGS -DHAVE_MPIIO_CONST=1" '
+configopts  = '--with-mem-align=8 '
+configopts += '--with-log-path-by-env="DARSHAN_LOG_PATH,VSC_SCRATCH" '
+configopts += '--with-jobid-env=PBS_JOBID '
+configopts += '--enable-HDF5-pre-1.10 '
+
+sanity_check_paths = {
+    'files': ["lib/libdarshan.so"],
+    'dirs': []
+}
+
+# Define an extra variable that is used in some examples that can be found
+# on the web just in case a user does too much copy-paste without understanding
+# what (s)he is doing.
+modextravars = { 'DARSHAN_PREFIX': '%(installdir)s' }
+
+moduleclass = 'lib'
+

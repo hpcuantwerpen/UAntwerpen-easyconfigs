@@ -1,0 +1,85 @@
+# Written by Kurt Lust @ UAntwerp, partly based on a file from the
+# JSC public easybuild repository at https://github.com/easybuilders/jsc.
+# Note that some of the tools included in darshan-util may not work depending
+# on packages installed on your cluster:
+# * darshan-job-summary.pl and darshan-summary-per-file.sh need perl (with some
+#   perl modules), pdflatex (with some special packages), GNUplot 4+ and epstopdf
+# * dxt_analyzer.py needs Python 2 with NumPy, matplotlib, re and argparse.
+# See also the dependencies.
+#
+easyblock = "ConfigureMake"
+name = "darshan-util"
+version = "3.1.7"
+
+homepage = 'http://www.mcs.anl.gov/research/projects/darshan/'
+
+whatis = [
+    "Description: darshan-util provides the postprocessing tools of the Darshan HPC I/O Characterization Tool",
+    "Keywords: I/O, profiler, profiling",
+]
+
+description = """
+Darshan is designed to capture an accurate picture of
+application I/O behavior, including properties such as patterns of
+access within files, with minimum overhead. The name is taken from a
+Sanskrit word for "sight" or "vision".
+
+Darshan can be used to investigate and tune the I/O behavior of
+complex HPC applications.  In addition, Darshan's lightweight design
+makes it suitable for full time deployment for workload
+characterization of large systems.  We hope that such studies will
+help the storage research community to better serve the needs of
+scientific computing.
+
+Darshan was originally developed on the IBM Blue Gene series of
+computers deployed at the Argonne Leadership Computing Facility, but
+it is portable across a wide variety of platforms include the Cray
+XE6, Cray XC30, and Linux clusters.  Darshan routinely instruments
+jobs using up to 786,432 compute cores on the Mira system at ALCF.
+"""
+
+usage = """
+See the link to the documentation.
+
+Note that depending on how the module was installed, some tools may not work:
+* darshan-job-summary.pl and darshan-summary-per-file.sh need perl (with some
+  perl modules), pdflatex (with some special packages), GNUplot 4+ and epstopdf
+* dxt_analyzer.py needs Python 2 with NumPy, matplotlib, re and argparse.
+
+As the log files are portable between systems, this module should work with
+log files produced with Darshan 3.1 on almost any cluster.
+"""
+
+docurls = [
+    'Web-based documentation: https://www.mcs.anl.gov/research/projects/darshan/docs/darshan3-util.html',
+]
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+source_urls = ['ftp://ftp.mcs.anl.gov/pub/darshan/releases']
+sources     = ['darshan-%(version)s.tar.gz']
+checksums   = ['9ba535df292727ac1e8025bdf2dc42942715205cad8319d925723fd88709e8d6']
+
+dependencies = [
+     ('zlib',    '1.2.11'),
+     ('bzip2',   '1.0.6'),
+# For dxt_analyzer.py: Needs a Python 2 with NumPy, matplotlib, re and argparse.
+# At UAntwerp we have these in the standard Python module.
+     ('Python',   '2.7.15'),
+# The following dependencies only make sense when pdflatex etc is also installed
+# as they are for the darshan-job-summary.pl and darshan-summary-per-file.sh command.
+#    ('gnuplot', '5.2.4'),
+#    ('Perl',    '5.26.1'),
+]
+
+start_dir = 'darshan-util'
+
+configopts  = '--with-zlib=$EBROOTZLIB '
+configopts += '--with-bzlip=$EBROOTBZIP2 '
+
+sanity_check_paths = {
+    'files': ["bin/darshan-job-summary.pl"],
+    'dirs': []
+}
+
+moduleclass = 'lib'
