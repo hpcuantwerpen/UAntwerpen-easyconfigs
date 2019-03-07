@@ -26,7 +26,7 @@ checksums = ['5d20086ecf5752cc7d9134246e9588fa201740d540f7eb84d795b1f7a93bca86']
 
 builddependencies = [
     ('flex', '2.6.4'),
-    ('Bison', '3.0.4'),
+    ('Bison', '3.0.5'),
     # zlib required, but being linked in statically, so not a runtime dep
     ('zlib', '1.2.11'),
 ]
