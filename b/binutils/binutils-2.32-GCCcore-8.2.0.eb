@@ -1,5 +1,5 @@
 name = 'binutils'
-version = '2.31.1'
+version = '2.32'
 
 homepage = 'http://directory.fsf.org/project/binutils/'
 
@@ -21,15 +21,14 @@ toolchain = {'name': 'GCCcore', 'version': '8.2.0'}
 
 source_urls = [GNU_SOURCE]
 sources =     [SOURCE_TAR_XZ]
-checksums =   ['5d20086ecf5752cc7d9134246e9588fa201740d540f7eb84d795b1f7a93bca86']
+checksums =   ['0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04']
 
 builddependencies = [
-    ('flex',    '2.6.4',  '', True),
-    ('Bison',   '3.0.4',  '', True),
+    ('buildtools', '2019a',  '', True), # For flex and Bison
     # zlib required, but being linked in statically, so not a runtime dep
-    ('zlib',    '1.2.11', '', True),
+    ('zlib',       '1.2.11', '', True),
     # use same binutils version that was used when building GCC toolchain, to 'bootstrap' this binutils
-    ('binutils', version, '', True)
+    ('binutils',   version, '', True)
 ]
 
 moduleclass = 'tools'
