@@ -16,22 +16,23 @@ name = 'buildtools'
 version = '2019a'
 
 # Version info:
-autoconf_version =  '2.69'    # Autoconf   20120424
-automake_version =  '1.16.1'  # Automake   20180311
-cmake_version =     '3.13.4'  # CMake      20190204
-doxygen_version =   '1.8.15'  # Doxygen    20181227
-help2man_version =  '1.47.8'  # help2man   20181013
-libtool_version =   '2.4.6'   # libtool    20150215
-m4_version =        '1.4.18'  # M4         20161231
-make_version =      '4.2.1'   # Make       20160610
-nasm_version =      '2.14.02' # NASM       20181226  
-yasm_version =      '1.3.0'   # Yasm       20140810
-pkgconfig_version = '0.29.2'  # pkg-config 20170320
-gperf_version =     '3.1'     # gperf      20170105
-sed_version =       '4.6'     # sed        20181220
-patchelf_version =  '0.9'     # patchelf   ??
-bison_version =     '3.0.5'   # Bison      ??
-flex_version =      '2.6.4'   # flex       ??
+autoconf_version =  '2.69'     # Autoconf   20120424 - Check on https://ftp.gnu.org/gnu/autoconf/
+automake_version =  '1.16.1'   # Automake   20180311 - Check on https://ftp.gnu.org/gnu/automake/
+cmake_version =     '3.13.4'   # CMake      20190204 - Check on https://cmake.org/download/
+doxygen_version =   '1.8.15'   # Doxygen    20181227 - Check on http://www.doxygen.nl/download.html
+help2man_version =  '1.47.8'   # help2man   20181013 - Check on https://ftp.gnu.org/gnu/help2man/
+libtool_version =   '2.4.6'    # libtool    20150215 - Check on https://ftp.gnu.org/gnu/libtool/
+m4_version =        '1.4.18'   # M4         20161231 - Check on https://ftp.gnu.org/gnu/m4/
+make_version =      '4.2.1'    # Make       20160610 - Check on https://ftp.gnu.org/gnu/make/
+nasm_version =      '2.14.02'  # NASM       20181226 - Check on https://www.nasm.us/
+yasm_version =      '1.3.0'    # Yasm       20140810 - Check on https://yasm.tortall.net/Download.html
+pkgconfig_version = '0.29.2'   # pkg-config 20170320 - Check on https://pkgconfig.freedesktop.org/releases/
+gperf_version =     '3.1'      # gperf      20170105 - Check on https://ftp.gnu.org/gnu/gperf/
+sed_version =       '4.6'      # sed        20181220 - Check on https://ftp.gnu.org/gnu/sed/
+patchelf_version =  '0.9'      # patchelf   20160229 - Check on https://github.com/NixOS/patchelf/releases
+bison_version =     '3.0.5'    # Bison      20180528 - Check on http://ftp.gnu.org/gnu/bison/
+flex_version =      '2.6.4'    # flex       20170506 - Check on https://github.com/westes/flex/releases
+byacc_version =     '20180609' # byacc      20180609 - Check on ftp://ftp.invisible-island.net/byacc
 # Not yet included due to build problems:
 # SCons      3.0.0     20170918
 homepage = 'http://www.gnu.org'
@@ -42,8 +43,8 @@ whatis = [
 
 description = """
 A bundle of often used build tools, GNU and others: autoconf, automake, libtool, 
-M4, make, sed, Bison, flex, CMake, NASM, Yasm, patchelf, pkg-config, gperf,
-help2man and Doxygen
+M4, make, sed, Bison, flex, Berkeley Yacc (byacc), CMake, NASM, Yasm, patchelf,
+pkg-config, gperf, help2man and Doxygen.
 """
 
 usage = """
@@ -57,6 +58,7 @@ building software. Many of them are GNU tools.
 + GNU sed %(sed)s          - https://www.gnu.org/software/sed/
 + GNU Bison %(bison)s      - https://www.gnu.org/software/bison
 + GNU flex %(flex)s       - https://www.gnu.org/software/flex/
++ byacc %(byacc)s       - http://invisible-island.net/byacc/byacc.html
 + CMake %(cmake)s         - http://www.cmake.org/
 + NASM %(nasm)s         - http://www.nasm.us/
 + Yasm %(yasm)s           - http://yasm.tortall.net/
@@ -77,6 +79,7 @@ build several of the 2019a packages.
     'sed'       : sed_version,
     'bison'     : bison_version,
     'flex'      : flex_version,
+    'byacc'     : byacc_version,
     'cmake'     : cmake_version,
     'nasm'      : nasm_version,
     'yasm'      : yasm_version,
@@ -126,6 +129,12 @@ components = [
         'source_urls': [GNU_SOURCE],
         'checksums':   ['d6e262bf3601b42d2b1e4ef8310029e1dcf20083c5446b4b7aa67081fdffc589'],
         'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('byacc', byacc_version, {
+        'sources':     [SOURCELOWER_TGZ],
+        'source_urls': ['ftp://ftp.invisible-island.net/byacc//'],
+        'checksums':   ['5bbb0b3ec3da5981a2488383b652499d6c1e0236b47d8bac5fcdfa12954f749c'],
+        'start_dir':   '%(namelower)s-%(version)s',
         }),
     ('M4', m4_version, { # Uses gawk which for now we assume to be on the system
         'sources':     [SOURCELOWER_TAR_XZ],
@@ -202,8 +211,12 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s'
         }),
     ('patchelf', patchelf_version, {
-        'sources':       ['%(version)s.tar.gz'],
-        'source_urls':   ['https://github.com/NixOS/patchelf/archive/'],
+        'sources':       [ { 'download_filename' : '%(version)s.tar.gz',
+                             'filename'          : 'patchelf-%(version)s.tar.gz',
+                             'source_urls'       : ['https://github.com/NixOS/patchelf/archive/'],
+                         } ],
+#        'sources':       ['%(version)s.tar.gz'],
+#        'source_urls':   ['https://github.com/Ni'%(version)s.tar.gz'xOS/patchelf/archive/'],
         'checksums':     ['cf0693e794229e19edcf2299427b5a352e0f4d4f06f9d3856e30ddb0344d5ce8'],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'sh bootstrap.sh && '
