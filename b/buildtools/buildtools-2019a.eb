@@ -215,8 +215,6 @@ components = [
                              'filename'          : 'patchelf-%(version)s.tar.gz',
                              'source_urls'       : ['https://github.com/NixOS/patchelf/archive/'],
                          } ],
-#        'sources':       ['%(version)s.tar.gz'],
-#        'source_urls':   ['https://github.com/Ni'%(version)s.tar.gz'xOS/patchelf/archive/'],
         'checksums':     ['cf0693e794229e19edcf2299427b5a352e0f4d4f06f9d3856e30ddb0344d5ce8'],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'sh bootstrap.sh && '
@@ -228,8 +226,6 @@ components = [
         'source_urls':   ['http://doxygen.nl/files/'],
         'checksums':     ['bd9c0ec462b6a9b5b41ede97bede5458e0d7bb40d4cfa27f6f622eb33c59245d'],
         'start_dir':     '%(namelower)s-%(version)s',
-#        'preconfigopts': 'module load flex/2.6.4 Bison/3.0.5 && ',   # Workaround for the builddependencies that are not loaded
-        'preconfigopts': 'env && '
         }),
 ]
 #
