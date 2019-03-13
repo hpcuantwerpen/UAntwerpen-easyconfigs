@@ -1,0 +1,37 @@
+easyblock = 'ConfigureMake'
+
+name = 'Bison'
+version = '3.0.5'
+
+homepage = 'http://www.gnu.org/software/bison'
+whatis = [ 
+    "Description: Bison is a general-purpose parser generator that converts an annotated context-free grammar into a deterministic LR or generalized LR (GLR) parser employing LALR(1) parser tables.",
+    "This module contains both executables and libraries offered by Bison.",
+    "Keywords: Bison, Yacc",
+]
+
+description = """
+Bison is a general-purpose parser generator that converts an annotated
+context-free grammar into a deterministic LR or generalized LR (GLR) parser
+employing LALR(1) parser tables.
+"""
+
+docurls = [
+    'Web-based documentation:https://www.gnu.org/software/bison/manual/',
+]
+
+toolchain = {'name': 'intel', 'version': '2019a'}
+
+sources = [SOURCELOWER_TAR_GZ]
+source_urls = [GNU_SOURCE]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+sanity_check_paths = {
+    'files': ["bin/%s" % x for x in ["bison", "yacc"]] + ["lib/liby.a"],
+    'dirs': [],
+}
+
+moduleclass = 'lang'
