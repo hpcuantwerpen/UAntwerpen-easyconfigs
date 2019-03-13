@@ -1,0 +1,117 @@
+easyblock = 'Bundle'
+
+name = 'veutils'
+version = '0.1'
+
+homepage = 'TODO'
+
+whatis = [
+    'Description: Provides aliases to a number of OS commands on SX Aurora TSUBASA to allow access to both the Linux and VEOS versions',
+]
+
+description = """
+This module provides alias to several OS commands on Sw Aurora TSUBASA to allow
+access to both the Linux ones (for the host side) and VEOS ones (for the VEs).
+
+Most aliases exist in 4 forms:
+* vh_ for the vector host
+* ve_ to executa on all VEs
+* ve0_ to execute on VE 0
+* ve1_ to execute on VE 1
+
+Commands provided in this way:
+* free
+* iostat (no vh)
+* lscpu
+* lslocks
+* mpstat
+* pidstat (no vh)
+* ps
+* sar (no vh)
+* sadf (no vh)
+* tload (vh, ve0, ve1 only)
+* top (vh, ve0, ve1 only)
+* uptime
+* vmstat
+* w
+""" 
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+dependencies = []
+builddependencies = []
+
+veroot = '/opt/nec/ve/bin/'
+vhroot = '/usr/bin/'
+
+modaliases = {
+    'vh_free':     vhroot + 'free',
+    've_free':     veroot + 'free',    
+    've0_free':    'VE_NODE_NUMBER=0 ' + veroot + 'free',    
+    've1_free':    'VE_NODE_NUMBER=1 ' + veroot + 'free',    
+#
+#    'vh_iostat':   vhroot + 'iostat',
+    've_iostat':   veroot + 'iostat',    
+    've0_iostat':  'VE_NODE_NUMBER=0 ' + veroot + 'iostat',    
+    've1_iostat':  'VE_NODE_NUMBER=1 ' + veroot + 'iostat',    
+#
+    'vh_lscpu':    vhroot + 'lscpu',
+    've_lscpu':    veroot + 'lscpu',    
+    've0_lscpu':   'VE_NODE_NUMBER=0 ' + veroot + 'lscpu',    
+    've1_lscpu':   'VE_NODE_NUMBER=1 ' + veroot + 'lscpu',    
+#
+    'vh_lslocks':  vhroot + 'lslocks',
+    've_lslocks':  veroot + 'lslocks',    
+    've0_lslocks': 'VE_NODE_NUMBER=0 ' + veroot + 'lslocks',    
+    've1_lslocks': 'VE_NODE_NUMBER=1 ' + veroot + 'lslocks',    
+#
+#    'vh_mpstat':   vhroot + 'mpstat',
+    've_mpstat':   veroot + 'mpstat',    
+    've0_mpstat':  'VE_NODE_NUMBER=0 ' + veroot + 'mpstat',    
+    've1_mpstat':  'VE_NODE_NUMBER=1 ' + veroot + 'mpstat',    
+#
+#    'vh_pidstat':   vhroot + 'pidstat',
+    've_pidstat':  veroot + 'pidstat',    
+    've0_pidstat': 'VE_NODE_NUMBER=0 ' + veroot + 'pidstat',    
+    've1_pidstat': 'VE_NODE_NUMBER=1 ' + veroot + 'pidstat',    
+#
+    'vh_ps':       vhroot + 'ps',
+    've_ps':       veroot + 'ps',    
+    've0_ps':      'VE_NODE_NUMBER=0 ' + veroot + 'ps',    
+    've1_ps':      'VE_NODE_NUMBER=1 ' + veroot + 'ps',    
+#
+#   'vh_sar':       vhroot + 'sar',
+    've_sar':      veroot + 'sar',    
+    've0_sar':     'VE_NODE_NUMBER=0 ' + veroot + 'sar',    
+    've1_sar':     'VE_NODE_NUMBER=1 ' + veroot + 'sar',    
+#
+#    'vh_sadf':     vhroot + 'sadf',
+    've_sadf':     veroot + 'sadf',    
+    've0_sadf':    'VE_NODE_NUMBER=0 ' + veroot + 'sadf',    
+    've1_sadf':    'VE_NODE_NUMBER=1 ' + veroot + 'sadf',    
+#
+    'vh_tload':    vhroot + 'tload',
+    've0_tload':   'VE_NODE_NUMBER=0 ' + veroot + 'tload',    
+    've1_tload':   'VE_NODE_NUMBER=1 ' + veroot + 'tload',    
+#
+    'vh_top':      vhroot + 'top',
+    've0_top':     'VE_NODE_NUMBER=0 ' + veroot + 'top',    
+    've1_top':     'VE_NODE_NUMBER=1 ' + veroot + 'top',    
+#
+    'vh_uptime':   vhroot + 'uptime',
+    've_uptime':   veroot + 'uptime',    
+    've0_uptime':  'VE_NODE_NUMBER=0 ' + veroot + 'uptime',    
+    've1_uptime':  'VE_NODE_NUMBER=1 ' + veroot + 'uptime',    
+#
+    'vh_vmstat':   vhroot + 'vmstat',
+    've_vmstat':   veroot + 'vmstat',    
+    've0_vmstat':  'VE_NODE_NUMBER=0 ' + veroot + 'vmstat',    
+    've1_vmstat':  'VE_NODE_NUMBER=1 ' + veroot + 'vmstat',    
+#
+    'vh_w':        vhroot + 'w',
+    've_w':        veroot + 'w',    
+    've0_w':       'VE_NODE_NUMBER=0 ' + veroot + 'w',    
+    've1_w':       'VE_NODE_NUMBER=1 ' + veroot + 'w',    
+}
+
+moduleclass = 'tools'
