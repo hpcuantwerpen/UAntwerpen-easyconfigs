@@ -1,0 +1,36 @@
+easyblock = 'MakeCp'
+
+name = 'BoltzTraP'
+version = '1.2.5'
+
+homepage = 'https://www.imc.tuwien.ac.at//forschungsbereich_theoretische_chemie/forschungsgruppen/prof_dr_gkh_madsen_theoretical_materials_chemistry/boltztrap/'
+
+whatis = [
+    "Description: BoltzTraP: a program for calculating the semi-classic transport coefficients.",
+]
+
+description = """i
+Boltzmann Transport Properties (BoltzTraP) is a program for calculating the semi-classic transport
+coefficients.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+# download from https://owncloud.tuwien.ac.at/index.php/s/s2d55LYlZnioa3s, and rename to include version
+sources = [SOURCE_TAR_BZ2]
+checksums = ['6623d4393bce2e178b073f75f283eee6']
+
+skipsteps = ['configure']
+
+start_dir = 'src'
+parallel = 1
+buildopts = 'FC="${FC}" FOPT="$FFLAGS" LIBS="$LIBLAPACK"'
+
+files_to_copy = [(['BoltzTraP'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/BoltzTraP'],
+    'dirs': [],
+}
+
+moduleclass = 'chem'
