@@ -1,0 +1,41 @@
+easyblock = 'MakeCp'
+
+name = 'ITensor'
+version = '2.1.1'
+
+homepage = 'http://itensor.org/'
+description = ("ITensor - Intelligent Tensor - is a C++ library for implementing tensor\n" 
+               "network calculations.")
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+toolchainopts = {'pic': True}
+
+source_urls = ['https://github.com/ITensor/ITensor/tarball/v%(version)s']
+sources = [SOURCELOWER_TAR_GZ]
+
+
+patches = [
+    ('options.mk.patch',1),
+    ('options_mpi.mk.patch',1),
+]
+
+# Don't use parallel make as we don't know the effect of starting
+# the compile script multiple times simultaneously.
+parallel = 10
+
+files_to_copy = [ '*'
+]
+
+sanity_check_paths = {
+    'files' : ['lib/libitensor-g.a', 'lib/libitensor.a'],
+    'dirs'  : ['lib']
+}
+
+postinstallcmds = ["sed -i -e 's|THIS_DIR=.*|THIS_DIR=%(installdir)s|' %(installdir)s/this_dir.mk",
+                   "rm %(installdir)s/options.mk.orig",
+                   "rm %(installdir)s/options_mpi.mk.orig"]
+
+modextravars = { 'LIBRARY_DIR' : '%(installdir)s' }
+
+moduleclass = 'math'
+
