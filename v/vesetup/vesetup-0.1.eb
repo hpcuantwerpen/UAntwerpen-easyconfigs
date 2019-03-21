@@ -1,0 +1,46 @@
+easyblock = 'Bundle'
+
+name = 'vesetup'
+version = '0.1'
+
+mpiversion = '2.0.0'
+
+homepage = 'TODO'
+
+whatis = [
+    'Description: vesetup is a module to set up the environment to use the VEs of the SX-Aurora TSUBASA system at UAntwerpen',
+]
+
+description = """
+This module sets up the environment ot use the vector processors of the NEC
+SX-Aurora TSUBASA system at UAntwerp.
+
+It currently provides no commands.
+""" 
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+dependencies = []
+builddependencies = []
+
+necroot  = '/opt/nec'
+nmpiroot = necroot + '/ve/mpi/' + mpiversion
+
+allow_prepend_abs_path = True
+modextrapaths = {
+    'PATH':               nmpiroot + '/bin64:'    + necroot + '/ve/bin',
+    'LD_LIBRARY_PATH':    nmpiroot + '/lib64:'    + necroot + '/ve/lib',
+    'VE_LD_LIBRARY_PATH': nmpiroot + '/lib64/ve:' + necroot + '/ve/lib',
+    'VE_LIBRARY_PATH':    nmpiroot + '/lib64/ve:' + necroot + '/ve/lib',
+    'CFILES':             nmpiroot + '/include:'  + necroot + '/ve/include',
+    'MANPATH':            necroot  + '/ve/share/man',
+    'INFOPATH':           necroot  + '/ve/share/info',    
+}
+modextravars = {
+    'NMPI_ROOT':   nmpiroot,
+    'MPI_PREFIX':  nmpiroot,
+    'AURLIC_SERVER_HOSTNAME': 'localhost',
+    'AURLIC_SERVER_PORT':     '7300',
+}
+
+moduleclass = 'tools'
