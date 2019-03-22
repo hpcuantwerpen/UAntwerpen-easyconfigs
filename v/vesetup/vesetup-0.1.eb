@@ -4,6 +4,7 @@ name = 'vesetup'
 version = '0.1'
 
 mpiversion = '2.0.0'
+nlcversion = '1.0.0'
 
 homepage = 'TODO'
 
@@ -25,14 +26,15 @@ builddependencies = []
 
 necroot  = '/opt/nec'
 nmpiroot = necroot + '/ve/mpi/' + mpiversion
+nlciroot = necroot + '/ve/nlc/' + nlcversion
 
 allow_prepend_abs_path = True
 modextrapaths = {
     'PATH':               nmpiroot + '/bin64:'    + necroot + '/ve/bin',
     'LD_LIBRARY_PATH':    nmpiroot + '/lib64:'    + necroot + '/ve/lib',
-    'VE_LD_LIBRARY_PATH': nmpiroot + '/lib64/ve:' + necroot + '/ve/lib',
-    'VE_LIBRARY_PATH':    nmpiroot + '/lib64/ve:' + necroot + '/ve/lib',
-    'CFILES':             nmpiroot + '/include:'  + necroot + '/ve/include',
+    'VE_LD_LIBRARY_PATH': nmpiroot + '/lib64/ve:' + necroot + '/ve/lib'     + nlcroot + '/lib',
+    'VE_LIBRARY_PATH':    nmpiroot + '/lib64/ve:' + necroot + '/ve/lib'     + nlcroot + '/lib',
+    'CFILES':             nmpiroot + '/include:'  + necroot + '/ve/include' + nlcroot + '/include',
     'MANPATH':            necroot  + '/ve/share/man',
     'INFOPATH':           necroot  + '/ve/share/info',    
 }
