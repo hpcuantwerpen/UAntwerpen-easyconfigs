@@ -10,9 +10,14 @@ description = ("ITensor - Intelligent Tensor - is a C++ library for implementing
 toolchain = {'name': 'intel', 'version': '2018b'}
 toolchainopts = {'pic': True}
 
-source_urls = ['https://github.com/ITensor/ITensor/tarball/v%(version)s']
-sources = [SOURCELOWER_TAR_GZ]
-
+sources = [{
+    'filename': 'ITensor-%(version)s.tar.gz',
+    'git_config': {
+        'url': 'https://github.com/ITensor',
+        'repo_name': 'ITensor',
+        'tag': 'master',
+    },
+}]
 
 patches = [
     ('options.mk.patch',1),
