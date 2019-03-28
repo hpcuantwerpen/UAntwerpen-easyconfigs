@@ -1,3 +1,8 @@
+# Note that because of the way the install is done, additional dependencies that
+# are not specified here nor available in our Python module, may be installed.
+# They will not be stored in the sources folder, so there is a problem with
+# reproducibility of the installation...
+#
 easyblock = 'PythonPackage'
 
 name = 'ASE'
