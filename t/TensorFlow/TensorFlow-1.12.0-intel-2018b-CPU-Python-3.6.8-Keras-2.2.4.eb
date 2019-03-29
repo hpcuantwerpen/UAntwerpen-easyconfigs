@@ -1,0 +1,121 @@
+easyblock = 'Bundle'
+
+name          = 'TensorFlow'
+version       = '1.12.0'
+pyver         = '3.6.8'
+
+kerasversion  = '2.2.4'
+cudaversion   = '9.0.176'
+cudnnversion  = '7.4.1.5' 
+
+versionsuffix = '-CPU-Python-%(pyver)s-Keras-' + kerasversion
+
+homepage = 'https://www.tensorflow.org/'
+
+whatis = [
+"Description: Tensorflow is an open-source library for machine intelligence, Keras is a high-level Neural Network API running on top of it",
+"This module provides binaries optimized for Intel-compatible CPUs, and Keras"
+]
+
+description = """
+TensorFlow is open-source software library for Machine Intelligence.
+Keras ia high-level Neural Network API that can use TensorFlow as a back-end.
+
+This module contains binaries optimized for Intel processors (and compatible
+CPUs) based on work done by Intel (essentially by using the Intel
+MKL-DNN libraries).
+
+Tensorflow doesn't compile properly with our compilers. Blame Google for a
+lousy build process with tools that lack the transparancy needed to easily
+solve build problems. Hence we use precompiled binaries, but we cannot
+exclude compatibility problems with our OS version.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+pycpver    = ''.join(pyver.split('.')[:2])
+pyvermajor = ''.join(pyver.split('.')[:1])
+
+# This is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+
+dependencies = [
+    ('Python',   pyver),
+    ('protobuf', '3.7.1',      '-Python-%(pyver)s'),
+    ('CUDA',     cudaversion,  '',                       True),
+    ('cuDNN',    cudnnversion, '-CUDA-' + cudaversion,   True),
+]
+
+# At the time of installation, the list below is equivalent to:
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" Markdown
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" Werkzeug
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" grpcio
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" astor
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" Keras-Applications
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" Keras-Preprocessing
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" tensorboard==1.12.2
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" tensorflow-gpu==1.12.0
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" Keras
+# easy_install --prefix="${VSC_DATA}/MyPythonPackages" keras-metrics
+exts_list = [
+    ('Markdown', '3.1', { # Dependency of tensorboard
+        'modulename':  'markdown',
+        'source_urls': ['https://pypi.python.org/packages/source/m/markdown'],
+    }),
+    ('Werkzeug', '0.15.1', { # Dependency of tensorboard
+        'modulename':  'werkzeug',
+        'source_urls': ['https://pypi.python.org/packages/source/W/Werkzeug'],
+    }),
+    ('grpcio', '1.19.0', { # Dependency of tensorboard
+        'source_urls': ['https://pypi.python.org/packages/source/g/grpcio'],
+        'modulename':  'grpc',
+    }),
+    ('astor', '0.7.1', { # Dependency of tensorflow
+        'source_urls': ['https://pypi.python.org/packages/source/a/astor'],
+    }),
+    ('Keras-Applications', '1.0.7', { # Dependency of tensorflow
+        'source_urls': ['https://pypi.python.org/packages/source/K/Keras-Applications'],
+        'source_tmpl': 'Keras_Applications-%(version)s.tar.gz',
+#        'modulename':  'keras_applications', 
+    }),
+    ('Keras-Preprocessing', '1.0.9', { # Dependency of tensorflow
+        'source_urls': ['https://pypi.python.org/packages/source/K/Keras-Preprocessing'],
+        'source_tmpl': 'Keras_Preprocessing-%(version)s.tar.gz',
+#        'modulename':  'keras_preprocessing', 
+    }),
+    ('tensorboard', '1.12.2', { # Dependency of tensorflow
+        'source_urls': ['https://pypi.python.org/packages/source/t/tensorboard'],
+        'source_tmpl': 'tensorboard-%%(version)s-py%(pyvermajor)s-none-any.whl' % {'pyvermajor': pyvermajor},
+        'use_pip': True,
+        'unpack_sources': False,
+    }),
+    ('intel-tensorflow', version, {
+        'source_urls': ['https://pypi.python.org/packages/source/i/intel-tensorflow'],
+        'source_tmpl': 'intel_tensorflow-%%(version)s-cp%(pycpver)s-cp%(pycpver)sm-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'use_pip': True,
+        'unpack_sources': False,
+        'modulename':  'tensorflow', 
+    }),
+    ('Keras', kerasversion, {
+        'source_urls': ['https://pypi.python.org/packages/source/K/Keras'],
+        'checksums': ['90b610a3dbbf6d257b20a079eba3fdf2eed2158f64066a7c6f7227023fd60bc9'],
+#        'modulename':  'keras', 
+    }),
+    ('keras-metrics', '1.0.0', { # Dependency of tensorflow
+        'source_urls': ['https://pypi.python.org/packages/source/k/keras-metrics'],
+#        'modulename':  'keras_preprocessing', 
+    }),
+]
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = True
+
+sanity_check_paths = {
+    'files': ['bin/tensorboard'],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+# Since the main EasyBlock is Bundle we need to adjust the Python path by hand.
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'
