@@ -1,0 +1,85 @@
+easyblock = 'Bundle'
+
+name          = 'TensorFlow'
+version       = '1.12.0'
+pyver         = '3.6.6'
+versionsuffix = '-GPU-Python-%(pyver)s-v2'
+
+cudaversion   = '9.0.176'
+cudnnversion  = '7.4.1.5' 
+
+homepage = 'https://www.tensorflow.org/'
+
+whatis = [
+"Description: Tensorflow is an open-source library for machine intelligence",
+"This module provides the GPU-accelerated libraries downloaded as a package from Google, so works on the GPU nodes only"
+]
+
+description = """
+An open-source software library for Machine Intelligence.
+
+This module contains a GPU-accelerated version as downloaded from Google.
+
+Tensorflow doesn't compile properly with our compilers.  Blame Google for a
+lousy build process with tools that lack the transparancy needed to easily
+solve build problems.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018a'}
+
+pycpver    = ''.join(pyver.split('.')[:2])
+pyvermajor = ''.join(pyver.split('.')[:1])
+
+# this is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+
+dependencies = [
+    ('Python',   pyver),
+    ('protobuf', '3.6.1',      '-Python-%(pyver)s'),
+    ('CUDA',     cudaversion,  '',                       True),
+    ('cuDNN',    cudnnversion, '-CUDA-' + cudaversion,   True),
+]
+
+exts_list = [
+    ('astor', '0.7.1', {
+        'source_urls': ['https://pypi.python.org/packages/source/a/astor'],
+    }),
+    ('grpcio', '1.19.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/g/grpcio'],
+        'modulename':  'grpc',
+    }),
+    ('Keras-Applications', '1.0.6', {
+        'source_urls': ['https://pypi.python.org/packages/source/K/Keras-Applications'],
+        'source_tmpl': 'Keras_Applications-%(version)s.tar.gz',
+#        'modulename':  'keras_applications', 
+    }),
+    ('Keras-Preprocessing', '1.0.5', {
+        'source_urls': ['https://pypi.python.org/packages/source/K/Keras-Preprocessing'],
+        'source_tmpl': 'Keras_Preprocessing-%(version)s.tar.gz',
+#        'modulename':  'keras_preprocessing', 
+    }),
+    ('tensorflow', version, {
+        'source_urls': ['https://pypi.python.org/packages/source/t/tensorflow-gpu'],
+        'source_tmpl': 'tensorflow_gpu-%%(version)s-cp%(pycpver)s-cp%(pycpver)sm-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'use_pip': True,
+        'unpack_sources': False,
+    }),
+    ('tensorboard', '1.12.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/t/tensorboard'],
+        'source_tmpl': 'tensorboard-%%(version)s-py%(pyvermajor)s-none-any.whl' % {'pyvermajor': pyvermajor},
+        'use_pip': True,
+        'unpack_sources': False,
+    }),
+]
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = True
+
+sanity_check_paths = {
+    'files': ['bin/tensorboard'],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'
