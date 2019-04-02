@@ -1,0 +1,98 @@
+easyblock = 'MakeCp'
+
+name = 'CP2K'
+version = '7.0-44b70af5'
+versionsuffix = '-PLUMED-2.4.1'
+
+homepage = 'http://www.cp2k.org/'
+whatis = [ """
+Description: CP2K is a scalable code for atomistic and molecular
+simulations of solid state, liquid, molecular and biological systems
+which provides a general framework for different methods such as
+e.g. density functional theory (DFT) using a mixed Gaussian and plane
+waves approach (GPW), and classical pair and many-body potentials.
+""",
+""" This version includes libxc, libint, PLUMED, ELPA, libxsmm, Intel
+MKL; popt and psmp executables.
+"""]
+
+description = """
+CP2K is a freely available (GPL) program, written in Fortran 2008, to perform
+atomistic and molecular simulations of solid state, liquid, molecular and
+biological systems. It provides a general framework for different methods such as
+e.g. density functional theory (DFT) using a mixed Gaussian and plane waves
+approach (GPW), and classical pair and many-body potentials.
+
+This version is built using a modified version of the included arch files in
+the CP2K distribution.
+
+Versions supported are:
+ - popt: distributed memory version (MPI, single-threaded BLAS)
+ - psmp: hybrid OpenMP/MPI version (MPI, OpenMP, multi-threaded BLAS)
+"""
+
+docurls = [
+    'Manual: https://manual.cp2k.org/',
+]
+
+upstream_contacts = [
+    'CP2K user forum: http://groups.google.com/group/cp2k',
+    'Bug tracker: https://github.com/cp2k/cp2k/issues',
+    'Dev mailing list: https://lists.cp2k.org/listinfo/cp2k-dev',
+]
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+sources = [{
+    'filename': 'cp2k-7.0-44b70af5.tar.gz',
+    'git_config': {
+        'url' : 'https://github.com/cp2k',
+        'repo_name' : 'cp2k',
+        'commit' : '44b70af5',
+        'recursive' : True,
+    },
+}]
+
+patches = [
+    'CP2K-7.0-PLUMED-archfiles.patch',
+]
+
+# Libint and PLUMED are statically linked.
+builddependencies = [
+    ('PLUMED', '2.4.1'),
+    ('Libint', '1.1.6','-CP2K')
+]
+
+dependencies = [
+    ('libxc', '4.3.4'),
+    ('libxsmm', '1.10'),
+    ('ELPA', '2017.05.003'),
+    ('zlib', '1.2.11'),
+    ('GSL', '2.5')
+]
+
+cp2k_versions = ['popt', 'psmp']
+
+buildopts  = 'ARCH=Linux-x86-64-intel VERSION="%s" '\
+                    'DATA_DIR=%s/data' % (' '.join(cp2k_versions), '%(installdir)s')
+
+runtest = 'ARCH=Linux-x86-64-intel VERSION="%s" '\
+                 'TESTOPTS="-nobuild -mpiexec mpirun" '\
+                 '--eval="export CP2K_DATA_DIR=%s/cp2k/data" '\
+                 'test' % (' '.join(cp2k_versions), '%(builddir)s')
+
+files_to_copy = [
+    "COPYRIGHT",
+    'data',
+    (['exe/Linux-x86-64-intel/%s.%s' % (x,y)
+      for x in ['cp2k', 'cp2k_shell', 'graph', 'libcp2k_unittest']
+      for y in cp2k_versions  ],
+     'bin')
+]
+
+sanity_check_paths = {
+    'files' : ['COPYRIGHT'],
+    'dirs'  : ['bin', 'data']
+}
+
+moduleclass = 'chem'
