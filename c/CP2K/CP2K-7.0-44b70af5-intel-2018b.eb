@@ -58,9 +58,13 @@ patches = [
     'CP2K-7.0-archfiles.patch',
 ]
 
+# Libint is statically linked.
+builddependencies = [
+    ('Libint', '1.1.6','-CP2K')
+]
+
 dependencies = [
     ('libxc', '4.3.4'),
-    ('Libint', '1.1.6','-CP2K'),
     ('libxsmm', '1.10'),
     ('ELPA', '2017.05.003')
 ]
