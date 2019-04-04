@@ -1,0 +1,49 @@
+easyblock = 'CMakeMake'
+
+name = 'libcerf'
+version = '1.13'
+
+homepage = 'http://apps.jcns.fz-juelich.de/doku/sc/libcerf'
+
+whatis = [
+    'Description: Implements the complex error functions, along with the Dawson, Faddeeva and Voigt functions',
+    'This module provides shared libraries'
+]
+
+description = """
+libcerf is a self-contained numeric library that provides an efficient and
+accurate implementation of complex error functions, along with Dawson, Faddeeva,
+and Voigt functions.
+
+This module provides shared libraries.
+"""
+
+usage = """
+See the manual pages for cdawson, cerf, cerfc, cerfcx, cerfi, dawson, erfcx,
+erfi, im_w_of_x, voigt and w_of_z (all in section 3).
+"""
+
+docurls = [
+    'Web-based documentation on http://apps.jcns.fz-juelich.de/doku/sc/libcerf#user_documentation',
+    'Man pages in section 3'
+]
+
+toolchain = {'name': 'GCCcore', 'version': '8.2.0'}
+
+# https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v1.13/libcerf-v1.13.tar.bz2
+sources = [ '%(name)s-v%(version)s.tar.bz2' ]
+source_urls = [ 'https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v%(version)s' ]
+
+builddependencies = [
+    ('binutils',   '2.32'),
+    ('buildtools', '2019a', '', True),
+]
+
+separate_build_dir = True
+
+sanity_check_paths = {
+    'files': ['lib/libcerf.%s' % SHLIB_EXT],
+    'dirs': []
+}
+
+moduleclass = 'math'
