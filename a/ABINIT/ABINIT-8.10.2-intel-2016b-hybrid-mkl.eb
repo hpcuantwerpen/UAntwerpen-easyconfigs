@@ -1,0 +1,96 @@
+easyblock = 'ConfigureMake'
+
+name = 'ABINIT'
+version = '8.10.2'
+versionsuffix = '-hybrid-mkl'
+
+homepage = 'http://www.abinit.org/'
+whatis = [
+    "Description: ABINIT is DFT-based software to caluclate optical, mechanical, vibrational, and other observable properties of materials",
+    "This package provides a hybrid OpenMP/MPI executable",
+]
+
+description = """
+ABINIT is a software suite to calculate the optical,
+mechanical, vibrational, and other observable properties of materials.
+Starting from the quantum equations of density functional theory, you can build
+up to advanced applications with perturbation theories based on DFT, and
+many-body Green's functions (GW and DMFT) .
+
+ABINIT can calculate molecules, nanostructures and solids with any chemical
+composition, and comes with several complete and robust tables of atomic
+potentials.
+
+On-line tutorials are available for the main features of the code, and several
+schools and workshops are organized each year.
+
+This module provides a hybrid OpenMP/MPI executable. It is build using 
+8-byte integers and flags for large system support, and includes support
+for netCDF, AtomPAW, LibXC functionals and Wannier90.
+"""
+
+toolchain = {'name': 'intel', 'version': '2016b'}
+toolchainopts = {'i8': True}
+
+# File: https://www.abinit.org/sites/default/files/packages/abinit-8.10.1.tar.gz
+source_urls = [
+    'https://www.abinit.org/sites/default/files/packages/',
+    'http://forge.abinit.org/fallbacks/',
+]
+# See the OneNote for the version numbers. For reproducibility, we also download
+# the files that would be downloaded otherwise by the configure routine as
+# fallbacks for libraries that we prefer not to install ourselves as ABINIT
+# will hopefully configure them the right way for its use.
+sources = [
+    SOURCELOWER_TAR_GZ,
+    {'filename': 'atompaw-4.0.1.0.tar.gz',   'extract_cmd': 'cp %s .'},
+    {'filename': 'libxc-3.0.0.tar.gz',       'extract_cmd': 'cp %s .'},
+    {'filename': 'wannier90-2.0.1.1.tar.gz', 'extract_cmd': 'cp %s .'},
+]
+
+dependencies = [
+#    ('netCDF', '4.6.1', '-MPI'),
+#    ('GSL', '2.5'),        # GSL support seems broken in BINIT 8.10.1.
+#    ('levmar', '2.6'),     # Support seems to be broken in ABINIT 8.10.1
+# We've removed the Python-dependency from 8.8.4 on as the only Python code that
+# can be found in the package seems to be test code that we did not put in the
+# Python path anyway, and users never complained. However, the configure script
+# fails for recent Python versions in a netCDF test.
+# Note that this also excludes using BigDFT as it requires PyYAML and hence
+# Python. But there are other problems also with BigDFT...
+#    ('Python', '2.7.15'),
+]
+
+preconfigopts  = 'export CC=mpiicc && export CXX=mpiicpc && export CPP="mpiicc -P"  && export FC=mpiifort && '
+# Some compiler flags taken from example configuration files on https://github.com/abinit/abiconfig/blob/master/abiconfig/clusters
+preconfigopts += 'export FCFLAGS="-O2 -xHost -fp-speculation=strict -fp-model strict -noaltparam -nofpscomp -mcmodel=large -shared-intel" && '
+
+patches = [
+    'ABINIT-8.10.1_configure_intel.patch'
+]
+
+configopts  = '--with-tardir="%(builddir)s" '
+configopts += '--enable-mpi=yes --with-mpi-level=2 --enable-mpi-io=yes '
+configopts += '--enable-openmp="yes" '
+configopts += '--enable-64bit-flags="yes" '
+configopts += '--with-trio-flavor="netcdf-fallback" '
+#configopts += '--with-dft-flavor="libxc+bigdft+atompaw+wannier90" '
+configopts += '--with-dft-flavor="libxc+atompaw+wannier90" '
+configopts += '--with-fc-vendor=intel '
+configopts += '--with-linalg-flavor="mkl+scalapack" '
+configopts += '--with-linalg-incs="-I$(MKLROOT)/include" '
+configopts += '--with-linalg-libs="-L$MKLROOT/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_lp64 -liomp5 -lpthread -lm -ldl" '
+configopts += '--with-fft-flavor=fftw3-mkl '
+configopts += '--with-fft-libs="-L$MKLROOT/mkl/lib/intel64 -lfftw3xf_intel" '
+configopts += '--with-fft-incs=-I$MKLROOT/mkl/fftw '
+configopts += '--enable-gw-dpc="yes" '       # Experimental, but I see it used in example configuration files for CECI clusters.
+#configopts += '--with-math-flavor="gsl" '    # Seems to be broken in 8.10.1
+# configopts += '--with-algo-flavor="levmar" '  # This does not work, there are too many warnings about incompatible types and missing function declarations.
+configopts += '--enable-avx-safe-mode '      # see https://forum.abinit.org/viewtopic.php?f=9&t=4028
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ['abinit', 'aim', 'cut3d', 'conducti', 'mrgddb', 'mrgscr', 'optic']],
+    'dirs':  ['lib/pkgconfig'],
+}
+
+moduleclass = 'chem'
