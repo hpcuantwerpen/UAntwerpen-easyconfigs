@@ -368,22 +368,28 @@ components = [
 # Terminal libraries
 #
     ('ncurses', ncurses_version, {
-        'sources':     [SOURCE_TAR_GZ],
-        'source_urls': [GNU_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       }],
         'patches':     ['ncurses-%(version)s_gcc-5.patch'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-shared --enable-overwrite', # First build: default build.
     }),
     ('ncurses', ncurses_version, {
-        'sources': [SOURCE_TAR_GZ],
-        'source_urls': [GNU_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       }],
         'patches':     ['ncurses-%(version)s_gcc-5.patch'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-shared --enable-overwrite --enable-ext-colors --enable-widec --includedir=%(installdir)s/include/ncursesw/' # Second build: the UTF-8 enabled version (ncursesw)
     }),
     ('libreadline', libreadline_version, {
-        'sources': ['readline-%(version)s.tar.gz'],
-        'source_urls': ['http://ftp.gnu.org/gnu/readline'],
+        'sources':     [ {
+                          'filename':    'readline-%(version)s.tar.gz',
+                          'source_urls': ['http://ftp.gnu.org/gnu/readline']
+                       }],
         'start_dir':   'readline-%(version)s',
         'preconfigopts': "LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS='-L%(installdir)s/lib -lncurses'",
     }),
@@ -393,8 +399,10 @@ components = [
     ('bzip2', bzip2_version, {
         # The bzip2 EasyBlock does not work in a bundle since there is a problem with with_shared_libs
         # https://sourceforge.net/projects/bzip2/files/bzip2-1.0.6.tar.gz/download
-        'sources':     [SOURCE_TAR_GZ],
-        'source_urls': [SOURCEFORGE_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': [SOURCEFORGE_SOURCE]
+                       }],
 	    'start_dir':   '%(namelower)s-%(version)s',
         'skipsteps':   ['configure'],
         'buildopts':   'CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ; ' + \
@@ -406,19 +414,25 @@ components = [
                        'ln -s libbz2.so.'+bzip2_version+' libbz2.so' 
     }),
     ('Szip', Szip_version, {
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': ['http://www.hdfgroup.org/ftp/lib-external/szip/%(version)s/src'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['http://www.hdfgroup.org/ftp/lib-external/szip/%(version)s/src']
+                       }],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-pic'
     }),
     ('zlib', zlib_version, {
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': [('http://sourceforge.net/projects/libpng/files/zlib/%(version)s', 'download')],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [('http://sourceforge.net/projects/libpng/files/zlib/%(version)s', 'download')]
+                       }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('XZ', XZ_version, {
-        'sources':     [SOURCELOWER_TAR_XZ],
-        'source_urls': ['http://tukaani.org/xz/'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': ['http://tukaani.org/xz/']
+                       }],
         'patches':     ['XZ-5.2.2_compat-libs.patch'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--disable-nls --disable-xz --disable-xzdec',  # First build without the need for gettext, we'll rebuild after building gettext.
@@ -428,8 +442,10 @@ components = [
 #
     ('JasPer', JasPer_version, { 
         'easyblock':   'CMakeMake',
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/']
+                       }],
         'start_dir':   '%(namelower)s-%(version)s',
         'preconfigopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
         'configopts':  '-DJAS_ENABLE_DOC=OFF -DALLOW_IN_SOURCE_BUILD=ON ',
@@ -437,45 +453,56 @@ components = [
     }),
      ('libjpeg-turbo', libjpegturbo_version, {
         'easyblock':   'CMakeMake',
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': [SOURCEFORGE_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [SOURCEFORGE_SOURCE]
+                       }],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-jpeg8',
      }),
     ('libpng', libpng_version, { # Needs zlib!
         # https://download.sourceforge.net/libpng/libpng-1.6.36.tar.xz
-        'sources':     [SOURCELOWER_TAR_XZ],
-        #'source_urls': [SOURCEFORGE_SOURCE],
-        'source_urls': ['https://download.sourceforge.net/libpng'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': ['https://download.sourceforge.net/libpng']
+                       }],
         'start_dir':   '%(namelower)s-%(version)s',
         'preconfigopts': 'CPATH=%(installdir)s/include:$CPATH LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS="-L%(installdir)s/lib $LDFLAGS"',
         'configopts':  '--with-pic',
         'postinstallcmds':  ['ln -s %(installdir)s/include/libpng16 %(installdir)s/include/libpng']
     }),
     ('LibTIFF', libtiff_version, {
-        'sources':     ['tiff-%(version)s.tar.gz'],
-        'source_urls': ['https://download.osgeo.org/libtiff/'],
+        'sources':     [ {
+                          'filename':    'tiff-%(version)s.tar.gz',
+                          'source_urls': ['https://download.osgeo.org/libtiff/']
+                       }],
         'start_dir':   'tiff-%(version)s'
     }),
 #
 # Audio and video file formats
 #
     ('x264', x264_version, {
-        'sources':    ['x264-snapshot-%(version)s-stable.tar.bz2'],
-        'source_urls': ['https://download.videolan.org/pub/videolan/x264/snapshots/', 'ftp://ftp.videolan.org/pub/videolan/x264/snapshots/'],
+        'sources':     [ {
+                          'filename':    'x264-snapshot-%(version)s-stable.tar.bz2',
+                          'source_urls': ['https://download.videolan.org/pub/videolan/x264/snapshots/', 'ftp://ftp.videolan.org/pub/videolan/x264/snapshots/']
+                       }],
         'start_dir':   'x264-snapshot-%(version)s-stable',
         'configopts': '--enable-shared --enable-static',
         'installopts': ' && mkdir -p %(installdir)s/doc && cp -r doc/* %(installdir)s/doc'
     }),
     ('x265', x265_version, {
         'easyblock':   'CMakeMake',
-        'sources':     ['%(name)s_%(version)s.tar.gz'],
-        'source_urls': ['http://ftp.videolan.org/pub/videolan/x265/', 'http://download.videolan.org/pub/videolan/x265/'],
+        'sources':     [ {
+                          'filename':    '%(name)s_%(version)s.tar.gz',
+                          'source_urls': ['http://ftp.videolan.org/pub/videolan/x265/', 'http://download.videolan.org/pub/videolan/x265/']
+                       }],
         'start_dir':   '%(namelower)s_%(version)s/source',
     }),
     ('LAME', LAME_version, { # Needs ncurses!
-        'sources':       [SOURCELOWER_TAR_GZ],
-        'source_urls':   ['https://sourceforge.net/projects/lame/files/lame/%(version_major_minor)s/'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['https://sourceforge.net/projects/lame/files/lame/%(version_major_minor)s/']
+                       }],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'CPATH=%(installdir)s/include:$CPATH LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS="-L%(installdir)s/lib $LDFLAGS" FRONTEND_LDADD="-L%(installdir)s/lib" ',
     }),
@@ -483,25 +510,33 @@ components = [
 # Network and XML
 #
     ( 'cURL', cURL_version, { # USES zlib
-        'sources': [SOURCELOWER_TAR_XZ],
-        'source_urls': ['https://curl.haxx.se/download/'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': ['https://curl.haxx.se/download/']
+                       }],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-zlib=%(installdir)s', 
     }),
     ('expat', expat_version, {
-        'sources': [SOURCELOWER_TAR_BZ2],
-        'source_urls': [SOURCEFORGE_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_BZ2,
+                          'source_urls': [SOURCEFORGE_SOURCE]
+                       }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('libxml2', libxml2_version, { # Needs zlib. The configure also looks for XZ utilities (liblzma), but that depends on gettext which depends on libxml2...
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/']
+                       }],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-pic --with-zlib=%(installdir)s --with-lzma=%(installdir)s --without-python',
     }),
     ('libxslt', libxslt_version, { # Needs libxml2 and can find it through pkg-config, so configure that path.
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/']
+                       }],
         'start_dir':   '%(namelower)s-%(version)s',
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ',
         'configopts':  '--with-pic --without-python',
@@ -510,8 +545,10 @@ components = [
 # Regular math libs
 #
     ('GSL', GSL_version, {
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': [GNU_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('libcerf', libcerf_version, {
@@ -533,22 +570,26 @@ components = [
 # Arbitrary precision math
 #
     ('GMP', GMP_version, {
-        'sources':     [SOURCELOWER_TAR_XZ],
-        'source_urls': [GNU_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--enable-cxx'
     }),
     ('MPFR', MPFR_version, {
-        'sources':     [SOURCELOWER_TAR_XZ],
-        'source_urls': [GNU_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-gmp=%(installdir)s'
     }),
     ('MPC', MPC_version, {
-        #'sources':     [ '%(namelower)s-%(version)s.tar.gz'],
-        #'source_urls': [ 'https://ftp.gnu.org/gnu/mpc/' ],
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': [GNU_SOURCE],
+         'sources':    [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-gmp=%(installdir)s --with-mpfr=%(installdir)s'
     }),
@@ -556,48 +597,70 @@ components = [
 # Miscellaneous
 #
     ('file', file_version, {
-        'sources':     [SOURCE_TAR_GZ],
-        'source_urls': ['ftp://ftp.astron.com/pub/file/'],
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': ['ftp://ftp.astron.com/pub/file/']
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('gc', gc_version, {
-        'sources':       [SOURCE_TAR_GZ, 'libatomic_ops-7_4_4.tar.gz'],
-        'source_urls':   ['http://hboehm.info/gc/gc_source/', 'https://github.com/ivmai/libatomic_ops/archive/'],
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': ['http://hboehm.info/gc/gc_source/']
+                       }, {
+                          'filename':    'libatomic_ops-7_4_4.tar.gz',
+                          'source_urls': ['https://github.com/ivmai/libatomic_ops/archive/'],
+                          'extract_cmd': 'mkdir -p %(name)s-%(version)s/libatomic_ops ; tar -xf %s -C %(name)s-%(version)s/libatomic_ops --strip-components=1'
+                       } ],
         'start_dir':     '%(name)s-%(version)s',
         'preconfigopts': "ln -s %(builddir)s/libatomic_ops*/ libatomic_ops && ",
         'configopts':    '--enable-threads=posix',
     }),
     ('libffi', libffi_version, {
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': [ 'ftp://sourceware.org/pub/libffi/', 'http://www.mirrorservice.org/sites/sourceware.org/pub/libffi/'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['ftp://sourceware.org/pub/libffi/', 'http://www.mirrorservice.org/sites/sourceware.org/pub/libffi/']
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('libiconv', libiconv_version, {
-        'sources':     [SOURCELOWER_TAR_GZ],
-        'source_urls': [GNU_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('libunistring', libunistring_version, {
-        'sources':     [SOURCELOWER_TAR_XZ],
-        'source_urls': [GNU_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'parallel':    1
     }),
     ('libyaml', libyaml_version, {
-        'sources':       ['yaml-%(version)s.tar.gz'],
-        'source_urls':   ['http://pyyaml.org/download/libyaml/'],
-        'preconfigopts': './bootstrap && ',
-        'start_dir':     'libyaml-%(version)s'
+        'sources':     [ {
+                          'filename':    'yaml-%(version)s.tar.gz',
+                          'source_urls': ['http://pyyaml.org/download/libyaml/']
+                       } ],
+#        Depending on how the download is done or what download site is used, the configure script may not be included.
+#        In that case, the bootstrap script can be used to generate it.
+#        'preconfigopts': './bootstrap && ',
+        'start_dir':     'yaml-%(version)s'
     }),
     ('PCRE', PCRE_version, {
-        'sources':     [SOURCELOWER_TAR_BZ2],
-        'source_urls': [ 'https://ftp.pcre.org/pub/pcre/' ],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_BZ2,
+                          'source_urls': ['https://ftp.pcre.org/pub/pcre/']
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  "--with-pic --disable-cpp --enable-utf --enable-unicode-properties"
     }),
     ('util-linux', util_version, { # Needs ncurses and zlib
-        'sources':     [ SOURCELOWER_TAR_XZ ],
-        'source_urls': [ 'http://www.kernel.org/pub/linux/utils/util-linux/v' + util_major_minor ],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': ['http://www.kernel.org/pub/linux/utils/util-linux/v' + util_major_minor]
+                       } ],
         'configopts':  "--disable-chfn-chsh --disable-login --disable-su --disable-rfkill " +
                        "--disable-wall --disable-use-tty-group " +
                        "--disable-makeinstall-chown --disable-makeinstall-setuid " +
@@ -610,19 +673,25 @@ components = [
 # Graphics
 #
     ('pixman', pixman_version, {
-        'sources':     [SOURCE_TAR_GZ],
-        'source_urls': ['http://cairographics.org/releases'],
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': ['http://cairographics.org/releases']
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
     }),
     ('freetype', freetype_version, { # Needs zlib, bzip2 and libpng
-        'sources':     [SOURCE_TAR_BZ2],
-        'source_urls': [GNU_SAVANNAH_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_BZ2,
+                          'source_urls': [GNU_SAVANNAH_SOURCE]
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--enable-freetype-config --with-harfbuzz=no',
     }),
     ('fontconfig', fontconfig_version, { # Needs pkg-config and gperf (buildtools) and expat, freetype and util-linux.
-        'sources':       [SOURCE_TAR_BZ2],
-        'source_urls':   ['http://www.freedesktop.org/software/fontconfig/release/'],
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_BZ2,
+                          'source_urls': ['http://www.freedesktop.org/software/fontconfig/release/']
+                       } ],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ',
         'configopts':    '--disable-docs',
@@ -632,8 +701,10 @@ components = [
 # with packages with similar function.
 #
     ('gettext', gettext_version, { # Needs libxml2, ncurses, libunistring.
-        'sources':       [SOURCELOWER_TAR_XZ],
-        'source_urls':   [GNU_SOURCE],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
                          'CPATH=%(installdir)s/include:$CPATH ' + \
@@ -645,8 +716,10 @@ components = [
 # Recompile XZ utils now with all features enabled.
 #
     ('XZ', XZ_version, {
-        'sources':       [SOURCELOWER_TAR_BZ2],
-        'source_urls':   ['http://tukaani.org/xz/'],
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_BZ2,
+                          'source_urls': ['http://tukaani.org/xz/']
+                       } ],
 #        'patches':       ['XZ-5.2.2_compat-libs.patch'], # Can't apply the patch a second time.
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'make mostlyclean clean distclean ; '+ \
