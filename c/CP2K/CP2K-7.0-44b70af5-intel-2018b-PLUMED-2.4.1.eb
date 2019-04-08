@@ -2,6 +2,7 @@ easyblock = 'MakeCp'
 
 name = 'CP2K'
 version = '7.0-44b70af5'
+versionsuffix = '-PLUMED-2.4.1'
 
 homepage = 'http://www.cp2k.org/'
 whatis = [ """
@@ -10,9 +11,9 @@ simulations of solid state, liquid, molecular and biological systems
 which provides a general framework for different methods such as
 e.g. density functional theory (DFT) using a mixed Gaussian and plane
 waves approach (GPW), and classical pair and many-body potentials.
-""", """
-This version includes libxc, libint, ELPA, libxsmm, Intel MKL; sopt,
-popt, ssmp and psmp executables.
+""",
+""" This version includes libxc, libint, PLUMED, ELPA, libxsmm, Intel
+MKL; popt and psmp executables.
 """]
 
 description = """
@@ -26,8 +27,6 @@ This version is built using a modified version of the included arch files in
 the CP2K distribution.
 
 Versions supported are:
- - sopt: single core version (single-threaded BLAS)
- - ssmp: shared memory version (OpenMP, multi-threaded BLAS)
  - popt: distributed memory version (MPI, single-threaded BLAS)
  - psmp: hybrid OpenMP/MPI version (MPI, OpenMP, multi-threaded BLAS)
 """
@@ -55,21 +54,24 @@ sources = [{
 }]
 
 patches = [
-    'CP2K-7.0-archfiles.patch',
+    'CP2K-7.0-PLUMED-archfiles.patch',
 ]
 
-# Libint is statically linked.
+# Libint and PLUMED are statically linked.
 builddependencies = [
+    ('PLUMED', '2.4.1'),
     ('Libint', '1.1.6','-CP2K')
 ]
 
 dependencies = [
     ('libxc', '4.3.4'),
     ('libxsmm', '1.10'),
-    ('ELPA', '2017.05.003')
+    ('ELPA', '2017.05.003'),
+    ('zlib', '1.2.11'),
+    ('GSL', '2.5')
 ]
 
-cp2k_versions = ['sopt', 'ssmp', 'popt', 'psmp']
+cp2k_versions = ['popt', 'psmp']
 
 buildopts  = 'ARCH=Linux-x86-64-intel VERSION="%s" '\
                     'DATA_DIR=%s/data' % (' '.join(cp2k_versions), '%(installdir)s')
