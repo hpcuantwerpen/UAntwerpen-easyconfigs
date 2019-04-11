@@ -9,6 +9,8 @@ description = """PLUMED is an open source library for free energy calculations i
  performed as a function of many order parameters with a particular  focus on biological problems, using
  state of the art methods such as metadynamics, umbrella sampling and Jarzynski-equation based steered MD.
  The software, written in C++, can be easily interfaced with both fortran and C/C++ codes.
+
+ This version includes the VES (Variationally Enhanced Sampling) module.
 """
 
 toolchain = {'name': 'intel', 'version': '2018b'}
@@ -23,7 +25,10 @@ dependencies = [
 ]
 
 preconfigopts = 'env FC=$MPIF90 LIBS="$LIBLAPACK $LIBS" '
-configopts = ' --exec-prefix=%(installdir)s --enable-gsl --disable-matheval' \
+configopts = ' --exec-prefix=%(installdir)s' \
+             ' --enable-gsl' \
+             ' --enable-modules=ves' \
+             ' --disable-matheval' \
              ' --disable-ld-r' # ld -r leads to an assertion fail from binutils
 prebuildopts = 'source sourceme.sh && CXXFLAGS="-O3 -xHost"'
 
