@@ -54,16 +54,18 @@ modextrapaths = {
     'LD_LIBRARY_PATH':    nmpiroot + '/lib64:'                        + nfortroot + '/lib64:' + necroot + '/ve/lib',
     'VE_LD_LIBRARY_PATH': nmpiroot + '/lib64/ve:' + nccroot + '/lib:' + nfortroot + '/lib:'   + necroot + '/ve/lib'     + nlcroot + '/lib',
     'VE_LIBRARY_PATH':    nmpiroot + '/lib64/ve:' + nccroot + '/lib:' + nfortroot + '/lib:'   + necroot + '/ve/lib'     + nlcroot + '/lib',
-    'CPATH':              nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
+    'NCC_INCLUDE_PATH':   nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
                           necroot + '/ve/include:' + nlcroot + '/include',
-    'FPATH':              nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
-                          necroot + '/ve/include:' + nlcroot + '/include',  # Not clear if this is used by NEC
+    'NFORT_INCLUDE_PATH': nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
+                          necroot + '/ve/include:' + nlcroot + '/include/mod' + nlcroot + '/include',
     'MANPATH':            necroot  + '/ve/share/man',
     'INFOPATH':           necroot  + '/ve/share/info',    
 }
 modextravars = {
     'NMPI_ROOT':   nmpiroot,
     'MPI_PREFIX':  nmpiroot,
+    'NLC_HOME':    nlcroot,
+    'ASL_HOME':    nlcroot,
     'AURLIC_SERVER_HOSTNAME': 'localhost',
     'AURLIC_SERVER_PORT':     '7300',
 }
