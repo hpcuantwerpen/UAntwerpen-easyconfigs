@@ -58,10 +58,14 @@ modextrapaths = {
                           necroot + '/ve/lib:'     + nlcroot + '/lib',
     'VE_LIBRARY_PATH':    nmpiroot + '/lib64/ve:'  + nccroot + '/lib:'     + nfortroot + '/lib:'   + 
                           necroot + '/ve/lib:'     + nlcroot + '/lib',
-    'NCC_INCLUDE_PATH':   nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
-                          necroot + '/ve/include:' + nlcroot + '/include',
-    'NFORT_INCLUDE_PATH': nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
-                          necroot + '/ve/include:' + nlcroot + '/include/mod' + nlcroot + '/include',
+#    'NCC_INCLUDE_PATH':   nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
+#                          necroot + '/ve/include:' + nlcroot + '/include',
+#    'NFORT_INCLUDE_PATH': nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
+#                          necroot + '/ve/include:' + nlcroot + '/include/mod' + nlcroot + '/include',
+    'NCC_INCLUDE_PATH':   nmpiroot + '/include:'   + nfortroot + '/include:' +
+                          nlcroot + '/include',
+    'NFORT_INCLUDE_PATH': nmpiroot + '/include:'   + nccroot + '/include:' +
+                          nlcroot + '/include/mod' + nlcroot + '/include',
     'MANPATH':            necroot  + '/ve/share/man',
     'INFOPATH':           necroot  + '/ve/share/info',    
 }
