@@ -5,6 +5,7 @@ homepage = 'http://www.pwscf.org/'
 whatis = [
     "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
     "This module contains the regular MPI executables.",
+    "Installed plugins: Wannier90 (2.1.0), WanT (2.5.1), QE-GIPAW (6.1), WEST (2.0.1), YAMBO (3.4.2)",
 ]
 
 description = """
@@ -15,6 +16,14 @@ norm-conserving and ultrasoft).
 
 This module provides regular MPI executables, so it is not suitable to run
 in hybrid mode.
+
+The module provides a number of plugins:
+* Wannier90 (2.1.0)
+* WanT (2.5.1)
+* QE-GIPAW (6.1)
+* WEST (2.0.1)
+* YAMBO (3.4.2)
+We no longer install PLUMED due to compatibility problems.
 """
 
 

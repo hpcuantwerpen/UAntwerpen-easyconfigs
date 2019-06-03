@@ -16,6 +16,7 @@ homepage = 'https://www.quantum-espresso.org/'
 whatis = [
     "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
     "This module contains the regular MPI executables.",
+    "Installed plugins: Wannier90 (2.1.0), QE-GIPAW (6.3)",
 ]
 
 description = """

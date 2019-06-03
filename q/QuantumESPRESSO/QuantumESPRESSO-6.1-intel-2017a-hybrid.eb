@@ -6,6 +6,7 @@ homepage = 'http://www.pwscf.org/'
 whatis = [
     "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
     "This module contains hybrid OpenMP/MPI executables.",
+    "Installed plugins: Wannier90 (2.1.0), WanT (2.5.1), QE-GIPAW (6.1), WEST (2.0.1), YAMBO (3.4.2)",
 ]
 
 description = """
@@ -24,6 +25,14 @@ the torque-tools module and in particular the
 torque-host-per-line command in there, which combined with the Torque
 version 2.0 (aka NUMA-aware aka -L) syntax for resource specifications 
 makes it easy to start hybrid applications in a robust way.
+
+The module provides a number of plugins:
+* Wannier90 (2.1.0)
+* WanT (2.5.1)
+* QE-GIPAW (6.1)
+* WEST (2.0.1)
+* YAMBO (3.4.2)
+We no longer install PLUMED due to compatibility problems.
 """
 
 toolchain = {'name': 'intel', 'version': '2017a'}
