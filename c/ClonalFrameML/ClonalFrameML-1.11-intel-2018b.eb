@@ -1,0 +1,33 @@
+easyblock = 'MakeCp'
+
+name = 'ClonalFrameML'
+version = '1.11'
+
+homepage = 'https://github.com/xavierdidelot/ClonalFrameML'
+description = "Efficient Inference of Recombination in Whole Bacterial Genomes"
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+sources = ['v%(version)s.tar.gz']
+
+# latest release version on github does not include latest patches
+# sources directory contains most recent checkout
+source_urls = ['https://github.com/xavierdidelot/ClonalFrameML/']
+#source_urls = ['https://github.com/xavierdidelot/ClonalFrameML/archive/']
+
+parallel = 1
+
+start_dir = 'src'
+
+prebuildopts  = 'sed -i "s|CC = g++|CC = icpc|" makefile && '
+prebuildopts += 'sed -i "s|CFLAGS += -O3 |CFLAGS += -xHost |" makefile && '
+buildopts = 'all'
+
+files_to_copy = [(['ClonalFrameML'], 'bin'), 'cfml_results.R', 'README.txt']
+
+sanity_check_paths = {
+    'files': ['bin/ClonalFrameML'],
+    'dirs': []
+}
+
+moduleclass = 'bio'
