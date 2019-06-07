@@ -9,7 +9,6 @@ homepage = 'https://www.quantum-espresso.org/'
 whatis = [
     "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
     "This module contains hybrid OpenMP/MPI executables.",
-    "Installed plugins: Wannier90 (" + wannier90_version + "), d3q (" + d3q_version + ").",
 ]
 
 description = """
@@ -23,12 +22,12 @@ OPENMP_NUM_THREADS to the appropriate value. See chapter 3 of the user guide
 for information on parallelism in QuantumESPRESSO.
 
 Installed plugins:
+* QE-GIPAW %(version)s
 * wannier90 %(wv)s
 * d3q %(d3qv)s
 
 Other plugins supported in some of the other QuantumESPRESSO modules are 
 supported by this module:
-* GIPAW is not yet available for QE 6.4
 * WANT, West, Yambo and PLUMED do not compile 
 """ % { 'version': version, 'wv': wannier90_version, 'd3qv': d3q_version }
 
@@ -42,10 +41,10 @@ sources = [
     },
 
     # QE-GIPAW
-#    { 'filename':          'qe-gipaw-%(version)s.tar.gz',
-#      'download_filename': '%(version)s.tar.gz',
-#      'source_urls':       ['https://github.com/dceresoli/qe-gipaw/archive/'] 
-#    },
+    { 'filename':          'qe-gipaw-%(version)s.tar.gz',
+      'download_filename': '%(version)s.tar.gz',
+      'source_urls':       ['https://github.com/dceresoli/qe-gipaw/archive/'] 
+    },
 
     # Wannier
     { 'filename':    'wannier90-%(wv)s.tar.gz' % {'wv': wannier90_version}, 
@@ -90,7 +89,7 @@ patches = [
 # source checksums with shasum -a 256 
 checksums = [
     'b0d7e9f617b848753ad923d8c6ca5490d5d82495f82b032b71a0ff2f2e9cfa08',  # qe-6.4.1.tar.gz
-#     '090edfcc186047a12c596ec13fdb29c187ab33d91a44c08371f23e779bb15f1e', # qe-gipaw-6.3.tar.gz
+    'e8aae92b4b300a6e5ecbe1ade14a95d623c8ed00947aec482dd1b32893342fe0',  # qe-gipaw-6.4.1.tar.gz
     'f196e441dcd7b67159a1d09d2d7de2893b011a9f03aab6b30c4703ecbf20fe5b',  # wannier90-3.0.0.tar.gz
 #    'f094031c6d13a0e00022daf4d7c847c7',                                  # plumed-1.3-qe-r11758.tar.gz
 #    '484b83dc8bf5e4804b532cde4cd1d1966d59ffeec19bd20b6c20f091b3a623df',  # want-2.6.0.tar.gz
@@ -110,8 +109,7 @@ dependencies = [
 # add plumed and uncomment the lines in sources and checksums if the package is downloaded manually
 #buildopts = 'all w90 epw gipaw want west yambo xspectra'  # plumed
 #buildopts = 'all'
-#buildopts = 'all gwl xspectra couple epw gipaw w90'
-buildopts = 'all gwl xspectra couple epw w90 d3q'
+buildopts = 'all gwl xspectra couple epw gipaw w90 d3q'
 
 # parallel build tends to fail
 parallel = 1
