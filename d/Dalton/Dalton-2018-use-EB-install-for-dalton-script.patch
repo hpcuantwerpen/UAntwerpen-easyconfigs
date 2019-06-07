@@ -1,0 +1,23 @@
+--- Dalton-2018.2.orig/dalton.in	2019-06-06 14:09:19.000000000 +0200
++++ Dalton-2018.2/dalton.in	2019-06-06 15:17:44.929381066 +0200
+@@ -18,18 +18,9 @@
+ dalton="dalton"
+ DALTON="DALTON"
+ 
+-# radovan: this is to figure out the location of this script
+-# http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+-SOURCE="${BASH_SOURCE[0]}"
+-while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+-    SCRIPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+-    SOURCE="$(readlink "$SOURCE")"
+-    # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+-    [[ $SOURCE != /* ]] && SOURCE="$SCRIPT_DIR/$SOURCE"
+-done
+-SCRIPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
++SCRIPT_DIR="$EBROOTDALTON"
+ 
+-DALTON_EXECUTABLE=$SCRIPT_DIR/$dalton.x
++DALTON_EXECUTABLE=$SCRIPT_DIR/bin/$dalton.x
+ 
+ which mpirun > /dev/null # check if mpirun exists, if not, then assume mpiexec
+ if [ $? -eq 0 ]; then

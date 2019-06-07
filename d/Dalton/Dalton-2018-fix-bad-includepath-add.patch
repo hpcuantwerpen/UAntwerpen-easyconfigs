@@ -1,0 +1,13 @@
+--- Dalton-2018.2.orig/cmake/mpi/ConfigMPI.cmake	2019-06-06 14:08:23.000000000 +0200
++++ Dalton-2018.2/cmake/mpi/ConfigMPI.cmake	2019-06-06 15:17:44.915381197 +0200
+@@ -16,7 +16,9 @@
+         find_package(MPI)
+         if(MPI_FOUND)
+             set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_COMPILE_FLAGS}")
+-            include_directories(${MPI_INCLUDE_PATH})
++            # Don't do this!! Let the MPI wrappers handle this. If you
++            # are not using MPI wrappers you are doing it wrong!
++            #include_directories(${MPI_INCLUDE_PATH})
+         else()
+             message(FATAL_ERROR "-- You asked for MPI, but CMake could not find any MPI installation, check $PATH")
+         endif()

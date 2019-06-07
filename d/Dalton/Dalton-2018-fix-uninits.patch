@@ -1,0 +1,57 @@
+--- Dalton-2018.2.orig/DALTON/abacus/herpar.F	2019-06-06 14:08:22.000000000 +0200
++++ Dalton-2018.2/DALTON/abacus/herpar.F	2019-06-06 15:17:44.922381131 +0200
+@@ -1478,6 +1478,14 @@
+         call quit('Failed to allocate memory')
+       end if
+ 
++#ifdef VAR_MPI
++      ! Make dummy allocation so we don't trip on uninitialized
++      ! variables in call to HER_RVINIT
++      nelement_d = 1
++      nelement_f = 1
++      call memallocmpi(nelement_d*8,dmat_p)
++      call memallocmpi(nelement_f*8,fmat_p)
++#endif
+ !     Receive initialization from master - 1 - common block information
+ !     =================================================================
+ !
+@@ -1502,6 +1510,9 @@
+           nelement_f = n2basx*rma_win_info%nmat_max_wo_win
+       end if
+ #ifdef VAR_MPI
++      ! Free the dummy allocations before doing the real allocations
++      call memfreempi(fmat_buff)
++      call memfreempi(dmat_buff)
+       call memallocmpi(nelement_d*8,dmat_p)
+       call memallocmpi(nelement_f*8,fmat_p)
+ #endif
+--- Dalton-2018.2.orig/DALTON/cc/ccsd_input.F	2019-06-06 14:08:22.000000000 +0200
++++ Dalton-2018.2/DALTON/cc/ccsd_input.F	2019-06-06 15:17:44.925381103 +0200
+@@ -101,6 +101,7 @@
+       LOGICAL   SET, NEWDEF, SIRFF
+       CHARACTER PROMPT*1, WORD*7, TABLE(NTABLE)*7, WORD1*7
+       CHARACTER*(80) LINE
++      INTEGER ITEST
+ C
+       SAVE SET
+ CSONIA/FRAN/TBPEDERSEN
+@@ -138,6 +139,8 @@
+ C
+       IF (SET) RETURN
+       SET = .TRUE.
++
++      ITEST = 0
+ C
+ CSPAS:8/11-13: Initialization of CCSDINP, CCLR, CCSDSYM 
+ C              and other common blocks is moved to a new routine
+--- Dalton-2018.2.orig/DALTON/sirius/sirqmmm.F	2019-06-06 14:08:22.000000000 +0200
++++ Dalton-2018.2/DALTON/sirius/sirqmmm.F	2019-06-06 15:17:44.926381094 +0200
+@@ -4333,6 +4333,8 @@
+       CALL MPIXBCAST(CONMAT,1,'LOGICAL',MASTER)
+ 
+       KELF    = 1
++      KELFEL  = 1
++      KELFNU  = 1
+       IF (SPLDIP) THEN
+          KELFEL = KELF   + 3*POLDIM
+          KELFNU = KELFEL + 3*POLDIM

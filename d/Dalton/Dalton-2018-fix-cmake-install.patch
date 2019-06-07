@@ -1,0 +1,26 @@
+--- Dalton-2018.2.orig/cmake/ConfigMakeInstall.cmake	2019-06-06 14:08:23.000000000 +0200
++++ Dalton-2018.2/cmake/ConfigMakeInstall.cmake	2019-06-06 15:17:44.918381169 +0200
+@@ -1,4 +1,4 @@
+-set(INSTALL_DIRECTORY "dalton")
++set(INSTALL_DIRECTORY ".")
+ 
+ # create install directory
+ install(
+@@ -11,7 +11,7 @@
+     foreach(_executable dalton.x)
+         install(
+             TARGETS ${_executable}
+-            DESTINATION ${INSTALL_DIRECTORY}
++            DESTINATION ${INSTALL_DIRECTORY}/bin
+             PERMISSIONS
+             OWNER_READ OWNER_WRITE OWNER_EXECUTE
+             GROUP_READ             GROUP_EXECUTE
+@@ -23,7 +23,7 @@
+ foreach(_script dalton)
+     install(
+         FILES ${CMAKE_BINARY_DIR}/${_script}
+-        DESTINATION ${INSTALL_DIRECTORY}
++        DESTINATION ${INSTALL_DIRECTORY}/bin
+         PERMISSIONS
+         OWNER_READ OWNER_WRITE OWNER_EXECUTE
+         GROUP_READ             GROUP_EXECUTE

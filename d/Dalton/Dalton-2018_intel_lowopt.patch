@@ -1,0 +1,15 @@
+--- Dalton-2018.2.orig/cmake/compilers/FortranFlags.cmake	2019-06-06 14:08:23.000000000 +0200
++++ Dalton-2018.2/cmake/compilers/FortranFlags.cmake	2019-06-06 15:17:44.932381038 +0200
+@@ -69,6 +69,12 @@
+             "${CMAKE_Fortran_FLAGS} -Qoption,ld,-w"
+             )
+     endif()
++    set(O1_OPT_FORTRAN
++        DALTON/choles/cc_chopt.F
++        DALTON/cc/cc_r12ccsd.F
++        )
++    SET_SOURCE_FILES_PROPERTIES(${O1_OPT_FORTRAN} PROPERTIES COMPILE_FLAGS "-O1")
++
+     set(reorder_definitions " --nocollapse ${reorder_definitions}")
+ endif()
+ 

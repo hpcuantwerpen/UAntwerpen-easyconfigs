@@ -1,0 +1,65 @@
+easyblock = 'CMakeMake'
+
+name = 'Dalton'
+version = '2018.2'
+versionsuffix = '-i8'
+
+homepage = 'http://daltonprogram.org/'
+description = """The Dalton code is a powerful tool for a wide range of molecular properties
+ at different levels of theory.
+ Any published work arising from use of one of the Dalton2018 programs
+ must acknowledge that by a proper reference,
+ http://www.daltonprogram.org/citation.html."""
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+toolchainopts = {'i8': True, 'usempi': True, 'openmp': True}
+
+# git clone --recursive https://gitlab.com/dalton/dalton.git
+# git checkout -b Dalton2018.2
+# git submodule update
+# to fetch source, then make the bizpped tarball
+# tar cjvf Dalton-2018.2.tar.bz2 --exclude .git --exclude .gitmodules --exclude .gitignore Dalton-2018.2/
+sources = [SOURCE_TAR_BZ2]
+patches = [
+    '%(name)s-%(version_major)s-fix-cmake-install.patch',
+    '%(name)s-%(version_major)s-use-EB-install-for-dalton-script.patch',
+    '%(name)s-%(version_major)s-fix-uninits.patch',
+    '%(name)s-%(version_major)s-fix-bad-includepath-add.patch',
+#    '%(name)s-%(version_major)s_cmake-obey-EB-variables.patch',
+    '%(name)s-%(version_major)s_intel_lowopt.patch',
+]
+checksums = [
+    # Dalton-2018.2.tar.bz2
+    '76e9adb0d66caca714d977f1a43ed812c8625d0adf1edee6e756ebc7a4d430ac',
+    # Dalton-2018-fix-cmake-install.patch
+    '5cc0d0d04c476485b5ff444981f26cbfa46c0fa961a8028ae16c656d448ea329',
+    # Dalton-2018-use-EB-install-for-dalton-script.patch
+    '3812c9d556c7d2ac846094ab9040069f6e0e62ed2253f1901e507c75b815fabf',
+    # Dalton-2018-fix-uninits.patch
+    'ec1f9b54d96740aeec9f5096b3ad8f582caf78b038099ee3cf3534732662c9ac',
+    # Dalton-2018-fix-bad-includepath-add.patch
+    '19648981dc08ff720b29cf1d805a4878ad63ca7414a3803d141f6a541ea025be',
+    # Dalton-2016_cmake-obey-EB-variables.patch
+#    '69c6d9c110c78c064544052ae5dcb8721f49744f7a5cbf3a0f4d1170d7d22927',
+    # Dalton-2018_intel_lowopt.patch
+    '7ec19dda8930d7756592d2f31c13f09d387a5bd7a093cb18378ee1736ff53624',
+]
+
+builddependencies = [('CMake', '3.9.1', '', True)]
+
+separate_build_dir = True
+
+configopts = '-DCMAKE_BUILD_TYPE=RELEASE '
+configopts += '-DENABLE_MPI=ON '
+configopts += '-DENABLE_OMP=ON '
+# Only enable for BLAS/LAPACK having 8 byte integers (basically MKL) adjust the configopts 'i8' option accordingly
+configopts += '-DENABLE_64BIT_INTEGERS=ON '
+configopts += '-DENABLE_SCALAPACK=ON '
+configopts += '-DBLACS_IMPLEMENTATION=intelmpi '
+
+sanity_check_paths = {
+    'files': ['bin/dalton', 'bin/dalton.x'],
+    'dirs': ['basis'],
+}
+
+moduleclass = 'chem'
