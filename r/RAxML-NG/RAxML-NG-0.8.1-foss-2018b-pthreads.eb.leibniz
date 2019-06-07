@@ -1,0 +1,61 @@
+easyblock = 'CMakeMake'
+
+name = 'RAxML-NG'
+version = '0.8.1'
+versionsuffix = '-pthreads'
+
+homepage = 'https://github.com/amkozlov/raxml-ng'
+description = ("RAxML-NG is a phylogenetic tree inference tool which uses maximum-likelihood (ML)\n"
+               "optimality criterion. Its search heuristic is based on iteratively performing a\n"
+               "series of Subtree Pruning and Regrafting (SPR) moves, which allows to quickly\n"
+               "navigate to the best-known ML tree. RAxML-NG is a successor of RAxML (Stamatakis\n"
+               "2014) and leverages the highly optimized likelihood computation implemented in\n"
+               "libpll (Flouri et al. 2014).\n"
+               "This version was compiled with support for multithreading and can use only one\n"
+               "node.\n")
+
+toolchain = {'name': 'foss', 'version': '2018b'}
+# Optimization target is provided by the RAxML and PLL-modules configure scripts.
+toolchainopts = {'optarch': False}
+
+# You should not use the source files distributed via GitHub, but generate your own as 
+# otherwise the pllmod library sources are not included.
+# git clone --recursive https://github.com/amkozlov/raxml-ng
+# cd raxml-ng
+# git checkout tags/0.8.1
+# cd raxml-ng
+# Copy the CMakeLists.txt file specifically prepared for compiling with Intel in the future
+#   (currently problems with compiling terraphast)
+# rm -rf .git .gitignore .gitmodules
+# cd ..
+# tar -cf 0.8.1.tar raxml-ng
+# gzip -9 0.8.1.tar.gz
+# cp 0.8.1.tar.gz /apps/antwerpen/sources/r/RAxML-NG
+sources = ['%(version)s.tar.gz']
+# Wrong URL to make sure the sources are not found.
+source_urls = ['https://github.com/amkozlov/raxml-ng/']
+#source_urls = ['https://github.com/amkozlov/raxml-ng/archive/']
+
+builddependencies = [
+    ( 'buildtools', '2018b',    '', True ),
+    ( 'flex',       '2.6.4',    '', True ),
+    ( 'Bison',      '3.0.5',    '', True ),
+    ( 'gtest',      '1.8.1' ),
+]
+
+separate_build_dir = True
+
+configopts = ' -DENABLE_RAXML_SIMD=AVX2 -DENABLE_PLLMOD_SIMD=AVX -DCMAKE_CXX_FLAGS_RELEASE="" -DGTEST_ROOT=$EBROOTGTEST .'
+buildopts = ' && cd ../raxml-ng && mkdir -p %(installdir)s && cp -r bin %(installdir)s/'
+
+parallel = 1
+
+
+skipsteps = ['install']
+
+sanity_check_paths = {
+    'files': ["bin/raxml-ng"],
+    'dirs': [],
+}
+
+moduleclass = 'bio'
