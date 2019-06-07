@@ -1,0 +1,89 @@
+easyblock = 'Bundle'
+
+name = 'GROMACS'
+version = '2019.2'
+versionsuffix = '-UArecipe-CUDA'
+
+homepage = 'http://www.gromacs.org'
+
+whatis = [
+    'Description: GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles.',
+    'This module is built using our own UAntwerp-recipes that follow closely the instructions of the GROMACS authors.',
+]
+
+description = """
+GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the
+Newtonian equations of motion for systems with hundreds to millions of
+particles.
+
+Binaries included:
+* gmx_mpi: Compiled with support for MPI, OpenMP and GPU. The built-in ThreadMPI
+  support is turned off. (GPU versions do not support GMX_DOUBLE)
+These binaries were built using our own UAntwerp recipes that follow closely
+the instructions of the GROMACS authors and leave their choice of compiler
+options as much as possible untouched.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+toolchainopts = {'openmp': False, 'usempi': False}
+
+dependencies = [('CUDA', '10.0.130', '', True)]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),   # For CMake
+]
+
+source_urls = ['ftp://ftp.gromacs.org/pub/gromacs/']
+
+# Problems with Bundle in EasyBuild 3.6.2:
+# - It is not possible to specify separate_start_dir. It is rejected in the 
+#   component specs and not honoured when defined as a variable the way it is 
+#   done in a regular CMakeMake EasyConfig.
+# - It only does the build and install steps for each component but does not
+#   run the tests. So we do it through the buildopts. runtest as a field is
+#   not honoured. And as a variable, it cause Bundle to malfunction.
+default_easyblock = 'CMakeMake'
+default_component_specs = {
+    'sources':   [SOURCELOWER_TAR_GZ],
+    'checksums': [ 'bcbf5cc071926bc67baa5be6fb04f0986a2b107e1573e15fadcb7d7fc4fb9f7e',  # shasum -a 256 gromacs-2019.2.tar.gz
+                 ],
+    'preconfigopts' : '( [ -f CMakeCache.txt ] && /bin/rm CMakeCache.txt ) ; ' +
+                      '( [ -f Makefile ] && make clean ) ; ' ,
+    'buildopts' : 'all check -j 20',
+#    'installopts' : 'clean',   # To completely remove the build so that a new one can start clean.
+    'start_dir':   '%(namelower)s-%(version)s',
+}
+
+# Hopper:
+# compflags = '-no-ftz'
+# Leibniz:
+compflags = ''
+sercompsel = "-DCMAKE_C_COMPILER='icc'    -DCMAKE_CXX_COMPILER='icpc'    -DCMAKE_C_FLAGS='%(flags)s' -DCMAKE_CXX_FLAGS='%(flags)s' " % {'flags' : compflags}
+mpicompsel = "-DCMAKE_C_COMPILER='mpiicc' -DCMAKE_CXX_COMPILER='mpiicpc' -DCMAKE_C_FLAGS='%(flags)s' -DCMAKE_CXX_FLAGS='%(flags)s' " % {'flags' : compflags}
+gmxbaseopts  = "-DGMX_PREFER_STATIC_LIBS=ON "
+gmxbaseopts += "-DGMX_OPENMP=ON "
+gmxbaseopts += "-DGMX_SIMD=AUTO "
+gmxbaseopts += "-DGMX_GPU=ON "
+gmxbaseopts += "-DGMX_X11=OFF "
+gmxbaseopts += "-DGMX_FFT_LIBRARY=mkl -DGMX_EXTERNAL_BLAS=ON -DGMX_EXTERNAL_LAPACK=ON "
+
+components = [
+    ('GROMACS', version, {
+        'configopts': sercompsel + gmxbaseopts + "-DGMX_MPI=OFF -DGMX_THREAD_MPI=ON  -DGMX_DOUBLE=OFF ",
+    }),
+    ('GROMACS', version, {
+        'configopts': mpicompsel + gmxbaseopts + "-DGMX_MPI=ON  -DGMX_THREAD_MPI=OFF -DGMX_DOUBLE=OFF ",
+    }),
+] 
+
+# This does what GMXRC.bash does except that it does not enable the command completion.
+modextravars = {
+    'GROMACS_DIR': "%(installdir)s",
+    'GMXBIN':      "%(installdir)s/bin",
+    'GMXLDLIB':    "%(installdir)s/lib64",
+    'GMXMAN':      "%(installdir)s/share/man",
+    'GMXDATA':     "%(installdir)s/share/data",
+}
+
+moduleclass = 'bio'
+
