@@ -1,0 +1,20 @@
+easyblock = 'Tarball'
+
+name = 'VESTA'
+version = '3.4.6'
+
+homepage = 'http://jp-minerals.org/vesta/en/'
+description = """VESTA is a 3D visualization program for structural models, 
+volumetric data such as electron/nuclear densities, and crystal morphologies."""
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+sources = ['%(name)s-x86_64.tar.bz2']
+source_urls = ['http://jp-minerals.org/vesta/archives/%(version)s/']
+
+sanity_check_paths = {
+    'files': ['VESTA'],
+    'dirs': ['elements', 'img', 'Library_License', 'PowderPlot', 'STRUCTURE_TIDY'],
+}
+
+modextrapaths = { 'LD_LIBRARY_PATH': "." }
