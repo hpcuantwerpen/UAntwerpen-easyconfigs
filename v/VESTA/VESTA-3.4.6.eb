@@ -17,4 +17,7 @@ sanity_check_paths = {
     'dirs': ['elements', 'img', 'Library_License', 'PowderPlot', 'STRUCTURE_TIDY'],
 }
 
-modextrapaths = { 'LD_LIBRARY_PATH': "." }
+modextrapaths = {
+    'LD_LIBRARY_PATH': ".",
+    'PATH' : ".",
+}
