@@ -13,7 +13,7 @@ source_urls = ['https://github.com/opencollab/arpack-ng/archive/']
 sources = ['%(version)s.tar.gz']
 checksums = ['673c8202de996fd3127350725eb1818e534db4e79de56d5dcee8c00768db599a']
 
-#builddependencies = [('Autotools', '20170619')]
+builddependencies = [('buildtools', '%(toolchain_version)s', '', True)] # for autoconf
 
 preconfigopts = "sh bootstrap && "
 configopts = '--enable-icb --enable-mpi --with-pic --with-blas="$LIBBLAS" --with-lapack="$LIBLAPACK"'

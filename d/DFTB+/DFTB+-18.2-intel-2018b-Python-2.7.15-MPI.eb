@@ -4,15 +4,24 @@ name = 'DFTB+'
 version = '18.2'
 versionsuffix = '-Python-%(pyver)s-MPI'
 
-homepage = 'https://www.dftb-plus.info'
-description = """DFTB+ is a fast and efficient versatile quantum mechanical simulation package.  It is based on the 
- Density Functional Tight Binding (DFTB) method, containing almost all of the useful extensions which have been
- developed for the DFTB framework so far.  Using DFTB+ you can carry out quantum mechanical simulations like with
- ab-initio density functional theory based packages, but in an approximate way gaining typically around two order of
- magnitude in speed.
+homepage = 'https://www.dftbplus.org'
+whatis = [
+    "Description: quantum mechanical simulation package based on the Density Functional Tight Binding method",
+]
 
- This installation of DFTB+ supports MPI and hybrid MPI/OpenMP parallelism.  Due to limitations in DFTB+, the MPI
- version does not perform TD-DFTB calculations (use the OpenMP-only version instead)."""
+description = """
+DFTB+ is a fast and efficient versatile quantum mechanical simulation
+package.  It is based on the Density Functional Tight Binding (DFTB)
+method, containing almost all of the useful extensions which have been
+developed for the DFTB framework so far.  Using DFTB+ you can carry
+out quantum mechanical simulations like with ab-initio density
+functional theory based packages, but in an approximate way gaining
+typically around two orders of magnitude in speed.
+
+This module supports MPI and hybrid MPI/OpenMP parallelism, but can't
+perform perform TD-DFTB calculations.  You can use the pure OpenMP
+DFTB+ module for TD-DFTB calculations.
+"""
 
 toolchain = {'name': 'intel', 'version': '2018b'}
 
@@ -23,12 +32,11 @@ checksums = [
 ]
 
 builddependencies = [
-    ('M4', '1.4.18'),
+    ('buildtools', '%(toolchain_version)s', '', True), # for M4
 ]
 
 dependencies = [
     ('Python', '2.7.15'),
-    ('arpack-ng', '3.6.2'),
 ]
 
 skipsteps = ['configure']

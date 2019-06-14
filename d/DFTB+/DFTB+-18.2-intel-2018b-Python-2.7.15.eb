@@ -4,14 +4,23 @@ name = 'DFTB+'
 version = '18.2'
 versionsuffix = '-Python-%(pyver)s'
 
-homepage = 'https://www.dftb-plus.info'
-description = """DFTB+ is a fast and efficient versatile quantum mechanical simulation package.  It is based on the 
- Density Functional Tight Binding (DFTB) method, containing almost all of the useful extensions which have been
- developed for the DFTB framework so far.  Using DFTB+ you can carry out quantum mechanical simulations like with
- ab-initio density functional theory based packages, but in an approximate way gaining typically around two order of
- magnitude in speed.
+homepage = 'https://www.dftbplus.org'
+whatis = [
+    "Description: quantum mechanical simulation package based on the Density Functional Tight Binding method",
+]
 
- This installation of DFTB+ only supports OpenMP shared memory parallelism."""
+description = """
+DFTB+ is a fast and efficient versatile quantum mechanical simulation
+package.  It is based on the Density Functional Tight Binding (DFTB)
+method, containing almost all of the useful extensions which have been
+developed for the DFTB framework so far.  Using DFTB+ you can carry
+out quantum mechanical simulations like with ab-initio density
+functional theory based packages, but in an approximate way gaining
+typically around two orders of magnitude in speed.
+
+This module only supports OpenMP shared memory parallelism.  Use the
+MPI version of the module if you need to scale to more than one node.
+"""
 
 toolchain = {'name': 'intel', 'version': '2018b'}
 
