@@ -12,6 +12,7 @@ easyblock = "CMakeMake"
 
 name = 'SPAdes'
 version = '3.13.1'
+versionsuffix = '-Python-%(pyver)s'
 
 homepage = 'http://cab.spbu.ru/software/spades/'
 
