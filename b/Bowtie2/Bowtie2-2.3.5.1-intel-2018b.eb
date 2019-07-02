@@ -35,7 +35,7 @@ toolchain = {'name': 'intel', 'version': '2018b'}
 sources = ['%(namelower)s-%(version)s-source.zip']
 source_urls = [('http://sourceforge.net/projects/bowtie-bio/files/%(namelower)s/%(version)s', 'download')]
 checksums = ['335c8dafb1487a4a9228ef922fbce4fffba3ce8bc211e2d7085aac092155a53f']
-patches = ['bowtie2-2.3.5.1_CMake_Intel.patch']   # Patch makes sure that no GNU-specific options are added.
+patches = ['Bowtie2-2.3.5.1_CMake_Intel.patch']   # Patch makes sure that no GNU-specific options are added.
 
 toolchainopts = {'cstd': 'c++11'}
 
@@ -65,11 +65,6 @@ postinstallcmds = [
     'cp -r ../%(namelower)s-%(version)s/example      %(installdir)s',
     'cp -r ../%(namelower)s-%(version)s/scripts      %(installdir)s',
 ]
-
-#files_to_copy = [
-#    (["bowtie2", "bowtie2-align-l", "bowtie2-align-s", "bowtie2-build", "bowtie2-build-l", "bowtie2-build-s",
-#      "bowtie2-inspect", "bowtie2-inspect-l", "bowtie2-inspect-s"], 'bin'),
-#    "LICENSE", "doc", "example", "scripts", "MANUAL", "MANUAL.markdown", "NEWS"]
 
 sanity_check_paths = {
     'files': ['bin/bowtie2-align-l', 'bin/bowtie2-build-l', 'bin/bowtie2-inspect-l', 
