@@ -1,0 +1,92 @@
+# This file is an EasyBuild reciPY as per https://github.com/hpcugent/easybuild
+# Author: Pablo Escobar Lopez
+# sciCORE - University of Basel
+# SIB Swiss Institute of Bioinformatics 
+# 3.9.0:
+# Modified by:
+# Adam Huffman
+# The Francis Crick Institute
+# 3.10.1: Modified by Kurt Lust (UAntwerpen) for Intel.
+
+easyblock = "CMakeMake"
+
+name = 'SPAdes'
+version = '3.13.1'
+
+homepage = 'http://cab.spbu.ru/software/spades/'
+
+whatis = [
+    'Description: Genome assembler for single-cell and isolates data sets (shared memory program).',
+]
+
+description = """
+SPAdes – St. Petersburg genome assembler – is an assembly toolkit containing
+various assembly pipelines. 
+
+The current version of SPAdes works with Illumina or IonTorrent reads and is
+capable of providing hybrid assemblies using PacBio, Oxford Nanopore and Sanger
+reads. You can also provide additional contigs that will be used as long reads.
+
+SPAdes OpenMP, so it is better to set OMP_NUM_THREADS.
+"""
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+source_urls = ['http://cab.spbu.ru/files/release%(version)s']
+sources = [SOURCE_TAR_GZ]
+
+#patches = ['SPAdes-%(version)s_intel.patch']
+
+builddependencies = [
+    ( 'buildtools', '%(toolchain_version)s',  '', True),
+]
+
+dependencies = [
+    ('zlib',        '1.2.11'),
+    ('bzip2',       '1.0.6'),
+    ('Python',      '3.7.1'),
+    ('Boost',       '1.68.0', '-Python-%(pyver)s' ),  # Can use an internal Boost instead so you may leave this out.
+]
+
+start_dir = 'src'
+
+separate_build_dir = True
+# Use maxparallel = 1 to better find compile errors as the output is clearer.
+#maxparallel = 1
+
+configopts  = '-DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RELEASE '
+# Need to specify zlib, otherwise it takes the system one.
+configopts += '-DZLIB_LIBRARY=$EBROOTZLIB/lib/libz.so '
+configopts += '-DZLIB_INCLUDE_DIR=$EBROOTZLIB/include '
+# Need to specify BZIP2 location
+configopts += '-DBZIP2_LIBRARIES=$EBROOTBZIP2/lib '
+configopts += '-DBZIP2_INCLUDE_DIR=$EBROOTBZIP2/include '
+# We'll do a very dirty trick. Even though we claim this is an Intel compiled binary,
+# we actually use the GCC compiler from the toolchain since the code does not compile
+# properly with the Intel compilers.
+configopts += '-DCMAKE_CXX_COMPILER=g++ '
+configopts += '-DCMAKE_CXX_FLAGS="-O3 -march=native" '
+
+# Note that we found two programs that are not installed. However, they are also not in
+# the list of executables that should be present after a successful installation according
+# to the instructions on GitHub
+# - spades_init.py in in the bin directory but not executable
+# - spades-read-filter isn't even copied to the bin directory
+# The following lines can install these programs should they be needed:
+#postinstallcmds = [
+#    'cp bin/spades-read-filter %(installdir)s/bin ',  # Don't know why this one is not copied by the install procedure.
+#    'chmod a+x %(installdir)s/bin/spades_init.py',    # Don't know why this one is not executable after install, though according to GitHub it may not be needed
+#]
+
+sanity_check_commands = [('spades.py', '--test')]
+
+sanity_check_paths = {
+    'files': ["bin/%s" % x for x in ["spades-bwa", "spades-core", "spades-corrector-core", "spades-gbuilder",
+                                     "spades-gmapper", "spades-hammer", "spades-ionhammer", "spades-kmercount",
+                                     "spades-truseq-scfcorrection",
+                                     'spades.py', 'metaspades.py', 'plasmidspades.py', 'rnaspades.py', 'truspades.py'
+                                     ]],
+    'dirs': ['share/spades'],
+}
+
+moduleclass = 'bio'
