@@ -1,0 +1,104 @@
+##
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+#
+# Copyright:: Copyright 2012-2014 Uni.Lu/LCSB, NTUA
+# Authors::   Fotis Georgatos <fotis@cern.ch>, Kenneth Hoste (UGent)
+# License::   MIT/GPL
+# $Id$
+#
+# This work implements a part of the HPCBIOS project and is a component of the policy:
+# http://hpcbios.readthedocs.org/en/latest/HPCBIOS_2012-94.html
+##
+
+easyblock = 'ConfigureMake'
+
+name = 'BLAST+'
+version = '2.9.0'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'http://blast.ncbi.nlm.nih.gov/'
+
+whatis = [
+    "Description: BLAST+ or Basic Local Alignment Search Tool, a tool to find regions of similarity between biological sequences.",
+    "This module provides a range of executables iand static libraries, compiled with MPI support.",
+]
+
+description = """
+The Basic Local Alignment Search Tool (BLAST) finds regions of local similarity
+between sequences. The program compares nucleotide or protein sequences to
+sequence databases and calculates the statistical significance of matches. BLAST
+can be used to infer functional and evolutionary relationships between sequences
+as well as help identify members of gene families.
+
+This module is compiled with support for the LMDB in-memory database for speed.
+JPEG and PNG are supported for graphics. BLAST+ was compiled with MPI support.
+"""
+
+docurls = [
+    "BLAST Command Line Application User Manual: https://www.ncbi.nlm.nih.gov/books/NBK279690/",
+    "BLAST Help: https://www.ncbi.nlm.nih.gov/books/NBK1762/",
+]
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+toolchainopts = {'cstd': 'c++14', 'usempi': True}
+
+source_urls = ['http://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/%(version)s/']
+sources = ['ncbi-blast-%(version)s+-src.tar.gz']
+# No patches seem to be needed to compile the 2.9.0 version with the Intel compilers and Boost 1.68.0.
+checksums = [
+    'a390cc2d7a09422759fc178db84de9def822cbe485916bbb2ec0d215dacdc257',  # ncbi-blast-2.9.0+-src.tar.gz
+]
+
+dependencies = [
+# The following modules are optional, as there are backup versions included in the setup.
+# But be sure to add the matching options to configopts when using the modules.
+    ('zlib',          '1.2.11'),
+    ('bzip2',         '1.0.6'),
+    ('PCRE',          '8.41'),
+# Each of the following modules needs matching options for the configure process
+    ('Python',        '3.7.1'),
+    ('Boost',         '1.68.0', versionsuffix),
+    ('GMP',           '6.1.2'),
+    ('libpng',        '1.6.34'),
+    ('libjpeg-turbo', '1.5.3'),
+    ('LMDB',          '0.9.22'),
+]
+
+# configure script uses -openmp with Intel compilers, which is no longer valid (-fopenmp is more generic than -qopenmp)
+configopts  = "OPENMP_FLAGS='-fopenmp'"
+configopts += '--with-64 '
+
+# Select library type
+configopts += '--with-static '   # Build failed when --with-dll was added.
+# Executables to generate
+configopts += '--with-static-exe --with-bin-release --without-debug --with-strip '
+# Use a couple of build-in libraries rather than their independent
+# counterpart, even if they are installed in seperate modules, to reduce dependencies.
+# configopts += '--without-z --without-bz2 --without-pcre '
+configopts += '--with-z=$EBROOTZLIB --with-bz2=$EBROOTBZIP2 --with-pcre=$EBROOTPCRE '
+# Enable support for SRA/VDB. Don't use a version that is already on the system,
+# but just get it from GitHub and compile into BLAST+. This again reduces dependencies.
+##configopts += '--with-downloaded-vdb '
+
+# Make sure it is compatible with the Python used by Boost should you enable
+# support for a Boost module with Python support
+configopts += '--with-python=$EBROOTPYTHON '
+# Uncomment/comment the following line to enable/disable Boost
+configopts += '--with-boost=$EBROOTBOOST '
+
+# Uncomment/comment to enable/disable the use of GMP
+configopts += '--with-gmp=$EBROOTGMP '
+# Uncomment/coment to enable/disable PNG-support
+configopts += '--with-png=$EBROOTLIBPNG '
+# Uncomment/comment to enable/disable JPEG-support
+configopts += '--with-jpeg=$EBROOTLIBJPEGMINTURBO '
+# Uncomment/coment to enable/disable LMDB support
+configopts += '--with-lmdb=$EBROOTLMDB '
+
+
+sanity_check_paths = {
+    'files': ['bin/blastn', 'bin/blastp', 'bin/blastx'],
+    'dirs': []
+}
+
+moduleclass = 'bio'
