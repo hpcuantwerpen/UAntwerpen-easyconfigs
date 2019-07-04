@@ -56,6 +56,9 @@ skipsteps = ['install']  # Bowtie 2.3.5.1 still does not have an install Makefil
 postinstallcmds = [
     'mkdir -p %(installdir)s/bin',
     'cp bowtie2-* %(installdir)s/bin',
+    'cp ../%(namelower)s-%(version)s/bowtie2         %(installdir)s/bin',
+    'cp ../%(namelower)s-%(version)s/bowtie2-build   %(installdir)s/bin',
+    'cp ../%(namelower)s-%(version)s/bowtie2-inspect %(installdir)s/bin',
     'cp ../%(namelower)s-%(version)s/LICENSE         %(installdir)s',
     'cp ../%(namelower)s-%(version)s/README.md       %(installdir)s',
     'cp ../%(namelower)s-%(version)s/MANUAL          %(installdir)s',
@@ -67,7 +70,8 @@ postinstallcmds = [
 ]
 
 sanity_check_paths = {
-    'files': ['bin/bowtie2-align-l', 'bin/bowtie2-build-l', 'bin/bowtie2-inspect-l', 
+    'files': ['bin/bowtie2', 'bin/bowtie2-build', 'bin/bowtie2-inspect',
+              'bin/bowtie2-align-l', 'bin/bowtie2-build-l', 'bin/bowtie2-inspect-l', 
               'bin/bowtie2-align-s', 'bin/bowtie2-build-s', 'bin/bowtie2-inspect-s'],
     'dirs':  ['doc', 'example', 'scripts'],
 }
