@@ -30,6 +30,11 @@ The module enables:
 - NEC MPI: version %(mpiversion)s
 - NLC (NEC Numerical Library Collection): version %(nlcversion)s
 It currently provides no commands.
+
+When using this version of the compilers, it has become necessary to use the
+option -static when linking since a newer version of the profiler library
+otherwise expects to find a libncc.so.2 which is not present in this 
+version of the compilers.
 """ % {
     'cversion'   : nccversion,
     'fversion'   : nfortversion,
@@ -77,5 +82,12 @@ modextravars = {
     'AURLIC_SERVER_HOSTNAME': 'localhost',
     'AURLIC_SERVER_PORT':     '7300',
 }
+
+modloadmsg = """
+When using this version of the compilers, it has become necessary to use the
+option -static when linking since a newer version of the profiler library
+otherwise expects to find a libncc.so.2 which is not present in this 
+version of the compilers.
+"""
 
 moduleclass = 'tools'
