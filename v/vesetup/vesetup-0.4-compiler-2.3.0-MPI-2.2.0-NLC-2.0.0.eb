@@ -1,0 +1,81 @@
+easyblock = 'Bundle'
+
+name = 'vesetup'
+version = '0.4'
+
+nccversion   = '2.3.0'
+nfortversion = '2.3.0'
+mpiversion   = '2.2.0'
+nlcversion   = '2.0.0'
+
+versionsuffix = '-compiler-%(cversion)s-MPI-%(mpiversion)s-NLC-%(nlcversion)s' % {
+    'cversion'   : nccversion,
+    'mpiversion' : mpiversion,
+    'nlcversion' : nlcversion
+    }
+
+homepage = 'https://www.hpc.nec/documents/'
+
+whatis = [
+    'Description: vesetup is a module to set up the environment to use the VEs of the SX-Aurora TSUBASA system at UAntwerpen',
+]
+
+description = """
+This module sets up the environment ot use the vector processors of the NEC
+SX-Aurora TSUBASA system at UAntwerp.
+
+The module enables:
+- C/C++ compiler: version %(cversion)s
+- Fortran compiler: version %(fversion)s
+- NEC MPI: version %(mpiversion)s
+- NLC (NEC Numerical Library Collection): version %(nlcversion)s
+It currently provides no commands.
+""" % {
+    'cversion'   : nccversion,
+    'fversion'   : nfortversion,
+    'mpiversion' : mpiversion,
+    'nlcversion' : nlcversion
+}
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+dependencies = []
+builddependencies = []
+
+necroot   = '/opt/nec'
+nccroot   = necroot + '/ve/ncc/'   + nccversion
+nfortroot = necroot + '/ve/nfort/' + nfortversion
+nmpiroot  = necroot + '/ve/mpi/'   + mpiversion
+nlcroot   = necroot + '/ve/nlc/'   + nlcversion
+
+allow_prepend_abs_path = True
+modextrapaths = {
+    'PATH':               nmpiroot + '/bin64:'     + nccroot + '/bin:'     + nfortroot + '/bin:'   + 
+                          necroot + '/ve/bin',
+    'LD_LIBRARY_PATH':    nmpiroot + '/lib64:'                             + nfortroot + '/lib64:' + 
+                          necroot + '/ve/lib',
+    'VE_LD_LIBRARY_PATH': nmpiroot + '/lib64/ve:'  + nccroot + '/lib:'     + nfortroot + '/lib:'   + 
+                          necroot + '/ve/lib:'     + nlcroot + '/lib',
+    'VE_LIBRARY_PATH':    nmpiroot + '/lib64/ve:'  + nccroot + '/lib:'     + nfortroot + '/lib:'   + 
+                          necroot + '/ve/lib:'     + nlcroot + '/lib',
+#    'NCC_INCLUDE_PATH':   nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
+#                          necroot + '/ve/include:' + nlcroot + '/include',
+#    'NFORT_INCLUDE_PATH': nmpiroot + '/include:'   + nccroot + '/include:' + nfortroot + '/include:' +
+#                          necroot + '/ve/include:' + nlcroot + '/include/mod' + nlcroot + '/include',
+    'NCC_INCLUDE_PATH':   nmpiroot + '/include:'   + nfortroot + '/include:' +
+                          nlcroot + '/include',
+    'NFORT_INCLUDE_PATH': nmpiroot + '/include:'   + nccroot + '/include:' +
+                          nlcroot + '/include/mod' + nlcroot + '/include',
+    'MANPATH':            necroot  + '/ve/share/man',
+    'INFOPATH':           necroot  + '/ve/share/info',    
+}
+modextravars = {
+    'NMPI_ROOT':   nmpiroot,
+    'MPI_PREFIX':  nmpiroot,
+    'NLC_HOME':    nlcroot,
+    'ASL_HOME':    nlcroot,
+    'AURLIC_SERVER_HOSTNAME': 'localhost',
+    'AURLIC_SERVER_PORT':     '7300',
+}
+
+moduleclass = 'tools'
