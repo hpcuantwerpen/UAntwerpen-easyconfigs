@@ -1,0 +1,242 @@
+# NOTE: This module is developed at UAntwerp
+#
+# It is the first module we compile when starting a new toolchain.
+#
+# This bundle collects a number of GNU tools useful during the building process
+# and a few other tools.
+#
+# We do include a Flex and Bison even thoug they do contain libraries
+# for which some packages may want to use toolchain-specific versions. These 
+# packages should then just assure that module is loaded after buildtools.
+#
+easyblock = 'Bundle'
+
+name = 'buildtools'
+version = '2019b'
+
+# Version info:
+autoconf_version =  '2.69'     # Autoconf   20120424 - Check on https://ftp.gnu.org/gnu/autoconf/
+automake_version =  '1.16.1'   # Automake   20180311 - Check on https://ftp.gnu.org/gnu/automake/
+cmake_version =     '3.15.0'   # CMake      20190717 - Check on https://cmake.org/download/
+doxygen_version =   '1.8.15'   # Doxygen    20181227 - Check on http://www.doxygen.nl/download.html
+help2man_version =  '1.47.10'  # help2man   20190322 - Check on https://ftp.gnu.org/gnu/help2man/
+libtool_version =   '2.4.6'    # libtool    20150215 - Check on https://ftp.gnu.org/gnu/libtool/
+m4_version =        '1.4.18'   # M4         20161231 - Check on https://ftp.gnu.org/gnu/m4/
+make_version =      '4.2.1'    # Make       20160610 - Check on https://ftp.gnu.org/gnu/make/
+nasm_version =      '2.14.02'  # NASM       20181226 - Check on https://www.nasm.us/
+yasm_version =      '1.3.0'    # Yasm       20140810 - Check on https://yasm.tortall.net/Download.html
+pkgconfig_version = '0.29.2'   # pkg-config 20170320 - Check on https://pkgconfig.freedesktop.org/releases/
+gperf_version =     '3.1'      # gperf      20170105 - Check on https://ftp.gnu.org/gnu/gperf/
+sed_version =       '4.7'      # sed        20181221 - Check on https://ftp.gnu.org/gnu/sed/
+patchelf_version =  '0.10'     # patchelf   20190328 - Check on https://github.com/NixOS/patchelf/releases
+bison_version =     '3.4.1'    # Bison      20190521 - Check on http://ftp.gnu.org/gnu/bison/
+flex_version =      '2.6.4'    # flex       20170506 - Check on https://github.com/westes/flex/releases
+byacc_version =     '20190617' # byacc      20190617 - Check on ftp://ftp.invisible-island.net/byacc
+# Not yet included due to build problems:
+# SCons      3.0.0     20170918
+homepage = 'http://www.gnu.org'
+
+whatis = [
+    "Description: A bundle of often used build tools, GNU and others: autoconf, automake, libtool, M4, make, sed, CMake, NASM, Yasm, patchelf, pkg-config, gperf, help2man and Doxygen"
+]
+
+description = """
+A bundle of often used build tools, GNU and others: autoconf, automake, libtool, 
+M4, make, sed, Bison, flex, Berkeley Yacc (byacc), CMake, NASM, Yasm, patchelf,
+pkg-config, gperf, help2man and Doxygen.
+"""
+
+usage = """
+This bundle collects a number of standard tools that are often needed when 
+building software. Many of them are GNU tools.
++ GNU Autoconf %(autoconf)s    - https://www.gnu.org/software/autoconf/
++ GNU Automake %(automake)s  - https://www.gnu.org/software/automake/
++ GNU libtool %(libtool)s    - https://www.gnu.org/software/libtool/
++ GNU M4 %(m4)s        - https://www.gnu.org/software/m4/
++ GNU make %(make)s       - https://www.gnu.org/software/make/
++ GNU sed %(sed)s          - https://www.gnu.org/software/sed/
++ GNU Bison %(bison)s      - https://www.gnu.org/software/bison
++ GNU flex %(flex)s       - https://www.gnu.org/software/flex/
++ byacc %(byacc)s       - http://invisible-island.net/byacc/byacc.html
++ CMake %(cmake)s         - http://www.cmake.org/
++ NASM %(nasm)s         - http://www.nasm.us/
++ Yasm %(yasm)s           - http://yasm.tortall.net/
++ patchelf %(patchelf)s         - Modify the dynamic linker and RPATH of ELF executables,
+                         http://nixos.org/patchelf.html
++ pkg-config %(pkgconfig)s    - https://www.freedesktop.org/wiki/Software/pkg-config/
++ GNU gperf %(gperf)s        - https://www.gnu.org/software/gperf/
++ GNU help2man %(help2man)s  - https://www.gnu.org/software/help2man/
++ Doxygen %(doxygen)s       - http://www.doxygen.org/
+These tools are all build against the system libraries and have been used to 
+build several of the 2019a packages.
+""" % {
+    'autoconf'  : autoconf_version,
+    'automake'  : automake_version,
+    'libtool'   : libtool_version,
+    'm4'        : m4_version,
+    'make'      : make_version,
+    'sed'       : sed_version,
+    'bison'     : bison_version,
+    'flex'      : flex_version,
+    'byacc'     : byacc_version,
+    'cmake'     : cmake_version,
+    'nasm'      : nasm_version,
+    'yasm'      : yasm_version,
+    'patchelf'  : patchelf_version,
+    'pkgconfig' : pkgconfig_version,
+    'gperf'     : gperf_version,
+    'help2man'  : help2man_version,
+    'doxygen'   : doxygen_version,
+}
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+# source_urls = [GNU_SOURCE]
+
+dependencies = [ ]
+
+builddependencies = [
+#    ('flex',  flex_version),   # For Doxygen
+#    ('Bison', bison_version),  # For Doxygen
+]
+
+osdependencies = [
+    ('openssl-devel', 'libssl-dev', 'libopenssl-devel'), # For CMake
+    ('ncurses-devel'),                                   # For CMake
+#    ('python'),                                          # Voor SCons
+]
+
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+#    ('SCons', '3.0.0', {  # This does not yet work.
+#        'easyblock':   'PythonPackage',
+#        'sources':     [SOURCELOWER_TAR_GZ],
+#        'source_urls': ['http://prdownloads.sourceforge.net/%(namelower)s'],
+#        'start_dir':   '%(namelower)s-%(version)s',
+#        }),
+    ('pkg-config', pkgconfig_version, {
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': ['https://pkg-config.freedesktop.org/releases/'],
+        'checksums':   ['6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  " --with-internal-glib",
+        }),
+    ('Make', make_version, { # Uses pkg-config
+        'sources':     [SOURCELOWER_TAR_BZ2],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['d6e262bf3601b42d2b1e4ef8310029e1dcf20083c5446b4b7aa67081fdffc589'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('byacc', byacc_version, {
+        'sources':     [SOURCELOWER_TGZ],
+        'source_urls': ['ftp://ftp.invisible-island.net/byacc//'],
+        'checksums':   ['f87868167b920bf2cb30fc32b62f63ae15671181ef329226d1063100be02518d'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        }),
+    ('M4', m4_version, { # Uses gawk which for now we assume to be on the system
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['f2c1e86ca0a404ff281631bdc8377638992744b175afb806e25871a24a934e07'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('libtool', libtool_version, { # Uses M4
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('Autoconf', autoconf_version, { # Uses M4
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['64ebcec9f8ac5b2487125a86a7760d2591ac9e1d3dbd59489633f9de62a57684'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('Automake', automake_version, {
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['5d05bb38a23fd3312b10aea93840feec685bdf4a41146e78882848165d3ae921'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('help2man', help2man_version, {
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['f371cbfd63f879065422b58fa6b81e21870cd791ef6e11d4528608204aa4dcfb'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('Bison', bison_version, {
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['27159ac5ebf736dffd5636fd2cd625767c9e437de65baa63cb0de83570bd820d'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'buildopts':    'V=1',
+        'parallel':     '1',  # Building the examples fails in some Bison version when doing a parallel
+                              # build, likely due to incomplete dependencies and a file being removed
+                              # while it is still needed.
+        }),
+    ('flex', flex_version, {
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': ['https://github.com/westes/flex/releases/download/v' + flex_version + '/'],
+        'checksums':   ['e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('sed', sed_version, {
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['2885768cd0a29ff8d58a6280a270ff161f6a3deb5690b2be6c49f46d4c67bd6a'], 
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('CMake', cmake_version, {
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': ['https://cmake.org/files/v%(version_major_minor)s'],
+        'checksums':   ['0678d74a45832cacaea053d85a5685f3ed8352475e6ddf9fcb742ffca00199b5'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '-- -DCMAKE_USE_OPENSSL=1'
+        }),
+    ('gperf', gperf_version, {
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('NASM', nasm_version, {
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': ['http://www.nasm.us/pub/nasm/releasebuilds/%(version)s'],
+        'checksums':   ['e24ade3e928f7253aa8c14aa44726d1edf3f98643f87c9d72ec1df44b26be8f5'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('Yasm', yasm_version, {
+        # http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': ['http://www.tortall.net/projects/yasm/releases/'],
+        'checksums':   ['3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
+    ('patchelf', patchelf_version, {
+        'sources':       [ { 'download_filename' : '%(version)s.tar.gz',
+                             'filename'          : 'patchelf-%(version)s.tar.gz',
+                             'source_urls'       : ['https://github.com/NixOS/patchelf/archive/'],
+                         } ],
+        'checksums':     ['b3cb6bdedcef5607ce34a350cf0b182eb979f8f7bc31eae55a93a70a3f020d13'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'sh bootstrap.sh && '
+        }),
+    ('Doxygen', doxygen_version, {  # Note that the build process already requires CMake, flex and Bison
+        'easyblock':     'EB_Doxygen',
+        # Download as http://doxygen.nl/files/doxygen-1.8.15.src.tar.gz
+        'sources':       ['%(namelower)s-%(version)s.src.tar.gz'],
+        'source_urls':   ['http://doxygen.nl/files/'],
+        'checksums':     ['bd9c0ec462b6a9b5b41ede97bede5458e0d7bb40d4cfa27f6f622eb33c59245d'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        }),
+]
+#
+# Additions to consider:
+# - GNU coreutils: Not only for building, but several programs are used during the build proces of some codes.
+# - SCons: Werkt nog niet.
+#
+
+#parallel = 1
+
+moduleclass = 'devel'
