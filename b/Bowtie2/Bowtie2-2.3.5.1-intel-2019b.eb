@@ -1,0 +1,82 @@
+# This file is an EasyBuild reciPY as per https://github.com/hpcugent/easybuild
+# Author: Pablo Escobar Lopez
+# Swiss Institute of Bioinformatics
+# Biozentrum - University of Basel
+# Modified by: Robert Schmidt <rjeschmi@gmail.com>
+# Ottawa Hospital Research Institute - Bioinformatics Team
+# Modified by: Adam Huffman <adam.huffman@crick.ac.uk>
+# The Francis Crick Institute
+# Modified by: Kurt Lust, UAntwerp: Overwrite compiler options used in the GNU-based
+# Makefile with the preferred options for intel compilers.
+
+easyblock = 'CMakeMake'
+
+name    = 'Bowtie2'
+version = '2.3.5.1'
+
+homepage = 'http://bowtie-bio.sourceforge.net/bowtie2/index.shtml'
+
+whatis = [
+    "Description: Bowtie 2 is an ultrafast and memory-efficient tool for aligning sequencing reads to long reference sequences.",
+]
+
+description = """
+Bowtie 2 is an ultrafast and memory-efficient tool for aligning sequencing reads 
+to long reference sequences. It is particularly good at aligning reads of about
+50 up to 100s or 1,000s of characters, and particularly good at aligning to
+relatively long (e.g. mammalian) genomes. Bowtie 2 indexes the genome with an
+FM Index to keep its memory footprint small: for the human genome, its memory
+footprint is typically around 3.2 GB. Bowtie 2 supports gapped, local, and
+paired-end alignment modes.
+"""
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+
+sources = ['%(namelower)s-%(version)s-source.zip']
+source_urls = [('http://sourceforge.net/projects/bowtie-bio/files/%(namelower)s/%(version)s', 'download')]
+checksums = ['335c8dafb1487a4a9228ef922fbce4fffba3ce8bc211e2d7085aac092155a53f']
+patches = ['Bowtie2-2.3.5.1_CMake_Intel.patch']   # Patch makes sure that no GNU-specific options are added.
+
+toolchainopts = {'cstd': 'c++11'}
+
+dependencies = [ # Note that it uses TBB, but that is included with the Intel compilers.
+    ('baselibs', '%(toolchain_version)s',  '', ('GCCcore', '8.3.0')),
+]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s',  '', True),  # Bowtie2 supports CMake since 2.3.5.1, but needs a pretty recent version of it.
+]
+
+configopts = '-DPOPCNT_CAPABILITY=ON'
+
+separate_build_dir = True
+
+skipsteps = ['install']  # Bowtie 2.3.5.1 still does not have an install Makefile target
+
+postinstallcmds = [
+    'mkdir -p %(installdir)s/bin',
+    'cp bowtie2-* %(installdir)s/bin',
+    'cp ../%(namelower)s-%(version)s/bowtie2         %(installdir)s/bin',
+    'cp ../%(namelower)s-%(version)s/bowtie2-build   %(installdir)s/bin',
+    'cp ../%(namelower)s-%(version)s/bowtie2-inspect %(installdir)s/bin',
+    'cp ../%(namelower)s-%(version)s/LICENSE         %(installdir)s',
+    'cp ../%(namelower)s-%(version)s/README.md       %(installdir)s',
+    'cp ../%(namelower)s-%(version)s/MANUAL          %(installdir)s',
+    'cp ../%(namelower)s-%(version)s/MANUAL.markdown %(installdir)s',
+    'cp ../%(namelower)s-%(version)s/NEWS            %(installdir)s',
+    'cp -r ../%(namelower)s-%(version)s/doc          %(installdir)s',
+    'cp -r ../%(namelower)s-%(version)s/example      %(installdir)s',
+    'cp -r ../%(namelower)s-%(version)s/scripts      %(installdir)s',
+]
+
+sanity_check_paths = {
+    'files': ['bin/bowtie2', 'bin/bowtie2-build', 'bin/bowtie2-inspect',
+              'bin/bowtie2-align-l', 'bin/bowtie2-build-l', 'bin/bowtie2-inspect-l', 
+              'bin/bowtie2-align-s', 'bin/bowtie2-build-s', 'bin/bowtie2-inspect-s'],
+    'dirs':  ['doc', 'example', 'scripts'],
+}
+
+# to add script folder to path just uncomment this line
+#modextrapaths = {'PATH': 'scripts'}
+
+moduleclass = 'bio'
