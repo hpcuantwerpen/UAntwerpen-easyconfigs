@@ -1,0 +1,42 @@
+name = 'Eigen'
+version = '3.3.7'
+
+homepage = 'http://eigen.tuxfamily.org/'
+
+whatis = [
+    "Description: Eigen is a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms"
+]
+
+description = """
+Eigen is a C++ template library for linear algebra: matrices, vectors, numerical
+solvers, and related algorithms.
+
+Eigen is Free Software. Starting from the 3.1.1 version, it is licensed under
+the MPL2, which is a simple weak copyleft license. Common questions about the
+MPL2 are answered in the official MPL2 FAQ. Note that currently, a few features
+rely on third-party code licensed under the LGPL: SimplicialCholesky, AMD
+ordering, and constrained_cg. Such features can be explicitly disabled by
+compiling with the EIGEN_MPL2_ONLY preprocessor symbol defined. Furthermore,
+Eigen provides interface classes for various third-party libraries (usually
+recognizable by the <Eigen/*Support> header name). Of course you have to mind
+the license of the so-included library when using them. Virtually any software
+may use Eigen. For example, closed-source software may use Eigen without having
+to disclose its own source code. Many proprietary and closed-source software
+projects are using Eigen right now, as well as many BSD-licensed projects.
+"""
+
+software_license_urls = [
+    "https://www.mozilla.org/en-US/MPL/2.0/",
+    "https://www.gnu.org/licenses/lgpl-3.0.en.html",
+]
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+
+source_urls = ['http://bitbucket.org/%(namelower)s/%(namelower)s/get']
+sources = ['%(version)s.tar.bz2']
+
+builddependencies = [
+   ( 'buildtools', '%(toolchain_version)s', '', True ),  # For recent CMake
+]
+
+moduleclass = 'math'
