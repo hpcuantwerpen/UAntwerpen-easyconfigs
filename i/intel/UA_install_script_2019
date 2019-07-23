@@ -1,11 +1,16 @@
 #!/bin/bash
 
-module load intel/2017a
+module load calcua/2019a-experimental
+MODULEPATH=/apps/antwerpen/modules/centos7/software-admin-x86_64:$MODULEPATH
+module load intel/2019_update4
 
 # For old configure scripts that still expect libmpich.a rather than libmpi.a for Intel MPI,
 # e.g., the Rmpi R-package.
 cd $EBROOTIMPI/compilers_and_libraries_$EBVERSIONIMPI/linux/mpi/intel64/lib
-ln -s libmpi.a libmpich.a
+cd release ;         ln -s libmpi.a libmpich.a
+cd ../release_mt ;   ln -s libmpi.a libmpich.a
+cd ../debug ;        ln -s libmpi.a libmpich.a
+cd ../debug_mt ;     ln -s libmpi.a libmpich.a
 
 # Create FFTW-compatible interfaces.
 cd $MKLROOT/interfaces/fftw2xc
