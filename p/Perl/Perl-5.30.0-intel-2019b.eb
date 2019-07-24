@@ -3,7 +3,6 @@ version = '5.30.0'
 
 buildset = '2019b'
 gcc_version = '8.3.0'
-binutils_version = '2.32'
 
 homepage = 'http://www.perl.org/'
 
@@ -16,24 +15,20 @@ PERL 5, Larry Wall's Practical Extraction and Report Language.
 
 This module already contains a lot of packages requested by VSC users.
 
-Note that there is an equivalent module in the intel-%(buildset_v)s toolchain,
+Note that there is an equivalent module in the GCCcore-%(gcc_v)s toolchain,
 so you can compare the performance.
 """ % {
-    'buildset_v' : buildset,
+    'gcc_v': gcc_version,
 }
 
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain = {'name': 'intel', 'version': buildset}
 toolchainopts = {'pic': True}
 
 source_urls = ['http://www.cpan.org/src/%(version_major)s.0']
-sources = [SOURCELOWER_TAR_GZ]
+sources =     [SOURCELOWER_TAR_GZ]
 
 dependencies = [
-    ('baselibs', buildset)  # expat for XML::Parser and zlib for Net::SSLeay
-]
-
-builddependencies = [
-    ('binutils',   binutils_version, '', ('GCCcore', gcc_version)),
+    ('baselibs', buildset, '', ('GCCcore', gcc_version))  # expat for XML::Parser and zlib for Net::SSLeay
 ]
 
 # !! order of extensions is important !!
