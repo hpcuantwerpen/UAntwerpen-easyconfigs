@@ -1,0 +1,23 @@
+# Patch by Kurt Lust, UAntwerp
+# The arguments lists of the CPUID_support functions are wrong and
+# do not correspond to its prototype in cpuid.h
+--- gmap-2019-06-10/src/cpuid.c.orig	2019-05-13 00:32:06.000000000 +0200
++++ gmap-2019-06-10/src/cpuid.c	2019-07-26 14:39:19.595045073 +0200
+@@ -11,7 +11,7 @@
+ 
+ void
+ CPUID_support (bool *sse2_support_p, bool *ssse3_support_p, bool *sse4_1_support_p, bool *sse4_2_support_p,
+-	       bool *avx2_support_p, bool *avx512_support_p, bool $avx512bw_support_p) {
++	       bool *avx2_support_p, bool *avx512_support_p, bool *avx512bw_support_p) {
+   *sse2_support_p = false;
+   *ssse3_support_p = false;
+   *sse4_1_support_p = false;
+@@ -30,7 +30,7 @@
+ 
+ void
+ CPUID_support (bool *sse2_support_p, bool *ssse3_support_p, bool *sse4_1_support_p, bool *sse4_2_support_p,
+-	       bool *avx2_support_p, bool *avx512_support_p) {
++	       bool *avx2_support_p, bool *avx512_support_p, bool *avx512bw_support_p) {
+   *sse2_support_p = _may_i_use_cpu_feature(_FEATURE_SSE2);
+   *ssse3_support_p = _may_i_use_cpu_feature(_FEATURE_SSSE3);
+   *sse4_1_support_p = _may_i_use_cpu_feature(_FEATURE_SSE4_1);
