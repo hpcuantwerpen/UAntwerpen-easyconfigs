@@ -1,0 +1,22 @@
+# This is an easyconfig file for EasyBuild, see http://hpcugent.github.io/easybuild
+easyblock = 'Toolchain'
+
+name = 'iccifort'
+version = 'phony'
+
+#gccver = '8.3.0'
+#binutilsver = '2.32'
+#gccsuff = '-GCC-%s-%s' % (gccver, binutilsver)
+
+homepage = 'http://software.intel.com/en-us/intel-cluster-toolkit-compiler/'
+description = """Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran compilers, Intel MPI & Intel MKL."""
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+dependencies = [
+#    ('GCCcore',  gccver),
+#    ('binutils', binutilsver, '-GCCcore-%s' % gccver),
+    ('icc',      'phony'),
+    ('ifort',    'phony'),
+]
+
