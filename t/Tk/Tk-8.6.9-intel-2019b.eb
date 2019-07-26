@@ -1,0 +1,57 @@
+easyblock = 'ConfigureMake'
+
+name = 'Tk'
+version = '8.6.9'
+
+homepage = 'http://www.tcl.tk/'
+
+whatis = [
+    'Description: GUI toolkit fot Tcl and other languages',
+    'This module provides the wish8.6 command and Tk shared libraries',
+]
+
+description = """
+Tk is an open source, cross-platform widget toolchain that provides a library of
+basic elements for building a graphical user interface (GUI) in many different
+programming languages.
+"""
+
+usage = """
+The module provides the wish86 command. Help for this command is available
+throug man wish
+
+There is extensive documentation on the API through man pages in section 3
+and section n, and on the Tcl web site.
+"""
+
+docurls = [
+    'Web-based documentation: https://www.tcl.tk/man/tcl8.6/TkLib/contents.htm',
+    'Man pages in section 3 and n'
+]
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+gcc_version = '8.3.0'
+
+source_urls = ["http://prdownloads.sourceforge.net/tcl"]
+sources = ['%(namelower)s%(version)s-src.tar.gz']
+
+patches = ['Tk-8.6.4_different-prefix-with-tcl.patch']
+
+dependencies = [
+    ('Tcl',   version),
+    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for zlib
+]
+
+osdependencies = [
+    ('libX11-devel'),
+]
+
+configopts = '--enable-threads --with-tcl=$EBROOTTCL/lib CFLAGS="-I$EBROOTTCL/include"'
+
+start_dir = 'unix'
+
+postinstallcmds = [
+    'cd %(installdir)s/bin ; ln -s wish%(version_major_minor)s wish',
+]
+
+moduleclass = 'vis'
