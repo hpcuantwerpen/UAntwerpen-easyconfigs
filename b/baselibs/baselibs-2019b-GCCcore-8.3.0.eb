@@ -2,7 +2,7 @@ easyblock = 'Bundle'
 
 name = 'baselibs'
 version = '2019b'
-versionsuffix = '-dev'
+#versionsuffix = '-dev'
 
 homepage = '(none)'
 
@@ -14,7 +14,7 @@ whatis = [
     "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, "+ 
     "JasPer, libjpeg-turbo, libpng, LibTIFF, x264, x265, LAME, cURL, expat, libxml2, libxslt, "+ 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
-    "file, FriBidi, gc, gettext, libffi, libiconv, libunistring, libyaml, PCRE.",
+    "file, FriBidi, gc, gettext, libffi, libiconv, libunistring, libyaml, PCRE, UDUNITS, util-linux.",
 ]
 
 binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
@@ -52,6 +52,7 @@ libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
 libunistring_version = '0.9.10'        # https://ftp.gnu.org/gnu/libunistring/
 libyaml_version =      '0.2.2'         # https://github.com/yaml/libyaml/releases
 PCRE_version =         '8.43'          # https://ftp.pcre.org/pub/pcre/
+UDUNITS_version =      '2.2.26'        # ftp://ftp.unidata.ucar.edu/pub/udunits
 util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
 pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
 freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
@@ -278,7 +279,15 @@ Overview of included libraries:
     The package includes the command line tools pcregrep, pcretest and 
     pcre-config, documented through man pages. API documentation is available
     through man pcre.
-  + util-linux (version $(utillinux)s): A random collection of Linux utilities
+  + UDUNITS (version %(UDUNITS)s): The UDUNITS package supports units of physical 
+    quantities. Its C library provides for arithmetic manipulation of units and for 
+    conversion of numeric values between compatible units. The package contains an 
+    extensive unit database, which is in XML format and user-extendable. The package 
+    also contains a command-line utility for investigating units and converting 
+    values.
+    This module provides both static and shared libraries, and a command line
+    utility.
+  + util-linux (version %(utillinux)s): A random collection of Linux utilities
     from the Linux kernel developers.
 """ % { 
     'ncurses': ncurses_version,
@@ -315,6 +324,7 @@ Overview of included libraries:
     'unistring': libunistring_version,
     'yaml': libyaml_version,
     'PCRE': PCRE_version,
+    'UDUNITS': UDUNITS_version,
     'utillinux': util_version,
 }
 
@@ -670,6 +680,13 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  "--with-pic --disable-cpp --enable-utf --enable-unicode-properties"
+    }),
+    ('UDUNITS', UDUNITS_version, { # depends on expat!
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['ftp://ftp.unidata.ucar.edu/pub/udunits']
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
     }),
     ('util-linux', util_version, { # Needs ncurses and zlib
         'sources':     [ {
