@@ -1,0 +1,29 @@
+name = 'Mono'
+version = '6.0.0.313'
+
+homepage = 'http://www.mono-project.com/'
+
+whatis = [ 
+    "Description: Mono is an open source, cross-platform, implementation of C# and the CLR that is binary compatible with Microsoft.NET"]
+
+description = """
+An open source, cross-platform, implementation of C# and the CLR that is
+binary compatible with Microsoft.NET.
+"""
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+gcc_version = '8.3.0'
+
+source_urls = ['http://download.mono-project.com/sources/mono/']
+sources =     [SOURCELOWER_TAR_XZ]
+checksums =   ['a946e91d7da3f90b5e7cbbdf27adfa2f57ddb09b199dfc4d6d3bc05eb0690c50']
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),                      # for Autotools and CMake
+    ('baselibs',   '%(toolchain_version)s', '', ('GCCcore', gcc_version)),  # for gettext
+]
+
+configopts = "--with-large-heap=yes --without-x"
+
+moduleclass = 'lang'
+
