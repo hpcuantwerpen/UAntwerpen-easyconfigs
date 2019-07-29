@@ -1,0 +1,37 @@
+name = 'SuiteSparse'
+version = '4.5.6'
+
+metis_ver = '5.1.0'
+metis_ver_suffix = '-i32-fp64'
+versionsuffix = '-METIS-%s' % metis_ver
+
+homepage = 'http://faculty.cse.tamu.edu/davis/suitesparse.html'
+
+whatis = [
+    'Description: Collection of libraries to manipulate sparse matrices, maintained by Tim Davis',
+    'This module is compield with support for the METIS graph partitioner and OpenMP',
+]
+
+description = """
+SuiteSparse is a collection of libraries manipulate sparse matrices maintained
+by Tim Davis (University of Florida). The package includes routines for LU
+factorization, Cholesky factorization and QR decomposition.
+
+Compiled with support for the METIS graph partitioner and with support for OpenMP.
+"""
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+toolchainopts = {'unroll': True, 'pic': True}
+
+source_urls = ['http://faculty.cse.tamu.edu/davis/SuiteSparse/']
+sources =     [SOURCE_TAR_GZ]
+checksums =   ['de5fb496bdc029e55955e05d918a1862a177805fbbd5b957e8b5ce6632f6c77e']
+patches =     ['SuiteSparse-4.5.5_config_OpenMP.patch']
+
+dependencies = [
+    ('METIS', metis_ver, metis_ver_suffix),
+]
+
+parallel = 1
+
+moduleclass = 'numlib'
