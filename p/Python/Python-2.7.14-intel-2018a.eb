@@ -241,6 +241,23 @@ exts_list = [
         'source_tmpl': '%(name)s-%(version)s.tar.gz',
         'source_urls': ['https://pypi.python.org/packages/source/m/mpmath'],
     }),
+#
+# Added for USPEX (Rolando Saniz and Marnik Berckx)
+#
+    ('spglib', '1.13.0.post6', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/s/spglib'],
+    }),
+    ('pysqlite', '2.8.3', {  # Note that this is Python 2 only!
+        'modulename':  'pysqlite2',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/p/pysqlite'],
+    }),
+#    ('pysqlite3', '0.2.1', {
+#        'modulename':  'sqlite3',
+#        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+#        'source_urls': ['https://pypi.python.org/packages/source/p/pysqlite3'],
+#    }),
 ]
 
 moduleclass = 'lang'
