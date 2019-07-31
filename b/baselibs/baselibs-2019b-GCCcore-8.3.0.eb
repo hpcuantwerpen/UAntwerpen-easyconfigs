@@ -11,7 +11,7 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, "+ 
+    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, "+ 
     "JasPer, libjpeg-turbo, libpng, LibTIFF, x264, x265, LAME, cURL, expat, libxml2, libxslt, "+ 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "file, FriBidi, gc, gettext, libffi, libiconv, libunistring, libyaml, PCRE, UDUNITS, util-linux.",
@@ -27,6 +27,7 @@ bzip2_major_minor =    '1.0'
 Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
 XZ_version =           '5.2.4'         # https://tukaani.org/xz/
 zlib_version =         '1.2.11'        # https://zlib.net/
+lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
 JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
 libjpegturbo_version = '2.0.2'         # https://sourceforge.net/projects/libjpeg-turbo/files/
 libpng_version =       '1.6.37'        # http://www.libpng.org/pub/png/libpng.html
@@ -83,6 +84,10 @@ Overview of included libraries:
   + bzip2 (version %(bzip2)s): Patent-free high-quailty data compressor
     with very good compression yet fast compression and decompression 
     (.bz2 files)
+  + LZ4 (version %(lz4)s): lossless compression algorithm, providing compression 
+    speed > 500 MB/s per core, scalable with multi-cores CPU. It features 
+    an extremely fast decoder, with speed in multiple GB/s per core, 
+    typically reaching RAM speed limits on multi-core systems.
   + Szip (version %(Szip)s): library maintained by the HDF group for lossless
     compression of scientific data.
   + XZ Utils (version %(XZ)s): XZ data compression libraries and 
@@ -293,6 +298,7 @@ Overview of included libraries:
     'ncurses': ncurses_version,
     'libreadline': libreadline_version,
     'bzip2': bzip2_version,
+    'lz4': lz4_version,
     'Szip': Szip_version,
     'XZ': XZ_version,
     'zlib': zlib_version,
@@ -334,6 +340,7 @@ docurls = [
     'libreadline: web-based libreadline documentation: https://tiswww.cwru.edu/php/chet/readline/readline.html',
     'libreadline: web-based libhistory documentation: https://tiswww.cwru.edu/php/chet/readline/history.html',
     'bzip2: web-based documentation on http://www.bzip.org/docs.html',
+    'LZ4: web-based documentation on https://github.com/lz4/lz4',
     'Szip: web pages on http://www.hdfgroup.org/doc_resource/SZIP/', 
     'XZ Utils: man pages for the command line utilities',
     'zlib: web-based manual on https://zlib.net/manual.html', 
@@ -429,6 +436,15 @@ components = [
                        'cd %(installdir)s/lib ; ' + \
                        'ln -s libbz2.so.'+bzip2_version+' libbz2.so.'+bzip2_major_minor+' ; ' + \
                        'ln -s libbz2.so.'+bzip2_version+' libbz2.so' 
+    }),
+    ('lz4', lz4_version, {
+        'sources':     [ {
+                          'filename':    'v%(version)s.tar.gz',
+                          'source_urls': ['https://github.com/lz4/lz4/archive/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'skipsteps':   ['configure'],
+        'installopts': "PREFIX=%(installdir)s",
     }),
     ('Szip', Szip_version, {
         'sources':     [ {
