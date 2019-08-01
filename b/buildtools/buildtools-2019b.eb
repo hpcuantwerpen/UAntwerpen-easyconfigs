@@ -32,18 +32,19 @@ patchelf_version =  '0.10'     # patchelf   20190328 - Check on https://github.c
 bison_version =     '3.4.1'    # Bison      20190521 - Check on http://ftp.gnu.org/gnu/bison/
 flex_version =      '2.6.4'    # flex       20170506 - Check on https://github.com/westes/flex/releases
 byacc_version =     '20190617' # byacc      20190617 - Check on ftp://ftp.invisible-island.net/byacc
+git_version =       '2.22.0'   # git        20190607 - Check on https://github.com/git/git/releases
 # Not yet included due to build problems:
 # SCons      3.0.0     20170918
 homepage = 'http://www.gnu.org'
 
 whatis = [
-    "Description: A bundle of often used build tools, GNU and others: autoconf, automake, libtool, M4, make, sed, CMake, NASM, Yasm, patchelf, pkg-config, gperf, help2man and Doxygen"
+    "Description: A bundle of often used build tools, GNU and others: autoconf, automake, libtool, M4, make, git, sed, CMake, NASM, Yasm, patchelf, pkg-config, gperf, help2man and Doxygen"
 ]
 
 description = """
 A bundle of often used build tools, GNU and others: autoconf, automake, libtool, 
-M4, make, sed, Bison, flex, Berkeley Yacc (byacc), CMake, NASM, Yasm, patchelf,
-pkg-config, gperf, help2man and Doxygen.
+M4, make, git, sed, Bison, flex, Berkeley Yacc (byacc), CMake, NASM, Yasm, 
+patchelf,, pkg-config, gperf, help2man and Doxygen.
 """
 
 usage = """
@@ -57,6 +58,7 @@ building software. Many of them are GNU tools.
 + GNU sed %(sed)s          - https://www.gnu.org/software/sed/
 + GNU Bison %(bison)s      - https://www.gnu.org/software/bison
 + GNU flex %(flex)s       - https://www.gnu.org/software/flex/
++ git %(git)s           - https://git-scm.com/
 + byacc %(byacc)s       - http://invisible-island.net/byacc/byacc.html
 + CMake %(cmake)s         - http://www.cmake.org/
 + NASM %(nasm)s         - http://www.nasm.us/
@@ -78,6 +80,7 @@ build several of the 2019a packages.
     'sed'       : sed_version,
     'bison'     : bison_version,
     'flex'      : flex_version,
+    'git'       : git_version,
     'byacc'     : byacc_version,
     'cmake'     : cmake_version,
     'nasm'      : nasm_version,
@@ -103,6 +106,12 @@ builddependencies = [
 osdependencies = [
     ('openssl-devel', 'libssl-dev', 'libopenssl-devel'), # For CMake
     ('ncurses-devel'),                                   # For CMake
+    ('libcurl-devel'),                                   # For git
+    ('expat-devel'),                                     # For git
+    ('gettext-devel'),                                   # For git
+    ('pcre-devel'),                                      # For git
+    ('perl'),                                            # For git
+    ('python'),                                          # For git
 #    ('python'),                                          # Voor SCons
 ]
 
@@ -121,7 +130,17 @@ components = [
         'source_urls': ['https://pkg-config.freedesktop.org/releases/'],
         'checksums':   ['6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591'],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  " --with-internal-glib",
+        'configopts':  "--with-internal-glib",
+        }),
+    ('git', git_version, { # Build of 2.22.0 fails if build after Make....
+        'sources':       [ { 'download_filename' : 'v%(version)s.tar.gz',
+                             'filename'          : 'git-%(version)s.tar.gz',
+                             'source_urls'       : ['https://github.com/git/git/archive'],
+                         } ],
+        'checksums':     ['d2557e9d6a90819cca463b7f2a7b30fd62d8ccc9760c8453f078e936559cb017'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'make configure && ',
+        'configopts':    "--with-libpcre --with-python=/usr/bin/python --enable-pthreads='-lpthread'",
         }),
     ('Make', make_version, { # Uses pkg-config
         'sources':     [SOURCELOWER_TAR_BZ2],
