@@ -11,7 +11,7 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, "+ 
+    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, libarchive, "+ 
     "JasPer, libjpeg-turbo, libpng, LibTIFF, x264, x265, LAME, cURL, expat, libxml2, libxslt, "+ 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "file, FriBidi, gc, gettext, libffi, libiconv, libunistring, libyaml, PCRE, UDUNITS, util-linux.",
@@ -28,6 +28,7 @@ Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-ex
 XZ_version =           '5.2.4'         # https://tukaani.org/xz/
 zlib_version =         '1.2.11'        # https://zlib.net/
 lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
+libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
 JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
 libjpegturbo_version = '2.0.2'         # https://sourceforge.net/projects/libjpeg-turbo/files/
 libpng_version =       '1.6.37'        # http://www.libpng.org/pub/png/libpng.html
@@ -97,6 +98,7 @@ Overview of included libraries:
     xzgrep, xzdiff, ...)
   + zlib (version %(zlib)s): Free lossless data compression library, not 
     covered by any patents, for the popular .gz files.
+  + libarchive (version %(libarchive)s): Multi-format archive and compression library.
 * Graphics file formats
   + JasPer (version %(JasPer)s): an open-source initiative to provide a free
     software-based reference implementation of the codec specified in the
@@ -302,6 +304,7 @@ Overview of included libraries:
     'Szip': Szip_version,
     'XZ': XZ_version,
     'zlib': zlib_version,
+    'libarchive': libarchive_version,
     'JasPer': JasPer_version,
     'libjpegturbo': libjpegturbo_version,
     'libpng': libpng_version,
@@ -344,6 +347,7 @@ docurls = [
     'Szip: web pages on http://www.hdfgroup.org/doc_resource/SZIP/', 
     'XZ Utils: man pages for the command line utilities',
     'zlib: web-based manual on https://zlib.net/manual.html', 
+    'libarchive: Some web-based documentation on https://www.libarchive.org/',
     'libjpeg-turbo web-based documentation: https://libjpeg-turbo.org/Documentation',
     'libpng: web-based documentation on http://www.libpng.org/pub/png/libpng.html',
     'x264: Some information on http://www.videolan.org/developers/x264.html',
@@ -469,6 +473,17 @@ components = [
         'patches':     ['XZ-5.2.2_compat-libs.patch'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--disable-nls --disable-xz --disable-xzdec',  # First build without the need for gettext, we'll rebuild after building gettext.
+    }),
+    ('libarchive', libarchive_version, {
+        'easyblock': 'CMakeMake',
+        'sources':   [ {
+                         # https://www.libarchive.org/downloads/libarchive-3.3.3.tar.gz
+                         # https://github.com/libarchive/libarchive/archive/v3.4.0.tar.gz
+                         'download_filename': 'v%(version)s.tar.gz',
+                         'filename':          SOURCELOWER_TAR_GZ,
+                         'source_urls':       [('https://github.com/libarchive/libarchive/archive')]
+                     }],
+        'start_dir': '%(namelower)s-%(version)s',
     }),
 #
 # Graphics file formats
