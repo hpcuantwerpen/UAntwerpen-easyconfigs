@@ -1,0 +1,68 @@
+easyblock = 'PythonBundle'
+
+name = 'Python-bioinformatics'
+version = '2019b.00'
+versionsuffix  = '-IntelPython3'
+python_version = '3.6.8' # For some reason pyver does not work at the start of the processing.
+
+tcver = ''.join(version.split('.')[:1])
+pyshortver = '.'.join(python_version.split('.')[:2])
+pycpver    = ''.join(python_version.split('.')[:2])
+pyvermajor = ''.join(python_version.split('.')[:1])
+
+homepage = '(none)'
+
+whatis = [
+    "Description: Additional Python %(pyshortver)s modules used by the bio-informatics groups.",
+    "Keywords: metapub",
+]
+
+description = """
+This module contains a number of additional packages for Python %(pyshortver)s used by
+various researchers of the bio-informatics research groups.
+"""
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+dependencies = [
+    ('IntelPython3-Packages', tcver+'.04'),
+]
+
+exts_list = [
+    ('eutils', '0.4.1', { # 0.5.2 does not work with metapub 0.4.3.6, dependency of metapub on eutils will be removed in the future.
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('filelock', '3.0.12', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('toml', '0.10.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('cssselect', '1.0.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('Unidecode', '1.1.1', {
+        'modulename':  'unidecode',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('tox', '3.13.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('metapub', '0.4.3.6', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+]
+
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = False
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python'+ pyshortver + '/site-packages'],
+}
+
+# As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
+# modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'

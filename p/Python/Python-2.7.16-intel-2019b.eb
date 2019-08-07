@@ -1,0 +1,503 @@
+name = 'Python'
+version = '2.7.16'
+#versionsuffix = '-test'
+
+pymaj   = ''.join(version.split('.')[:1])
+pycpver = ''.join(version.split('.')[:2])
+
+homepage = 'http://python.org/'
+
+whatis = [
+    'Description: Python %(version)s interpreter with a range of optional packages'
+]
+
+description = """
+This is the Python 2.7 interpreter with several additional packages requested by
+UAntwerp researchers installed.
+
+If you don't find your favourite packages in this module, check the other
+modules that have Python in their name, try to install them in your
+personal directories and/or contact UAntwerp HPC support
+at hpc@uantwerpen.be.
+"""
+
+usage = """
+There is ample documentation about Python available on the web; please check
+there or any good book about Python for usage information.
+
+To get a list of installed Python packages, load this module file and then
+execute
+pydoc modules
+
+The preferred way to install additional Python modules in your own directories
+is to put them in you /data directory using pip or easy_install.
+Instructions can be found at:
+https://vlaams-supercomputing-centrum-vscdocumentation.readthedocs-hosted.com/en/latest/software/python_package_management.html#alternatives-to-conda
+(but replace /user with /data).
+"""
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+gcc_version = '8.3.0'
+toolchainopts = {'pic': True}
+
+source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
+sources =     [SOURCE_TGZ]
+
+# python needs bzip2 to build the bz2 package
+dependencies = [
+    ('baselibs',    '%(toolchain_version)s', '', ('GCCcore', gcc_version)),
+    # Baselibs is used for: bzip2, zlib, ncurses, libreadline, GMP
+    # libffi, libpng, freetype, libyaml
+#   ('Tcl',         '8.6.8'),  # KL 20180720, enters via Tk and SQLite
+    ('Tk',          '8.6.9'),  # KL 20180720
+    ('SQLite',      '3.29.0'), # KL 20180720
+    ('cURL',        '7.65.3'), # KL 20180720, needed for pysam
+    ('HDF5',        '1.8.21', '-MPI'),       # KL 20180720, needed for hf5py
+    ('SuiteSparse', '4.5.6',  '-METIS-5.1.0'), # KL 20180720, for umfpack support in NumPy.
+    # OS dependency should be preferred if the os version is more recent then this version,
+    # it's nice to have an up to date openssl for security reasons
+    # ('OpenSSL', '1.0.2h'),
+]
+
+osdependencies = [('openssl-devel', 'libssl-dev', 'libopenssl-devel')]
+
+# order is important!
+# package versions updated 20190730
+# skipsteps=['extensions'] # This doesn't work unfortunately.
+exts_list = [
+    ('six', '1.12.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pyparsing', '2.2.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('packaging', '19.1', {  # Needed for recent versions of setuptools
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('appdirs', '1.4.3', {   # Needed for recent versions of setuptools
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('setuptools', '41.0.1', {  # Is this stil needed? It is not installed with --skip --rebuild, so there might be a version included with Python.
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('wheel', '0.33.4', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pip', '19.2.1', {  # Is this stil needed? It is not installed with --skip --rebuild, so there might be a version included with Python.
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('attrs', '19.1.0', {
+        'source_urls': [PYPI_SOURCE],
+        'modulename': 'attr',
+    }),
+    ('nose', '1.3.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('numpy', '1.16.4', { # 1.17 drops support for Python 2.7
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+        'patches': ['numpy-1.12.0-mkl.patch'], 
+    }),
+    ('scipy', '1.2.2', { # 1.3.0 drops support for Python 2.7
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('python-dateutil', '2.8.0', {
+        'source_urls': [PYPI_SOURCE],
+        'modulename': 'dateutil',
+    }),
+    ('Cycler', '0.10.0', {    # Requirement for matplotlib according to the documentation.
+        'modulename': 'cycler',
+        'source_urls': [PYPI_LOWER_SOURCE],
+        'source_tmpl': 'cycler-%(version)s.tar.gz',
+    }),
+    ('blist', '1.3.6', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('mpi4py', '3.0.2', {
+#        'source_urls': ['http://bitbucket.org/mpi4py/mpi4py/downloads/'],
+        'source_urls': ['https://pypi.python.org/packages/source/rmp/mpi4py/'],
+    }),
+    ('paycheck', '1.0.2', {
+        'source_urls': [PYPI_SOURCE],
+        'patches': [
+            'paycheck-1.0.2_setup-open-README-utf8.patch',
+        ],
+    }),
+    ('pbr', '5.4.1', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('lockfile', '0.12.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('Cython', '0.29.3', {
+        'source_urls': [PYPI_LOWER_SOURCE],
+    }),
+    ('setuptools_scm', '3.3.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('deap', '1.3.0', {
+#        'source_tmpl': '%(name)s-%(version)s.post2.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+#        'patches': [
+#            'deap-1.0.2_setup-open-README-utf8.patch',
+#        ],
+    }),
+    ('decorator', '4.4.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('arff', '2.4.0', {
+        'source_tmpl': 'liac-%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/l/liac-arff/'],
+    }),
+    ('pycrypto', '2.6.1', {
+        'modulename': 'Crypto',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('ecdsa', '0.13.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('ipaddress', '1.0.22', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('asn1crypto', '0.24.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('idna', '2.8', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pycparser', '2.19', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('cffi', '1.12.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('enum34', '1.1.6', {  # Is this stil needed? It is not installed with --skip --rebuild, so there might be a version included with Python.
+        'modulename': 'enum',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('cryptography', '2.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pyasn1', '0.4.5', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('PyNaCl', '1.3.0', {
+        'source_urls': [PYPI_LOWER_SOURCE],
+        'modulename': 'nacl',
+    }),
+    ('bcrypt', '3.1.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('paramiko', '2.6.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('netifaces', '0.10.9', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('netaddr', '0.7.19', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('funcsigs', '1.0.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('mock', '3.0.5', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pytz', '2019.1', {  # Requirement for matplotlib
+#        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pandas', '0.24.2', { # 0.25 drops support for Python 2.7
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('bitstring', '3.1.6', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('functools32', '3.2.3-2', {  # Needed for matplotlib on Python 2
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('subprocess32', '3.5.4', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('backports.functools_lru_cache', '1.5', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('kiwisolver', '1.1.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('matplotlib', '2.2.4', {  # Support for Python 2.7 dropped in the 3.x versions.
+#    ('matplotlib', '1.5.3', { # Version used in 2016b to check if the install works
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('virtualenv', '16.7.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('sklearn', '0.20.4', { # Python 2 support dropped in 0.21.
+        'source_tmpl': 'scikit-learn-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/s/scikit-learn'],
+    }),
+    ('argparse', '1.4.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pyzmq', '18.0.2', {
+        'modulename':  'zmq',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('greenlet', '0.4.15', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('scoop', '0.7.1.1', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('lxml', '4.4.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('chardet', '3.0.4', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('certifi', '2019.6.16', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('urllib3', '1.25.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('requests', '2.22.0', { # Needed for the easyconfig update script.
+        'source_urls': [PYPI_SOURCE],
+    }),
+# Pysam does not work with Python 3.7.0, tried with Intel and GCC.
+    ('pysam', '0.15.3', {  # Still fails with Python 3.7.0 with EasyBuild.
+        'source_urls':  [PYPI_SOURCE],
+#        'prebuildopts': pysam_prebuildopts, # To use GCC instead.
+    }),
+    ('tinyarray', '1.2.1', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('absl-py', '0.7.1', {
+        'modulename': 'absl',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }), 
+    ('xlrd', '1.2.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('py_expression_eval', '0.3.9', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('tabulate', '0.8.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('ujson', '1.35', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('atomicwrites', '1.3.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('py', '1.8.0', { # Needed for pytest
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('scandir', '1.10.0', {
+        'source_urls': [PYPI_SOURCE],       
+    }),
+    ('pathlib2', '2.3.4', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('zipp', '0.5.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('contextlib2', '0.5.5', {
+        'source_urls': [PYPI_SOURCE], 
+    }),
+    ('configparser', '3.7.4', {
+        'source_urls': [PYPI_SOURCE], 
+    }),
+    ('importlib-metadata', '0.19', {
+        'modulename':  'importlib_metadata',
+        'source_tmpl': 'importlib_metadata-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/i/importlib.metadata'],
+    }),
+    ('pluggy', '0.12.0', {
+        'source_urls': [PYPI_SOURCE], 
+    }),
+    ('more-itertools', '5.0.0', { # Version 6 dropped support for Python 2.7
+        'modulename':  'more_itertools',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('attrs', '19.1.0', {
+        'source_urls': [PYPI_SOURCE],
+        'modulename': 'attr',
+    }),
+    ('wcwidth', '0.1.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pytest', '4.6.4', { # Version 5 drops POython 2.7 support; needed for recent versions of kwant (which is not installed here)
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('Click', '7.0', {
+        'modulename':  'click',
+        'source_urls': [PYPI_LOWER_SOURCE],
+    }),
+    ('psutil', '5.6.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('future', '0.17.1', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Packages for CMT
+#
+    ('h5py', '2.9.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Debug and profiling packages used in some benchmark scripts
+# memory_profiler and psutil
+#
+    ('memory_profiler', '0.55.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+# Some packages for TensorFlow that may be useful to others also and for which
+# TensorFlow is not too picky on the version number.
+    ('astar', '0.9', {
+        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': pymaj},
+        'source_urls':    [PYPI_SOURCE],
+        'use_pip':        True,
+        'unpack_sources': False,
+    }),
+    ('gast', '0.2.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('termcolor', '1.0.1', { # 1.1 dropped support for Python 2.7
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Requested by Yannick Engelman
+#
+    ('mpmath', '1.1.0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Other packages that were used by some other software installed at UAntwerp but
+# might be of more general use.
+#
+    ('PrettyTable', '0.7.2', {
+        'source_tmpl': 'prettytable-%(version)s.tar.gz', # %(namelower)s does not work at this location...
+        'source_urls': [PYPI_SOURCE],
+        'modulename':  'prettytable',
+    }),
+    ('PyYAML', '5.1.1', {  # Needed for PyTorch
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_LOWER_SOURCE],
+        'modulename':  'yaml',
+    }),
+#
+# Added for USPEX (Rolando Saniz and Marnik Berckx)
+#
+    ('spglib', '1.14.1.post0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pysqlite', '2.8.3', {  # Note that this is Python 2 only!
+        'modulename':  'pysqlite2',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Usefull for LAMMPS
+#
+    ('networkx', '2.2', { # 2.3 dropped support for Python 2.7
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+    }),
+
+#
+# Popular extensions found in miniconda installations
+#
+    ('pycosat', '0.6.3', {
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#    ('ruamel.yaml.clib', '0.1.0', {
+#        'modulename':  'ruamel.yaml', # Cannot import ruamel.yaml.clib and the trick with the empty directory in postinstallcmds does not work in this EasyConfig.
+#        'use_pip':     True, # Otherwise produces an error message that you have to install with pip install.
+##        'installopts': '--install-option="--prefix=%(installdir)s"',
+#        'source_urls': [PYPI_SOURCE],
+#    }),
+#    ('ruamel.yaml', '0.16.0', { # Install before pyOpenSSL, the latter cause strange problems when compiling.
+#        'modulename':  'ruamel.yaml',
+#        # ruamel.yaml-0.16.0-py2.py3-none-any.whl (122.2 kB)  Copy SHA256 hash SHA256
+#        'source_tmpl': '%(name)s-%(version)s-py2.py3-none-any.whl',
+#        'source_urls': [PYPI_SOURCE],
+#        'use_pip':     False,
+#    }),
+    ('ruamel.yaml', '0.15.100', { # New API which is incompatible with previous versions, from 0.16.0 also split in two modules....
+        'modulename':  'ruamel.yaml',
+        # ruamel.yaml-0.16.0-py2.py3-none-any.whl (122.2 kB)  Copy SHA256 hash SHA256
+#        'source_tmpl': '%(name)s-%(version)s-py2.py3-none-any.whl',
+        'source_urls': [PYPI_SOURCE],
+        'use_pip':     True, # pip mandatory for this package.
+    }),
+    ('pyOpenSSL', '19.0.0', {
+        'modulename':  'OpenSSL',
+        'source_urls': ['https://pypi.python.org/packages/source/P/PyOpenSSL'],
+    }),
+    ('PySocks', '1.7.0', {
+        'modulename':  'socks',
+        'source_urls': ['https://pypi.python.org/packages/source/P/PySocks'],
+    }),
+    ('libarchive', '0.4.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('gmpy2', '2.0.8', { # Python 3.5 and later only!
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('parso', '0.5.1', { # depends on parso
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('jedi', '0.14.1', { # depends on parso
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('prompt_toolkit', '2.0.9', { # depends on parso
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('mkl_random', '1.0.1.1', {
+        'modulename':  'mkl_random',
+        'source_urls': [PYPI_SOURCE],
+        # mkl_random-1.0.1.1-cp27-cp27mu-manylinux1_x86_64.whl
+        'source_tmpl': '%%(name)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)smu-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'use_pip': True,
+        'unpack_sources': False,
+    }),
+    ('mkl_fft', '1.0.6', {
+        'modulename':  'mkl_fft',
+        'source_urls': [PYPI_SOURCE],
+        # mkl_random-1.0.1.1-cp27-cp27mu-manylinux1_x86_64.whl
+        'source_tmpl': '%%(name)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)smu-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'use_pip': True,
+        'unpack_sources': False,
+    }),
+
+]
+
+moduleclass = 'lang'
+
+modloadmsg = """
+Python 2.7 is no longer developed and will not receive any further patches as of
+the end of 2019. Moreover, more and more packages drop Python 2.7 support and
+only support Python 3.5 and up, or even 3.6 or 3.7 as the minimal version.
+For these reasons, we can no longer maintain and support Python 2.7 on the 
+clusters in future toolchains. This will likely be the last Python 2.7 module
+on the cluster. Hence we encourage all users to swicht to newer versions and 
+modify their code where needed as soon as possible. See
+https://docs.python.org/3/howto/pyporting.html
+"""
+
+modluafooter= """
+family("python2.7")
+"""
+

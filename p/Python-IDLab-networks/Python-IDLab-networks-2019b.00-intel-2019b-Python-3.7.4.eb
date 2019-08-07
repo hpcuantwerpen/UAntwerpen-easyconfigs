@@ -1,0 +1,122 @@
+# Werkt niet:
+# * gevent: configure niet aan de praat te krijgen.
+# Dit pakket nochtans wel normaal met pip install buiten de EasyBuild-omgeving.
+#
+# Dit lijkt te liggen aan de interne werking van EasyBuild. Met use_pip gebruilt EasyBuild:
+# pip install --prefix=.... --no-deps  --ignore-installed  --no-build-isolation  .
+# terwijl de manuele installatie volgens de VSC-website verloopt met:
+# pip install --install-option="--prefix=/data/antwerpen/202/vsc20259/MyPythonPackages" gevent
+# --install-option zorgt ervoor dat pip de setup op een andere manier doet, niet via een wheel.
+#
+easyblock = 'PythonBundle'
+
+name = 'Python-IDLab-networks'
+version = '2019b.00'
+versionsuffix = '-Python-%(pyver)s'
+python_version = '3.7.4' # For some reason pyver does not work at the start of the processing.
+
+homepage = '(none)'
+
+whatis = [
+    "Description: Additional Python %(pyshortver)s modules used at IDLab wireless network research.",
+]
+
+description = """
+This module contains a number of additional packages for Python %(pyshortver)s used by
+various researchers from the IDLab wireless network group.
+"""
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+
+dependencies = [
+    ('Python',     python_version),
+    ('buildtools', '2019b', '', True),  # for git
+]
+
+pycpver    = ''.join(python_version.split('.')[:2])
+pyvermajor = ''.join(python_version.split('.')[:1])
+
+#install_option = '--install-option="--prefix=%(dir)s"' % { 'dir': installdir }
+
+exts_list = [
+    ('k7', '0.4.2', {
+#        'modulename':  'k7',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('bottle', '0.12.17', {
+#        'modulename':  'bottle',
+        'source_urls': [PYPI_SOURCE],
+    }),
+# gevent is impossible to install from source in EasyBuild, don't know why, so use a wheel... 
+#    ('gevent', '1.4.0', {
+#        'modulename':  'gevent',
+#        'use_pip':     True,
+#        'installopts': '--install-option="--prefix=/scratch/antwerpen/202/vsc20259/EasyBuildDev/Develop/ivybridge/Software/Python-IDLab-networks/2019b-intel-2019b-Python-3.7.4-EasyBuild-PythonPackage"',
+#        'prebuildopts': 'export CC=gcc && ',
+#        'source_urls': [PYPI_SOURCE],
+#    }),
+    ('gevent', '1.4.0', {
+#        'modulename':  'gevent',
+#        'installopts': '--install-option="--prefix=/scratch/antwerpen/202/vsc20259/EasyBuildDev/Develop/ivybridge/Software/Python-IDLab-networks/2019b-intel-2019b-Python-3.7.4-EasyBuild-PythonPackage"',
+#        'prebuildopts': 'export CC=gcc && ',
+        'source_urls': [PYPI_SOURCE],
+        # gevent-1.4.0-cp37-cp37m-manylinux1_x86_64.whl (
+        'source_tmpl': '%%(name)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)sm-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'use_pip': True,
+        'unpack_sources': False,
+    }),
+    ('gevent-websocket', '0.10.1', {
+        'modulename':  'geventwebsocket',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('bottle-websocket', '0.2.9', {
+        'modulename':  'bottle_websocket',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('whichcraft', '0.6.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('Eel', '0.10.4', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('argh', '0.26.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+#    ('pathtools3', '0.2.1', { # watchdog seems to need pathtools and not pathtools3...
+#        'modulename':  'pathtools',
+#        'source_urls': [PYPI_SOURCE],
+#    }),
+    ('pathtools', '0.1.2', {
+        'modulename':  'pathtools',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('watchdog', '0.9.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('smmap2', '2.0.5', {
+        'modulename':  'smmap',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('gitdb2', '2.0.5', {
+        'modulename':  'gitdb',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('GitPython', '2.1.13', {
+        'modulename':  'git',
+        'source_urls': [PYPI_SOURCE],
+    }),
+]
+
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = False
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+# As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
+# modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'

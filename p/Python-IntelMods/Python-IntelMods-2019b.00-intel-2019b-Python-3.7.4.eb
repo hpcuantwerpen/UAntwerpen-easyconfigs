@@ -1,0 +1,147 @@
+easyblock = 'PythonBundle'
+
+name = 'Python-IntelMods'
+version = '2019b.00'
+versionsuffix = '-Python-%(pyver)s'
+python_version = '3.7.4' # For some reason pyver does not work at the start of the processing.
+
+smp_version          = '0.1.4'  # https://github.com/IntelPython/smp/releases
+mkl_service_version  = '2.1.0'  # https://github.com/IntelPython/mkl-service
+numpy_version        = '1.15.4' # https://github.com/IntelPython/numpy/releases; 1.16.x did not work.
+mkl_random_version   = '1.0.4'  # https://github.com/IntelPython/mkl_random/releases
+mkl_fft_version      = '1.0.14' # https://github.com/IntelPython/mkl_fft/releases
+scikit_learn_version = '0.20.0' # https://github.com/IntelPython/scikit-learn/releases
+daal4py_version      = '2019.4' # https://github.com/IntelPython/daal4py/releases
+
+pycpver    = ''.join(python_version.split('.')[:2])
+pyvermajor = ''.join(python_version.split('.')[:1])
+
+homepage = '(none)'
+
+whatis = [
+    "Description: Python-IntelMods contains some packages that Intel claims to have optimized, using Intel sources rather than PyPi",
+#    "Contains: numpy, mkl_fft, mkl_random, mkl-service (mkl), smp, scikit-learn, daal4py",
+    "Contains: numpy, mkl_fft, mkl_random, smp, scikit-learn",
+]
+
+description = """
+This module contains a number of addition modules for Python %(pyshortver)s used by
+various researchers of the bio-informatics research groups.
+"""
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+toolchainopts = {'usempi': True}
+
+dependencies = [
+    ('Python', python_version),
+]
+
+# this is a bundle of Python packages
+# We do however also add a list of components. The installation procedure does
+# nothing except for downloading the sources in a way we cannot arrange from
+# an exts_list.
+default_easyblock = 'BinariesTarball'
+
+components = [
+    ('smp', smp_version, {
+        'sources': [{ # https://github.com/IntelPython/smp/archive/v0.1.4.tar.gz
+                     'download_filename': 'v' + smp_version + '.tar.gz',
+                     'filename':          'smp-'+ smp_version + '.tar.gz',
+                     'source_urls':       ['https://github.com/IntelPython/smp/archive/']
+                    }],
+        'skipsteps': ['install'],
+    }),   
+    ('mkl-service', mkl_service_version, {
+        'sources': [{ # https://github.com/IntelPython/mkl-service/archive/v2.1.0.tar.gz
+                     'download_filename': 'v' + mkl_service_version + '.tar.gz',
+                     'filename':          'mkl_service-'+ mkl_service_version + '.tar.gz',
+                     'source_urls':       ['https://github.com/IntelPython/mkl-service/archive']
+                    }], 
+        'skipsteps': ['install'],
+    }),   
+    ('numpy', numpy_version, {
+        'sources': [{ 
+                     'download_filename': 'v' + numpy_version + '.tar.gz',
+                     'filename':          'numpy-'+ numpy_version + '.tar.gz',
+                     'source_urls':       ['https://github.com/IntelPython/numpy/archive/']
+                    }],
+        'skipsteps': ['install'],
+    }),   
+    ('mkl_random', mkl_random_version, {
+        'sources': [{
+                     'download_filename': 'v' + mkl_random_version + '.tar.gz',
+                     'filename':          'mkl_random-'+ mkl_random_version + '.tar.gz',
+                     'source_urls':       ['https://github.com/IntelPython/mkl_random/archive']
+                    }], 
+        'skipsteps': ['install'],
+    }),   
+    ('mkl_fft', mkl_fft_version, {
+        'sources': [{
+                     'download_filename': 'v' + mkl_fft_version + '.tar.gz',
+                     'filename':          'mkl_fft-'+ mkl_fft_version + '.tar.gz',
+                     'source_urls':       ['https://github.com/IntelPython/mkl_fft/archive']
+                    }], 
+        'skipsteps': ['install'],
+    }),   
+    ('sklearn', scikit_learn_version, {
+        'sources': [{ # https://github.com/IntelPython/scikit-learn/archive/0.20.0.tar.gz
+                     'download_filename': scikit_learn_version + '.tar.gz',
+                     'filename':          'sklearn-'+ scikit_learn_version + '.tar.gz',
+                     'source_urls':       ['https://github.com/IntelPython/scikit-learn/archive']
+                    }], 
+        'skipsteps': ['install'],
+    }),   
+    ('daal4py', daal4py_version, {
+        'sources': [{ # https://github.com/IntelPython/daal4py/archive/2019.4.tar.gz
+                     'download_filename': daal4py_version + '.tar.gz',
+                     'filename':          'daal4py-'+ daal4py_version + '.tar.gz',
+                     'source_urls':       ['https://github.com/IntelPython/daal4py/archive/']
+                    }],
+        'skipsteps': ['install'],
+    }),   
+]
+
+exts_list = [
+    ('smp', smp_version, {
+#        'use_pip':        True,
+    }),
+# mkl-service nog niet aan de praat gekregen: bij import mkl foutmelding
+# undefined symbol: MKLMPI_Get_wrappers
+#    ('mkl_service', mkl_service_version, {
+#        'modulename': 'mkl',
+##        'use_pip':        True,
+#    }),
+    ('numpy', numpy_version, {
+        'patches': ['numpy-1.12.0-mkl.patch'], 
+    }),
+#    ('daal4py', daal4py_version, {
+##        'use_pip':        True,
+#    }),
+    ('mkl_random', mkl_random_version, {
+#        'use_pip':        True,
+    }),
+    ('mkl_fft', mkl_fft_version, {
+#        'use_pip':        True,
+    }),
+    ('sklearn', scikit_learn_version, {
+#        'use_pip':        True,
+    }),
+# daal4py nog niet gecompileerd gekregen
+#    ('daal4py', daal4py_version, {
+##        'use_pip':        True,
+#    }),
+]
+
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = False
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+# As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
+# modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'

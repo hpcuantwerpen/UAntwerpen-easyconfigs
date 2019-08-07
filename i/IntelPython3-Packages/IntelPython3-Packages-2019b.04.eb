@@ -1,0 +1,333 @@
+easyblock = 'PythonBundle'
+
+name = 'IntelPython3-Packages'
+version = '2019b.04'
+
+python_version = '3.6.8'
+gcc_version    = '8.3.0'
+
+tcver      = ''.join(version.split('.')[:1])
+pycpver    = ''.join(python_version.split('.')[:2])
+pyvermajor = ''.join(python_version.split('.')[:1])
+pyshortver = '.'.join(python_version.split('.')[:2])
+
+homepage = '(none)'
+
+whatis = [
+    "Description: Python packages on top of the Intel Python module to make the module equivalent to our Python/ modules",
+]
+
+description = """
+This module adds a number of packages to the corresponding IntelPython3 module
+to make the module a superset of our regular Python/3.x modules.
+"""
+
+# We need GCCcore as the toolchain and not Intel as IntelPython compiles with gcc.
+# Otherwise some modules will be compiled with gcc but using Intel compiler flags
+# which does not work.
+#toolchain = {'name': 'GCCcore', 'version': '8.3.0'}
+toolchain = {'name': 'dummy', 'version': ''}
+
+dependencies = [
+    ('IntelPython3', version, '',     True),
+    ('baselibs',     tcver,   '',     ('GCCcore', gcc_version)),
+    ('SQLite',      '3.29.0', '',     ('intel', tcver)),          # Needed for pysqlite3
+    ('HDF5',        '1.8.21', '-MPI', ('intel', tcver)),          # Needed for hf5py. IntelPython3 loads intel anyway. 
+    ('buildtools',   tcver, '',       True),                      # for git
+]
+
+exts_list = [
+    ('appdirs', '1.4.3', {   # Needed for recent versions of setuptools
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('attrs', '19.1.0', {
+        'source_urls': [PYPI_SOURCE],
+        'modulename': 'attr',
+    }),
+    ('packaging', '19.1', {  # Needed for recent versions of setuptools
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('nose', '1.3.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('blist', '1.3.6', { # REMOVE IN FUTURE VERSION? CODE NOT MAINTAINED
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('paycheck', '1.0.2', {
+        'source_urls': [PYPI_SOURCE],
+        'patches': [
+            'paycheck-1.0.2_setup-open-README-utf8.patch',
+        ],
+    }),
+    ('pbr', '5.4.1', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('lockfile', '0.12.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('setuptools_scm', '3.3.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('deap', '1.3.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('decorator', '4.4.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('arff', '2.4.0', {
+        'source_tmpl': 'liac-%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/l/liac-arff/'],
+    }),
+    ('pycrypto', '2.6.1', { # Build fails...
+        'modulename': 'Crypto',
+        'source_urls': [PYPI_SOURCE],
+#        'use_pip': True,
+    }),
+    ('ecdsa', '0.13.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('cryptography', '2.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pyasn1', '0.4.5', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('PyNaCl', '1.3.0', {
+        'source_urls': [PYPI_LOWER_SOURCE],
+        'modulename': 'nacl',
+    }),
+    ('bcrypt', '3.1.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('paramiko', '2.6.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('netifaces', '0.10.9', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('netaddr', '0.7.19', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('mock', '3.0.5', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('bitstring', '3.1.6', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('virtualenv', '16.7.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('lz4', '2.1.10', { # Useful option for joblib
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('joblib', '0.13.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('argparse', '1.4.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pyzmq', '18.0.2', {
+        'modulename':  'zmq',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('greenlet', '0.4.15', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('scoop', '0.7.1.1', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('lxml', '4.4.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('tinyarray', '1.2.1', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('absl-py', '0.7.1', {
+        'modulename': 'absl',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }), 
+    ('xlrd', '1.2.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('py_expression_eval', '0.3.9', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('tabulate', '0.8.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('ujson', '1.35', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('atomicwrites', '1.3.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('py', '1.8.0', { # Needed for pytest
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('scandir', '1.10.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pathlib2', '2.3.4', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('zipp', '0.5.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('importlib-metadata', '0.19', {
+        'modulename':  'importlib_metadata',
+        'source_tmpl': 'importlib_metadata-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/i/importlib.metadata'],
+    }),
+    ('pluggy', '0.12.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('more-itertools', '7.2.0', {
+        'modulename':  'more_itertools',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('wcwidth', '0.1.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pytest', '5.0.1', { # Needed for recent versions of kwant (which is not installed here)
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('Click', '7.0', {
+        'modulename':  'click',
+        'source_urls': [PYPI_LOWER_SOURCE],
+    }),
+    ('psutil', '5.6.3', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('future', '0.17.1', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Packages for CMT
+#
+    ('h5py', '2.9.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Debug and profiling packages used in some benchmark scripts
+# memory_profiler and psutil
+#
+    ('memory_profiler', '0.55.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+# Some packages for TensorFlow that may be useful to others also and for which
+# TensorFlow is not too picky on the version number.
+    ('astar', '0.9', {
+        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': pyvermajor},
+        'source_urls':    [PYPI_SOURCE],
+        'use_pip':        True,
+        'unpack_sources': False,
+    }),
+    ('gast', '0.2.2', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('termcolor', '1.1.0', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Requested by Yannick Engelman
+#
+    ('mpmath', '1.1.0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Other packages that were used by some other software installed at UAntwerp but
+# might be of more general use.
+#
+    ('PrettyTable', '0.7.2', {
+        'source_tmpl': 'prettytable-%(version)s.tar.gz', # %(namelower)s does not work at this location...
+        'source_urls': [PYPI_LOWER_SOURCE],
+        'modulename':  'prettytable',
+    }),
+# PyYAML is included in IntelPython3
+#
+#
+# Added for USPEX (Rolando Saniz and Marnik Berckx)
+#
+    ('spglib', '1.14.1.post0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('pysqlite3', '0.2.1', {  # Note that this is Python 2 only!
+        'modulename':  'pysqlite3',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Usefull for LAMMPS
+#
+    ('networkx', '2.3', {
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# Popular extensions found in miniconda installations
+#
+#    ('ruamel.yaml.clib', '0.1.0', {
+#        'modulename':  'ruamel.yaml', # Cannot import ruamel.yaml.clib and the trick with the empty directory in postinstallcmds does not work in this EasyConfig.
+#        'use_pip':     True, # Otherwise produces an error message that you have to install with pip install.
+##        'installopts': '--install-option="--prefix=%(installdir)s"',
+#        'source_urls': [PYPI_SOURCE],
+#    }),
+#    ('ruamel.yaml', '0.16.0', { # Install before pyOpenSSL, the latter cause strange problems when compiling.
+#        'modulename':  'ruamel.yaml',
+#        # ruamel.yaml-0.16.0-py2.py3-none-any.whl (122.2 kB)  Copy SHA256 hash SHA256
+#        'source_tmpl': '%(name)s-%(version)s-py2.py3-none-any.whl',
+#        'source_urls': [PYPI_SOURCE],
+#        'use_pip':     False,
+#    }),
+    ('ruamel.yaml', '0.15.100', { # # New API which is incompatible with previous versions, from 0.16.0 also split in two modules....
+        'modulename':  'ruamel.yaml',
+        # ruamel.yaml-0.16.0-py2.py3-none-any.whl (122.2 kB)  Copy SHA256 hash SHA256
+#        'source_tmpl': '%(name)s-%(version)s-py2.py3-none-any.whl',
+        'source_urls': [PYPI_SOURCE],
+        'use_pip':     True, # pip mandatory for this package.
+    }),
+    ('xonsh', '0.9.9', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('SIP', '4.19.8', { # Python 3.5 and later only! And only available as a wheel.
+        'modulename':     'sip',
+        # sip-4.19.8-cp37-cp37m-manylinux1_x86_64.whl
+        'source_tmpl':    '%%(namelower)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)sm-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'source_urls':    [PYPI_LOWER_SOURCE],
+        'use_pip':        True,
+        'unpack_sources': False,
+    }),
+    ('libarchive', '0.4.7', {
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('gmpy2', '2.0.8', { # Python 3.5 and later only!
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('parso', '0.5.1', { # depends on parso
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('jedi', '0.14.1', { # depends on parso
+        'source_urls': [PYPI_SOURCE],
+    }),
+    ('prompt_toolkit', '2.0.9', { # depends on parso
+        'source_urls': [PYPI_SOURCE],
+    }),
+]
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = False
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python'+ pyshortver + '/site-packages'],
+}
+
+# As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
+# modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'
