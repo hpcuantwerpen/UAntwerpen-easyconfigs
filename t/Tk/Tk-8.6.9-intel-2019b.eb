@@ -40,10 +40,7 @@ patches = ['Tk-8.6.4_different-prefix-with-tcl.patch']
 dependencies = [
     ('Tcl',   version),
     ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for zlib
-]
-
-osdependencies = [
-    ('libX11-devel'),
+    ('X11',      '%(toolchain_version)s', '', ('GCCcore', gcc_version)),
 ]
 
 configopts = '--enable-threads --with-tcl=$EBROOTTCL/lib CFLAGS="-I$EBROOTTCL/include"'
