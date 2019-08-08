@@ -1,3 +1,9 @@
+# This EasyConfig fails to install when the locale (look at the output
+# of locale) is set to "POSIX". py_expression_eval them fails with an 
+# error message comming from encodings/ascii.py in the Intel Python
+# distribution. This can be solved by setting
+# export LANG="en_US.UTF-8"
+# before calling EasyBuild to install this package.
 easyblock = 'PythonBundle'
 
 name = 'IntelPython3-Packages'
