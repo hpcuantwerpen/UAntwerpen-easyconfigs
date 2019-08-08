@@ -70,11 +70,10 @@ sources = [
 dependencies = [
     ('baselibs',    '%(toolchain_version)s', '', ('GCCcore', gcc_version)),
     # Baselibs is used for: bzip2, zlib, lz4, ncurses, libreadline, GMP
-    # libffi, libpng, freetype, libyaml
+    # libffi, libpng, freetype, libyaml, cURL
 #   ('Tcl',         '8.6.8'),                  # KL 20171204, enters via Tk and SQLite
     ('Tk',          '8.6.9'),                  # KL 20171204
     ('SQLite',      '3.29.0'),                 # KL 20171204
-    ('cURL',        '7.65.3'),                 # KL 20171204, needed for pysam
     ('HDF5',        '1.8.21', '-MPI'),       # KL 20180629, needed for hf5py 
     ('SuiteSparse', '4.5.6',  '-METIS-5.1.0'), # KL 20180703, for umfpack support in NumPy.
 #    ('protobuf',    '3.5.0'),  # KL 20171204, protobuf now again in a separate module, faster code than the PyPi module
