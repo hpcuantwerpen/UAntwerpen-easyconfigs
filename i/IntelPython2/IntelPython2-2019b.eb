@@ -1,0 +1,27 @@
+# IMPORTANT NOTE: This is just a dummy easyconfig, create 2019b as an alias or
+# symbolic link to the proper 2019b.XX module file that is actually in use.
+# It is needed though for EasyBuild to get the right dependency change
+easyblock = 'Bundle'
+
+name = 'IntelPython2'
+version = '2019b'
+intelpython_version = version + '.04'
+
+homepage = 'https://software.intel.com/en-us/distribution-for-python'
+
+whatis = [
+    'Description: Dummy IntelPython2 module; this should never have been installed and lmod aliases or symbolic links should have been used instead.',
+]
+
+description = """
+Dummy IntelPython2 module; this should never have been installed and lmod 
+aliases or symbolic links should have been used instead.
+]""" 
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+dependencies = [
+    ('IntelPython2',  intelpython_version), # Not really needed as all libraries are included through symbolic links
+]
+
+moduleclass = 'lang'
