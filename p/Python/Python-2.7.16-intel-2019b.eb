@@ -267,10 +267,8 @@ exts_list = [
     ('requests', '2.22.0', { # Needed for the easyconfig update script.
         'source_urls': [PYPI_SOURCE],
     }),
-# Pysam does not work with Python 3.7.0, tried with Intel and GCC.
     ('pysam', '0.15.3', {  # Still fails with Python 3.7.0 with EasyBuild.
         'source_urls':  [PYPI_SOURCE],
-#        'prebuildopts': pysam_prebuildopts, # To use GCC instead.
     }),
     ('tinyarray', '1.2.1', {
         'source_urls': [PYPI_SOURCE],
@@ -376,6 +374,13 @@ exts_list = [
 # Requested by Yannick Engelman
 #
     ('mpmath', '1.1.0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# New dependecy for kwant, and uses mpmath
+#
+    ('sympy', '1.4', {
         'source_tmpl': '%(name)s-%(version)s.tar.gz',
         'source_urls': [PYPI_SOURCE],
     }),

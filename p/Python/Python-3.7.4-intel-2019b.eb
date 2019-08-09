@@ -90,12 +90,6 @@ osdependencies = [
     ('openssl-devel', 'libssl-dev', 'libopenssl-devel')
 ]
 
-# pysam does not compile with Intel on Python 3.7.0, though it does with Python 3.6.6...
-# For Intel:
-pysam_prebuildopts  = 'VERBOSE=1 '
-pysam_prebuildopts += 'CC="gcc"  CFLAGS="-march=native" '    # Pybinding currently does not compile with icc/icpc, so enforce gcc/g++
-pysam_prebuildopts += 'CXX="g++" CXXFLAGS="-march=native" '  # The pybinding cmake recipes automatically add -O3 -fPIC -stc=c++11
-
 # order is important!
 # package versions updated 20190730
 # skipsteps=['extensions'] # This doesn't work unfortunately.
@@ -299,11 +293,9 @@ exts_list = [
     ('requests', '2.22.0', { # Needed for the easyconfig update script.
         'source_urls': [PYPI_SOURCE],
     }),
-## Pysam does not work with Python 3.7.0, tried with Intel and GCC.
-#    ('pysam', '0.15.3', {  # Still fails with Python 3.7.0 with EasyBuild.
-#        'source_urls':  ['https://pypi.python.org/packages/source/p/pysam'],
-#        'prebuildopts': pysam_prebuildopts, # To use GCC instead.
-#    }),
+    ('pysam', '0.15.3', {  # Still fails with Python 3.7.0 with EasyBuild.
+        'source_urls':  ['https://pypi.python.org/packages/source/p/pysam'],
+    }),
     ('tinyarray', '1.2.1', {
         'source_urls': [PYPI_SOURCE],
     }),
@@ -398,6 +390,13 @@ exts_list = [
 # Requested by Yannick Engelman
 #
     ('mpmath', '1.1.0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# New dependecy for kwant, and uses mpmath
+#
+    ('sympy', '1.4', {
         'source_tmpl': '%(name)s-%(version)s.tar.gz',
         'source_urls': [PYPI_SOURCE],
     }),

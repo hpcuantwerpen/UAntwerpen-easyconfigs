@@ -146,6 +146,9 @@ exts_list = [
     ('lxml', '4.4.0', {
         'source_urls': [PYPI_SOURCE],
     }),
+    ('pysam', '0.15.3', {  # Still fails with Python 3.7.0 with EasyBuild.
+        'source_urls':  ['https://pypi.python.org/packages/source/p/pysam'],
+    }),
     ('tinyarray', '1.2.1', {
         'source_urls': [PYPI_SOURCE],
     }),
@@ -240,6 +243,13 @@ exts_list = [
 # Requested by Yannick Engelman
 #
     ('mpmath', '1.1.0', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_SOURCE],
+    }),
+#
+# New dependecy for kwant, and uses mpmath
+#
+    ('sympy', '1.4', {
         'source_tmpl': '%(name)s-%(version)s.tar.gz',
         'source_urls': [PYPI_SOURCE],
     }),
