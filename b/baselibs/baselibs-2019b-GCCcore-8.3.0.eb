@@ -14,7 +14,8 @@ whatis = [
     "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, libarchive, "+ 
     "JasPer, libjpeg-turbo, libpng, LibTIFF, x264, x265, LAME, cURL, expat, libxml2, libxslt, "+ 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
-    "file, FriBidi, gc, gettext, libffi, libiconv, libunistring, libyaml, PCRE, UDUNITS, util-linux.",
+    "FriBidi, gettext, ICU, libiconv, libunistring, " +
+    "file, gc, libffi, libyaml, PCRE, UDUNITS, util-linux.",
 ]
 
 binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
@@ -45,13 +46,14 @@ libcerf_version =      '1.13'          # https://jugit.fz-juelich.de/mlz/libcerf
 GMP_version =          '6.1.2'         # https://ftp.gnu.org/gnu/gmp/
 MPFR_version =         '4.0.2'         # https://ftp.gnu.org/gnu/mpfr/
 MPC_version =          '1.1.0'         # https://ftp.gnu.org/gnu/mpc/
-file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
 fribidi_version =      '1.0.5'         # https://github.com/fribidi/fribidi/releases 
-gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
 gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
-libffi_version =       '3.2.1'         # ftp://sourceware.org/pub/libffi/
+ICU_version =          '64.2'          # http://site.icu-project.org/home
 libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
 libunistring_version = '0.9.10'        # https://ftp.gnu.org/gnu/libunistring/
+file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
+gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
+libffi_version =       '3.2.1'         # ftp://sourceware.org/pub/libffi/
 libyaml_version =      '0.2.2'         # https://github.com/yaml/libyaml/releases
 PCRE_version =         '8.43'          # https://ftp.pcre.org/pub/pcre/
 UDUNITS_version =      '2.2.26'        # ftp://ftp.unidata.ucar.edu/pub/udunits
@@ -239,18 +241,9 @@ Overview of included libraries:
   + fontconfig (version %(fontconfig)s): a library designed to provide system-wide 
     font configuration, customization and application access.
     The package contains a number of command line tools and a shared library.
-* Miscellaneous
-  + file (version %(filev)s): The file command is "a file type guesser", that
-    is, a command-line tool that tells you in words what kind of data a file
-    contains. Unlike most GUI systems, command-line UNIX systems - with this
-    program leading the charge - don't rely on filename extentions to tell you
-    the type of a file, but look at the file's actual contents. This is, of
-    course, more reliable, but requires a bit of I/O.This is a
-    re-implementation of the original file command shipped with Bell Labs UNIX.
+* Unicode and multilingual support
   + FriBidi (version %(fribidiv)s): Free Implementation of the Unicode Bidirectional 
     Algorithm.
-  + gc (version %(gc)s): gc is the Boehm-Demers-Weiser conservative garbage
-    collector, a garbage collecting replacement for C malloc or C++ new.
   + gettext (version %(gettext)s): GNU gettest is a support library for
     multilingual programs developed in the GNU Translation Project. It
     offers to programmers, translators, and even users, a well integrated set of
@@ -263,6 +256,22 @@ Overview of included libraries:
     programs to massage in various ways the sets of translatable strings, or
     already translated strings. A special GNU Emacs mode also helps interested
     parties in preparing these sets, or bringing them up to date.
+  + ICU (version %(ICU)s): a mature, widely used set of C/C++ and Java libraries 
+    providing Unicode and Globalization support for software applications.
+  + libiconv (version %(iconv)s): This library provides an implementation of the
+    iconv() function call to convert various encodings to/from Unicode.
+  + libunistring (version %(unistring)s): provides functions for manipulating Unicode
+    strings and for manipulating C strings according to the Unicode standard.
+* Miscellaneous
+  + file (version %(filev)s): The file command is "a file type guesser", that
+    is, a command-line tool that tells you in words what kind of data a file
+    contains. Unlike most GUI systems, command-line UNIX systems - with this
+    program leading the charge - don't rely on filename extentions to tell you
+    the type of a file, but look at the file's actual contents. This is, of
+    course, more reliable, but requires a bit of I/O.This is a
+    re-implementation of the original file command shipped with Bell Labs UNIX.
+  + gc (version %(gc)s): gc is the Boehm-Demers-Weiser conservative garbage
+    collector, a garbage collecting replacement for C malloc or C++ new.
   + libffi (version %(ffi)s): FFI stands for Foreign Function Interface.
     A foreign function interface is the popular name for the interface that
     allows code written in one language to call code written in another
@@ -273,10 +282,6 @@ Overview of included libraries:
     The library provides a portable, high level programming interface to various
     calling conventions. This allows a programmer to call any function specified
     by a call interface description at run-time.
-  + libiconv (version %(iconv)s): This library provides an implementation of the
-    iconv() function call to convert various encodings to/from Unicode.
-  + libunistring (version %(unistring)s): provides functions for manipulating Unicode
-    strings and for manipulating C strings according to the Unicode standard.
   + libyaml (version %(yaml)s): a YAML 1.1 parser and emitter written in C.
   + PCRE (version %(PCRE)s): The PCRE library is a set of functions that implement
     regular expression pattern matching using the same syntax and semantics as
@@ -324,13 +329,14 @@ Overview of included libraries:
     'pixman': pixman_version,
     'freetype': freetype_version,
     'fontconfig': fontconfig_version,
-    'filev': file_version,
     'fribidiv': fribidi_version,
-    'gc': gc_version,
     'gettext': gettext_version,
-    'ffi': libffi_version,
+    'ICU': ICU_version,
     'iconv': libiconv_version,
     'unistring': libunistring_version,
+    'filev': file_version,
+    'gc': gc_version,
+    'ffi': libffi_version,
     'yaml': libyaml_version,
     'PCRE': PCRE_version,
     'UDUNITS': UDUNITS_version,
@@ -359,8 +365,10 @@ docurls = [
     'cURL: man pages for the curl and curl-config commands (section 1) and the library functions (section 3)',
     'expat: web-based documentation: https://libexpat.github.io/doc/',
     'expat: man page for xmlwf',
+    'ICU: web-based documentation at http://site.icu-project.org/home',
+    'ICU: man pages for seveal of the commands in section 1 and section 8',
     'libxml2: web-based documentation: http://xmlsoft.org/html/index.html',
-    'libxml2: an pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
+    'libxml2: man pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
     'libxslt: web-based documentation on the home page: http://xmlsoft.org/libxslt/',
     'libxslt: man pages for xsltproc, libxslt and libexslt',
     'file: home page is https://www.darwinsys.com/file/', 
@@ -642,6 +650,40 @@ components = [
         'configopts':  '--with-gmp=%(installdir)s --with-mpfr=%(installdir)s'
     }),
 #
+# Unicode and multi-language support
+#
+    ('FriBidi', fribidi_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_BZ2,
+                          'source_urls': ['https://github.com/%(namelower)s/%(namelower)s/releases/download/v%(version)s']
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--disable-docs',
+    }),
+    ('ICU', ICU_version, {
+        'sources':     [ {
+                          'filename':    'icu4c-%(version_major)s_%(version_minor)s-src.tgz',
+                          'source_urls': ['http://download.icu-project.org/files/icu4c/%(version)s']
+                       } ],
+        'start_dir':   '%(namelower)s/source'
+    }),
+    ('libiconv', libiconv_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s'
+    }),
+    ('libunistring', libunistring_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'parallel':    1
+    }),
+
+#
 # Miscellaneous
 #
     ('file', file_version, {
@@ -650,14 +692,6 @@ components = [
                           'source_urls': ['ftp://ftp.astron.com/pub/file/']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
-    }),
-    ('FriBidi', fribidi_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_BZ2,
-                          'source_urls': ['https://github.com/%(namelower)s/%(namelower)s/releases/download/v%(version)s']
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--disable-docs',
     }),
     ('gc', gc_version, {
         'sources':     [ {
@@ -678,21 +712,6 @@ components = [
                           'source_urls': ['ftp://sourceware.org/pub/libffi/', 'http://www.mirrorservice.org/sites/sourceware.org/pub/libffi/']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
-    }),
-    ('libiconv', libiconv_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s'
-    }),
-    ('libunistring', libunistring_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'parallel':    1
     }),
     ('libyaml', libyaml_version, {
         'sources':     [ {
