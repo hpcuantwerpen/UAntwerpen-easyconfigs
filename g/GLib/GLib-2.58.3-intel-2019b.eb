@@ -1,0 +1,67 @@
+# Note: 2.58.3 is the last version that used Autotools and make to configure and
+# build GLib.
+# Later version switched to Meson (configre) and Ninja (guild).
+#
+easyblock = 'ConfigureMake'
+
+name = 'GLib'
+version = '2.58.3'
+
+homepage = 'http://www.gtk.org/'
+
+whatis = [
+    'Description: One of the GTK+ base libraries',
+    'The module provides a number of command line utilities and static and shared libraries',
+]
+
+description = """
+GLib provides the core application building blocks for libraries and
+applications written in C. It provides the core object system used in GNOME,
+the main loop implementation, and a large set of utility functions for strings
+and common data structures.
+
+The module provides a number of command line utilities and staqtic and shared
+libraries.
+"""
+
+docurls= [
+    'Web-based documentation: https://developer.gnome.org/glib/',
+]
+
+docpaths = [
+    'share/gtk-doc/html/glib',
+    'share/gtk-doc/html/gobject',
+    'share/gtk-doc/html/gio'
+]
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+gcc_version = '8.3.0'
+toolchainopts = {'pic': True}
+
+source_urls = [FTPGNOME_SOURCE]
+sources = [SOURCELOWER_TAR_XZ]
+
+dependencies = [
+    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for libffi, gettext, libxml2, PCRE, util-linux
+]
+
+builddependencies = [
+     ('buildtools', '%(toolchain_version)s', '', True),
+#    ('Python', '2.7.13')
+]
+
+preconfigopts = "./autogen.sh && "
+configopts  = "--disable-maintainer-mode --disable-silent-rules --disable-libelf --disable-systemtap "
+configopts += "--with-libiconv=gnu "
+configopts += "--enable-static --enable-shared "
+
+#parallel = 1
+
+postinstallcmds = ["sed -i -e 's|#!.*python|#!/usr/bin/env python|' %(installdir)s/bin/*"]
+
+sanity_check_paths = {
+    'files': ['lib/libglib-%(version_major)s.0.a', 'lib/libglib-%%(version_major)s.0.%s' % SHLIB_EXT],
+    'dirs': ['bin', 'include'],
+}
+
+moduleclass = 'vis'
