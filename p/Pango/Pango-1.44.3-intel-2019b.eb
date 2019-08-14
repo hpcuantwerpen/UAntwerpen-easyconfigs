@@ -1,7 +1,8 @@
-easyblock = 'ConfigureMake'
+# This one does not yet work as HarBuzz >= 2.0 is needed for it....
+easyblock = 'MesonNinja'
 
 name = 'Pango'
-version = '1.42.3'
+version = '1.44.3'
 
 homepage = 'http://www.pango.org/'
 
@@ -40,17 +41,28 @@ dependencies = [
     ('X11',      '%(toolchain_version)s', '', ('GCCcore', gcc_version)),
     ('GLib',     '2.61.2'),
     ('cairo',    '1.17.2'),
-    ('HarfBuzz', '1.9.0'),
+    ('HarfBuzz', '1.9.0'),  # 1.9.0 turns out to be too old for Pango 1.44.x
 ]
 
 builddependencies = [
-    ('buildtools',            '%(toolchain_version)s',  '', True), # For help2man to generate the man page.
-    ('GObject-Introspection', '1.60.1')
+    ('buildtools',            '%(toolchain_version)s', '', True), # For pkg-config and for help2man to generate the man page.
+    ('GObject-Introspection', '1.60.1'),
+    ('Ninja',                 '1.9.0'),
+    ('Meson',                 '0.51.1',                '-Python-3.7.4'),
 ]
 
-configopts = "--disable-silent-rules --enable-introspection=yes --enable-static --enable-shared "
+configopts = "--buildtype=release --default-library=both "
+# Old configopts:
+# configopts = "--disable-silent-rules --enable-introspection=yes --enable-static --enable-shared "
+
+sanity_check_paths = {
+    'files': ['bin/pango-view', 'lib/libpango-1.0.%s' % SHLIB_EXT, 'lib/libpangocairo-1.0.%s' % SHLIB_EXT,
+              'lib/libpangoft2-1.0.%s' % SHLIB_EXT, 'lib/libpangoxft-1.0.%s' % SHLIB_EXT],
+    'dirs': [],
+}
 
 modextrapaths = {
+    'GI_TYPELIB_PATH': 'share',
     'XDG_DATA_DIRS': 'share',
 }
 
