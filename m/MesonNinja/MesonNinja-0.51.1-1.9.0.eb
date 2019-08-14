@@ -1,0 +1,62 @@
+# This easyconfig requires at least EasyBuild 3.9.4 due to a bug in the Bundle
+# EasyBlock in earlier versions. Or use the patched bundle.py of
+# https://github.com/easybuilders/easybuild-easyblocks/pull/1777 via --include-easyblocks
+easyblock = 'Bundle'
+
+name = 'MesonNinja'
+meson_version = '0.51.1'
+ninja_version = '1.9.0'
+version = meson_version + '-'+ ninja_version
+system_pyshortver = '3.6'
+
+homepage = 'https://mesonbuild.com'
+
+whatis = [
+    "Description: MesonNinja contains Meson, a cross-platform build system written in Python, and Ninja, a small build system with a focus on speed"
+]
+
+description = """
+Meson is a cross-platform build system designed to be both as fast and as 
+user friendly as possible.
+
+Ninja is a small build system with a focus on speed
+
+Meson is written in Python 3.5. This module uses the system Python.
+"""
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+default_easyblock = 'PythonPackage'
+
+components = [
+    ('Ninja', ninja_version, {
+        'easyblock':     'CmdCp',
+        'sources':       [ { 'download_filename' : 'v%(version)s.tar.gz',
+                             'filename'          : SOURCELOWER_TAR_GZ,
+                             'source_urls'       : ['https://github.com/ninja-build/ninja/archive'],
+                         } ],
+        'checksums':     ['5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'cmds_map':      [('.*', "./configure.py --bootstrap")],
+        'files_to_copy': [(['ninja'], 'bin')],
+    }),
+    ('Meson', meson_version, {
+        'easyblock':     'PythonPackage',
+        'sources':       [SOURCELOWER_TAR_GZ],
+        'source_urls':   [PYPI_SOURCE],
+        'checksums':     ['fbd730e87799f62ba5b0026be3ad667550e6cc0888bb57932a2d0e232c9391f6'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'req_py_majver': 3, # Used to let EasyBuild select the right system Python executable.
+        'req_py_minver': 5, # Used to let EasyBuild select the right system Python executable.
+        'options':       {'modulename': 'mesonbuild'}
+    }),
+]
+
+sanity_check_paths = {
+    'files': ['bin/ninja', 'bin/meson'],
+    'dirs':  ['lib/python%s/site-packages' % system_pyshortver],
+}
+
+modextrapaths = {'PYTHONPATH': ['lib/python%s/site-packages' % system_pyshortver]}
+
+moduleclass = 'tools'
