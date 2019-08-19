@@ -27,9 +27,11 @@ checksums =   ['e20a07865c8697bba00aebccc6f54912d6bc333bb4d604e6b07491c1a226b34f
 builddependencies = [('binutils', '2.32')]
 
 dependencies = [
-    ('baselibs', buildset), # For libjpeg-turbo, libpng, LibTIFF
-    ('giflib',   '5.2.1'),
+    ('baselibs', buildset), # For libjpeg-turbo, libpng, LibTIFF, iglib
+#    ('giflib',   '5.2.1'),
 ]
+
+configopts = '--enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras'
 
 sanity_check_paths = {
     'files': [],
