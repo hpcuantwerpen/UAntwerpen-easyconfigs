@@ -11,11 +11,12 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, libarchive, "+ 
-    "JasPer, libjpeg-turbo, libpng, LibTIFF, x264, x265, LAME, cURL, expat, libxml2, libxslt, "+ 
+    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, libarchive, " + 
+    "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
+    "x264, x265, LAME, cURL, expat, libxml2, libxslt, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
-    "file, gc, libffi, libyaml, PCRE, UDUNITS, util-linux.",
+    "file, gc, libffi, libyaml, PCRE, UDUNITS, D-Bus, util-linux.",
 ]
 
 binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
@@ -30,10 +31,12 @@ XZ_version =           '5.2.4'         # https://tukaani.org/xz/
 zlib_version =         '1.2.11'        # https://zlib.net/
 lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
 libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
+giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
 JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
 libjpegturbo_version = '2.0.2'         # https://sourceforge.net/projects/libjpeg-turbo/files/
 libpng_version =       '1.6.37'        # http://www.libpng.org/pub/png/libpng.html
 libtiff_version =      '4.0.10'        # http://www.simplesystems.org/libtiff/
+libwebp_version =      '1.0.3'         # https://github.com/webmproject/libwebp/releases
 x264_version =         '20190721-2245' # https://download.videolan.org/pub/videolan/x264/snapshots/
 x265_version =         '3.1.1'         # http://download.videolan.org/pub/videolan/x265/
 LAME_version =         '3.100'         # http://lame.sourceforge.net/
@@ -61,6 +64,7 @@ util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/lin
 pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
 freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
 fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
+dbus_version =         '1.13.12'       # https://dbus.freedesktop.org/releases/dbus/
 
 description = """
 This module provides a large number of up-to-date base libraries used by many
@@ -102,6 +106,9 @@ Overview of included libraries:
     covered by any patents, for the popular .gz files.
   + libarchive (version %(libarchive)s): Multi-format archive and compression library.
 * Graphics file formats
+  + giflib (version %(giflib)s): a library for reading and writing gif images. It is 
+    API and ABI compatible with libungif which was in wide use while the LZW 
+    compression algorithm was patented.
   + JasPer (version %(JasPer)s): an open-source initiative to provide a free
     software-based reference implementation of the codec specified in the
     JPEG-2000 Part-1 standard (i.e., ISO/IEC 15444-1). The JasPer software is
@@ -150,6 +157,10 @@ Overview of included libraries:
     additional tools on other OSes.
     The library, along with associated tool programs, should handle most of your
     needs for reading and writing TIFF images.
+  + libwebp (version %(libwebp)s): WebP is a modern image format that provides 
+    superior lossless and lossy compression for images on the web. Using WebP, 
+    webmasters and web developers can create smaller, richer images that make 
+    the web faster.
 * Audio and video
   + x264 (version v%(x264)s): x264 is a free software library and
     application for encoding video streams into the H.264/MPEG-4 AVC compression
@@ -263,6 +274,11 @@ Overview of included libraries:
   + libunistring (version %(unistring)s): provides functions for manipulating Unicode
     strings and for manipulating C strings according to the Unicode standard.
 * Miscellaneous
+  + D-Bus (version %(dbus)s): D-Bus is a message bus system, a simple way for 
+    applications to talk to one another. In addition to interprocess communication, 
+    D-Bus helps coordinate process lifecycle; it makes it simple and reliable to 
+    code a "single instance" application or daemon, and to launch applications 
+    and daemons on demand when their services are needed.
   + file (version %(filev)s): The file command is "a file type guesser", that
     is, a command-line tool that tells you in words what kind of data a file
     contains. Unlike most GUI systems, command-line UNIX systems - with this
@@ -310,10 +326,12 @@ Overview of included libraries:
     'XZ': XZ_version,
     'zlib': zlib_version,
     'libarchive': libarchive_version,
+    'giflib': giflib_version,
     'JasPer': JasPer_version,
     'libjpegturbo': libjpegturbo_version,
     'libpng': libpng_version,
     'libtiff': libtiff_version,
+    'libwebp': libwebp_version,
     'x264': x264_version,
     'x265': x265_version,
     'LAME': LAME_version,
@@ -334,6 +352,7 @@ Overview of included libraries:
     'ICU': ICU_version,
     'iconv': libiconv_version,
     'unistring': libunistring_version,
+    'dbus': dbus_version,
     'filev': file_version,
     'gc': gc_version,
     'ffi': libffi_version,
@@ -354,8 +373,11 @@ docurls = [
     'XZ Utils: man pages for the command line utilities',
     'zlib: web-based manual on https://zlib.net/manual.html', 
     'libarchive: Some web-based documentation on https://www.libarchive.org/',
+    'giflib: home page with links to the documentation on http://giflib.sourceforge.net/',
     'libjpeg-turbo web-based documentation: https://libjpeg-turbo.org/Documentation',
     'libpng: web-based documentation on http://www.libpng.org/pub/png/libpng.html',
+    'libwebp: home page with documentation on https://developers.google.com/speed/webp/',
+    'libwebp: Manual pages for cwebp and dwebp in section 1',
     'x264: Some information on http://www.videolan.org/developers/x264.html',
     'x265: web-based documentation: http://x265.readthedocs.io/en/default/',
     'GSL manual: https://www.gnu.org/software/gsl/doc/html/index.html',
@@ -371,6 +393,7 @@ docurls = [
     'libxml2: man pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
     'libxslt: web-based documentation on the home page: http://xmlsoft.org/libxslt/',
     'libxslt: man pages for xsltproc, libxslt and libexslt',
+    'D-Bus: home page is https://www.freedesktop.org/wiki/Software/dbus/ and contains links to the documentation',
     'file: home page is https://www.darwinsys.com/file/', 
     'FriBidi: home page is https://github.com/fribidi/fribidi',
     'gc: web-based documentation on the home page http://hboehm.info/gc/',
@@ -393,7 +416,8 @@ toolchain = {'name': 'GCCcore', 'version': gcc_version}
 toolchainopts = {'pic': True}
 
 builddependencies = [
-    ('binutils',   binutils_version, '', ('GCCcore', gcc_version)),
+#    ('binutils',   binutils_version, '', ('GCCcore', gcc_version)),
+    ('binutils',   binutils_version, ),
     ('buildtools', version,          '', True),
 ]
 
@@ -496,6 +520,16 @@ components = [
 #
 # Graphics file formats
 #
+    ('giflib', giflib_version, {
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': [('http://sourceforge.net/projects/giflib/files', 'download')]
+                       }],
+        'start_dir':   '%(name)s-%(version)s',
+        'skipsteps':   ['configure'],
+        'buildopts':   'CC="$CC" CFLAGS="$CXXFLAGS"',
+        'installopts': "PREFIX=%(installdir)s",
+    }),
     ('JasPer', JasPer_version, { 
         'easyblock':   'CMakeMake',
         'sources':     [ {
@@ -533,6 +567,13 @@ components = [
                           'source_urls': ['https://download.osgeo.org/libtiff/']
                        }],
         'start_dir':   'tiff-%(version)s'
+    }),
+    ('libwebp', libwebp_version, { # Needs giflib, libjpeg-turbo, libpng and libTIFF
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['https://storage.googleapis.com/downloads.webmproject.org/releases/webp']
+                       }],
+        'start_dir':   '%(name)s-%(version)s'
     }),
 #
 # Audio and video file formats
@@ -686,6 +727,14 @@ components = [
 #
 # Miscellaneous
 #
+    ('DBus', dbus_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': ['http://dbus.freedesktop.org/releases/dbus']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--without-systemdsystemunitdir',
+    }),
     ('file', file_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
