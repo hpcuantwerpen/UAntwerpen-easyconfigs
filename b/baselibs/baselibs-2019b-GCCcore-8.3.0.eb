@@ -573,7 +573,8 @@ components = [
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['https://storage.googleapis.com/downloads.webmproject.org/releases/webp']
                        }],
-        'start_dir':   '%(name)s-%(version)s'
+        'start_dir':   '%(name)s-%(version)s',
+        'configopts':  '--enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras',
     }),
 #
 # Audio and video file formats
