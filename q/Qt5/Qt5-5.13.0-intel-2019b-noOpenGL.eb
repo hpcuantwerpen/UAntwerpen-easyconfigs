@@ -1,0 +1,58 @@
+easyblock = 'EB_Qt'
+
+name = 'Qt5'
+version = '5.13.0'
+versionsuffix = '-noOpenGL'
+
+homepage = 'http://qt.io/'
+
+whatis = [
+    'Description: Qt is a comprehensive cross-platform C++ application framework',
+    'This module is compiled without OpenGL support, so will work on all nodes, but some Qt programs may fail to compile or run',
+]
+
+description = """
+Qt is a cross-platform GUI development library. It supports not only Windows,
+macOS and Linux, but also tablet/phone operating systems such as Android and
+iOS and is used in many embedded devices. It is a popular choice for 
+developing good-looking cross-platform GUI applications. 
+
+Note Qt is pronounced "Cute".
+
+It is installed with the (L)GPL license.
+
+This module is compiled without support for OpenGL programs. As such it can
+be used on all nodes, but not all Qt applications will compile or work.
+"""
+
+docurls = [
+    'Web-based documentation: http://doc.qt.io/qt-5/',
+]
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+gcc_version = '8.3.0'
+
+source_urls = [
+    'http://download.qt.io/official_releases/qt/%(version_major_minor)s/%(version)s/single/',
+    'http://download.qt.io/archive/qt/%(version_major_minor)s/%(version)s/single/'
+]
+sources = ['qt-everywhere-src-%(version)s.tar.xz']
+checksums = ['2cba31e410e169bd5cdae159f839640e672532a4687ea0f265f686421e0e86d6']
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True), # For pkg-config
+]
+
+# qtgamepad needs recent kernel/libevdev (fails on RHEL 6.x)
+configopts = '-skip qtgamepad -no-opengl'
+
+dependencies = [
+    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # For PCRE (not really needed), libjpeg-turbo, libpng
+    ('GLib',     '2.61.2'),      
+#    ('HarfBuzz', '1.9.0'),       # Can do without, Qt5 contains its own alternative
+#    ('SQLite',         '3.21'),        # UPDATE: Qt5 doesn find this one BEFORE Can do without, Qt5 contains its own alternative
+    ('X11',      '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # Loads fontconfig and freetype, used by Qt5, tough Qt5 also provides its own freetype alternative
+#    ('libGLU',         '9.0.0'),
+]
+
+moduleclass = 'devel'

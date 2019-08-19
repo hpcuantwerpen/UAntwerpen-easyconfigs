@@ -1,0 +1,67 @@
+easyblock = 'EB_Qt'
+
+name = 'Qt5'
+version = '5.12.4'
+versionsuffix = '-noOpenGL'
+
+buildset         = '2019b'
+gcc_version      = '8.3.0'
+binutils_version = '2.32'
+
+homepage = 'http://qt.io/'
+
+whatis = [
+    'Description: Qt is a comprehensive cross-platform C++ application framework',
+    'This module is compiled without OpenGL support, so will work on all nodes, but some Qt programs may fail to compile or run',
+]
+
+description = """
+Qt is a cross-platform GUI development library. It supports not only Windows,
+macOS and Linux, but also tablet/phone operating systems such as Android and
+iOS and is used in many embedded devices. It is a popular choice for 
+developing good-looking cross-platform GUI applications. 
+
+Note Qt is pronounced "Cute".
+
+It is installed with the (L)GPL license.
+
+This module is compiled without support for OpenGL programs. As such it can
+be used on all nodes, but not all Qt applications will compile or work.
+"""
+
+docurls = [
+    'Web-based documentation: http://doc.qt.io/qt-5/',
+]
+
+toolchain = {'name': 'GCCcore', 'version': gcc_version}
+
+source_urls = [
+    'http://download.qt.io/official_releases/qt/%(version_major_minor)s/%(version)s/single/',
+    'http://download.qt.io/archive/qt/%(version_major_minor)s/%(version)s/single/'
+]
+sources =   ['qt-everywhere-src-%(version)s.tar.xz']
+checksums = ['85da5e0ee498759990180d5b8192efaa6060a313c5018b772f57d446bdd425e1']  # qt-everywhere-src-5.12.4.tar.xz
+patches =   ['Qt5-%(version)s_fix-avx2.patch']
+
+builddependencies = [
+    ('buildtools', buildset, '', True), # For pkg-config
+]
+
+dependencies = [
+    ('baselibs', buildset), # For PCRE (not really needed), libjpeg-turbo, libpng
+    ('GLib',     '2.61.2'),      
+#    ('HarfBuzz', '1.9.0'),       # Can do without, Qt5 contains its own alternative
+#    ('SQLite',         '3.21'),        # UPDATE: Qt5 doesn't find this one BEFORE Can do without, Qt5 contains its own alternative
+    ('X11',      buildset), # Loads fontconfig and freetype, used by Qt5, tough Qt5 also provides its own freetype alternative
+#    ('libGLU',         '9.0.0'),
+]
+
+# qtgamepad needs recent kernel/libevdev (fails on RHEL 6.x)
+configopts = '-skip qtgamepad -no-opengl'
+
+# make sure QtWebEngine component is being built & installed
+check_qtwebengine = True
+
+parallel = 1
+
+moduleclass = 'devel'

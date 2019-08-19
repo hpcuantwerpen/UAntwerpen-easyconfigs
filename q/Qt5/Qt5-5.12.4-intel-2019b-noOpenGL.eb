@@ -1,0 +1,72 @@
+# Does not yet work, crashes with C++ errors.
+easyblock = 'EB_Qtmod'
+
+name = 'Qt5'
+version = '5.12.4'
+versionsuffix = '-noOpenGL'
+
+homepage = 'http://qt.io/'
+
+whatis = [
+    'Description: Qt is a comprehensive cross-platform C++ application framework',
+    'This module is compiled without OpenGL support, so will work on all nodes, but some Qt programs may fail to compile or run',
+]
+
+description = """
+Qt is a cross-platform GUI development library. It supports not only Windows,
+macOS and Linux, but also tablet/phone operating systems such as Android and
+iOS and is used in many embedded devices. It is a popular choice for 
+developing good-looking cross-platform GUI applications. 
+
+Note Qt is pronounced "Cute".
+
+It is installed with the (L)GPL license.
+
+This module is compiled without support for OpenGL programs. As such it can
+be used on all nodes, but not all Qt applications will compile or work.
+"""
+
+docurls = [
+    'Web-based documentation: http://doc.qt.io/qt-5/',
+]
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+gcc_version = '8.3.0'
+
+source_urls = [
+    'http://download.qt.io/official_releases/qt/%(version_major_minor)s/%(version)s/single/',
+    'http://download.qt.io/archive/qt/%(version_major_minor)s/%(version)s/single/'
+]
+sources = ['qt-everywhere-src-%(version)s.tar.xz']
+#patches = ['Qt5-%(version)s_fix-avx2.patch']
+#checksums = [
+#    '6462ac74c00ff466487d8ef8d0922971aa5b1d5b33c0753308ec9d57711f5a42',  # qt-everywhere-src-5.12.3.tar.xz
+#    '6f46005f056bf9e6ff3e5d012a874d18ee03b33e685941f2979c970be91a9dbc',  # Qt5-5.12.3_fix-avx2.patch
+#]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+osdependencies = [
+#    ('mesa-libGL'),
+#    ('mesa-libGL-devel'),
+#    ('mesa-libEGL'),
+#    ('mesa-libEGL-devel'),
+#    ('mesa-libGLU'),
+#    ('mesa-libGLU-devel'),
+]
+
+# qtgamepad needs recent kernel/libevdev (fails on RHEL 6.x)
+configopts = '-skip qtgamepad -no-opengl'
+
+dependencies = [
+    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # For PCRE (not really needed), libjpeg-turbo, libpng
+    ('GLib',     '2.61.2'),      
+    ('HarfBuzz', '1.9.0'),       # Can do without, Qt5 contains its own alternative
+#    ('SQLite',         '3.21'),        # UPDATE: Qt5 doesn find this one BEFORE Can do without, Qt5 contains its own alternative
+    ('X11',      '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # Loads fontconfig and freetype, used by Qt5, tough Qt5 also provides its own freetype alternative
+#    ('libGLU',         '9.0.0'),
+]
+
+moduleclass = 'devel'
