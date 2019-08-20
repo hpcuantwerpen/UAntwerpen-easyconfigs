@@ -2,7 +2,6 @@ easyblock = 'Bundle'
 
 name = 'baselibs'
 version = '2019b'
-#versionsuffix = '-dev'
 
 homepage = '(none)'
 
@@ -40,6 +39,7 @@ libwebp_version =      '1.0.3'         # https://github.com/webmproject/libwebp/
 x264_version =         '20190721-2245' # https://download.videolan.org/pub/videolan/x264/snapshots/
 x265_version =         '3.1.1'         # http://download.videolan.org/pub/videolan/x265/
 LAME_version =         '3.100'         # http://lame.sourceforge.net/
+libopus_version =      '1.3.1'         # http://opus-codec.org/downloads/
 cURL_version =         '7.65.3'        # https://curl.haxx.se/download/
 expat_version =        '2.2.7'         # https://github.com/libexpat/libexpat/releases
 libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
@@ -65,6 +65,7 @@ pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
 freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
 fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
 dbus_version =         '1.13.12'       # https://dbus.freedesktop.org/releases/dbus/
+libevent_version =     '2.1.11'        # https://libevent.org/
 
 description = """
 This module provides a large number of up-to-date base libraries used by many
@@ -177,6 +178,12 @@ Overview of included libraries:
     Run lame with the --help option to get some help on the command line options
     of the lame command line tool. There is also a manual page for the lame
     command. The API is very poorly documented (basically through the source code).
+  + libopus (version %(opus)s): Opus is a totally open, royalty-free, highly versatile 
+    audio codec. Opus is unmatched for interactive speech and music transmission over
+    the Internet, but is also intended for storage and streaming applications. It is 
+    standardized by the Internet Engineering Task Force (IETF) as RFC 6716 
+    which incorporated technology from Skype’s SILK codec and Xiph.Org’s 
+    CELT codec.
 * Networking and XML
   + cURL (version %(cURL)s): libcurl is a free and easy-to-use client-side
     URL transfer library, supporting DICT, FILE, FTP, FTPS, Gopher, HTTP, HTTPS,
@@ -288,6 +295,10 @@ Overview of included libraries:
     re-implementation of the original file command shipped with Bell Labs UNIX.
   + gc (version %(gc)s): gc is the Boehm-Demers-Weiser conservative garbage
     collector, a garbage collecting replacement for C malloc or C++ new.
+  + libevent (version %(event)s): The libevent API provides a mechanism to 
+    execute a callback function when a specific event occurs on a file 
+    descriptor or after a timeout has been reached. Furthermore, libevent
+    also support callbacks due to signals or regular timeouts.
   + libffi (version %(ffi)s): FFI stands for Foreign Function Interface.
     A foreign function interface is the popular name for the interface that
     allows code written in one language to call code written in another
@@ -335,6 +346,7 @@ Overview of included libraries:
     'x264': x264_version,
     'x265': x265_version,
     'LAME': LAME_version,
+    'opus': libopus_version,
     'cURL': cURL_version,
     'expat': expat_version,
     'xml2': libxml2_version,
@@ -355,6 +367,7 @@ Overview of included libraries:
     'dbus': dbus_version,
     'filev': file_version,
     'gc': gc_version,
+    'event': libevent_version,
     'ffi': libffi_version,
     'yaml': libyaml_version,
     'PCRE': PCRE_version,
@@ -380,6 +393,7 @@ docurls = [
     'libwebp: Manual pages for cwebp and dwebp in section 1',
     'x264: Some information on http://www.videolan.org/developers/x264.html',
     'x265: web-based documentation: http://x265.readthedocs.io/en/default/',
+    'libopus: web-based documentation on the home page: http://opus-codec.org/'
     'GSL manual: https://www.gnu.org/software/gsl/doc/html/index.html',
     'libcerf homepage: https://jugit.fz-juelich.de/mlz/libcerf',
     'GMP web-based documentation: https://gmplib.org/manual/',
@@ -399,6 +413,7 @@ docurls = [
     'gc: web-based documentation on the home page http://hboehm.info/gc/',
     'gettext: web-based documentation: https://www.gnu.org/software/gettext/manual/index.html',
     'gettext: man pages for all command line tools (man section 1) and for the API (man section 3)',
+    'libevent: web-based documentation on the home page: https://libevent.org/',
     'libffi: Man pages for the library (ffi) and the functions ffi_prep_cif, ffi_prep_cif_var and ffi_call',
     'libiconv: web-based documentation on https://www.gnu.org/software/libiconv/',
     'libiconv: manual pages for the iconv command and iconv_open, iconv_close, iconvctl, iconv_open_into',
@@ -604,6 +619,13 @@ components = [
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'CPATH=%(installdir)s/include:$CPATH LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS="-L%(installdir)s/lib $LDFLAGS" FRONTEND_LDADD="-L%(installdir)s/lib" ',
     }),
+    ('libopus', libopus_version, {
+        'sources':     [ {
+                          'filename':    'opus-%(version)s.tar.gz',
+                          'source_urls': ['https://archive.mozilla.org/pub/opus']
+                       }],
+        'start_dir':   'opus-%(version)s',
+    }),
 #
 # Network and XML
 #
@@ -709,13 +731,6 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s/source'
     }),
-    ('libiconv', libiconv_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s'
-    }),
     ('libunistring', libunistring_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
@@ -723,6 +738,45 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'parallel':    1
+    }),
+#
+# There is a tricky circular dependency between gettext and libiconv according to the libiconv
+# documentation/ libiconv gets more features if it finds gettext, but the latter also can do
+# more when it finds libiconv.
+# Note that gettext also needs libxml2, libcurses and libunistring
+#
+    ('gettext', gettext_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
+                         'CPATH=%(installdir)s/include:$CPATH ' + \
+                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
+                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
+        'configopts':    '--without-emacs --with-libxml2-prefix=%(installdir)s --with-libncurses-prefix=%(installdir)s --with-libunistring-prefix=%(installdir)s --with-libiconv-prefix=%(installdir)s',
+    }),
+    ('libiconv', libiconv_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s'
+    }),
+    # Now recompile gettext to enable the additional features
+    ('gettext', gettext_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'make distclean && ' + \
+                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
+                         'CPATH=%(installdir)s/include:$CPATH ' + \
+                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
+                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
+        'configopts':    '--without-emacs --with-libxml2-prefix=%(installdir)s --with-libncurses-prefix=%(installdir)s --with-libunistring-prefix=%(installdir)s --with-libiconv-prefix=%(installdir)s',
     }),
 
 #
@@ -755,6 +809,13 @@ components = [
         'start_dir':     '%(name)s-%(version)s',
         'preconfigopts': "ln -s %(builddir)s/libatomic_ops*/ libatomic_ops && ",
         'configopts':    '--enable-threads=posix',
+    }),
+    ('libevent', libevent_version, {
+        'sources':     [ {
+                          'filename':    '%(name)s-%(version)s-stable.tar.gz',
+                          'source_urls': ['https://github.com/%(name)s/%(name)s/releases/download/release-%(version)s-stable/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s-stable'
     }),
     ('libffi', libffi_version, {
         'sources':     [ {
@@ -827,22 +888,6 @@ components = [
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ',
         'configopts':    '--disable-docs',
-    }),
-#
-# The following packages have a lot of dependencies and therefore come at the end rather than
-# with packages with similar function.
-#
-    ('gettext', gettext_version, { # Needs libxml2, ncurses, libunistring.
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':     '%(namelower)s-%(version)s',
-        'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
-                         'CPATH=%(installdir)s/include:$CPATH ' + \
-                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
-                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
-        'configopts':    '--without-emacs --with-libxml2-prefix=%(installdir)s --with-libncurses-prefix=%(installdir)si --with-libunistring-prefix=%(installdir)s --with-libiconv-prefix=%(installdir)s',
     }),
 #
 # Recompile XZ utils now with all features enabled.
