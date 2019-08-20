@@ -2,7 +2,6 @@ easyblock = 'Bundle'
 
 name = 'baselibs'
 version = '2019b'
-#versionsuffix = '-dev'
 
 homepage = '(none)'
 
@@ -11,11 +10,12 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, libarchive, "+ 
-    "JasPer, libjpeg-turbo, libpng, LibTIFF, x264, x265, LAME, cURL, expat, libxml2, libxslt, "+ 
+    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, libarchive, " + 
+    "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
+    "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, NSPR, NSS, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
-    "file, gc, libffi, libyaml, PCRE, UDUNITS, util-linux.",
+    "file, gc, libevent, libffi, libyaml, PCRE, UDUNITS, D-Bus, util-linux.",
 ]
 
 binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
@@ -30,13 +30,16 @@ XZ_version =           '5.2.4'         # https://tukaani.org/xz/
 zlib_version =         '1.2.11'        # https://zlib.net/
 lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
 libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
+giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
 JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
 libjpegturbo_version = '2.0.2'         # https://sourceforge.net/projects/libjpeg-turbo/files/
 libpng_version =       '1.6.37'        # http://www.libpng.org/pub/png/libpng.html
 libtiff_version =      '4.0.10'        # http://www.simplesystems.org/libtiff/
+libwebp_version =      '1.0.3'         # https://github.com/webmproject/libwebp/releases
 x264_version =         '20190721-2245' # https://download.videolan.org/pub/videolan/x264/snapshots/
 x265_version =         '3.1.1'         # http://download.videolan.org/pub/videolan/x265/
 LAME_version =         '3.100'         # http://lame.sourceforge.net/
+libopus_version =      '1.3.1'         # http://opus-codec.org/downloads/
 cURL_version =         '7.65.3'        # https://curl.haxx.se/download/
 expat_version =        '2.2.7'         # https://github.com/libexpat/libexpat/releases
 libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
@@ -61,6 +64,10 @@ util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/lin
 pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
 freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
 fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
+dbus_version =         '1.13.12'       # https://dbus.freedesktop.org/releases/dbus/
+libevent_version =     '2.1.11'        # https://libevent.org/
+NSPR_version =         '4.22'          # https://archive.mozilla.org/pub/nspr/releases
+NSS_version =          '3.45'          # https://ftp.mozilla.org/pub/security/nss/releases/
 
 description = """
 This module provides a large number of up-to-date base libraries used by many
@@ -102,6 +109,9 @@ Overview of included libraries:
     covered by any patents, for the popular .gz files.
   + libarchive (version %(libarchive)s): Multi-format archive and compression library.
 * Graphics file formats
+  + giflib (version %(giflib)s): a library for reading and writing gif images. It is 
+    API and ABI compatible with libungif which was in wide use while the LZW 
+    compression algorithm was patented.
   + JasPer (version %(JasPer)s): an open-source initiative to provide a free
     software-based reference implementation of the codec specified in the
     JPEG-2000 Part-1 standard (i.e., ISO/IEC 15444-1). The JasPer software is
@@ -150,6 +160,10 @@ Overview of included libraries:
     additional tools on other OSes.
     The library, along with associated tool programs, should handle most of your
     needs for reading and writing TIFF images.
+  + libwebp (version %(libwebp)s): WebP is a modern image format that provides 
+    superior lossless and lossy compression for images on the web. Using WebP, 
+    webmasters and web developers can create smaller, richer images that make 
+    the web faster.
 * Audio and video
   + x264 (version v%(x264)s): x264 is a free software library and
     application for encoding video streams into the H.264/MPEG-4 AVC compression
@@ -166,7 +180,13 @@ Overview of included libraries:
     Run lame with the --help option to get some help on the command line options
     of the lame command line tool. There is also a manual page for the lame
     command. The API is very poorly documented (basically through the source code).
-* Networking and XML
+  + libopus (version %(opus)s): Opus is a totally open, royalty-free, highly versatile 
+    audio codec. Opus is unmatched for interactive speech and music transmission over
+    the Internet, but is also intended for storage and streaming applications. It is 
+    standardized by the Internet Engineering Task Force (IETF) as RFC 6716 
+    which incorporated technology from Skype’s SILK codec and Xiph.Org’s 
+    CELT codec.
+* Networking, security and XML
   + cURL (version %(cURL)s): libcurl is a free and easy-to-use client-side
     URL transfer library, supporting DICT, FILE, FTP, FTPS, Gopher, HTTP, HTTPS,
     IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMTP, SMTPS,
@@ -199,6 +219,11 @@ Overview of included libraries:
     Users can either embed the library in their application or use xsltproc the
     command line processing tool. This library is free software and can be
     reused in commercial applications.
+  + NSPR (version %(NSPR)s): Netscape Portable Runtime (NSPR) provides a 
+    platform-neutral API for system level  and libc-like functions.
+  + NSS (version %(NSS)s): Network Security Services, a set of libraries designed 
+    to support cross-platform development of security-enabled client and server 
+    applications.
 * Mathematical libraries
   + GSL (version %(GSL)s): The GNU Scientific Library, a numerical library for C and
     C++ programmers. The library provides a wide range of mathematical routines
@@ -263,6 +288,11 @@ Overview of included libraries:
   + libunistring (version %(unistring)s): provides functions for manipulating Unicode
     strings and for manipulating C strings according to the Unicode standard.
 * Miscellaneous
+  + D-Bus (version %(dbus)s): D-Bus is a message bus system, a simple way for 
+    applications to talk to one another. In addition to interprocess communication, 
+    D-Bus helps coordinate process lifecycle; it makes it simple and reliable to 
+    code a "single instance" application or daemon, and to launch applications 
+    and daemons on demand when their services are needed.
   + file (version %(filev)s): The file command is "a file type guesser", that
     is, a command-line tool that tells you in words what kind of data a file
     contains. Unlike most GUI systems, command-line UNIX systems - with this
@@ -272,6 +302,10 @@ Overview of included libraries:
     re-implementation of the original file command shipped with Bell Labs UNIX.
   + gc (version %(gc)s): gc is the Boehm-Demers-Weiser conservative garbage
     collector, a garbage collecting replacement for C malloc or C++ new.
+  + libevent (version %(event)s): The libevent API provides a mechanism to 
+    execute a callback function when a specific event occurs on a file 
+    descriptor or after a timeout has been reached. Furthermore, libevent
+    also support callbacks due to signals or regular timeouts.
   + libffi (version %(ffi)s): FFI stands for Foreign Function Interface.
     A foreign function interface is the popular name for the interface that
     allows code written in one language to call code written in another
@@ -310,17 +344,22 @@ Overview of included libraries:
     'XZ': XZ_version,
     'zlib': zlib_version,
     'libarchive': libarchive_version,
+    'giflib': giflib_version,
     'JasPer': JasPer_version,
     'libjpegturbo': libjpegturbo_version,
     'libpng': libpng_version,
     'libtiff': libtiff_version,
+    'libwebp': libwebp_version,
     'x264': x264_version,
     'x265': x265_version,
     'LAME': LAME_version,
+    'opus': libopus_version,
     'cURL': cURL_version,
     'expat': expat_version,
     'xml2': libxml2_version,
     'xslt': libxslt_version,
+    'NSPR': NSPR_version,
+    'NSS': NSS_version,
     'GSL': GSL_version, 
     'libcerf': libcerf_version,
     'GMP': GMP_version,
@@ -334,8 +373,10 @@ Overview of included libraries:
     'ICU': ICU_version,
     'iconv': libiconv_version,
     'unistring': libunistring_version,
+    'dbus': dbus_version,
     'filev': file_version,
     'gc': gc_version,
+    'event': libevent_version,
     'ffi': libffi_version,
     'yaml': libyaml_version,
     'PCRE': PCRE_version,
@@ -354,10 +395,14 @@ docurls = [
     'XZ Utils: man pages for the command line utilities',
     'zlib: web-based manual on https://zlib.net/manual.html', 
     'libarchive: Some web-based documentation on https://www.libarchive.org/',
+    'giflib: home page with links to the documentation on http://giflib.sourceforge.net/',
     'libjpeg-turbo web-based documentation: https://libjpeg-turbo.org/Documentation',
     'libpng: web-based documentation on http://www.libpng.org/pub/png/libpng.html',
+    'libwebp: home page with documentation on https://developers.google.com/speed/webp/',
+    'libwebp: Manual pages for cwebp and dwebp in section 1',
     'x264: Some information on http://www.videolan.org/developers/x264.html',
     'x265: web-based documentation: http://x265.readthedocs.io/en/default/',
+    'libopus: web-based documentation on the home page: http://opus-codec.org/'
     'GSL manual: https://www.gnu.org/software/gsl/doc/html/index.html',
     'libcerf homepage: https://jugit.fz-juelich.de/mlz/libcerf',
     'GMP web-based documentation: https://gmplib.org/manual/',
@@ -371,11 +416,15 @@ docurls = [
     'libxml2: man pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
     'libxslt: web-based documentation on the home page: http://xmlsoft.org/libxslt/',
     'libxslt: man pages for xsltproc, libxslt and libexslt',
+    'NSPR: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR',
+    'NSS: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS',
+    'D-Bus: home page is https://www.freedesktop.org/wiki/Software/dbus/ and contains links to the documentation',
     'file: home page is https://www.darwinsys.com/file/', 
     'FriBidi: home page is https://github.com/fribidi/fribidi',
     'gc: web-based documentation on the home page http://hboehm.info/gc/',
     'gettext: web-based documentation: https://www.gnu.org/software/gettext/manual/index.html',
     'gettext: man pages for all command line tools (man section 1) and for the API (man section 3)',
+    'libevent: web-based documentation on the home page: https://libevent.org/',
     'libffi: Man pages for the library (ffi) and the functions ffi_prep_cif, ffi_prep_cif_var and ffi_call',
     'libiconv: web-based documentation on https://www.gnu.org/software/libiconv/',
     'libiconv: manual pages for the iconv command and iconv_open, iconv_close, iconvctl, iconv_open_into',
@@ -393,7 +442,8 @@ toolchain = {'name': 'GCCcore', 'version': gcc_version}
 toolchainopts = {'pic': True}
 
 builddependencies = [
-    ('binutils',   binutils_version, '', ('GCCcore', gcc_version)),
+#    ('binutils',   binutils_version, '', ('GCCcore', gcc_version)),
+    ('binutils',   binutils_version, ),
     ('buildtools', version,          '', True),
 ]
 
@@ -413,13 +463,14 @@ components = [
         'configopts':  '--with-shared --enable-overwrite', # First build: default build.
     }),
     ('ncurses', ncurses_version, {
-        'sources':     [ {
-                          'filename':    SOURCE_TAR_GZ,
-                          'source_urls': [GNU_SOURCE]
-                       }],
-        'patches':     ['ncurses-%(version)s_gcc-5.patch'],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--with-shared --enable-overwrite --enable-ext-colors --enable-widec --includedir=%(installdir)s/include/ncursesw/' # Second build: the UTF-8 enabled version (ncursesw)
+        'sources':       [ {
+                            'filename':    SOURCE_TAR_GZ,
+                            'source_urls': [GNU_SOURCE]
+                         }],
+        'patches':       ['ncurses-%(version)s_gcc-5.patch'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'make distclean && ',
+        'configopts':    '--with-shared --enable-overwrite --enable-ext-colors --enable-widec --includedir=%(installdir)s/include/ncursesw/' # Second build: the UTF-8 enabled version (ncursesw)
     }),
     ('libreadline', libreadline_version, {
         'sources':     [ {
@@ -496,6 +547,16 @@ components = [
 #
 # Graphics file formats
 #
+    ('giflib', giflib_version, {
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': [('http://sourceforge.net/projects/giflib/files', 'download')]
+                       }],
+        'start_dir':   '%(name)s-%(version)s',
+        'skipsteps':   ['configure'],
+        'buildopts':   'CC="$CC" CFLAGS="$CXXFLAGS"',
+        'installopts': "PREFIX=%(installdir)s",
+    }),
     ('JasPer', JasPer_version, { 
         'easyblock':   'CMakeMake',
         'sources':     [ {
@@ -534,6 +595,14 @@ components = [
                        }],
         'start_dir':   'tiff-%(version)s'
     }),
+    ('libwebp', libwebp_version, { # Needs giflib, libjpeg-turbo, libpng and libTIFF
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['https://storage.googleapis.com/downloads.webmproject.org/releases/webp']
+                       }],
+        'start_dir':   '%(name)s-%(version)s',
+        'configopts':  '--enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras',
+    }),
 #
 # Audio and video file formats
 #
@@ -562,8 +631,15 @@ components = [
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'CPATH=%(installdir)s/include:$CPATH LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS="-L%(installdir)s/lib $LDFLAGS" FRONTEND_LDADD="-L%(installdir)s/lib" ',
     }),
+    ('libopus', libopus_version, {
+        'sources':     [ {
+                          'filename':    'opus-%(version)s.tar.gz',
+                          'source_urls': ['https://archive.mozilla.org/pub/opus']
+                       }],
+        'start_dir':   'opus-%(version)s',
+    }),
 #
-# Network and XML
+# Network, security and XML
 #
     ( 'cURL', cURL_version, { # USES zlib
         'sources':     [ {
@@ -596,6 +672,39 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ',
         'configopts':  '--with-pic --without-python',
+    }),
+    ('NSPR', NSPR_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['https://archive.mozilla.org/pub/nspr/releases/v%(version)s/src/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s/nspr',
+        'configopts':  '--disable-debug --enable-optimize --enable-64bit',
+    }),
+    ('NSS', NSS_version, {
+        'easyblock':     'MakeCp',
+        'sources':       [ {
+                            'filename':    SOURCELOWER_TAR_GZ,
+                            'source_urls': ['https://ftp.mozilla.org/pub/security/nss/releases/NSS_%(version_major)s_%(version_minor)s_RTM/src/']
+                         }],
+        'patches':       ['NSS-3.39_pkgconfig.patch'],
+        'start_dir':     '%(namelower)s-%(version)s/nss',
+        'parallel':      1,
+        'buildopts':     'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
+                         'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd -',
+        'files_to_copy': [(['../dist/public/*'], 'include')],
+        'postinstallcmds': [
+                             'cp -Lp ../dist/Linux*.OBJ/bin/*           %(installdir)/bin',
+                             'cp -Lp ../dist/Linux*.OBJ/lib/*.a         %(installdir)/lib',
+                             'cp -Lp ../dist/Linux*.OBJ/lib/*.so        %(installdir)/lib',
+                             'cp -Lp ../dist/Linux*.OBJ/lib/*.chk       %(installdir)/lib',
+                             'cp -Lp ../dist/Linux*.OBJ/lib/pkgconfig/* %(installdir)/lib/pkgconfig',
+                           ],
+#        'files_to_copy': [
+#                           (['../dist/Linux*.OBJ/bin/*'], 'bin'),
+#                           (['../dist/Linux*.OBJ/lib/*'], 'lib'),
+#                           (['../dist/public/*'], 'include')
+#                         ],
     }),
 #
 # Regular math libs
@@ -667,13 +776,6 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s/source'
     }),
-    ('libiconv', libiconv_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s'
-    }),
     ('libunistring', libunistring_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
@@ -682,10 +784,57 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'parallel':    1
     }),
+#
+# There is a tricky circular dependency between gettext and libiconv according to the libiconv
+# documentation/ libiconv gets more features if it finds gettext, but the latter also can do
+# more when it finds libiconv.
+# Note that gettext also needs libxml2, libcurses and libunistring
+#
+    ('gettext', gettext_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
+                         'CPATH=%(installdir)s/include:$CPATH ' + \
+                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
+                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
+        'configopts':    '--without-emacs --with-libxml2-prefix=%(installdir)s --with-libncurses-prefix=%(installdir)s --with-libunistring-prefix=%(installdir)s --with-libiconv-prefix=%(installdir)s',
+    }),
+    ('libiconv', libiconv_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s'
+    }),
+    # Now recompile gettext to enable the additional features
+    ('gettext', gettext_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'make distclean && ' + \
+                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
+                         'CPATH=%(installdir)s/include:$CPATH ' + \
+                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
+                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
+        'configopts':    '--without-emacs --with-libxml2-prefix=%(installdir)s --with-libncurses-prefix=%(installdir)s --with-libunistring-prefix=%(installdir)s --with-libiconv-prefix=%(installdir)s',
+    }),
 
 #
 # Miscellaneous
 #
+    ('DBus', dbus_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': ['http://dbus.freedesktop.org/releases/dbus']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--without-systemdsystemunitdir',
+    }),
     ('file', file_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
@@ -705,6 +854,13 @@ components = [
         'start_dir':     '%(name)s-%(version)s',
         'preconfigopts': "ln -s %(builddir)s/libatomic_ops*/ libatomic_ops && ",
         'configopts':    '--enable-threads=posix',
+    }),
+    ('libevent', libevent_version, {
+        'sources':     [ {
+                          'filename':    '%(name)s-%(version)s-stable.tar.gz',
+                          'source_urls': ['https://github.com/%(name)s/%(name)s/releases/download/release-%(version)s-stable/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s-stable'
     }),
     ('libffi', libffi_version, {
         'sources':     [ {
@@ -779,22 +935,6 @@ components = [
         'configopts':    '--disable-docs',
     }),
 #
-# The following packages have a lot of dependencies and therefore come at the end rather than
-# with packages with similar function.
-#
-    ('gettext', gettext_version, { # Needs libxml2, ncurses, libunistring.
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':     '%(namelower)s-%(version)s',
-        'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
-                         'CPATH=%(installdir)s/include:$CPATH ' + \
-                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
-                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
-        'configopts':    '--without-emacs --with-libxml2-prefix=%(installdir)s --with-libncurses-prefix=%(installdir)si --with-libunistring-prefix=%(installdir)s --with-libiconv-prefix=%(installdir)s',
-    }),
-#
 # Recompile XZ utils now with all features enabled.
 #
     ('XZ', XZ_version, {
@@ -821,5 +961,7 @@ sanity_check_paths = {
 modextravars = {
     'CURL_INCLUDES': '%(installdir)s/include'
 }
+
+modextrapaths = {'CPATH': 'include/nss'}
 
 moduleclass = 'lib'
