@@ -10,12 +10,12 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, libarchive, " + 
+    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, gzip, lz4, zstd, libb2, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
-    "x264, x265, LAME, cURL, expat, libxml2, libxslt, " + 
+    "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, NSPR, NSS, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
-    "file, gc, libffi, libyaml, PCRE, UDUNITS, D-Bus, util-linux.",
+    "file, gc, libevent, libffi, libyaml, PCRE, UDUNITS, D-Bus, util-linux.",
 ]
 
 binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
@@ -28,7 +28,10 @@ bzip2_major_minor =    '1.0'
 Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
 XZ_version =           '5.2.4'         # https://tukaani.org/xz/
 zlib_version =         '1.2.11'        # https://zlib.net/
+gzip_version =         '1.10'          # https://ftp.gnu.org/gnu/gzip/
 lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
+zstd_version =         '1.4.3'         # https://github.com/facebook/zstd/releases
+libb2_version =        '0.98.1'        # https://github.com/BLAKE2/libb2/releases
 libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
 giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
 JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
@@ -66,6 +69,8 @@ freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/relea
 fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
 dbus_version =         '1.13.12'       # https://dbus.freedesktop.org/releases/dbus/
 libevent_version =     '2.1.11'        # https://libevent.org/
+NSPR_version =         '4.22'          # https://archive.mozilla.org/pub/nspr/releases
+NSS_version =          '3.45'          # https://ftp.mozilla.org/pub/security/nss/releases/
 
 description = """
 This module provides a large number of up-to-date base libraries used by many
@@ -105,6 +110,13 @@ Overview of included libraries:
     xzgrep, xzdiff, ...)
   + zlib (version %(zlib)s): Free lossless data compression library, not 
     covered by any patents, for the popular .gz files.
+  + gzip (version %(gzip)s): gzip data compression programs.
+  + zstd (version %(zstd)s: Facebook Zstandard compression, a real-time 
+    compression algorithm, providing high compression ratios. It offers a 
+    very wide range of compression/speed trade-off, while being backed by a 
+    very fast decoder. It also offers a special mode for small data, called 
+    dictionary compression, and can create dictionaries from any sample set.
+  + libb2 (version %(libb2)s): a C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp
   + libarchive (version %(libarchive)s): Multi-format archive and compression library.
 * Graphics file formats
   + giflib (version %(giflib)s): a library for reading and writing gif images. It is 
@@ -184,7 +196,7 @@ Overview of included libraries:
     standardized by the Internet Engineering Task Force (IETF) as RFC 6716 
     which incorporated technology from Skype’s SILK codec and Xiph.Org’s 
     CELT codec.
-* Networking and XML
+* Networking, security and XML
   + cURL (version %(cURL)s): libcurl is a free and easy-to-use client-side
     URL transfer library, supporting DICT, FILE, FTP, FTPS, Gopher, HTTP, HTTPS,
     IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMTP, SMTPS,
@@ -217,6 +229,11 @@ Overview of included libraries:
     Users can either embed the library in their application or use xsltproc the
     command line processing tool. This library is free software and can be
     reused in commercial applications.
+  + NSPR (version %(NSPR)s): Netscape Portable Runtime (NSPR) provides a 
+    platform-neutral API for system level  and libc-like functions.
+  + NSS (version %(NSS)s): Network Security Services, a set of libraries designed 
+    to support cross-platform development of security-enabled client and server 
+    applications.
 * Mathematical libraries
   + GSL (version %(GSL)s): The GNU Scientific Library, a numerical library for C and
     C++ programmers. The library provides a wide range of mathematical routines
@@ -336,6 +353,9 @@ Overview of included libraries:
     'Szip': Szip_version,
     'XZ': XZ_version,
     'zlib': zlib_version,
+    'gzip': gzip_version,
+    'zstd': zstd_version,
+    'libb2': libb2_version,
     'libarchive': libarchive_version,
     'giflib': giflib_version,
     'JasPer': JasPer_version,
@@ -351,6 +371,8 @@ Overview of included libraries:
     'expat': expat_version,
     'xml2': libxml2_version,
     'xslt': libxslt_version,
+    'NSPR': NSPR_version,
+    'NSS': NSS_version,
     'GSL': GSL_version, 
     'libcerf': libcerf_version,
     'GMP': GMP_version,
@@ -385,6 +407,10 @@ docurls = [
     'Szip: web pages on http://www.hdfgroup.org/doc_resource/SZIP/', 
     'XZ Utils: man pages for the command line utilities',
     'zlib: web-based manual on https://zlib.net/manual.html', 
+    'gzip: Web-based documentation on https://www.gnu.org/software/gzip/manual/',
+    'gzip: man pages for all commands (gzip, gunzip, gzexe, zcat, zcmp, zdiff, zforce, zgrep, zless, zmore, znew) in Section 1',
+    'zstd: Web-based documentation via the home page: http://www.zstd.net/',
+    'libb2: Home page: https://github.com/BLAKE2/libb2',
     'libarchive: Some web-based documentation on https://www.libarchive.org/',
     'giflib: home page with links to the documentation on http://giflib.sourceforge.net/',
     'libjpeg-turbo web-based documentation: https://libjpeg-turbo.org/Documentation',
@@ -407,6 +433,8 @@ docurls = [
     'libxml2: man pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
     'libxslt: web-based documentation on the home page: http://xmlsoft.org/libxslt/',
     'libxslt: man pages for xsltproc, libxslt and libexslt',
+    'NSPR: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR',
+    'NSS: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS',
     'D-Bus: home page is https://www.freedesktop.org/wiki/Software/dbus/ and contains links to the documentation',
     'file: home page is https://www.darwinsys.com/file/', 
     'FriBidi: home page is https://github.com/fribidi/fribidi',
@@ -452,13 +480,14 @@ components = [
         'configopts':  '--with-shared --enable-overwrite', # First build: default build.
     }),
     ('ncurses', ncurses_version, {
-        'sources':     [ {
-                          'filename':    SOURCE_TAR_GZ,
-                          'source_urls': [GNU_SOURCE]
-                       }],
-        'patches':     ['ncurses-%(version)s_gcc-5.patch'],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--with-shared --enable-overwrite --enable-ext-colors --enable-widec --includedir=%(installdir)s/include/ncursesw/' # Second build: the UTF-8 enabled version (ncursesw)
+        'sources':       [ {
+                            'filename':    SOURCE_TAR_GZ,
+                            'source_urls': [GNU_SOURCE]
+                         }],
+        'patches':       ['ncurses-%(version)s_gcc-5.patch'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'make distclean && ',
+        'configopts':    '--with-shared --enable-overwrite --enable-ext-colors --enable-widec --includedir=%(installdir)s/include/ncursesw/' # Second build: the UTF-8 enabled version (ncursesw)
     }),
     ('libreadline', libreadline_version, {
         'sources':     [ {
@@ -512,6 +541,13 @@ components = [
                        }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
+    ('gzip', gzip_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s'
+    }),
     ('XZ', XZ_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
@@ -520,6 +556,21 @@ components = [
         'patches':     ['XZ-5.2.2_compat-libs.patch'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--disable-nls --disable-xz --disable-xzdec',  # First build without the need for gettext, we'll rebuild after building gettext.
+    }),
+    ('zstd', zstd_version, {
+        'sources':     [ {
+                           'download_filename': 'v%(version)s.tar.gz',
+                           'filename':          SOURCELOWER_TAR_GZ,
+                           'source_urls':       ['https://github.com/facebook/zstd/archive/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'skipsteps':   ['configure'],
+        'installopts': "PREFIX=%(installdir)s" 
+    }),
+    ('libb2', libb2_version, {
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': ['https://github.com/BLAKE2/libb2/releases/download/v%(version)s'],
+        'start_dir':   '%(namelower)s-%(version)s',
     }),
     ('libarchive', libarchive_version, {
         'easyblock': 'CMakeMake',
@@ -545,17 +596,6 @@ components = [
         'buildopts':   'CC="$CC" CFLAGS="$CXXFLAGS"',
         'installopts': "PREFIX=%(installdir)s",
     }),
-    ('JasPer', JasPer_version, { 
-        'easyblock':   'CMakeMake',
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/']
-                       }],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'preconfigopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
-        'configopts':  '-DJAS_ENABLE_DOC=OFF -DALLOW_IN_SOURCE_BUILD=ON ',
-        'prebuildopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
-    }),
      ('libjpeg-turbo', libjpegturbo_version, {
         'easyblock':   'CMakeMake',
         'sources':     [ {
@@ -563,8 +603,19 @@ components = [
                           'source_urls': [SOURCEFORGE_SOURCE]
                        }],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--with-jpeg8',
+        'configopts':  '-DWITH_JPEG7=1 -DWITH_JPEG8=1 -DWITH_12BIT=0', # 12-bit support broken during configure step.
      }),
+    ('JasPer', JasPer_version, { 
+        'easyblock':     'CMakeMake',
+        'sources':       [ {
+                            'filename':    SOURCELOWER_TAR_GZ,
+                            'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/']
+                         }],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
+        'configopts':    '-DJAS_ENABLE_DOC=0 -DJAS_ENABLE_OPENGL=0 -DJAS_ENABLE_LIBJPEG=1 -DALLOW_IN_SOURCE_BUILD=ON ',
+        'prebuildopts':  'cd %(builddir)s/%(namelower)s-%(version)s ; ',
+    }),
     ('libpng', libpng_version, { # Needs zlib!
         # https://download.sourceforge.net/libpng/libpng-1.6.36.tar.xz
         'sources':     [ {
@@ -627,7 +678,7 @@ components = [
         'start_dir':   'opus-%(version)s',
     }),
 #
-# Network and XML
+# Network, security and XML
 #
     ( 'cURL', cURL_version, { # USES zlib
         'sources':     [ {
@@ -660,6 +711,39 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ',
         'configopts':  '--with-pic --without-python',
+    }),
+    ('NSPR', NSPR_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['https://archive.mozilla.org/pub/nspr/releases/v%(version)s/src/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s/nspr',
+        'configopts':  '--disable-debug --enable-optimize --enable-64bit',
+    }),
+    ('NSS', NSS_version, {
+        'easyblock':     'MakeCp',
+        'sources':       [ {
+                            'filename':    SOURCELOWER_TAR_GZ,
+                            'source_urls': ['https://ftp.mozilla.org/pub/security/nss/releases/NSS_%(version_major)s_%(version_minor)s_RTM/src/']
+                         }],
+        'patches':       ['NSS-3.39_pkgconfig.patch'],
+        'start_dir':     '%(namelower)s-%(version)s/nss',
+        'parallel':      1,
+        'buildopts':     'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
+                         'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd -',
+        'files_to_copy': [(['../dist/public/*'], 'include')],
+        'postinstallcmds': [
+                             'cp -Lp ../dist/Linux*.OBJ/bin/*           %(installdir)/bin',
+                             'cp -Lp ../dist/Linux*.OBJ/lib/*.a         %(installdir)/lib',
+                             'cp -Lp ../dist/Linux*.OBJ/lib/*.so        %(installdir)/lib',
+                             'cp -Lp ../dist/Linux*.OBJ/lib/*.chk       %(installdir)/lib',
+                             'cp -Lp ../dist/Linux*.OBJ/lib/pkgconfig/* %(installdir)/lib/pkgconfig',
+                           ],
+#        'files_to_copy': [
+#                           (['../dist/Linux*.OBJ/bin/*'], 'bin'),
+#                           (['../dist/Linux*.OBJ/lib/*'], 'lib'),
+#                           (['../dist/public/*'], 'include')
+#                         ],
     }),
 #
 # Regular math libs
@@ -916,5 +1000,7 @@ sanity_check_paths = {
 modextravars = {
     'CURL_INCLUDES': '%(installdir)s/include'
 }
+
+modextrapaths = {'CPATH': 'include/nss'}
 
 moduleclass = 'lib'
