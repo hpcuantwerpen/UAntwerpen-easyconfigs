@@ -213,6 +213,13 @@ components = [ # Update done on 2019-07-23
     ('xbitmaps', '1.1.2', {  # 2018-03-10 https://www.x.org/archive/individual/data/
         'checksums': ['b9f0c71563125937776c8f1f25174ae9685314cbd130fb4c2efce811981e07ee'],
     }),
+#
+# UAntwerp additions
+# 
+    ('libdrm', '2.4.99', { # 2019-07-02 http://dri.freedesktop.org/libdrm/, used by Qt5
+        'source_urls': ['http://dri.freedesktop.org/libdrm/'],
+        'checksums':   ['4dbf539c7ed25dbb2055090b77ab87508fc46be39a9379d15fed4b5517e1da5e'],
+    }),
 ]
 
 preconfigopts = "if [ ! -f configure ]; then ./autogen.sh; fi && "
