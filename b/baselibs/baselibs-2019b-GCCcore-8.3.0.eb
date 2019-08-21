@@ -10,7 +10,7 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, lz4, libarchive, " + 
+    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, gzip, lz4, zstd, libb2, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
     "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, NSPR, NSS, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
@@ -28,7 +28,10 @@ bzip2_major_minor =    '1.0'
 Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
 XZ_version =           '5.2.4'         # https://tukaani.org/xz/
 zlib_version =         '1.2.11'        # https://zlib.net/
+gzip_version =         '1.10'          # https://ftp.gnu.org/gnu/gzip/
 lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
+zstd_version =         '1.4.3'         # https://github.com/facebook/zstd/releases
+libb2_version =        '0.98.1'        # https://github.com/BLAKE2/libb2/releases
 libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
 giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
 JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
@@ -107,6 +110,13 @@ Overview of included libraries:
     xzgrep, xzdiff, ...)
   + zlib (version %(zlib)s): Free lossless data compression library, not 
     covered by any patents, for the popular .gz files.
+  + gzip (version %(gzip)s): gzip data compression programs.
+  + zstd (version %(zstd)s: Facebook Zstandard compression, a real-time 
+    compression algorithm, providing high compression ratios. It offers a 
+    very wide range of compression/speed trade-off, while being backed by a 
+    very fast decoder. It also offers a special mode for small data, called 
+    dictionary compression, and can create dictionaries from any sample set.
+  + libb2 (version %(libb2)s): a C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp
   + libarchive (version %(libarchive)s): Multi-format archive and compression library.
 * Graphics file formats
   + giflib (version %(giflib)s): a library for reading and writing gif images. It is 
@@ -343,6 +353,9 @@ Overview of included libraries:
     'Szip': Szip_version,
     'XZ': XZ_version,
     'zlib': zlib_version,
+    'gzip': gzip_version,
+    'zstd': zstd_version,
+    'libb2': libb2_version,
     'libarchive': libarchive_version,
     'giflib': giflib_version,
     'JasPer': JasPer_version,
@@ -394,6 +407,10 @@ docurls = [
     'Szip: web pages on http://www.hdfgroup.org/doc_resource/SZIP/', 
     'XZ Utils: man pages for the command line utilities',
     'zlib: web-based manual on https://zlib.net/manual.html', 
+    'gzip: Web-based documentation on https://www.gnu.org/software/gzip/manual/',
+    'gzip: man pages for all commands (gzip, gunzip, gzexe, zcat, zcmp, zdiff, zforce, zgrep, zless, zmore, znew) in Section 1',
+    'zstd: Web-based documentation via the home page: http://www.zstd.net/',
+    'libb2: Home page: https://github.com/BLAKE2/libb2',
     'libarchive: Some web-based documentation on https://www.libarchive.org/',
     'giflib: home page with links to the documentation on http://giflib.sourceforge.net/',
     'libjpeg-turbo web-based documentation: https://libjpeg-turbo.org/Documentation',
@@ -524,6 +541,13 @@ components = [
                        }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
+    ('gzip', gzip_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s'
+    }),
     ('XZ', XZ_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
@@ -532,6 +556,21 @@ components = [
         'patches':     ['XZ-5.2.2_compat-libs.patch'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--disable-nls --disable-xz --disable-xzdec',  # First build without the need for gettext, we'll rebuild after building gettext.
+    }),
+    ('zstd', zstd_version, {
+        'sources':     [ {
+                           'download_filename': 'v%(version)s.tar.gz',
+                           'filename':          SOURCELOWER_TAR_GZ,
+                           'source_urls':       ['https://github.com/facebook/zstd/archive/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'skipsteps':   ['configure'],
+        'installopts': "PREFIX=%(installdir)s" 
+    }),
+    ('libb2', libb2_version, {
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': ['https://github.com/BLAKE2/libb2/releases/download/v%(version)s'],
+        'start_dir':   '%(namelower)s-%(version)s',
     }),
     ('libarchive', libarchive_version, {
         'easyblock': 'CMakeMake',
@@ -557,17 +596,6 @@ components = [
         'buildopts':   'CC="$CC" CFLAGS="$CXXFLAGS"',
         'installopts': "PREFIX=%(installdir)s",
     }),
-    ('JasPer', JasPer_version, { 
-        'easyblock':   'CMakeMake',
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/']
-                       }],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'preconfigopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
-        'configopts':  '-DJAS_ENABLE_DOC=OFF -DALLOW_IN_SOURCE_BUILD=ON ',
-        'prebuildopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
-    }),
      ('libjpeg-turbo', libjpegturbo_version, {
         'easyblock':   'CMakeMake',
         'sources':     [ {
@@ -575,8 +603,19 @@ components = [
                           'source_urls': [SOURCEFORGE_SOURCE]
                        }],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--with-jpeg8',
+        'configopts':  '-DWITH_JPEG7=1 -DWITH_JPEG8=1 -DWITH_12BIT=0', # 12-bit support broken during configure step.
      }),
+    ('JasPer', JasPer_version, { 
+        'easyblock':     'CMakeMake',
+        'sources':       [ {
+                            'filename':    SOURCELOWER_TAR_GZ,
+                            'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/']
+                         }],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
+        'configopts':    '-DJAS_ENABLE_DOC=0 -DJAS_ENABLE_OPENGL=0 -DJAS_ENABLE_LIBJPEG=1 -DALLOW_IN_SOURCE_BUILD=ON ',
+        'prebuildopts':  'cd %(builddir)s/%(namelower)s-%(version)s ; ',
+    }),
     ('libpng', libpng_version, { # Needs zlib!
         # https://download.sourceforge.net/libpng/libpng-1.6.36.tar.xz
         'sources':     [ {
