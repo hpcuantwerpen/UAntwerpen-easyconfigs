@@ -824,7 +824,7 @@ components = [
         'buildopts': 'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
                      'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd - && ' + \
                      '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/Linux*.OBJ/* %(installdir)s && ' + \
-                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public       %(installdir)s/include', 
+                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public/*     %(installdir)s/include', 
     }),
 #
 # Regular math libs
