@@ -10,12 +10,12 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, bzip2, Szip, XZ utils, zlib, gzip, lz4, zstd, libb2, libarchive, " + 
+    "Contains: ncurses/ncursesw, readline, brotli, bzip2, Szip, XZ utils, zlib, gzip, lz4, zstd, libb2, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
     "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, NSPR, NSS, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
-    "file, gc, libevent, libffi, libyaml, PCRE, UDUNITS, D-Bus, util-linux.",
+    "file, gc, libevent, libffi, libyaml, PCRE, PCRE2, UDUNITS, D-Bus, util-linux.",
 ]
 
 binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
@@ -23,6 +23,7 @@ gcc_version      = '8.3.0'
 
 ncurses_version =      '6.1'           # https://ftp.gnu.org/pub/gnu/ncurses/
 libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+brotli_version =       '1.0.7'         # https://github.com/google/brotli/releases
 bzip2_version =        '1.0.6'         # http://www.bzip.org/downloads.html
 bzip2_major_minor =    '1.0'    
 Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
@@ -62,12 +63,12 @@ gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
 libffi_version =       '3.2.1'         # ftp://sourceware.org/pub/libffi/
 libyaml_version =      '0.2.2'         # https://github.com/yaml/libyaml/releases
 PCRE_version =         '8.43'          # https://ftp.pcre.org/pub/pcre/
+PCRE2_version =        '10.33'         # https://ftp.pcre.org/pub/pcre/
 UDUNITS_version =      '2.2.26'        # ftp://ftp.unidata.ucar.edu/pub/udunits
 util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
 pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
 freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
 fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
-dbus_version =         '1.13.12'       # https://dbus.freedesktop.org/releases/dbus/
 libevent_version =     '2.1.11'        # https://libevent.org/
 NSPR_version =         '4.22'          # https://archive.mozilla.org/pub/nspr/releases
 NSS_version =          '3.45'          # https://ftp.mozilla.org/pub/security/nss/releases/
@@ -94,6 +95,12 @@ Overview of included libraries:
     and perform csh-like history expansion on previous commands.
     There are manual pages for readline and history and help via info.
 * File compression tools and libraries
+  + brolti (version %(brotli)s): Brotli is a generic-purpose lossless compression 
+    algorithm that compresses data using a combination of a modern variant of 
+    the LZ77 algorithm, Huffman coding currently available general-purpose 
+    compression methods. It is similar in speed with deflate but offers more 
+    dense compression.
+    The specification of the Brotli Compressed Data Format is defined in RFC 7932.
   + bzip2 (version %(bzip2)s): Patent-free high-quailty data compressor
     with very good compression yet fast compression and decompression 
     (.bz2 files)
@@ -298,11 +305,6 @@ Overview of included libraries:
   + libunistring (version %(unistring)s): provides functions for manipulating Unicode
     strings and for manipulating C strings according to the Unicode standard.
 * Miscellaneous
-  + D-Bus (version %(dbus)s): D-Bus is a message bus system, a simple way for 
-    applications to talk to one another. In addition to interprocess communication, 
-    D-Bus helps coordinate process lifecycle; it makes it simple and reliable to 
-    code a "single instance" application or daemon, and to launch applications 
-    and daemons on demand when their services are needed.
   + file (version %(filev)s): The file command is "a file type guesser", that
     is, a command-line tool that tells you in words what kind of data a file
     contains. Unlike most GUI systems, command-line UNIX systems - with this
@@ -335,6 +337,10 @@ Overview of included libraries:
     The package includes the command line tools pcregrep, pcretest and 
     pcre-config, documented through man pages. API documentation is available
     through man pcre.
+  + PCRE2 (version %(PCRE2)s: More modern version of PCRE.
+    The package includes the command line tools pcre2grep, pcre2test and 
+    pcre2-config, documented through man pages. API documentation is available
+    through man pcre2.
   + UDUNITS (version %(UDUNITS)s): The UDUNITS package supports units of physical 
     quantities. Its C library provides for arithmetic manipulation of units and for 
     conversion of numeric values between compatible units. The package contains an 
@@ -348,6 +354,7 @@ Overview of included libraries:
 """ % { 
     'ncurses': ncurses_version,
     'libreadline': libreadline_version,
+    'brotli': brotli_version,
     'bzip2': bzip2_version,
     'lz4': lz4_version,
     'Szip': Szip_version,
@@ -386,13 +393,13 @@ Overview of included libraries:
     'ICU': ICU_version,
     'iconv': libiconv_version,
     'unistring': libunistring_version,
-    'dbus': dbus_version,
     'filev': file_version,
     'gc': gc_version,
     'event': libevent_version,
     'ffi': libffi_version,
     'yaml': libyaml_version,
     'PCRE': PCRE_version,
+    'PCRE2': PCRE2_version,
     'UDUNITS': UDUNITS_version,
     'utillinux': util_version,
 }
@@ -402,6 +409,7 @@ docurls = [
     'libreadline: web-based readline user interface documentation: https://tiswww.cwru.edu/php/chet/readline/rluserman.html',
     'libreadline: web-based libreadline documentation: https://tiswww.cwru.edu/php/chet/readline/readline.html',
     'libreadline: web-based libhistory documentation: https://tiswww.cwru.edu/php/chet/readline/history.html',
+    'brotli: Home page: https://github.com/google/brotli',
     'bzip2: web-based documentation on http://www.bzip.org/docs.html',
     'LZ4: web-based documentation on https://github.com/lz4/lz4',
     'Szip: web pages on http://www.hdfgroup.org/doc_resource/SZIP/', 
@@ -435,7 +443,6 @@ docurls = [
     'libxslt: man pages for xsltproc, libxslt and libexslt',
     'NSPR: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR',
     'NSS: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS',
-    'D-Bus: home page is https://www.freedesktop.org/wiki/Software/dbus/ and contains links to the documentation',
     'file: home page is https://www.darwinsys.com/file/', 
     'FriBidi: home page is https://github.com/fribidi/fribidi',
     'gc: web-based documentation on the home page http://hboehm.info/gc/',
@@ -448,6 +455,8 @@ docurls = [
     'libunistring: web-based manual: https://www.gnu.org/software/libunistring/manual/libunistring.html',
     'libunistring: supports the info command, start with info libunistring',
     'PCRE: web-based documentation: http://www.pcre.org/original/doc/html/',
+    'PCRE2: web-based documentation: http://www.pcre.org/current/doc/html/',
+    'PCRE2: Manual pages in section 1 (pcre2grep, pcre2test) and 3 (API, start with pcre2)',
     'util-linux: documented through man pages',
     'freetype: Web-based documentation on https://www.freetype.org/freetype2/docs/documentation.html',
     'fontconfig: Web-based documentation on https://www.freedesktop.org/wiki/Software/fontconfig/',
@@ -474,7 +483,7 @@ components = [
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
-                       }],
+                       } ],
         'patches':     ['ncurses-%(version)s_gcc-5.patch'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-shared --enable-overwrite', # First build: default build.
@@ -483,7 +492,7 @@ components = [
         'sources':       [ {
                             'filename':    SOURCE_TAR_GZ,
                             'source_urls': [GNU_SOURCE]
-                         }],
+                         } ],
         'patches':       ['ncurses-%(version)s_gcc-5.patch'],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'make distclean && ',
@@ -498,15 +507,91 @@ components = [
         'preconfigopts': "LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS='-L%(installdir)s/lib -lncurses'",
     }),
 #
+# There is a tricky circular dependency between gettext and libiconv according to the libiconv
+# documentation/ libiconv gets more features if it finds gettext, but the latter also can do
+# more when it finds libiconv.
+# Note that gettext also needs libcurses but for now we build with built-in libxml2 and libunistring
+# to avoid further complicating matters.
+#
+    ('gettext', gettext_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+#        'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
+#                         'CPATH=%(installdir)s/include:$CPATH ' + \
+#                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
+#                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
+        'configopts':    '--without-emacs --with-libncurses-prefix=%(installdir)s --with-included-libunistring --with-included-libxml',
+    }),
+    ('libiconv', libiconv_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s'
+    }),
+    # Now recompile gettext to enable the additional features
+    ('gettext', gettext_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'make distclean && ',
+#        'preconfigopts': 'make distclean && ' + \
+#                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
+#                         'CPATH=%(installdir)s/include:$CPATH ' + \
+#                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
+#                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
+        'configopts':    '--without-emacs --with-libncurses-prefix=%(installdir)s --with-included-libunistring --with-included-libxml',
+    }),
+#
+# Unicode and multi-language support
+#
+    ('FriBidi', fribidi_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_BZ2,
+                          'source_urls': ['https://github.com/%(namelower)s/%(namelower)s/releases/download/v%(version)s']
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--disable-docs',
+    }),
+    ('ICU', ICU_version, { # Unicode/multilanguage support
+        'sources':     [ {
+                          'filename':    'icu4c-%(version_major)s_%(version_minor)s-src.tgz',
+                          'source_urls': ['http://download.icu-project.org/files/icu4c/%(version)s']
+                       } ],
+        'start_dir':   '%(namelower)s/source'
+    }),
+    ('libunistring', libunistring_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'parallel':    1
+    }),
+#
 # File compression tools
 #
+    ('brotli', brotli_version, {
+        'easyblock':   'CMakeMake',
+        'sources':     [ {
+                          'download_filename': 'v%(version)s.tar.gz',
+                          'filename':          SOURCELOWER_TAR_GZ,
+                          'source_urls':       ['https://github.com/google/brotli/archive']
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
+    }),
     ('bzip2', bzip2_version, {
         # The bzip2 EasyBlock does not work in a bundle since there is a problem with with_shared_libs
         # https://sourceforge.net/projects/bzip2/files/bzip2-1.0.6.tar.gz/download
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': [SOURCEFORGE_SOURCE]
-                       }],
+                       } ],
 	    'start_dir':   '%(namelower)s-%(version)s',
         'skipsteps':   ['configure'],
         'buildopts':   'CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ; ' + \
@@ -521,7 +606,7 @@ components = [
         'sources':     [ {
                           'filename':    'v%(version)s.tar.gz',
                           'source_urls': ['https://github.com/lz4/lz4/archive/']
-                       }],
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'skipsteps':   ['configure'],
         'installopts': "PREFIX=%(installdir)s",
@@ -530,7 +615,7 @@ components = [
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['http://www.hdfgroup.org/ftp/lib-external/szip/%(version)s/src']
-                       }],
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-pic'
     }),
@@ -538,31 +623,31 @@ components = [
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [('http://sourceforge.net/projects/libpng/files/zlib/%(version)s', 'download')]
-                       }],
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('gzip', gzip_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
-                       }],
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('XZ', XZ_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': ['http://tukaani.org/xz/']
-                       }],
+                       } ],
         'patches':     ['XZ-5.2.2_compat-libs.patch'],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--disable-nls --disable-xz --disable-xzdec',  # First build without the need for gettext, we'll rebuild after building gettext.
+#        'configopts':  '--disable-nls --disable-xz --disable-xzdec',  # First build without the need for gettext, we'll rebuild after building gettext.
     }),
     ('zstd', zstd_version, {
         'sources':     [ {
                            'download_filename': 'v%(version)s.tar.gz',
                            'filename':          SOURCELOWER_TAR_GZ,
                            'source_urls':       ['https://github.com/facebook/zstd/archive/']
-                       }],
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'skipsteps':   ['configure'],
         'installopts': "PREFIX=%(installdir)s" 
@@ -580,7 +665,7 @@ components = [
                          'download_filename': 'v%(version)s.tar.gz',
                          'filename':          SOURCELOWER_TAR_GZ,
                          'source_urls':       [('https://github.com/libarchive/libarchive/archive')]
-                     }],
+                     } ],
         'start_dir': '%(namelower)s-%(version)s',
     }),
 #
@@ -590,7 +675,7 @@ components = [
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': [('http://sourceforge.net/projects/giflib/files', 'download')]
-                       }],
+                       } ],
         'start_dir':   '%(name)s-%(version)s',
         'skipsteps':   ['configure'],
         'buildopts':   'CC="$CC" CFLAGS="$CXXFLAGS"',
@@ -601,7 +686,7 @@ components = [
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [SOURCEFORGE_SOURCE]
-                       }],
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '-DWITH_JPEG7=1 -DWITH_JPEG8=1 -DWITH_12BIT=0', # 12-bit support broken during configure step.
      }),
@@ -610,18 +695,17 @@ components = [
         'sources':       [ {
                             'filename':    SOURCELOWER_TAR_GZ,
                             'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/']
-                         }],
+                         } ],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
         'configopts':    '-DJAS_ENABLE_DOC=0 -DJAS_ENABLE_OPENGL=0 -DJAS_ENABLE_LIBJPEG=1 -DALLOW_IN_SOURCE_BUILD=ON ',
         'prebuildopts':  'cd %(builddir)s/%(namelower)s-%(version)s ; ',
     }),
     ('libpng', libpng_version, { # Needs zlib!
-        # https://download.sourceforge.net/libpng/libpng-1.6.36.tar.xz
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': ['https://download.sourceforge.net/libpng']
-                       }],
+                       } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'preconfigopts': 'CPATH=%(installdir)s/include:$CPATH LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS="-L%(installdir)s/lib $LDFLAGS"',
         'configopts':  '--with-pic',
@@ -631,16 +715,23 @@ components = [
         'sources':     [ {
                           'filename':    'tiff-%(version)s.tar.gz',
                           'source_urls': ['https://download.osgeo.org/libtiff/']
-                       }],
+                       } ],
         'start_dir':   'tiff-%(version)s'
     }),
     ('libwebp', libwebp_version, { # Needs giflib, libjpeg-turbo, libpng and libTIFF
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['https://storage.googleapis.com/downloads.webmproject.org/releases/webp']
-                       }],
+                       } ],
         'start_dir':   '%(name)s-%(version)s',
         'configopts':  '--enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras',
+    }),
+    ('LibTIFF', libtiff_version, { # Recompile as libwebp also adds features to LibTIFF.
+        'sources':     [ {
+                          'filename':    'tiff-%(version)s.tar.gz',
+                          'source_urls': ['https://download.osgeo.org/libtiff/']
+                       } ],
+        'start_dir':   'tiff-%(version)s'
     }),
 #
 # Audio and video file formats
@@ -649,7 +740,7 @@ components = [
         'sources':     [ {
                           'filename':    'x264-snapshot-%(version)s-stable.tar.bz2',
                           'source_urls': ['https://download.videolan.org/pub/videolan/x264/snapshots/', 'ftp://ftp.videolan.org/pub/videolan/x264/snapshots/']
-                       }],
+                       } ],
         'start_dir':   'x264-snapshot-%(version)s-stable',
         'configopts': '--enable-shared --enable-static',
         'installopts': ' && mkdir -p %(installdir)s/doc && cp -r doc/* %(installdir)s/doc'
@@ -701,7 +792,8 @@ components = [
                           'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/']
                        }],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--with-pic --with-zlib=%(installdir)s --with-lzma=%(installdir)s --without-python',
+#        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-zlib=%(installdir)s --with-lzma=%(installdir)s --without-python',
+        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib --with-lzma --without-python',
     }),
     ('libxslt', libxslt_version, { # Needs libxml2 and can find it through pkg-config, so configure that path.
         'sources':     [ {
@@ -721,29 +813,18 @@ components = [
         'configopts':  '--disable-debug --enable-optimize --enable-64bit',
     }),
     ('NSS', NSS_version, {
-        'easyblock':     'MakeCp',
-        'sources':       [ {
-                            'filename':    SOURCELOWER_TAR_GZ,
-                            'source_urls': ['https://ftp.mozilla.org/pub/security/nss/releases/NSS_%(version_major)s_%(version_minor)s_RTM/src/']
-                         }],
-        'patches':       ['NSS-3.39_pkgconfig.patch'],
-        'start_dir':     '%(namelower)s-%(version)s/nss',
-        'parallel':      1,
-        'buildopts':     'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
-                         'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd -',
-        'files_to_copy': [(['../dist/public/*'], 'include')],
-        'postinstallcmds': [
-                             'cp -Lp ../dist/Linux*.OBJ/bin/*           %(installdir)/bin',
-                             'cp -Lp ../dist/Linux*.OBJ/lib/*.a         %(installdir)/lib',
-                             'cp -Lp ../dist/Linux*.OBJ/lib/*.so        %(installdir)/lib',
-                             'cp -Lp ../dist/Linux*.OBJ/lib/*.chk       %(installdir)/lib',
-                             'cp -Lp ../dist/Linux*.OBJ/lib/pkgconfig/* %(installdir)/lib/pkgconfig',
-                           ],
-#        'files_to_copy': [
-#                           (['../dist/Linux*.OBJ/bin/*'], 'bin'),
-#                           (['../dist/Linux*.OBJ/lib/*'], 'lib'),
-#                           (['../dist/public/*'], 'include')
-#                         ],
+        'sources':   [ {
+                        'filename':    SOURCELOWER_TAR_GZ,
+                        'source_urls': ['https://ftp.mozilla.org/pub/security/nss/releases/NSS_%(version_major)s_%(version_minor)s_RTM/src/']
+                     }],
+        'patches':   ['NSS-3.39_pkgconfig.patch'],
+        'start_dir': '%(namelower)s-%(version)s/nss',
+        'skipsteps': ['configure','install'],
+        'parallel':  1,
+        'buildopts': 'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
+                     'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd - && ' + \
+                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/Linux*.OBJ/* %(installdir)s && ' + \
+                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public       %(installdir)s/include', 
     }),
 #
 # Regular math libs
@@ -774,12 +855,13 @@ components = [
 # Arbitrary precision math
 #
     ('GMP', GMP_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--enable-cxx'
+        'sources':       [ {
+                            'filename':    SOURCELOWER_TAR_XZ,
+                            'source_urls': [GNU_SOURCE]
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'toolchainopts': {'pic': True, 'precise': True},
+        'configopts':    '--enable-cxx'
     }),
     ('MPFR', MPFR_version, {
         'sources':     [ {
@@ -798,82 +880,8 @@ components = [
         'configopts':  '--with-gmp=%(installdir)s --with-mpfr=%(installdir)s'
     }),
 #
-# Unicode and multi-language support
-#
-    ('FriBidi', fribidi_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_BZ2,
-                          'source_urls': ['https://github.com/%(namelower)s/%(namelower)s/releases/download/v%(version)s']
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--disable-docs',
-    }),
-    ('ICU', ICU_version, {
-        'sources':     [ {
-                          'filename':    'icu4c-%(version_major)s_%(version_minor)s-src.tgz',
-                          'source_urls': ['http://download.icu-project.org/files/icu4c/%(version)s']
-                       } ],
-        'start_dir':   '%(namelower)s/source'
-    }),
-    ('libunistring', libunistring_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'parallel':    1
-    }),
-#
-# There is a tricky circular dependency between gettext and libiconv according to the libiconv
-# documentation/ libiconv gets more features if it finds gettext, but the latter also can do
-# more when it finds libiconv.
-# Note that gettext also needs libxml2, libcurses and libunistring
-#
-    ('gettext', gettext_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':     '%(namelower)s-%(version)s',
-        'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
-                         'CPATH=%(installdir)s/include:$CPATH ' + \
-                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
-                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
-        'configopts':    '--without-emacs --with-libxml2-prefix=%(installdir)s --with-libncurses-prefix=%(installdir)s --with-libunistring-prefix=%(installdir)s --with-libiconv-prefix=%(installdir)s',
-    }),
-    ('libiconv', libiconv_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s'
-    }),
-    # Now recompile gettext to enable the additional features
-    ('gettext', gettext_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':     '%(namelower)s-%(version)s',
-        'preconfigopts': 'make distclean && ' + \
-                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
-                         'CPATH=%(installdir)s/include:$CPATH ' + \
-                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
-                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
-        'configopts':    '--without-emacs --with-libxml2-prefix=%(installdir)s --with-libncurses-prefix=%(installdir)s --with-libunistring-prefix=%(installdir)s --with-libiconv-prefix=%(installdir)s',
-    }),
-
-#
 # Miscellaneous
 #
-    ('DBus', dbus_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': ['http://dbus.freedesktop.org/releases/dbus']
-                       }],
-        'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--without-systemdsystemunitdir',
-    }),
     ('file', file_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
@@ -924,7 +932,19 @@ components = [
                           'source_urls': ['https://ftp.pcre.org/pub/pcre/']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  "--with-pic --disable-cpp --enable-utf --enable-unicode-properties"
+        'configopts':  "--with-pic --disable-cpp --enable-utf --enable-unicode-properties --enable-newline-is-any " + \
+                       "--enable-pcre16 --enable-pcre32 --enable-jit " + \
+                       "--enable-pcregrep-libz --enable-pcregrep-libbz2 --enable-pcretest-libreadline ",
+    }),
+    ('PCRE2', PCRE2_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_BZ2,
+                          'source_urls': ['https://ftp.pcre.org/pub/pcre/']
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  "--with-pic --disable-cpp --enable-newline-is-any " + \
+                       "--enable-pcre2-16 --enable-pcre2-32 --enable-jit " + \
+                       "--enable-pcre2grep-libz --enable-pcre2grep-libbz2 --enable-pcre2test-libreadline "
     }),
     ('UDUNITS', UDUNITS_version, { # depends on expat!
         'sources':     [ {
@@ -955,6 +975,7 @@ components = [
                           'source_urls': ['http://cairographics.org/releases']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--enable-gnuplot ',
     }),
     ('freetype', freetype_version, { # Needs zlib, bzip2 and libpng
         'sources':     [ {
@@ -973,23 +994,6 @@ components = [
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ',
         'configopts':    '--disable-docs',
     }),
-#
-# Recompile XZ utils now with all features enabled.
-#
-    ('XZ', XZ_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_BZ2,
-                          'source_urls': ['http://tukaani.org/xz/']
-                       } ],
-#        'patches':       ['XZ-5.2.2_compat-libs.patch'], # Can't apply the patch a second time.
-        'start_dir':     '%(namelower)s-%(version)s',
-        'preconfigopts': 'make mostlyclean clean distclean ; '+ \
-                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
-                         'CPATH=%(installdir)s/include:$CPATH ' + \
-                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
-                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
-        'configopts':    '--with-libiconv-prefix=%(installdir)s',
-    }),
 ]
 
 sanity_check_paths = {
@@ -1001,6 +1005,9 @@ modextravars = {
     'CURL_INCLUDES': '%(installdir)s/include'
 }
 
-modextrapaths = {'CPATH': 'include/nss'}
+modextrapaths = {
+    'CPATH':     ['include/nss','include/freetype2'],
+    'INFOPATH' : 'share/info',
+}
 
 moduleclass = 'lib'
