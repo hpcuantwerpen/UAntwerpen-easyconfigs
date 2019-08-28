@@ -9,6 +9,7 @@ homepage = 'https://www.x.org'
 whatis = [
     'Description: X Window System (X11) libraries, a windowing system for bitmap displays',
     'This module contains static and shared libraries for a lot of libraries from the X11 system',
+    'Local UAntwerp extensions: libDRM and D-Bus (DBus)',
 ]
 
 description = """
@@ -219,6 +220,14 @@ components = [ # Update done on 2019-07-23
     ('libdrm', '2.4.99', { # 2019-07-02 http://dri.freedesktop.org/libdrm/, used by Qt5
         'source_urls': ['http://dri.freedesktop.org/libdrm/'],
         'checksums':   ['4dbf539c7ed25dbb2055090b77ab87508fc46be39a9379d15fed4b5517e1da5e'],
+    }),
+    ('DBus', '1.13.12', { 
+        'sources':     [ { # 2019-06-11 http://dbus.freedesktop.org/releases/dbus
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': ['http://dbus.freedesktop.org/releases/dbus']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--without-systemdsystemunitdir',
     }),
 ]
 
