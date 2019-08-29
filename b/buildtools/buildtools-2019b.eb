@@ -3,13 +3,14 @@
 # https://github.com/easybuilders/easybuild-easyblocks/pull/1777 via --include-easyblocks
 #
 # NOTE: This module is developed at UAntwerp
+# NOTE: meson, which is included, requires python3 with setuptools installed in the OS.
 #
 # It is the first module we compile when starting a new toolchain.
 #
 # This bundle collects a number of GNU tools useful during the building process
 # and a few other tools.
 #
-# We do include a Flex and Bison even thoug they do contain libraries
+# We do include a Flex and Bison even though they do contain libraries
 # for which some packages may want to use toolchain-specific versions. These 
 # packages should then just assure that module is loaded after buildtools.
 #
