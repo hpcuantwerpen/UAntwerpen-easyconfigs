@@ -1,0 +1,70 @@
+# This one does not yet work as HarBuzz >= 2.0 is needed for it....
+easyblock = 'MesonNinja'
+
+name = 'Pango'
+version = '1.44.3'
+
+buildset         = '2019b'
+gcc_version      = '8.3.0'
+binutils_version = '2.32'
+
+homepage = 'http://www.pango.org/'
+
+whatis = [
+    'Description: Text layout and rendering library',
+    'This module provides a command line utility and static and shared libraries'
+]
+
+description = """
+Pango is a library for laying out and rendering of text, with an emphasis on
+internationalization.  Pango can be used anywhere that text layout is needed,
+though most of the work on Pango so far has been done in the context of the GTK+
+widget toolkit. Pango forms the core of text and font handling for GTK+-2.x.
+
+This module provides a command line utility pango-view and static and shared
+libraries.
+"""
+
+docurls = [
+    'Web based documentation: https://developer.gnome.org/pango/unstable/',
+    'Man page for pango-view',
+]
+
+docpaths = [
+    'share/gtk-doc/html/pango'
+]
+
+toolchain = {'name': 'GCCcore', 'version': gcc_version}
+
+source_urls = [FTPGNOME_SOURCE]
+sources =     [SOURCELOWER_TAR_XZ]
+
+dependencies = [
+    ('baselibs', buildset), # For FriBidi
+    ('X11',      buildset),
+    ('GLib',     '2.61.2'),
+    ('cairo',    '1.17.2'),
+    ('HarfBuzz', '2.5.3'),
+]
+
+builddependencies = [
+    ('buildtools',            buildset, '',              True), # For ninja, meson, pkg-config and for help2man to generate the man page.
+    ('GObject-Introspection', '1.61.1'),
+]
+
+configopts = "--buildtype=release --default-library=both "
+# Old configopts:
+# configopts = "--disable-silent-rules --enable-introspection=yes --enable-static --enable-shared "
+
+sanity_check_paths = {
+    'files': ['bin/pango-view', 'lib/libpango-1.0.%s' % SHLIB_EXT, 'lib/libpangocairo-1.0.%s' % SHLIB_EXT,
+              'lib/libpangoft2-1.0.%s' % SHLIB_EXT, 'lib/libpangoxft-1.0.%s' % SHLIB_EXT],
+    'dirs': [],
+}
+
+modextrapaths = {
+    'GI_TYPELIB_PATH': 'share',
+    'XDG_DATA_DIRS': 'share',
+}
+
+moduleclass = 'vis'
