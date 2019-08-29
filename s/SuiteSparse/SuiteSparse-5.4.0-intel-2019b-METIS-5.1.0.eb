@@ -30,6 +30,10 @@ dependencies = [
     ('METIS', metis_ver, metis_ver_suffix)
 ]
 
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True), # for cmake
+]
+
 parallel = 1
 
 moduleclass = 'numlib'
