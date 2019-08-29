@@ -1,0 +1,30 @@
+easyblock = 'Tarball'
+
+name = 'KHRplatform'
+version = '1.0'
+
+homepage = '(none)'
+
+whatis = [
+    'Description: Dummy module containing a header file that Qt5 likes and is usually provided with OpenGL, but seems to be required in non-OpenGL builds also.',
+]
+
+description = """
+Dummy module containing a header file that Qt5 likes and is usually provided 
+with OpenGL, but seems to be required in non-OpenGL builds also.
+"""
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+source_urls = []
+sources =     ['KHRplatform.tar.bz2']
+checksums =   ['82f32d0308faa243bc1d953066010d603df88cb266a3af0a2295422c0a755e4f']
+
+start_dir = '.'
+
+sanity_check_paths = {
+    'files': [ 'include/KHR/khrplatform.h' ],
+    'dirs':  []
+}
+
+moduleclass = 'devel'
