@@ -3,6 +3,10 @@ easyblock = 'ConfigureMake'
 name = 'cairo'
 version = '1.17.2'
 
+buildset         = '2019b'
+gcc_version      = '8.3.0'
+binutils_version = '2.32'
+
 homepage = 'http://cairographics.org'
 
 whatis = [
@@ -45,23 +49,23 @@ docpaths = [
     'share/gtk-doc/html/cairo',
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain = {'name': 'GCCcore', 'version': gcc_version}
 
 source_urls = ['http://cairographics.org/snapshots/']
 sources = [SOURCE_TAR_XZ]
 
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for bzip2, zlib, libpng, freetype, pixman, expat
+    ('baselibs', buildset), # for bzip2, zlib, libpng, freetype, pixman, expat
     ('GLib',     '2.61.2'),
-    ('X11',      '%(toolchain_version)s', '', ('GCCcore', gcc_version)),
+    ('X11',      buildset),
+]
+
+builddependencies = [
+    ('binutils', binutils_version)
 ]
 
 # disable symbol lookup, which requires -lbfd, to avoid link issues with (non-PIC) libiberty.a provided by GCC
 configopts = "--enable-symbol-lookup=no --enable-gobject=yes --enable-svg=yes --enable-tee=yes --enable-xlib-xcb "
-
-# workaround for "hidden symbol .* in .* is referenced by DSO" and "ld: final link failed: Bad value"
-buildopts = 'LD="$CC" LDFLAGS="$LDFLAGS -shared-intel"'
 
 sanity_check_paths = {
     'files': ['bin/cairo-trace', 'lib/cairo/libcairo-trace.so', 'lib/cairo/libcairo-trace.a',
