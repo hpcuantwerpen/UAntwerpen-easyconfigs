@@ -12,7 +12,7 @@ whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
     "Contains: ncurses/ncursesw, readline, brotli, bzip2, Szip, XZ utils, zlib, gzip, lz4, zstd, libb2, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
-    "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, NSPR, NSS, " + 
+    "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
     "file, gc, libevent, libffi, libyaml, PCRE, PCRE2, UDUNITS, D-Bus, util-linux.",
@@ -70,8 +70,6 @@ pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
 freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
 fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
 libevent_version =     '2.1.11'        # https://libevent.org/
-NSPR_version =         '4.22'          # https://archive.mozilla.org/pub/nspr/releases
-NSS_version =          '3.45'          # https://ftp.mozilla.org/pub/security/nss/releases/
 
 description = """
 This module provides a large number of up-to-date base libraries used by many
@@ -236,11 +234,6 @@ Overview of included libraries:
     Users can either embed the library in their application or use xsltproc the
     command line processing tool. This library is free software and can be
     reused in commercial applications.
-  + NSPR (version %(NSPR)s): Netscape Portable Runtime (NSPR) provides a 
-    platform-neutral API for system level  and libc-like functions.
-  + NSS (version %(NSS)s): Network Security Services, a set of libraries designed 
-    to support cross-platform development of security-enabled client and server 
-    applications.
 * Mathematical libraries
   + GSL (version %(GSL)s): The GNU Scientific Library, a numerical library for C and
     C++ programmers. The library provides a wide range of mathematical routines
@@ -378,8 +371,6 @@ Overview of included libraries:
     'expat': expat_version,
     'xml2': libxml2_version,
     'xslt': libxslt_version,
-    'NSPR': NSPR_version,
-    'NSS': NSS_version,
     'GSL': GSL_version, 
     'libcerf': libcerf_version,
     'GMP': GMP_version,
@@ -441,8 +432,6 @@ docurls = [
     'libxml2: man pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
     'libxslt: web-based documentation on the home page: http://xmlsoft.org/libxslt/',
     'libxslt: man pages for xsltproc, libxslt and libexslt',
-    'NSPR: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR',
-    'NSS: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS',
     'file: home page is https://www.darwinsys.com/file/', 
     'FriBidi: home page is https://github.com/fribidi/fribidi',
     'gc: web-based documentation on the home page http://hboehm.info/gc/',
@@ -804,28 +793,28 @@ components = [
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ',
         'configopts':  '--with-pic --without-python',
     }),
-    ('NSPR', NSPR_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': ['https://archive.mozilla.org/pub/nspr/releases/v%(version)s/src/']
-                       }],
-        'start_dir':   '%(namelower)s-%(version)s/nspr',
-        'configopts':  '--disable-debug --enable-optimize --enable-64bit',
-    }),
-    ('NSS', NSS_version, {
-        'sources':   [ {
-                        'filename':    SOURCELOWER_TAR_GZ,
-                        'source_urls': ['https://ftp.mozilla.org/pub/security/nss/releases/NSS_%(version_major)s_%(version_minor)s_RTM/src/']
-                     }],
-        'patches':   ['NSS-3.39_pkgconfig.patch'],
-        'start_dir': '%(namelower)s-%(version)s/nss',
-        'skipsteps': ['configure','install'],
-        'parallel':  1,
-        'buildopts': 'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
-                     'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd - && ' + \
-                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/Linux*.OBJ/* %(installdir)s && ' + \
-                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public/*     %(installdir)s/include', 
-    }),
+#    ('NSPR', NSPR_version, {
+#        'sources':     [ {
+#                          'filename':    SOURCELOWER_TAR_GZ,
+#                          'source_urls': ['https://archive.mozilla.org/pub/nspr/releases/v%(version)s/src/']
+#                       }],
+#        'start_dir':   '%(namelower)s-%(version)s/nspr',
+#        'configopts':  '--disable-debug --enable-optimize --enable-64bit',
+#    }),
+#    ('NSS', NSS_version, {
+#        'sources':   [ {
+#                        'filename':    SOURCELOWER_TAR_GZ,
+#                        'source_urls': ['https://ftp.mozilla.org/pub/security/nss/releases/NSS_%(version_major)s_%(version_minor)s_RTM/src/']
+#                     }],
+#        'patches':   ['NSS-3.39_pkgconfig.patch'],
+#        'start_dir': '%(namelower)s-%(version)s/nss',
+#        'skipsteps': ['configure','install'],
+#        'parallel':  1,
+#        'buildopts': 'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
+#                     'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd - && ' + \
+#                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/Linux*.OBJ/* %(installdir)s && ' + \
+#                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public/*     %(installdir)s/include', 
+#    }),
 #
 # Regular math libs
 #
@@ -1006,7 +995,8 @@ modextravars = {
 }
 
 modextrapaths = {
-    'CPATH':     ['include/nss','include/freetype2'],
+    'CPATH':     ['include/freetype2'],
+#    'CPATH':     ['include/nss','include/freetype2'],
     'INFOPATH' : 'share/info',
 }
 
