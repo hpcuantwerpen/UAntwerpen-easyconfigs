@@ -1,0 +1,90 @@
+easyblock = 'Bundle'
+
+
+NSPR_version =     '4.22'          # https://archive.mozilla.org/pub/nspr/releases
+NSS_version =      '3.45'          # https://ftp.mozilla.org/pub/security/nss/releases/
+
+buildset =         '2019b'
+binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
+gcc_version =      '8.3.0'
+
+name = 'NSS-NSPR'
+version = NSS_version + '-' + NSPR_version
+
+homepage = '(none)'
+
+whatis = [
+    "Description: NSS (Netscape Security Services) with its dependencies (NSPR at the moment)",
+    "Contains: NSPR, NSS",
+]
+
+description = """
+This module provides NSS, the Netscape Security Services, and some related
+packages:
+
+  + NSPR (version %(NSPR)s): Netscape Portable Runtime (NSPR) provides a 
+    platform-neutral API for system level  and libc-like functions.
+  + NSS (version %(NSS)s): Network Security Services, a set of libraries designed 
+    to support cross-platform development of security-enabled client and server 
+    applications.
+
+Note that for some applications, we have detected conflicts with the system
+OpenSSL libraries so use with care.
+""" % {
+    'NSPR': NSPR_version,
+    'NSS': NSS_version,
+}
+
+docurls = [
+    'NSPR: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR',
+    'NSS: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS',
+]
+
+toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+builddependencies = [
+#    ('binutils',   binutils_version, '', ('GCCcore', gcc_version)),
+    ('binutils',   binutils_version, ),
+    ('buildtools', buildset,        '', True),
+]
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ('NSPR', NSPR_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['https://archive.mozilla.org/pub/nspr/releases/v%(version)s/src/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s/nspr',
+        'configopts':  '--disable-debug --enable-optimize --enable-64bit',
+    }),
+    ('NSS', NSS_version, {
+        'sources':   [ {
+                        'filename':    SOURCELOWER_TAR_GZ,
+                        'source_urls': ['https://ftp.mozilla.org/pub/security/nss/releases/NSS_%(version_major)s_%(version_minor)s_RTM/src/']
+                     }],
+        'patches':   ['NSS-3.39_pkgconfig.patch'],
+        'start_dir': '%(namelower)s-%(version)s/nss',
+        'skipsteps': ['configure','install'],
+        'parallel':  1,
+        'buildopts': 'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
+                     'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd - && ' + \
+                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/Linux*.OBJ/* %(installdir)s && ' + \
+                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public/*     %(installdir)s/include', 
+    }),
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['include']
+}
+
+modextrapaths = {
+    'CPATH':     ['include/freetype2'],
+    'INFOPATH' : 'share/info',
+}
+
+moduleclass = 'lib'
+
