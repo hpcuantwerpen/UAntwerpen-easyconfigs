@@ -60,6 +60,8 @@ dependencies = [
 
 osdependencies = [('openssl-devel', 'libssl-dev', 'libopenssl-devel')]
 
+configopts  = '--with-system-expat '
+
 # order is important!
 # package versions updated 20190730
 # skipsteps=['extensions'] # This doesn't work unfortunately.

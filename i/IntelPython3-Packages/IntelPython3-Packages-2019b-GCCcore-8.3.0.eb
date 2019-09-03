@@ -7,7 +7,7 @@
 easyblock = 'PythonBundle'
 
 name = 'IntelPython3-Packages'
-version = '2019b.04'
+version = '2019b'
 
 python_version = '3.6.8'
 gcc_version    = '8.3.0'
