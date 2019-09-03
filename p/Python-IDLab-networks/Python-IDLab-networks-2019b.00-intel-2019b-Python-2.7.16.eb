@@ -10,9 +10,9 @@
 #
 easyblock = 'PythonBundle'
 
-name = 'Python-IDLab-networks'
-version = '2019b.00'
-versionsuffix = '-Python-%(pyver)s'
+name =           'Python-IDLab-networks'
+version =        '2019b.00'
+versionsuffix =  '-Python-%(pyver)s'
 python_version = '2.7.16' # For some reason pyver does not work at the start of the processing.
 
 

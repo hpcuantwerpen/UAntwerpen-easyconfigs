@@ -10,12 +10,12 @@
 #
 easyblock = 'PythonBundle'
 
-name = 'Python-IDLab-networks'
-version = '2019b.00'
+name =           'Python-IDLab-networks'
+version =        '2019b.00'
 versionsuffix  = '-IntelPython3'
 python_version = '3.6.8' # For some reason pyver does not work at the start of the processing.
 
-tcver = ''.join(version.split('.')[:1])
+buildset =   ''.join(version.split('.')[:1])
 pyshortver = '.'.join(python_version.split('.')[:2])
 pycpver    = ''.join(python_version.split('.')[:2])
 pyvermajor = ''.join(python_version.split('.')[:1])
@@ -34,8 +34,8 @@ various researchers from the IDLab wireless network group.
 toolchain = {'name': 'dummy', 'version': ''}
 
 dependencies = [
-    ('IntelPython3-Packages', tcver+'.04'),
-    ('buildtools',            tcver),  # for git
+    ('IntelPython3-Packages', buildset),
+    ('buildtools',            buildset),  # for git
 ]
 
 pycpver    = ''.join(python_version.split('.')[:2])
@@ -111,7 +111,6 @@ exts_list = [
         'source_urls': [PYPI_SOURCE],
     }),
 ]
-
 
 # specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
 full_sanity_check = False
