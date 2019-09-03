@@ -58,8 +58,7 @@ dependencies = [
     ('X11',      buildset), # Loads fontconfig and freetype, used by Qt5, though Qt5 also provides its own freetype alternative
     ('FFmpeg',   '4.1.4',  '-CPU'),
 #    ('libevent', '2.1.11'),
-#    ('NSPR',     '4.22', '-baselibsDevel'), # Moved to baselibs
-#    ('NSS',      '3.45', '-baselibsDevel'), # Moved to baselibs
+    ('NSS-NSPR', '3.45-4.22'),
 #    ('libdrm',   '2.4.99'), # Moved to X11.
 #    ('libGLU',         '9.0.0'),
 ]
