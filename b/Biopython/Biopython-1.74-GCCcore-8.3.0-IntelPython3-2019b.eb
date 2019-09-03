@@ -14,11 +14,12 @@
 ##
 easyblock = 'PythonPackage'
 
-name = 'Biopython'
-version = '1.74'
-tcver = '2019b'
-gcc_version = '8.3.0'
-versionsuffix = '-IntelPython3-' + tcver
+name =             'Biopython'
+version =          '1.74'
+buildset =         '2019b'
+gcc_version =      '8.3.0'
+binutils_version = '2.32'
+versionsuffix =    '-IntelPython3-' + buildset
 
 pyshortver = '3.6'
 
@@ -42,7 +43,11 @@ source_urls = ['http://biopython.org/DIST']
 sources =     [SOURCELOWER_TAR_GZ]
 
 dependencies = [
-    ('IntelPython3-Packages', tcver + '.04', '', True)
+    ('IntelPython3-Packages', buildset, '', True)
+]
+
+builddependencies = [
+    ('binutils', binutils_version),
 ]
 
 sanity_check_paths = {
