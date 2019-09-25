@@ -1,0 +1,62 @@
+easyblock = 'Bundle'
+
+name = 'IntelPython2'
+version = '2019b.05'
+
+python_version = '2.7.16'
+intel_root     = '/apps/antwerpen/x86_64/centos7/intel-psxe/2019_update5'
+
+tcver          = ''.join(version.split('.')[:1])
+py_major       = python_version[0]
+py_major_minor = '.'.join(python_version.split('.')[:2])
+
+homepage = 'https://software.intel.com/en-us/distribution-for-python'
+
+whatis = [
+    'Description: Python '+ py_major_minor + ' from the Intel® Distribution for Python, powered by Anaconda.',
+]
+
+description = """
+Python %(pyver)s from the Intel® Distribution for Python, powered by Anaconda.
+
+A number of the packages in this distribution have been optimized by and for
+Intel-compatible CPUs and may perform better than the regular versions of it.
+In some cases, different algorithms with a different rounding pattern and
+stability properties were used, so the results may be different from a regular
+Python distribution.
+
+Our license with Intel at UAntwerp does include support. This does not mean
+that Intel will solve bugs in your code, but it does mean that if we find a 
+bug and can reproduce it in a small script, Intel will have a look at it
+and try to correct it in future versions.
+""" % {
+    'pyver': python_version
+}
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+dependencies = [
+#    ('intel',  tcver), # Not really needed as all libraries are included through symbolic links
+]
+
+allow_prepend_abs_path = True
+
+modextrapaths = {
+    'CONDA_PREFIX':    intel_root + '/intelpython%s'     % py_major,
+    'PATH':            intel_root + '/intelpython%s/bin' % py_major,
+    'LD_LIBRARY_PATH': intel_root + '/intelpython%s/lib' % py_major,
+}
+
+# The extra EB-vars are needed for compatibility with the regular EasyBuild
+# Python packages and the installation procedures for additional packages.
+modextravars = {
+    'EBROOTPYTHON':      intel_root + '/intelpython%s'     % py_major,
+    'EBVERSIONPYTHON':   python_version,
+    'CONDA_DEFAULT_ENV': 'root',
+}
+
+moduleclass = 'lang'
+
+modluafooter= """
+family("python%(pymm)s")
+""" % { 'pymm': py_major_minor }
