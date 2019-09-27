@@ -1,8 +1,8 @@
 #!/bin/bash
 
-module load calcua/2019a-experimental
+module load calcua/2019b-test
 MODULEPATH=/apps/antwerpen/modules/centos7/software-admin-x86_64:$MODULEPATH
-module load intel/2019_update4
+module load intel/2019b.05
 
 # For old configure scripts that still expect libmpich.a rather than libmpi.a for Intel MPI,
 # e.g., the Rmpi R-package.

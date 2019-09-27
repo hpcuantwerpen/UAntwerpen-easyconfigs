@@ -1,8 +1,8 @@
-name = 'Perl'
+name =    'Perl'
 version = '5.30.0'
 
-buildset = '2019b'
-gcc_version = '8.3.0'
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://www.perl.org/'
 
@@ -18,17 +18,17 @@ This module already contains a lot of packages requested by VSC users.
 Note that there is an equivalent module in the GCCcore-%(gcc_v)s toolchain,
 so you can compare the performance.
 """ % {
-    'gcc_v': gcc_version,
+    'gcc_v': local_gcc_version,
 }
 
-toolchain = {'name': 'intel', 'version': buildset}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
 source_urls = ['http://www.cpan.org/src/%(version_major)s.0']
 sources =     [SOURCELOWER_TAR_GZ]
 
 dependencies = [
-    ('baselibs', buildset, '', ('GCCcore', gcc_version))  # expat for XML::Parser and zlib for Net::SSLeay
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version))  # expat for XML::Parser and zlib for Net::SSLeay
 ]
 
 # !! order of extensions is important !!

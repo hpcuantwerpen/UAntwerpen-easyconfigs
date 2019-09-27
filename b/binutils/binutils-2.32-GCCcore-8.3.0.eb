@@ -1,8 +1,9 @@
 name = 'binutils'
 version = '2.32'
-GCCcore_version = '8.3.0'
-buildset        = '2019b'
-#versionsuffix   = '-GCCcore-' + GCCcore_version # This is added automatically by the EasyBlock it seems.
+#versionsuffix   = '-GCCcore-' + local_GCCcore_version # This is added automatically by the EasyBlock it seems.
+
+local_GCCcore_version = '8.3.0'
+local_buildset        = '2019b'
 
 homepage = 'http://directory.fsf.org/project/binutils/'
 
@@ -20,18 +21,18 @@ is mostly meant to be used as a component of the GCC toolchain, so users
 preferably load the GCC toolchain instead of this module.
 """
 
-toolchain = {'name': 'GCCcore', 'version': GCCcore_version}
+toolchain = {'name': 'GCCcore', 'version': local_GCCcore_version}
 
 source_urls = [GNU_SOURCE]
 sources =     [SOURCE_TAR_XZ]
 checksums =   ['0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04']
 
 builddependencies = [
-    ('buildtools', buildset, '', True), # For flex and Bison
+    ('buildtools', local_buildset, '', True), # For flex and Bison
     # zlib required, but being linked in statically, so not a runtime dep
-    ('zlib',       '1.2.11', '', True),
+    ('zlib',       '1.2.11',       '', True),
     # use same binutils version that was used when building GCC toolchain, to 'bootstrap' this binutils
-    ('binutils',   version,  '', True)
+    ('binutils',   version,        '', True)
 ]
 
 moduleclass = 'tools'

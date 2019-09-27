@@ -1,8 +1,10 @@
 easyblock = 'Bundle'
 
-name = 'X11'
+name =    'X11'
 version = '2019b'
-gcc_version = '8.3.0'
+
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'https://www.x.org'
 
@@ -25,7 +27,7 @@ may present radically different interfaces.
 This module contains static and shared libraries for a lot of libraries from the X11 system
 """
 
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 source_urls = [
     XORG_LIB_SOURCE,
@@ -42,10 +44,10 @@ dependencies = [
 ]
 
 builddependencies = [
-    ('buildtools', version, '', True), # Includes Bison which is also used
+    ('buildtools', version,                '', True), # Includes Bison which is also used
     # use same binutils version that was used when building GCCcore toolchain
-    ('binutils',   '2.32'),
-    ('intltool',   '0.51.0', '-Perl-5.30.0'),
+    ('binutils',   local_binutils_version),
+    ('intltool',   '0.51.0',               '-Perl-5.30.0'),
 ]
 
 default_easyblock = 'ConfigureMake'
@@ -235,15 +237,12 @@ preconfigopts = "if [ ! -f configure ]; then ./autogen.sh; fi && "
 
 # Python is required for xcb-proto
 allow_system_deps = [('Python', SYS_PYTHON_VERSION)]
-pyshortver = '.'.join(SYS_PYTHON_VERSION.split('.')[0:2])
-
-# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
-full_sanity_check = True
+local_pyshortver = '.'.join(SYS_PYTHON_VERSION.split('.')[0:2])
 
 sanity_check_paths = {
     'files': ['include/X11/Xlib.h', 'include/X11/Xutil.h'],
     'dirs': ['include/GL', 'include/X11', 'include/X11/extensions', 'lib',
-             'lib/python%s/site-packages/xcbgen' % pyshortver, 'lib/pkgconfig', 'share/pkgconfig'],
+             'lib/python%s/site-packages/xcbgen' % local_pyshortver, 'lib/pkgconfig', 'share/pkgconfig'],
 }
 
 moduleclass = 'vis'

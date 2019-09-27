@@ -1,11 +1,11 @@
 easyblock = 'ConfigureMake'
 
-name = 'HarfBuzz'
+name =    'HarfBuzz'
 version = '2.5.3'
 
-buildset         = '2019b'
-gcc_version      = '8.3.0'
-binutils_version = '2.32'
+local_buildset         = '2019b'
+local_gcc_version      = '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'http://www.freedesktop.org/wiki/Software/HarfBuzz'
 
@@ -29,7 +29,7 @@ docpaths = [
     'share/gtk-doc/html/harfbuzz',
 ]
 
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 source_urls = ['http://www.freedesktop.org/software/harfbuzz/release/']
 sources =     [SOURCELOWER_TAR_XZ]
@@ -37,12 +37,12 @@ sources =     [SOURCELOWER_TAR_XZ]
 dependencies = [
     ('GLib',     '2.61.2'),
     ('cairo',    '1.17.2'),
-    ('baselibs', buildset), # for freetype and ICU
+    ('baselibs', local_buildset), # for freetype and ICU
 ]
 
 builddependencies = [
     ('GObject-Introspection', '1.61.1'),
-    ('binutils',              binutils_version)
+    ('binutils',              local_binutils_version)
 ]
 
 configopts = "--enable-introspection=yes --with-gobject=yes --enable-static --enable-shared --with-cairo "
@@ -56,7 +56,7 @@ modextrapaths = {
 
 sanity_check_paths = {
     'files': ['lib/libharfbuzz.%s' % SHLIB_EXT, 'bin/hb-view'],
-    'dirs': []
+    'dirs':  []
 }
 
 

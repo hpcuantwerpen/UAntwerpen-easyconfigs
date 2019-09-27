@@ -1,8 +1,12 @@
 easyblock = 'ConfigureMake'
 
-name = 'intltool'
-version = '0.51.0'
+name =          'intltool'
+version =       '0.51.0'
 versionsuffix = '-Perl-%(perlver)s'
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'http://freedesktop.org/wiki/Software/intltool/'
 
@@ -31,24 +35,24 @@ docurls = [
     "Man pages (section 8) for all commands",
 ]
 
-toolchain = {'name': 'GCCcore', 'version': '8.3.0'}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 source_urls = ['http://launchpad.net/intltool/trunk/%(version)s/+download/']
-sources = [SOURCE_TAR_GZ]
-checksums = ['67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd']
-patches = ['intltool-0.51.0_perl-5.26.patch']
+sources =     [SOURCE_TAR_GZ]
+checksums =   ['67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd']
+patches =     ['intltool-0.51.0_perl-5.26.patch']
 
 dependencies = [
     ('Perl',       '5.30.0'),  # Already contains XML::Parser in our setup
 ]
 
 builddependencies = [
-    ('binutils',   '2.32'),
+    ('binutils',   local_binutils_version),
 ]
 
 sanity_check_paths = {
     'files': ['bin/intltool%s' % x for x in ['-extract', '-merge', '-prepare', '-update', 'ize']],
-    'dirs': []
+    'dirs':  []
 }
 
 moduleclass = 'devel'

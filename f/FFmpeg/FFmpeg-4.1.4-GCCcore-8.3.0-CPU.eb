@@ -1,11 +1,11 @@
 easyblock = 'ConfigureMake'
 
-name = 'FFmpeg'
-version = '4.1.4'
+name =          'FFmpeg'
+version =       '4.1.4'
 versionsuffix = '-CPU'
 
-buildset = '2019b'
-gcc_version = '8.3.0'
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'https://www.ffmpeg.org/'
 
@@ -44,18 +44,18 @@ docurls = [
     "Man pages for the commands (section 1) and libraries (section 3)",
 ]
 
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 source_urls = ['http://ffmpeg.org/releases/']
 sources = [SOURCELOWER_TAR_XZ]
 
 dependencies = [
-    ( 'baselibs', buildset ),  # For zlib, bzip2, x264, x265, LAME, freetype, fontconfig and FriBidi
-    ( 'X11',      buildset ),
+    ('baselibs', local_buildset ),  # For zlib, bzip2, x264, x265, LAME, freetype, fontconfig and FriBidi
+    ('X11',      local_buildset ),
 ]
 
 builddependencies = [
-    ( 'buildtools', buildset, '', True), # For NASM, was in the dependency list but should only be a build dependency
+    ('buildtools', local_buildset, '', True), # For NASM, was in the dependency list but should only be a build dependency
     ('binutils',   '2.32'),
 ]
 
@@ -71,7 +71,7 @@ sanity_check_paths = {
     'files': ['bin/ff%s' % x for x in ['mpeg', 'probe']] +
              ['lib/lib%s.%s' % (x, y) for x in ['avdevice', 'avfilter', 'avformat', 'avcodec', 'avutil',
                                                 'postproc', 'swresample', 'swscale'] for y in [SHLIB_EXT, 'a']],
-    'dirs': ['include']
+    'dirs':  ['include']
 }
 
 moduleclass = 'vis'

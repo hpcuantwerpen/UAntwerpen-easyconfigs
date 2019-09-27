@@ -3,12 +3,12 @@
 # about unrecognizded pragmas when compiling with another compiler.
 easyblock = 'MesonNinja'
 
-name = 'GLib'
+name =    'GLib'
 version = '2.61.2'
 
-buildset         = '2019b'
-gcc_version      = '8.3.0'
-binutils_version = '2.32'
+local_buildset         = '2019b'
+local_gcc_version      = '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'http://www.gtk.org/'
 
@@ -37,7 +37,7 @@ docpaths = [
     'share/gtk-doc/html/gio'
 ]
 
-toolchain     = {'name': 'GCCcore', 'version': gcc_version}
+toolchain     = {'name': 'GCCcore', 'version': local_gcc_version}
 toolchainopts = {'pic': True}
 
 # Check on https://ftp.gnome.org/pub/GNOME/sources/glib/
@@ -45,7 +45,7 @@ source_urls = [FTPGNOME_SOURCE]
 sources =     [SOURCELOWER_TAR_XZ]
 
 dependencies = [
-    ('baselibs', buildset), # for libffi, gettext, libxml2, PCRE, util-linux
+    ('baselibs', local_buildset), # for libffi, gettext, libxml2, PCRE, util-linux
 ]
 
 builddependencies = [
@@ -57,8 +57,8 @@ builddependencies = [
     # Packages that use GLib should either have an explicit
     # (build)dependency on Python or it will use the system version
     # EasyBuild itself uses.
-    ('buildtools', buildset, '',              True), # for pkg-config, Meson and Ninja
-    ('binutils',   binutils_version)
+    ('buildtools', local_buildset, '',              True), # for pkg-config, Meson and Ninja
+    ('binutils',   local_binutils_version)
 ]
 
 # avoid using hardcoded path to Python binary in build step

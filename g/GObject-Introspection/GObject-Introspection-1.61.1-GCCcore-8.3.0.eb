@@ -6,9 +6,9 @@ easyblock = 'MesonNinja'
 name = 'GObject-Introspection'
 version = '1.61.1'
 
-buildset         = '2019b'
-gcc_version      = '8.3.0'
-binutils_version = '2.32'
+local_buildset         = '2019b'
+local_gcc_version      = '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'https://wiki.gnome.org/GObjectIntrospection/'
 
@@ -32,24 +32,24 @@ docurls = [
     'Web-based documentation: https://developer.gnome.org/gi/',
 ]
 
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 source_urls = [FTPGNOME_SOURCE]
 sources =     [SOURCELOWER_TAR_XZ]
 checksums =   ['0651219df1529bdc6ef4cec6567de88bd1b89e60d6659c7c3f380d8b38b7b8dc']
 
 dependencies = [
-    ('Python',   '3.7.4', '', ('intel', buildset)),  # Now requires Python 3 which didn't work in some older versions..
+    ('Python',   '3.7.4', '', ('intel', local_buildset)),  # Now requires Python 3 which didn't work in some older versions..
     ('GLib',     '2.61.2'),
-    ('baselibs', buildset), # for libffi
+    ('baselibs', local_buildset), # for libffi
 ]
 
 builddependencies = [
-    ('buildtools', buildset, '', True), # For meson, ninja and pkg-config, tried to use also flex and Bison from buildtools
+    ('buildtools', local_buildset, '', True), # For meson, ninja and pkg-config, tried to use also flex and Bison from buildtools
 #    ('flex',       '2.6.4',                 '', True),
 #    ('Bison',      '3.0.4',                 '', True),
     ('cairo',      '1.17.2'),
-    ('binutils',   binutils_version)
+    ('binutils',   local_binutils_version)
 ]
 
 #preconfigopts = "env GI_SCANNER_DISABLE_CACHE=true "
@@ -69,7 +69,7 @@ sanity_check_paths = {
     'files': ['bin/g-ir-%s' % x for x in ['annotation-tool', 'compiler', 'generate', 'scanner']] +
              ['lib/libgirepository-1.0.%s' % SHLIB_EXT],
 #             ['lib/libgirepository-1.0.%s' % x for x in [SHLIB_EXT, 'a']], # The MesonNinja build process cannot be convinced to build a static lib.
-    'dirs': ['include', 'share']
+    'dirs':  ['include', 'share']
 }
 
 moduleclass = 'devel'

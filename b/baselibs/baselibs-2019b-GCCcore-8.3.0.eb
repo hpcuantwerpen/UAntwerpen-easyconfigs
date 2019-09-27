@@ -1,7 +1,7 @@
 easyblock = 'Bundle'
 
-name = 'baselibs'
-version = '2019b'
+name =          'baselibs'
+version =       '2019b'
 
 homepage = '(none)'
 
@@ -18,58 +18,58 @@ whatis = [
     "file, gc, libevent, libffi, libyaml, PCRE, PCRE2, UDUNITS, D-Bus, util-linux.",
 ]
 
-binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
-gcc_version      = '8.3.0'
+local_binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
+local_gcc_version      = '8.3.0'
 
-ncurses_version =      '6.1'           # https://ftp.gnu.org/pub/gnu/ncurses/
-libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
-brotli_version =       '1.0.7'         # https://github.com/google/brotli/releases
-bzip2_version =        '1.0.6'         # http://www.bzip.org/downloads.html
-bzip2_major_minor =    '1.0'    
-Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
-XZ_version =           '5.2.4'         # https://tukaani.org/xz/
-zlib_version =         '1.2.11'        # https://zlib.net/
-gzip_version =         '1.10'          # https://ftp.gnu.org/gnu/gzip/
-lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
-zstd_version =         '1.4.3'         # https://github.com/facebook/zstd/releases
-libb2_version =        '0.98.1'        # https://github.com/BLAKE2/libb2/releases
-libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
-giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
-JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
-libjpegturbo_version = '2.0.2'         # https://sourceforge.net/projects/libjpeg-turbo/files/
-libpng_version =       '1.6.37'        # http://www.libpng.org/pub/png/libpng.html
-libtiff_version =      '4.0.10'        # http://www.simplesystems.org/libtiff/
-libwebp_version =      '1.0.3'         # https://github.com/webmproject/libwebp/releases
-x264_version =         '20190721-2245' # https://download.videolan.org/pub/videolan/x264/snapshots/
-x265_version =         '3.1.1'         # http://download.videolan.org/pub/videolan/x265/
-LAME_version =         '3.100'         # http://lame.sourceforge.net/
-libopus_version =      '1.3.1'         # http://opus-codec.org/downloads/
-cURL_version =         '7.65.3'        # https://curl.haxx.se/download/
-expat_version =        '2.2.7'         # https://github.com/libexpat/libexpat/releases
-libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
-libxslt_version =      '1.1.33'        # http://xmlsoft.org/sources/
-GSL_version =          '2.5'           # https://ftp.gnu.org/gnu/gsl/
-libcerf_version =      '1.13'          # https://jugit.fz-juelich.de/mlz/libcerf/-/releases
-GMP_version =          '6.1.2'         # https://ftp.gnu.org/gnu/gmp/
-MPFR_version =         '4.0.2'         # https://ftp.gnu.org/gnu/mpfr/
-MPC_version =          '1.1.0'         # https://ftp.gnu.org/gnu/mpc/
-fribidi_version =      '1.0.5'         # https://github.com/fribidi/fribidi/releases 
-gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
-ICU_version =          '64.2'          # http://site.icu-project.org/home
-libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
-libunistring_version = '0.9.10'        # https://ftp.gnu.org/gnu/libunistring/
-file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
-gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
-libffi_version =       '3.2.1'         # ftp://sourceware.org/pub/libffi/
-libyaml_version =      '0.2.2'         # https://github.com/yaml/libyaml/releases
-PCRE_version =         '8.43'          # https://ftp.pcre.org/pub/pcre/
-PCRE2_version =        '10.33'         # https://ftp.pcre.org/pub/pcre/
-UDUNITS_version =      '2.2.26'        # ftp://ftp.unidata.ucar.edu/pub/udunits
-util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
-pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
-freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
-fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
-libevent_version =     '2.1.11'        # https://libevent.org/
+local_ncurses_version =      '6.1'           # https://ftp.gnu.org/pub/gnu/ncurses/
+local_libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+local_brotli_version =       '1.0.7'         # https://github.com/google/brotli/releases
+local_bzip2_version =        '1.0.6'         # http://www.bzip.org/downloads.html
+local_bzip2_major_minor =    '1.0'    
+local_Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
+local_XZ_version =           '5.2.4'         # https://tukaani.org/xz/
+local_zlib_version =         '1.2.11'        # https://zlib.net/
+local_gzip_version =         '1.10'          # https://ftp.gnu.org/gnu/gzip/
+local_lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
+local_zstd_version =         '1.4.3'         # https://github.com/facebook/zstd/releases
+local_libb2_version =        '0.98.1'        # https://github.com/BLAKE2/libb2/releases
+local_libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
+local_giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
+local_JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
+local_libjpegturbo_version = '2.0.2'         # https://sourceforge.net/projects/libjpeg-turbo/files/
+local_libpng_version =       '1.6.37'        # http://www.libpng.org/pub/png/libpng.html
+local_libtiff_version =      '4.0.10'        # http://www.simplesystems.org/libtiff/
+local_libwebp_version =      '1.0.3'         # https://github.com/webmproject/libwebp/releases
+local_x264_version =         '20190721-2245' # https://download.videolan.org/pub/videolan/x264/snapshots/
+local_x265_version =         '3.1.1'         # http://download.videolan.org/pub/videolan/x265/
+local_LAME_version =         '3.100'         # http://lame.sourceforge.net/
+local_libopus_version =      '1.3.1'         # http://opus-codec.org/downloads/
+local_cURL_version =         '7.65.3'        # https://curl.haxx.se/download/
+local_expat_version =        '2.2.7'         # https://github.com/libexpat/libexpat/releases
+local_libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
+local_libxslt_version =      '1.1.33'        # http://xmlsoft.org/sources/
+local_GSL_version =          '2.5'           # https://ftp.gnu.org/gnu/gsl/
+local_libcerf_version =      '1.13'          # https://jugit.fz-juelich.de/mlz/libcerf/-/releases
+local_GMP_version =          '6.1.2'         # https://ftp.gnu.org/gnu/gmp/
+local_MPFR_version =         '4.0.2'         # https://ftp.gnu.org/gnu/mpfr/
+local_MPC_version =          '1.1.0'         # https://ftp.gnu.org/gnu/mpc/
+local_fribidi_version =      '1.0.5'         # https://github.com/fribidi/fribidi/releases 
+local_gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
+local_ICU_version =          '64.2'          # http://site.icu-project.org/home
+local_libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
+local_libunistring_version = '0.9.10'        # https://ftp.gnu.org/gnu/libunistring/
+local_file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
+local_gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
+local_libffi_version =       '3.2.1'         # ftp://sourceware.org/pub/libffi/
+local_libyaml_version =      '0.2.2'         # https://github.com/yaml/libyaml/releases
+local_PCRE_version =         '8.43'          # https://ftp.pcre.org/pub/pcre/
+local_PCRE2_version =        '10.33'         # https://ftp.pcre.org/pub/pcre/
+local_UDUNITS_version =      '2.2.26'        # ftp://ftp.unidata.ucar.edu/pub/udunits
+local_util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
+local_pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
+local_freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
+local_fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
+local_libevent_version =     '2.1.11'        # https://libevent.org/
 
 description = """
 This module provides a large number of up-to-date base libraries used by many
@@ -345,54 +345,54 @@ Overview of included libraries:
   + util-linux (version %(utillinux)s): A random collection of Linux utilities
     from the Linux kernel developers.
 """ % { 
-    'ncurses': ncurses_version,
-    'libreadline': libreadline_version,
-    'brotli': brotli_version,
-    'bzip2': bzip2_version,
-    'lz4': lz4_version,
-    'Szip': Szip_version,
-    'XZ': XZ_version,
-    'zlib': zlib_version,
-    'gzip': gzip_version,
-    'zstd': zstd_version,
-    'libb2': libb2_version,
-    'libarchive': libarchive_version,
-    'giflib': giflib_version,
-    'JasPer': JasPer_version,
-    'libjpegturbo': libjpegturbo_version,
-    'libpng': libpng_version,
-    'libtiff': libtiff_version,
-    'libwebp': libwebp_version,
-    'x264': x264_version,
-    'x265': x265_version,
-    'LAME': LAME_version,
-    'opus': libopus_version,
-    'cURL': cURL_version,
-    'expat': expat_version,
-    'xml2': libxml2_version,
-    'xslt': libxslt_version,
-    'GSL': GSL_version, 
-    'libcerf': libcerf_version,
-    'GMP': GMP_version,
-    'MPFR': MPFR_version,
-    'MPC': MPC_version,
-    'pixman': pixman_version,
-    'freetype': freetype_version,
-    'fontconfig': fontconfig_version,
-    'fribidiv': fribidi_version,
-    'gettext': gettext_version,
-    'ICU': ICU_version,
-    'iconv': libiconv_version,
-    'unistring': libunistring_version,
-    'filev': file_version,
-    'gc': gc_version,
-    'event': libevent_version,
-    'ffi': libffi_version,
-    'yaml': libyaml_version,
-    'PCRE': PCRE_version,
-    'PCRE2': PCRE2_version,
-    'UDUNITS': UDUNITS_version,
-    'utillinux': util_version,
+    'ncurses': local_ncurses_version,
+    'libreadline': local_libreadline_version,
+    'brotli': local_brotli_version,
+    'bzip2': local_bzip2_version,
+    'lz4': local_lz4_version,
+    'Szip': local_Szip_version,
+    'XZ': local_XZ_version,
+    'zlib': local_zlib_version,
+    'gzip': local_gzip_version,
+    'zstd': local_zstd_version,
+    'libb2': local_libb2_version,
+    'libarchive': local_libarchive_version,
+    'giflib': local_giflib_version,
+    'JasPer': local_JasPer_version,
+    'libjpegturbo': local_libjpegturbo_version,
+    'libpng': local_libpng_version,
+    'libtiff': local_libtiff_version,
+    'libwebp': local_libwebp_version,
+    'x264': local_x264_version,
+    'x265': local_x265_version,
+    'LAME': local_LAME_version,
+    'opus': local_libopus_version,
+    'cURL': local_cURL_version,
+    'expat': local_expat_version,
+    'xml2': local_libxml2_version,
+    'xslt': local_libxslt_version,
+    'GSL': local_GSL_version, 
+    'libcerf': local_libcerf_version,
+    'GMP': local_GMP_version,
+    'MPFR': local_MPFR_version,
+    'MPC': local_MPC_version,
+    'pixman': local_pixman_version,
+    'freetype': local_freetype_version,
+    'fontconfig': local_fontconfig_version,
+    'fribidiv': local_fribidi_version,
+    'gettext': local_gettext_version,
+    'ICU': local_ICU_version,
+    'iconv': local_libiconv_version,
+    'unistring': local_libunistring_version,
+    'filev': local_file_version,
+    'gc': local_gc_version,
+    'event': local_libevent_version,
+    'ffi': local_libffi_version,
+    'yaml': local_libyaml_version,
+    'PCRE': local_PCRE_version,
+    'PCRE2': local_PCRE2_version,
+    'UDUNITS': local_UDUNITS_version,
+    'utillinux': local_util_version,
 }
 
 docurls = [
@@ -451,14 +451,14 @@ docurls = [
     'fontconfig: Web-based documentation on https://www.freedesktop.org/wiki/Software/fontconfig/',
 ]
 
-util_major_minor = '.'.join(util_version.split('.')[:2])
+local_util_major_minor = '.'.join(local_util_version.split('.')[:2])
 
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 toolchainopts = {'pic': True}
 
 builddependencies = [
-#    ('binutils',   binutils_version, '', ('GCCcore', gcc_version)),
-    ('binutils',   binutils_version, ),
+#    ('binutils',   local_binutils_version, '', ('GCCcore', local_gcc_version)),
+    ('binutils',   local_binutils_version, ),
     ('buildtools', version,          '', True),
 ]
 
@@ -468,7 +468,7 @@ components = [
 #
 # Terminal libraries
 #
-    ('ncurses', ncurses_version, {
+    ('ncurses', local_ncurses_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
@@ -477,7 +477,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-shared --enable-overwrite', # First build: default build.
     }),
-    ('ncurses', ncurses_version, {
+    ('ncurses', local_ncurses_version, {
         'sources':       [ {
                             'filename':    SOURCE_TAR_GZ,
                             'source_urls': [GNU_SOURCE]
@@ -487,7 +487,7 @@ components = [
         'preconfigopts': 'make distclean && ',
         'configopts':    '--with-shared --enable-overwrite --enable-ext-colors --enable-widec --includedir=%(installdir)s/include/ncursesw/' # Second build: the UTF-8 enabled version (ncursesw)
     }),
-    ('libreadline', libreadline_version, {
+    ('libreadline', local_libreadline_version, {
         'sources':     [ {
                           'filename':    'readline-%(version)s.tar.gz',
                           'source_urls': ['http://ftp.gnu.org/gnu/readline']
@@ -502,7 +502,7 @@ components = [
 # Note that gettext also needs libcurses but for now we build with built-in libxml2 and libunistring
 # to avoid further complicating matters.
 #
-    ('gettext', gettext_version, {
+    ('gettext', local_gettext_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': [GNU_SOURCE]
@@ -514,7 +514,7 @@ components = [
 #                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
         'configopts':    '--without-emacs --with-libncurses-prefix=%(installdir)s --with-included-libunistring --with-included-libxml',
     }),
-    ('libiconv', libiconv_version, {
+    ('libiconv', local_libiconv_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
@@ -522,7 +522,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     # Now recompile gettext to enable the additional features
-    ('gettext', gettext_version, {
+    ('gettext', local_gettext_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': [GNU_SOURCE]
@@ -539,7 +539,7 @@ components = [
 #
 # Unicode and multi-language support
 #
-    ('FriBidi', fribidi_version, {
+    ('FriBidi', local_fribidi_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_BZ2,
                           'source_urls': ['https://github.com/%(namelower)s/%(namelower)s/releases/download/v%(version)s']
@@ -547,14 +547,14 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--disable-docs',
     }),
-    ('ICU', ICU_version, { # Unicode/multilanguage support
+    ('ICU', local_ICU_version, { # Unicode/multilanguage support
         'sources':     [ {
                           'filename':    'icu4c-%(version_major)s_%(version_minor)s-src.tgz',
                           'source_urls': ['http://download.icu-project.org/files/icu4c/%(version)s']
                        } ],
         'start_dir':   '%(namelower)s/source'
     }),
-    ('libunistring', libunistring_version, {
+    ('libunistring', local_libunistring_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': [GNU_SOURCE]
@@ -565,7 +565,7 @@ components = [
 #
 # File compression tools
 #
-    ('brotli', brotli_version, {
+    ('brotli', local_brotli_version, {
         'easyblock':   'CMakeMake',
         'sources':     [ {
                           'download_filename': 'v%(version)s.tar.gz',
@@ -574,7 +574,7 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
     }),
-    ('bzip2', bzip2_version, {
+    ('bzip2', local_bzip2_version, {
         # The bzip2 EasyBlock does not work in a bundle since there is a problem with with_shared_libs
         # https://sourceforge.net/projects/bzip2/files/bzip2-1.0.6.tar.gz/download
         'sources':     [ {
@@ -586,12 +586,12 @@ components = [
         'buildopts':   'CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ; ' + \
                        'make -f Makefile-libbz2_so CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ',
         'installopts': 'PREFIX="%(installdir)s" ; ' + \
-                       'cp libbz2.so.'+bzip2_version+' %(installdir)s/lib ; ' \
+                       'cp libbz2.so.'+local_bzip2_version+' %(installdir)s/lib ; ' \
                        'cd %(installdir)s/lib ; ' + \
-                       'ln -s libbz2.so.'+bzip2_version+' libbz2.so.'+bzip2_major_minor+' ; ' + \
-                       'ln -s libbz2.so.'+bzip2_version+' libbz2.so' 
+                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so.'+local_bzip2_major_minor+' ; ' + \
+                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so' 
     }),
-    ('lz4', lz4_version, {
+    ('lz4', local_lz4_version, {
         'sources':     [ {
                           'filename':    'v%(version)s.tar.gz',
                           'source_urls': ['https://github.com/lz4/lz4/archive/']
@@ -600,7 +600,7 @@ components = [
         'skipsteps':   ['configure'],
         'installopts': "PREFIX=%(installdir)s",
     }),
-    ('Szip', Szip_version, {
+    ('Szip', local_Szip_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['http://www.hdfgroup.org/ftp/lib-external/szip/%(version)s/src']
@@ -608,21 +608,21 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-pic'
     }),
-    ('zlib', zlib_version, {
+    ('zlib', local_zlib_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [('http://sourceforge.net/projects/libpng/files/zlib/%(version)s', 'download')]
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    ('gzip', gzip_version, {
+    ('gzip', local_gzip_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    ('XZ', XZ_version, {
+    ('XZ', local_XZ_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': ['http://tukaani.org/xz/']
@@ -631,7 +631,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
 #        'configopts':  '--disable-nls --disable-xz --disable-xzdec',  # First build without the need for gettext, we'll rebuild after building gettext.
     }),
-    ('zstd', zstd_version, {
+    ('zstd', local_zstd_version, {
         'sources':     [ {
                            'download_filename': 'v%(version)s.tar.gz',
                            'filename':          SOURCELOWER_TAR_GZ,
@@ -641,12 +641,12 @@ components = [
         'skipsteps':   ['configure'],
         'installopts': "PREFIX=%(installdir)s" 
     }),
-    ('libb2', libb2_version, {
+    ('libb2', local_libb2_version, {
         'sources':     [SOURCELOWER_TAR_GZ],
         'source_urls': ['https://github.com/BLAKE2/libb2/releases/download/v%(version)s'],
         'start_dir':   '%(namelower)s-%(version)s',
     }),
-    ('libarchive', libarchive_version, {
+    ('libarchive', local_libarchive_version, {
         'easyblock': 'CMakeMake',
         'sources':   [ {
                          # https://www.libarchive.org/downloads/libarchive-3.3.3.tar.gz
@@ -660,7 +660,7 @@ components = [
 #
 # Graphics file formats
 #
-    ('giflib', giflib_version, {
+    ('giflib', local_giflib_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': [('http://sourceforge.net/projects/giflib/files', 'download')]
@@ -670,7 +670,7 @@ components = [
         'buildopts':   'CC="$CC" CFLAGS="$CXXFLAGS"',
         'installopts': "PREFIX=%(installdir)s",
     }),
-     ('libjpeg-turbo', libjpegturbo_version, {
+     ('libjpeg-turbo', local_libjpegturbo_version, {
         'easyblock':   'CMakeMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
@@ -679,7 +679,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '-DWITH_JPEG7=1 -DWITH_JPEG8=1 -DWITH_12BIT=0', # 12-bit support broken during configure step.
      }),
-    ('JasPer', JasPer_version, { 
+    ('JasPer', local_JasPer_version, { 
         'easyblock':     'CMakeMake',
         'sources':       [ {
                             'filename':    SOURCELOWER_TAR_GZ,
@@ -690,7 +690,7 @@ components = [
         'configopts':    '-DJAS_ENABLE_DOC=0 -DJAS_ENABLE_OPENGL=0 -DJAS_ENABLE_LIBJPEG=1 -DALLOW_IN_SOURCE_BUILD=ON ',
         'prebuildopts':  'cd %(builddir)s/%(namelower)s-%(version)s ; ',
     }),
-    ('libpng', libpng_version, { # Needs zlib!
+    ('libpng', local_libpng_version, { # Needs zlib!
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': ['https://download.sourceforge.net/libpng']
@@ -700,14 +700,14 @@ components = [
         'configopts':  '--with-pic',
         'postinstallcmds':  ['ln -s %(installdir)s/include/libpng16 %(installdir)s/include/libpng']
     }),
-    ('LibTIFF', libtiff_version, {
+    ('LibTIFF', local_libtiff_version, {
         'sources':     [ {
                           'filename':    'tiff-%(version)s.tar.gz',
                           'source_urls': ['https://download.osgeo.org/libtiff/']
                        } ],
         'start_dir':   'tiff-%(version)s'
     }),
-    ('libwebp', libwebp_version, { # Needs giflib, libjpeg-turbo, libpng and libTIFF
+    ('libwebp', local_libwebp_version, { # Needs giflib, libjpeg-turbo, libpng and libTIFF
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['https://storage.googleapis.com/downloads.webmproject.org/releases/webp']
@@ -715,7 +715,7 @@ components = [
         'start_dir':   '%(name)s-%(version)s',
         'configopts':  '--enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras',
     }),
-    ('LibTIFF', libtiff_version, { # Recompile as libwebp also adds features to LibTIFF.
+    ('LibTIFF', local_libtiff_version, { # Recompile as libwebp also adds features to LibTIFF.
         'sources':     [ {
                           'filename':    'tiff-%(version)s.tar.gz',
                           'source_urls': ['https://download.osgeo.org/libtiff/']
@@ -725,7 +725,7 @@ components = [
 #
 # Audio and video file formats
 #
-    ('x264', x264_version, {
+    ('x264', local_x264_version, {
         'sources':     [ {
                           'filename':    'x264-snapshot-%(version)s-stable.tar.bz2',
                           'source_urls': ['https://download.videolan.org/pub/videolan/x264/snapshots/', 'ftp://ftp.videolan.org/pub/videolan/x264/snapshots/']
@@ -734,7 +734,7 @@ components = [
         'configopts': '--enable-shared --enable-static',
         'installopts': ' && mkdir -p %(installdir)s/doc && cp -r doc/* %(installdir)s/doc'
     }),
-    ('x265', x265_version, {
+    ('x265', local_x265_version, {
         'easyblock':   'CMakeMake',
         'sources':     [ {
                           'filename':    '%(name)s_%(version)s.tar.gz',
@@ -742,7 +742,7 @@ components = [
                        }],
         'start_dir':   '%(namelower)s_%(version)s/source',
     }),
-    ('LAME', LAME_version, { # Needs ncurses!
+    ('LAME', local_LAME_version, { # Needs ncurses!
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['https://sourceforge.net/projects/lame/files/lame/%(version_major_minor)s/']
@@ -750,7 +750,7 @@ components = [
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'CPATH=%(installdir)s/include:$CPATH LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS="-L%(installdir)s/lib $LDFLAGS" FRONTEND_LDADD="-L%(installdir)s/lib" ',
     }),
-    ('libopus', libopus_version, {
+    ('libopus', local_libopus_version, {
         'sources':     [ {
                           'filename':    'opus-%(version)s.tar.gz',
                           'source_urls': ['https://archive.mozilla.org/pub/opus']
@@ -760,7 +760,7 @@ components = [
 #
 # Network, security and XML
 #
-    ( 'cURL', cURL_version, { # USES zlib
+    ( 'cURL', local_cURL_version, { # USES zlib
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': ['https://curl.haxx.se/download/']
@@ -768,14 +768,14 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-zlib=%(installdir)s', 
     }),
-    ('expat', expat_version, {
+    ('expat', local_expat_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_BZ2,
                           'source_urls': [SOURCEFORGE_SOURCE]
                        }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    ('libxml2', libxml2_version, { # Needs zlib. The configure also looks for XZ utilities (liblzma), but that depends on gettext which depends on libxml2...
+    ('libxml2', local_libxml2_version, { # Needs zlib. The configure also looks for XZ utilities (liblzma), but that depends on gettext which depends on libxml2...
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/']
@@ -784,7 +784,7 @@ components = [
 #        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-zlib=%(installdir)s --with-lzma=%(installdir)s --without-python',
         'configopts':  'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib --with-lzma --without-python',
     }),
-    ('libxslt', libxslt_version, { # Needs libxml2 and can find it through pkg-config, so configure that path.
+    ('libxslt', local_libxslt_version, { # Needs libxml2 and can find it through pkg-config, so configure that path.
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/']
@@ -818,14 +818,14 @@ components = [
 #
 # Regular math libs
 #
-    ('GSL', GSL_version, {
+    ('GSL', local_GSL_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
                        }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    ('libcerf', libcerf_version, {
+    ('libcerf', local_libcerf_version, {
         'easyblock':   'CMakeMake',
         # https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v1.13/libcerf-v1.13.tar.bz2
         # The problem with this link is that whatever .tar.gz file you request to it, it will
@@ -833,17 +833,17 @@ components = [
         # it.
         'sources':     [ {
                           'filename':    '%(namelower)s-v%(version)s.tar.bz2',
-                          'source_urls': ['https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v' + libcerf_version]
+                          'source_urls': ['https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v' + local_libcerf_version]
                        }],
         #'sources':     [ '%(namelower)s-v%(version)s.tar.bz2' ],
-        #'source_urls': [ 'https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v' + libcerf_version ],
+        #'source_urls': [ 'https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v' + local_libcerf_version ],
         'separate_build_dir': True,
         'start_dir':   '%(namelower)s-v%(version)s',
     }),
 #
 # Arbitrary precision math
 #
-    ('GMP', GMP_version, {
+    ('GMP', local_GMP_version, {
         'sources':       [ {
                             'filename':    SOURCELOWER_TAR_XZ,
                             'source_urls': [GNU_SOURCE]
@@ -852,7 +852,7 @@ components = [
         'toolchainopts': {'pic': True, 'precise': True},
         'configopts':    '--enable-cxx'
     }),
-    ('MPFR', MPFR_version, {
+    ('MPFR', local_MPFR_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': [GNU_SOURCE]
@@ -860,7 +860,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-gmp=%(installdir)s'
     }),
-    ('MPC', MPC_version, {
+    ('MPC', local_MPC_version, {
          'sources':    [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
@@ -871,14 +871,14 @@ components = [
 #
 # Miscellaneous
 #
-    ('file', file_version, {
+    ('file', local_file_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': ['ftp://ftp.astron.com/pub/file/']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    ('gc', gc_version, {
+    ('gc', local_gc_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': ['http://hboehm.info/gc/gc_source/']
@@ -891,21 +891,21 @@ components = [
         'preconfigopts': "ln -s %(builddir)s/libatomic_ops*/ libatomic_ops && ",
         'configopts':    '--enable-threads=posix',
     }),
-    ('libevent', libevent_version, {
+    ('libevent', local_libevent_version, {
         'sources':     [ {
                           'filename':    '%(name)s-%(version)s-stable.tar.gz',
                           'source_urls': ['https://github.com/%(name)s/%(name)s/releases/download/release-%(version)s-stable/']
                        }],
         'start_dir':   '%(namelower)s-%(version)s-stable'
     }),
-    ('libffi', libffi_version, {
+    ('libffi', local_libffi_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['ftp://sourceware.org/pub/libffi/', 'http://www.mirrorservice.org/sites/sourceware.org/pub/libffi/']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    ('libyaml', libyaml_version, {
+    ('libyaml', local_libyaml_version, {
         'sources':     [ {
                           'filename':    'yaml-%(version)s.tar.gz',
                           'source_urls': ['http://pyyaml.org/download/libyaml/']
@@ -915,7 +915,7 @@ components = [
 #        'preconfigopts': './bootstrap && ',
         'start_dir':     'yaml-%(version)s'
     }),
-    ('PCRE', PCRE_version, {
+    ('PCRE', local_PCRE_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_BZ2,
                           'source_urls': ['https://ftp.pcre.org/pub/pcre/']
@@ -925,7 +925,7 @@ components = [
                        "--enable-pcre16 --enable-pcre32 --enable-jit " + \
                        "--enable-pcregrep-libz --enable-pcregrep-libbz2 --enable-pcretest-libreadline ",
     }),
-    ('PCRE2', PCRE2_version, {
+    ('PCRE2', local_PCRE2_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_BZ2,
                           'source_urls': ['https://ftp.pcre.org/pub/pcre/']
@@ -935,17 +935,17 @@ components = [
                        "--enable-pcre2-16 --enable-pcre2-32 --enable-jit " + \
                        "--enable-pcre2grep-libz --enable-pcre2grep-libbz2 --enable-pcre2test-libreadline "
     }),
-    ('UDUNITS', UDUNITS_version, { # depends on expat!
+    ('UDUNITS', local_UDUNITS_version, { # depends on expat!
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['ftp://ftp.unidata.ucar.edu/pub/udunits']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
     }),
-    ('util-linux', util_version, { # Needs ncurses and zlib
+    ('util-linux', local_util_version, { # Needs ncurses and zlib
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': ['http://www.kernel.org/pub/linux/utils/util-linux/v' + util_major_minor]
+                          'source_urls': ['http://www.kernel.org/pub/linux/utils/util-linux/v' + local_util_major_minor]
                        } ],
         'configopts':  "--disable-chfn-chsh --disable-login --disable-su --disable-rfkill " +
                        "--disable-wall --disable-use-tty-group " +
@@ -958,7 +958,7 @@ components = [
 #
 # Graphics
 #
-    ('pixman', pixman_version, {
+    ('pixman', local_pixman_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': ['http://cairographics.org/releases']
@@ -966,7 +966,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--enable-gnuplot ',
     }),
-    ('freetype', freetype_version, { # Needs zlib, bzip2 and libpng
+    ('freetype', local_freetype_version, { # Needs zlib, bzip2 and libpng
         'sources':     [ {
                           'filename':    SOURCE_TAR_XZ,
                           'source_urls': [GNU_SAVANNAH_SOURCE]
@@ -974,7 +974,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--enable-freetype-config --with-harfbuzz=no',
     }),
-    ('fontconfig', fontconfig_version, { # Needs pkg-config and gperf (buildtools) and expat, freetype and util-linux.
+    ('fontconfig', local_fontconfig_version, { # Needs pkg-config and gperf (buildtools) and expat, freetype and util-linux.
         'sources':     [ {
                           'filename':    SOURCE_TAR_BZ2,
                           'source_urls': ['http://www.freedesktop.org/software/fontconfig/release/']
