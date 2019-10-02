@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#module load calcua/2019a-experimental
+#MODULEPATH=/apps/antwerpen/modules/centos7/software-admin-x86_64:$MODULEPATH
+#module load intel/2019_update4
 module load calcua/2019b-test
 MODULEPATH=/apps/antwerpen/modules/centos7/software-admin-x86_64:$MODULEPATH
 module load intel/2019b.05
