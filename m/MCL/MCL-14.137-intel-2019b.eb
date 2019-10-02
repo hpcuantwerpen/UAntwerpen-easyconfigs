@@ -1,7 +1,9 @@
 easyblock = 'ConfigureMake'
 
-name = 'MCL'
+name =    'MCL'
 version = '14.137'
+
+local_buildset = '2019b'
 
 homepage = 'http://micans.org/mcl/'
 
@@ -31,10 +33,10 @@ docurls = [
     "man pages (sections 1, 5 and 7) - try 'man mcl' as a starting point",
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = ['http://micans.org/%(namelower)s/src/']
-sources = ['%(namelower)s-%(version_major)s-%(version_minor)s.tar.gz']
+sources =     ['%(namelower)s-%(version_major)s-%(version_minor)s.tar.gz']
 
 
 # see https://github.com/sanger-pathogens/Roary/issues/217 for more information
@@ -45,7 +47,7 @@ postinstallcmds = [
 
 sanity_check_paths = {
     'files': ['bin/mcl'],
-    'dirs': ['share']
+    'dirs':  ['share']
 }
 
 moduleclass = 'bio'

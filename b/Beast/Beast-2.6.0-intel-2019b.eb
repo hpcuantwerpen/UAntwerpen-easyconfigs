@@ -5,8 +5,10 @@
 
 easyblock = "Tarball"
 
-name = 'Beast'
+name =    'Beast'
 version = '2.6.0'
+
+local_buildset = '2019b'
 
 homepage = 'http://beast2.org/'
 
@@ -23,7 +25,7 @@ tree topology. BEAST uses MCMC to average over tree space, so that each tree is 
 proportional to its posterior probability.
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 # Take the BEAST.*.Linux file, otherwise the scripts are missing!
 # https://github.com/CompEvol/beast2/releases/download/v2.6.0/BEAST.v2.6.0.Linux.tgz
@@ -39,7 +41,7 @@ dependencies = [
 
 sanity_check_paths = {
     'files': ["bin/beast"],
-    'dirs': []
+    'dirs':  []
 }
 
 moduleclass = 'bio'

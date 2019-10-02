@@ -5,8 +5,10 @@
 
 easyblock = 'ConfigureMake'
 
-name = 'JAGS'
+name =    'JAGS'
 version = '4.3.0'
+
+local_buildset = '2019b'
 
 homepage = 'http://mcmc-jags.sourceforge.net/'
 
@@ -40,16 +42,16 @@ docurls = [
     "Downloadable PDF manuals at https://sourceforge.net/projects/mcmc-jags/files/Manuals/%(version_major)s.x/",
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = [('http://sourceforge.net/projects/mcmc-jags/files/JAGS/%(version_major)s.x/Source/', 'download')]
-sources = [SOURCE_TAR_GZ]
+sources =     [SOURCE_TAR_GZ]
 
 configopts = ' --with-blas="-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl" '
 
 sanity_check_paths = {
     'files': ["bin/jags", "libexec/jags-terminal", "lib/libjags.%s" % SHLIB_EXT],
-    'dirs': []
+    'dirs':  []
 }
 
 modextrapaths = {

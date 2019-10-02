@@ -1,7 +1,10 @@
 easyblock = 'ConfigureMake'
 
-name = 'libgd'
+name =    'libgd'
 version = '2.2.5'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://www.libgd.org/'
 
@@ -25,20 +28,19 @@ docurls = [
     "Web-based documentation: https://libgd.github.io/manuals/%(version)s/files/preamble-txt.html",
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = ['https://github.com/libgd/libgd/releases/download/gd-%(version)s/']
 sources =     [SOURCELOWER_TAR_GZ]
 checksums =   ['a66111c9b4a04e818e9e2a37d7ae8d4aae0939a100a36b0ffb52c706a09074b5']
 
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # For zlib, libpng, libjpegturbo and fontconfig
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # For zlib, libpng, libjpegturbo and fontconfig
 ]
 
 sanity_check_paths = {
     'files': ["lib/libgd.a", "lib/libgd.%s" % SHLIB_EXT],
-    'dirs': ["bin", "include"],
+    'dirs':  ["bin", "include"],
 }
 
 moduleclass = 'lib'

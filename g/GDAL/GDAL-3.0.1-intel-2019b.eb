@@ -1,8 +1,11 @@
 easyblock = 'ConfigureMake'
 
-name = 'GDAL'
+name =    'GDAL'
 version = '3.0.1'
 #versionsuffix = '-Python-%(pyver)s'
+
+local_gcc_version = '8.3.0'
+local_buildset =    '2019b'
 
 homepage = 'http://www.gdal.org/'
 
@@ -26,19 +29,18 @@ docurls = [
    'Web-based documentation on the package home page http://www.gdal.org/',
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = ['http://download.osgeo.org/gdal/%(version)s/']
 sources =     [SOURCELOWER_TAR_XZ]
 
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for zlib
+    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', local_gcc_version)), # for zlib
     ('PROJ',     '6.1.1'),                                               # Seems to be a mandatory dependency given the error messages if it is not present.
 ]
 
 builddependencies = [
-    ('buildtools', '%(toolchain_version)s', '', True),   # For pkg-config >= 0.25
+    ('buildtools', local_buildset, '', True),   # For pkg-config >= 0.25
 ]
 
 configopts  = ''
@@ -118,7 +120,7 @@ configopts += ' CXX=icpc CXXFLAGS="-I$EBROOTIMPI/compilers_and_libraries/linux/m
 sanity_check_paths = {
     'files': ['lib/libgdal.%s' % SHLIB_EXT],
 #    'dirs': ['bin', 'include', 'lib/python%(pyshortver)s/site-packages']
-    'dirs': ['bin', 'include']
+    'dirs':  ['bin', 'include']
 }
 
 moduleclass = 'data'

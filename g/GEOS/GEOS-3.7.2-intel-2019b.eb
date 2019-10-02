@@ -1,7 +1,9 @@
 easyblock = 'ConfigureMake'
 
-name = 'GEOS'
+name =    'GEOS'
 version = '3.7.2'
+
+local_buildset = '2019b'
 
 homepage = 'http://trac.osgeo.org/geos'
 
@@ -23,16 +25,16 @@ and is a project of OSGeo.
 This module is build without support for Python.
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = ['http://download.osgeo.org/geos/']
-sources = [SOURCELOWER_TAR_BZ2]
+sources =     [SOURCELOWER_TAR_BZ2]
 
 configopts = '--disable-python'
 
 sanity_check_paths = {
     'files': ['bin/geos-config', 'lib/libgeos.%s' % SHLIB_EXT, 'lib/libgeos.a', 'include/geos.h'],
-    'dirs': [],
+    'dirs':  [],
 }
 
 moduleclass = 'math'

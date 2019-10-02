@@ -1,7 +1,9 @@
 # Note that this package should be compiled on a compute node as otherwise 
 # the tests will fail as MPI can't find which nodes to use.
-name = 'FFTW'
+name =    'FFTW'
 version = '3.3.8'
+
+local_buildset = '2019b'
 
 homepage = 'http://www.fftw.org/'
 
@@ -36,7 +38,7 @@ docurls = [
     'Support for texinfo: info fftw3',
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 # Note:
 # - We let the configure script set appropriate optimization options and don't want 
 #   easybuild to force the use of -xHost. In fact, FFTW is a multiplatform library
@@ -45,20 +47,20 @@ toolchain = {'name': 'intel', 'version': '2019b'}
 toolchainopts = {'optarch': False}
 
 source_urls = [homepage]
-sources = ['fftw-%(version)s.tar.gz']
-checksums = ['8aac833c943d8e90d51b697b27d4384d']
+sources =     ['fftw-%(version)s.tar.gz']
+checksums =   ['8aac833c943d8e90d51b697b27d4384d']
 
 # As all our clusters support at least AVX nowadays, we don't need to
 # build separate variants for SSE or SSE2.
-use_sse = False
-use_sse2 = False
+use_sse =    False
+use_sse2 =   False
 
-use_avx = True
-use_avx2 = True
+use_avx =    True
+use_avx2 =   True
 use_avx512 = True
 
 # KL: This is for AMD cpus only anyway.
-use_fma4 = False
+use_fma4 =   False
 
 # PRECISION
 #

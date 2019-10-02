@@ -8,8 +8,11 @@
 
 easyblock = 'ConfigureMake'
 
-name = 'GMAP-GSNAP'
+name =    'GMAP-GSNAP'
 version = '2019-06-10'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://research-pub.gene.com/gmap/'
 
@@ -21,8 +24,7 @@ GMAP: A Genomic Mapping and Alignment Program for mRNA and EST Sequences
 GSNAP: Genomic Short-read Nucleotide Alignment Program
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'usempi': True}
 
 sources =     [SOURCELOWER_TAR_GZ]
@@ -35,7 +37,7 @@ patches = ['GMAP-GSNAP-2019-06-10_cpuid.patch']
 # to support files in gobby format take a look at README for extra dependencies
 # http://research-pub.gene.com/gmap/src/README
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for zlib and bzip2
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib and bzip2
 ]
 
 # you can change the MAX_READLENGTH for GSNAP with something like this.
@@ -44,7 +46,7 @@ dependencies = [
 
 sanity_check_paths = {
     'files': ['bin/gmap', 'bin/gsnap'],
-    'dirs': [],
+    'dirs':  [],
 }
 
 moduleclass = 'bio'

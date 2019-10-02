@@ -1,6 +1,9 @@
-name = 'HDF5'
-version = '1.8.21'
+name =          'HDF5'
+version =       '1.8.21'
 versionsuffix = '-noMPI'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://www.hdfgroup.org/HDF5/'
 
@@ -31,22 +34,20 @@ docurls = [
 ]
 
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True, 'usempi': False}
 
 source_urls = [
     'https://support.hdfgroup.org/ftp/HDF5/current18/src/',
     'https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-%(versions)/src/'
 ]
-
-sources = [SOURCELOWER_TAR_BZ2]
-checksums = ['e5b1b1dee44a64b795a91c3321ab7196d9e0871fe50d42969761794e3899f40d']
+sources =     [SOURCELOWER_TAR_BZ2]
+checksums =   ['e5b1b1dee44a64b795a91c3321ab7196d9e0871fe50d42969761794e3899f40d']
 
 buildopts = 'CXXFLAGS="$CXXFLAGS -DMPICH_IGNORE_CXX_SEEK"'
 
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)) # for zlib and Szip
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)) # for zlib and Szip
 ]
 
 moduleclass = 'data'

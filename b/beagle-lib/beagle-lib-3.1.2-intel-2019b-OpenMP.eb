@@ -1,8 +1,10 @@
 easyblock = 'ConfigureMake'
 
-name = 'beagle-lib'
-version = '3.1.2'
+name =          'beagle-lib'
+version =       '3.1.2'
 versionsuffix = '-OpenMP'
+
+local_buildset = '2019b'
 
 homepage = 'https://github.com/beagle-dev/beagle-lib'
 
@@ -36,7 +38,7 @@ docurls = [
 
 ################
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'openmp': 'True'}
 
 # https://github.com/beagle-dev/beagle-lib/archive/beagle_release_2_1_2.tar.gz
@@ -49,7 +51,7 @@ dependencies = [
 ]  # Needed to use beagle-lib with Beast.
 
 builddependencies = [
-    ('buildtools', '%(toolchain_version)s', '', True),
+    ('buildtools', local_buildset, '', True),
 ]
 
 # parallel build does not work (to test)
@@ -64,7 +66,7 @@ sanity_check_paths = {
               for includefile in ["beagle.h", "platform.h"]] +
              ["lib/libhmsbeagle%s.%s" % (libfile, SHLIB_EXT)
               for libfile in ["-cpu", "-cpu-sse", "-jni", ""]],
-    'dirs': []
+    'dirs':  []
 }
 
 moduleclass = 'numlib'

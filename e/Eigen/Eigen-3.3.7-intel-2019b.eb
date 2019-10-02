@@ -1,5 +1,7 @@
-name = 'Eigen'
+name =    'Eigen'
 version = '3.3.7'
+
+local_buildset = '2019b'
 
 homepage = 'http://eigen.tuxfamily.org/'
 
@@ -30,13 +32,13 @@ software_license_urls = [
     "https://www.gnu.org/licenses/lgpl-3.0.en.html",
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = ['http://bitbucket.org/%(namelower)s/%(namelower)s/get']
 sources = ['%(version)s.tar.bz2']
 
 builddependencies = [
-   ( 'buildtools', '%(toolchain_version)s', '', True ),  # For recent CMake
+   ( 'buildtools', local_buildset, '', True ),  # For recent CMake
 ]
 
 moduleclass = 'math'

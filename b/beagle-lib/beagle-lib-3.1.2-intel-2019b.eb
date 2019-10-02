@@ -1,7 +1,9 @@
 easyblock = 'ConfigureMake'
 
-name = 'beagle-lib'
+name =    'beagle-lib'
 version = '3.1.2'
+
+local_buildset = '2019b'
 
 homepage = 'https://github.com/beagle-dev/beagle-lib'
 
@@ -35,7 +37,7 @@ docurls = [
 
 ################
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 # Enable OpenMP support. The Beagle code does contain OpenMP pragmas,
 # but since it seems that it is installed only to be used by BEAST and MrBayes
 # since parallelism seems to come from threads in Java in Beast and MPI processes
@@ -53,7 +55,7 @@ dependencies = [
 ]  # Needed to use beagle-lib with Beast.
 
 builddependencies = [
-    ('buildtools', '%(toolchain_version)s', '', True),
+    ('buildtools', local_buildset, '', True),
 ]
 
 # parallel build does not work (to test)
@@ -68,7 +70,7 @@ sanity_check_paths = {
               for includefile in ["beagle.h", "platform.h"]] +
              ["lib/libhmsbeagle%s.%s" % (libfile, SHLIB_EXT)
               for libfile in ["-cpu", "-cpu-sse", "-jni", ""]],
-    'dirs': []
+    'dirs':  []
 }
 
 moduleclass = 'numlib'
