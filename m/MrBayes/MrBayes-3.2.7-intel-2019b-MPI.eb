@@ -3,8 +3,8 @@
 # autoconf produces an error message about missing macros.
 easyblock = "ConfigureMake"
 
-buildset =    '2019b'
-gcc_version = '8.3.0'
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 name = 'MrBayes'
 version = '3.2.7' # 3.2.7a according to GitHub release tag, 3.2.7 according to the filename
@@ -65,7 +65,7 @@ docpaths = [
     'examples'
 ]
 
-toolchain =     {'name': 'intel', 'version': buildset}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'usempi': True}
 
 # https://github.com/NBISweden/MrBayes/archive/v3.2.7.tar.gz
@@ -77,11 +77,11 @@ sources = [{
 
 dependencies = [
     ('beagle-lib', '3.1.2'),
-    ('baselibs',   buildset, '', ('GCCcore', gcc_version)),  # for libreadline
+    ('baselibs',   local_buildset, '', ('GCCcore', local_gcc_version)),  # for libreadline
 ]
 
 builddependencies = [
-    ('buildtools', buildset, '', True),
+    ('buildtools', local_buildset, '', True),
 ]
 
 #preconfigopts  = 'aclocal -I lib/autoconf && libtoolize && autoconf && '

@@ -5,8 +5,10 @@
 
 easyblock = 'MakeCp'
 
-name = 'MUSCLE'
+name =    'MUSCLE'
 version = '3.8.31'
+
+local_buildset = '2019b'
 
 homepage = 'http://drive5.com/muscle/'
 
@@ -24,7 +26,7 @@ command-line options are needed to perform common alignment tasks.
 
 toolchain = {'name': 'intel', 'version': '2019b'}
 
-sources = ['%(namelower)s%(version)s_src.tar.gz']
+sources =     ['%(namelower)s%(version)s_src.tar.gz']
 source_urls = ['http://www.drive5.com/muscle/downloads%(version)s/']
 
 patches = ['MUSCLE-%(version)s_easyconfig_vars.patch']
@@ -34,7 +36,7 @@ files_to_copy = [
 
 sanity_check_paths = {
     'files': ["bin/muscle"],
-    'dirs': [],
+    'dirs':  [],
 }
 
 moduleclass = 'bio'

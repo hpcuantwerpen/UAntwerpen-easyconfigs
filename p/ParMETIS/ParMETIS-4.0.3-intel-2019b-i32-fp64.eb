@@ -2,14 +2,16 @@
 #                          # this explicitly makes the EasyConfig clearer.
 easyblock = 'EB_ParMETISMOD'
 
-name = 'ParMETIS'
-version = '4.0.3'
+name =          'ParMETIS'
+version =       '4.0.3'
 versionsuffix = '-i32-fp64'
+
+local_buildset = '2019b'
 
 homepage = 'http://glaros.dtc.umn.edu/gkhome/metis/parmetis/overview'
 
 whatis = [
-    'Description: Parallel graph partioning and fill-reducing matrix ordering',
+    'Description: Parallel graph paritioning and fill-reducing matrix ordering',
     'This package contains the command line tools and a static library, compiled with 32-bit integers and double precision floating point, without OpenMP support',
 ]
 
@@ -42,7 +44,7 @@ docpaths = [
     'manual/manual.pdf',
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'usempi': True, 'openmp': False, 'pic': True}
 
 source_urls = [
@@ -51,7 +53,7 @@ source_urls = [
 ]
 sources = [SOURCELOWER_TAR_GZ]
 
-builddependencies = [('buildtools', '%(toolchain_version)s', '', True)]
+builddependencies = [('buildtools', local_buildset, '', True)]
 
 #
 # Configuration of ParMETIS

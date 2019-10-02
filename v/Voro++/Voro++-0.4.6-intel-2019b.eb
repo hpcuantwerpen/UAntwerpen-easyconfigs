@@ -1,7 +1,9 @@
 easyblock = 'ConfigureMake'
 
-name = 'Voro++'
+name =    'Voro++'
 version = '0.4.6'
+
+local_buildset = '2019b'
 
 homepage = 'http://math.lbl.gov/voro++/'
 
@@ -26,7 +28,7 @@ docurls = [
     "Man page (section 1) for the voro++ command"
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
 sources =     [SOURCELOWER_TAR_GZ]
@@ -44,7 +46,7 @@ installopts = "PREFIX=%(installdir)s"
 
 sanity_check_paths = {
     'files': ['bin/voro++', 'lib/libvoro++.a', 'include/voro++/voro++.hh'],
-    'dirs': [],
+    'dirs':  [],
 }
 
 modextrapaths = {'CPATH': 'include/voro++'}

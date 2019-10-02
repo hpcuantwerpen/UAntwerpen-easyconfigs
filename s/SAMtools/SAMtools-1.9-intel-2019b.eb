@@ -9,11 +9,11 @@
 # Modified by: Adam Huffman
 # The Francis Crick Institute
 ##
-name = 'SAMtools'
+name =    'SAMtools'
 version = '1.9'
 
-tcver = '2019b'
-gcc_version = '8.3.0'
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://www.htslib.org/'
 
@@ -35,16 +35,16 @@ docurls = [
     "Manual page for the samtools and wgsim commands (section 1)",
 ]
 
-toolchain = {'name': 'intel', 'version': tcver}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
 source_urls = ['https://github.com/samtools/%(namelower)s/releases/download/%(version)s']
-sources = [SOURCELOWER_TAR_BZ2]
+sources =     [SOURCELOWER_TAR_BZ2]
 
 # The htslib component of SAMtools 1.4 uses zlib, bzip2 and lzma compression.
 # The latter is currently provided by XZ.
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for ncurses, zl;ib, bzip2, XZ and cURL
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for ncurses, zl;ib, bzip2, XZ and cURL
 ]
 
 moduleclass = 'bio'

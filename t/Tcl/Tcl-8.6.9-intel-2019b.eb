@@ -1,7 +1,10 @@
 easyblock = 'ConfigureMake'
 
-name = 'Tcl'
+name =    'Tcl'
 version = '8.6.9'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://www.tcl.tk/'
 
@@ -25,15 +28,14 @@ Documentation  is avaialble through the Tcl web site. There are also a few
 manual pages in section 3 and n.
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 sources =     ['%(namelower)s%(version)s-src.tar.gz']
 source_urls = ["http://prdownloads.sourceforge.net/tcl"]
 checksums =   ['ad0cd2de2c87b9ba8086b43957a0de3eb2eb565c7159d5f53ccbba3feb915f4e']
 
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for zlib
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib
 ]
 
 configopts = '--enable-threads EXTRA_INSTALL="install-private-headers"'

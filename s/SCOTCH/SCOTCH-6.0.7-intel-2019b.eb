@@ -1,5 +1,7 @@
-name = 'SCOTCH'
+name =    'SCOTCH'
 version = '6.0.7'
+
+local_buildset = '2019b'
 
 homepage = 'http://gforge.inria.fr/projects/scotch/'
 
@@ -21,7 +23,7 @@ docurls = [
     'Downloadable PDF user manual at https://gforge.inria.fr/docman/view.php/248/8261/ptscotch_user6.0.pdf',
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
 # https://gforge.inria.fr/frs/download.php/file/38040/scotch_6.0.7.tar.gz
