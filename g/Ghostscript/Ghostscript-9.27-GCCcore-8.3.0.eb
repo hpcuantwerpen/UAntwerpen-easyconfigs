@@ -1,7 +1,11 @@
 easyblock = 'ConfigureMake'
 
-name = 'Ghostscript'
-version = '9.26'
+name =    'Ghostscript'
+version = '9.27'
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'  
 
 homepage = 'http://ghostscript.com'
 whatis = [
@@ -34,35 +38,35 @@ docurls = [
     'Web-based documentation: https://www.ghostscript.com/doc/%(version)s/Readme.htm'
 ]
 
-toolchain = {'name': 'intel', 'version': '2018b'}
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
 toolchainopts = {'pic': True}
 
 source_urls = [
     'https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%(version_major)s%(version_minor)s/',
 ]
-sources = ['ghostscript-%(version)s.tar.gz']
-checksums = ['831fc019bd477f7cc2d481dc5395ebfa4a593a95eb2fe1eb231a97e450d7540d']
+sources =     ['ghostscript-%(version)s.tar.gz']
+checksums =   ['9760e8bdd07a08dbd445188a6557cb70e60ccb6a5601f7dbfba0d225e28ce285']
 
 dependencies = [
-    ('zlib',          '1.2.11'),
-    ('libpng',        '1.6.34'),
-    ('freetype',      '2.9.1'),
-    ('libjpeg-turbo', '1.5.3'),
-    ('expat',         '2.2.5'),
-    ('GLib',          '2.57.2'),
-    ('cairo',         '1.15.12'),
-    ('LibTIFF',       '4.0.9'),
+    ('baselibs', local_buildset), # zlib, libpng, libjpeg-turbo, expoat, LibTIFF, freetype
+    ('GLib',     '2.61.2'),
+    ('cairo',    '1.17.2'),
+]
+
+builddependencies = [
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
 ]
 
 # Do not use local copies of zlib, jpeg, freetype, and png
-preconfigopts = "mv zlib zlib.no && mv jpeg jpeg.no && mv freetype freetype.no && mv libpng libpng.no && "
+preconfigopts  = "mv zlib zlib.no && mv jpeg jpeg.no && mv freetype freetype.no && mv libpng libpng.no && "
 preconfigopts += 'export LIBS="$LIBS -lz" && '
 
 configopts = "--with-system-libtiff --enable-dynamic"
 
 sanity_check_paths = {
     'files': ['bin/gs'],
-    'dirs': ['lib/ghostscript', 'share/man'],
+    'dirs':  ['lib/ghostscript', 'share/man'],
 }
 
 moduleclass = 'tools'
