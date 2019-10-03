@@ -1,9 +1,12 @@
-name = 'Python'
+name =    'Python'
 version = '2.7.16'
 #versionsuffix = '-test'
 
-pymaj   = ''.join(version.split('.')[:1])
-pycpver = ''.join(version.split('.')[:2])
+local_pymaj   = ''.join(version.split('.')[:1])
+local_pycpver = ''.join(version.split('.')[:2])
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://python.org/'
 
@@ -36,8 +39,7 @@ https://vlaams-supercomputing-centrum-vscdocumentation.readthedocs-hosted.com/en
 (but replace /user with /data).
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
 source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
@@ -45,7 +47,7 @@ sources =     [SOURCE_TGZ]
 
 # python needs bzip2 to build the bz2 package
 dependencies = [
-    ('baselibs',    '%(toolchain_version)s', '', ('GCCcore', gcc_version)),
+    ('baselibs',    local_buildset, '', ('GCCcore', local_gcc_version)),
     # Baselibs is used for: bzip2, zlib, ncurses, libreadline, GMP
     # libffi, libpng, freetype, libyaml, cURL
 #   ('Tcl',         '8.6.8'),  # KL 20180720, enters via Tk and SQLite
@@ -361,7 +363,7 @@ exts_list = [
 # Some packages for TensorFlow that may be useful to others also and for which
 # TensorFlow is not too picky on the version number.
     ('astar', '0.9', {
-        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': pymaj},
+        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': local_pymaj},
         'source_urls':    [PYPI_SOURCE],
         'use_pip':        True,
         'unpack_sources': False,
@@ -458,11 +460,11 @@ exts_list = [
     ('libarchive', '0.4.7', {
         'source_urls': [PYPI_SOURCE],
     }),
-    ('gmpy2', '2.0.8', { # Python 3.5 and later only!
+    ('gmpy2', '2.0.8', {
         'source_tmpl': '%(name)s-%(version)s.zip',
         'source_urls': [PYPI_SOURCE],
     }),
-    ('parso', '0.5.1', { # depends on parso
+    ('parso', '0.5.1', { 
         'source_urls': [PYPI_SOURCE],
     }),
     ('jedi', '0.14.1', { # depends on parso
@@ -475,7 +477,7 @@ exts_list = [
         'modulename':  'mkl_random',
         'source_urls': [PYPI_SOURCE],
         # mkl_random-1.0.1.1-cp27-cp27mu-manylinux1_x86_64.whl
-        'source_tmpl': '%%(name)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)smu-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'source_tmpl': '%%(name)s-%%(version)s-cp%(local_pycpver)s-cp%(local_pycpver)smu-manylinux1_x86_64.whl' % {'local_pycpver': local_pycpver},
         'use_pip': True,
         'unpack_sources': False,
     }),
@@ -483,7 +485,7 @@ exts_list = [
         'modulename':  'mkl_fft',
         'source_urls': [PYPI_SOURCE],
         # mkl_random-1.0.1.1-cp27-cp27mu-manylinux1_x86_64.whl
-        'source_tmpl': '%%(name)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)smu-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'source_tmpl': '%%(name)s-%%(version)s-cp%(local_pycpver)s-cp%(local_pycpver)smu-manylinux1_x86_64.whl' % {'local_pycpver': local_pycpver},
         'use_pip': True,
         'unpack_sources': False,
     }),

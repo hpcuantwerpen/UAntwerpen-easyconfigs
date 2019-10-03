@@ -6,17 +6,20 @@ easyblock = 'Bundle'
 # libraries to be in the same directory.
 # 
 
-name = 'netCDF'
-version = '4.7.0'
-versionsuffix = '-MPI'
-version_fortran = '4.4.5'
-version_cpp4 = '4.3.0'
-version_cpp3 = '4.2'
+name =                  'netCDF'
+version =               '4.7.0'
+versionsuffix =         '-MPI'
+local_version_fortran = '4.4.5'
+local_version_cpp4 =    '4.3.0'
+local_version_cpp3 =    '4.2'
 # Version numbers on 20190729
 # netCDF-C:       4.7.0
 # netCDF-Fortran: 4.4.5
 # netCDF-4 C++:   4.3.0
 # netCDF-3 C++:   4.2 (legacy C++)
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://www.unidata.ucar.edu/software/netcdf/'
 
@@ -74,8 +77,7 @@ docurls = [
     'Man pages for the command line utitlities (section 1) and netcdf and netcdf_fortran (section 3)',
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True, 'usempi': True}
 
 #sources = ['v%(version)s.tar.gz']
@@ -84,12 +86,12 @@ source_urls = [
 ]
 
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for cURL, zlib and Szip
-    ('HDF5', '1.8.21', '-MPI'),
+    ('baselibs', local_buildset, '',    ('GCCcore', local_gcc_version)), # for cURL, zlib and Szip
+    ('HDF5',     '1.8.21',       '-MPI'),
 ]
 
 builddependencies = [ 
-    ('buildtools', '%(toolchain_version)s', '', True),
+    ('buildtools', local_buildset, '', True),
 ]
 
 # make sure both static and shared libs are built
@@ -107,22 +109,22 @@ components = [
         'start_dir': 'netcdf-c-%(version)s',
         'configopts': '--enable-shared --enable-static'
     }),
-    ('netCDF-Fortran', version_fortran, { 
+    ('netCDF-Fortran', local_version_fortran, { 
 #       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz
-        'sources': ['netcdf-fortran-%(version)s.tar.gz'],
-        'start_dir': 'netcdf-fortran-%(version)s',
+        'sources':    ['netcdf-fortran-%(version)s.tar.gz'],
+        'start_dir':  'netcdf-fortran-%(version)s',
         'configopts': '--enable-shared --enable-static'
     }),
-    ('netCDF-CXX3', version_cpp3, { 
+    ('netCDF-CXX3', local_version_cpp3, { 
 #       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-cxx-4.2.tar.gz
-        'sources': ['netcdf-cxx-%(version)s.tar.gz'],
-        'start_dir': 'netcdf-cxx-%(version)s',
+        'sources':   ['netcdf-cxx-%(version)s.tar.gz'],
+        'start_dir':  'netcdf-cxx-%(version)s',
         'configopts': '--enable-shared --enable-static'
     }),
-    ('netCDF-CXX4', version_cpp4, { 
+    ('netCDF-CXX4', local_version_cpp4, { 
 #       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-cxx4-4.3.0.tar.gz
-        'sources': ['netcdf-cxx4-%(version)s.tar.gz'],
-        'start_dir': 'netcdf-cxx4-%(version)s',
+        'sources':    ['netcdf-cxx4-%(version)s.tar.gz'],
+        'start_dir':  'netcdf-cxx4-%(version)s',
         'configopts': '--enable-shared --enable-static'
     }),
 ]

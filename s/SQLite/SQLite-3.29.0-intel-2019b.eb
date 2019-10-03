@@ -12,8 +12,12 @@
 
 easyblock = 'ConfigureMake'
 
-name = 'SQLite'
+name =    'SQLite'
 version = '3.29.0'   # KL version check 20190729
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
+
 
 homepage = 'http://www.sqlite.org/'
 
@@ -59,18 +63,18 @@ docurls = [
     'Man page for the sqlite3 command line tool',
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+local_version_minor_etc  = version.split('.')[1:]
+local_version_minor_etc += '0' * (3 - len(local_version_minor_etc))
+local_version_str = '%(version_major)s' + ''.join('%02d' % int(x) for x in local_version_minor_etc)
 
 source_urls = ['http://www.sqlite.org/2019/']
-version_minor_etc = version.split('.')[1:]
-version_minor_etc += '0' * (3 - len(version_minor_etc))
-version_str = '%(version_major)s' + ''.join('%02d' % int(x) for x in version_minor_etc)
-sources = ['sqlite-autoconf-%s.tar.gz' % version_str]
+sources = ['sqlite-autoconf-%s.tar.gz' % local_version_str]
 checksums = ['8e7c1e2950b5b04c5944a981cb31fffbf9d2ddda939d536838ebc854481afd5b']
 
 dependencies = [
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)),  # For libreadline
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)),  # For libreadline
     ('Tcl',      '8.6.9'),
 ]
 
@@ -85,7 +89,7 @@ configopts = 'CFLAGS="-O2 -xHost -ftz -fp-speculation=safe -fp-model source -DSQ
 sanity_check_paths = {
     'files': ['bin/sqlite3', 'include/sqlite3ext.h', 'include/sqlite3.h', 'lib/libsqlite3.a',
               'lib/libsqlite3.%s' % SHLIB_EXT],
-    'dirs': ['lib/pkgconfig'],
+    'dirs':  ['lib/pkgconfig'],
 }
 
 moduleclass = 'devel'

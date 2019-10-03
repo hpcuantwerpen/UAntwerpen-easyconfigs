@@ -7,9 +7,11 @@
 #
 easyblock = 'MakeCp'
 
-name = 'MUMPS'
-version = '5.2.1'
+name =          'MUMPS'
+version =       '5.2.1'
 versionsuffix = '-noOpenMP-noMPI'
+
+local_buildset = '2019b'
 
 homepage = 'http://graal.ens-lyon.fr/MUMPS/'
 
@@ -25,7 +27,7 @@ does it use OpenMP; it is only meant for kwant since this package officially
 requires a single core, non-distributed-memory version of MUMPS.
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True, 'openmp': False, 'usempi': False}
 
 source_urls = ['http://mumps.enseeiht.fr/']

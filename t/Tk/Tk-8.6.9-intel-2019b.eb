@@ -1,7 +1,10 @@
 easyblock = 'ConfigureMake'
 
-name = 'Tk'
+name =    'Tk'
 version = '8.6.9'
+
+local_buildset = '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://www.tcl.tk/'
 
@@ -29,18 +32,16 @@ docurls = [
     'Man pages in section 3 and n'
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = ["http://prdownloads.sourceforge.net/tcl"]
-sources = ['%(namelower)s%(version)s-src.tar.gz']
-
-patches = ['Tk-8.6.4_different-prefix-with-tcl.patch']
+sources =     ['%(namelower)s%(version)s-src.tar.gz']
+patches =     ['Tk-8.6.4_different-prefix-with-tcl.patch']
 
 dependencies = [
-    ('Tcl',   version),
-    ('baselibs', '%(toolchain_version)s', '', ('GCCcore', gcc_version)), # for zlib
-    ('X11',      '%(toolchain_version)s', '', ('GCCcore', gcc_version)),
+    ('Tcl',      version),
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib
+    ('X11',      local_buildset, '', ('GCCcore', local_gcc_version)),
 ]
 
 configopts = '--enable-threads --with-tcl=$EBROOTTCL/lib CFLAGS="-I$EBROOTTCL/include"'

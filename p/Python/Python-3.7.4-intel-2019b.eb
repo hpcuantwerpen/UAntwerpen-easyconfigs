@@ -1,11 +1,14 @@
-name = 'Python'
+name =    'Python'
 version = '3.7.4'
 
-mkl_random_version = '1.0.4' # Because of the special download procedure.
-mkl_fft_version    = '1.0.14' 
+local_mkl_random_version = '1.0.4' # Because of the special download procedure.
+local_mkl_fft_version    = '1.0.14' 
 
-pymaj   = ''.join(version.split('.')[:1])
-pycpver = ''.join(version.split('.')[:2])
+local_pymaj   = ''.join(version.split('.')[:1])
+local_pycpver = ''.join(version.split('.')[:2])
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
 
 homepage = 'http://python.org/'
 
@@ -41,8 +44,7 @@ https://vlaams-supercomputing-centrum-vscdocumentation.readthedocs-hosted.com/en
 (but replace /user with /data).
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
-gcc_version = '8.3.0'
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
 #source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
@@ -55,20 +57,20 @@ sources = [
 # Using download_filename / filename in the exts_list does not work, but downloading
 # here does the job...
     { 
-        'download_filename': 'v' + mkl_random_version + '.tar.gz',
-        'filename': 'mkl_random-'+ mkl_random_version + '.tar.gz',
+        'download_filename': 'v' + local_mkl_random_version + '.tar.gz',
+        'filename': 'mkl_random-'+ local_mkl_random_version + '.tar.gz',
         'source_urls': ['https://github.com/IntelPython/mkl_random/archive']
     }, 
     { 
-        'download_filename': 'v' + mkl_fft_version + '.tar.gz',
-        'filename': 'mkl_fft-'+ mkl_fft_version + '.tar.gz',
+        'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
+        'filename': 'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
         'source_urls': ['https://github.com/IntelPython/mkl_fft/archive']
     }, 
 ]
 
 # python needs bzip2 to build the bz2 package
 dependencies = [
-    ('baselibs',    '%(toolchain_version)s', '', ('GCCcore', gcc_version)),
+    ('baselibs',    local_buildset, '', ('GCCcore', local_gcc_version)),
     # Baselibs is used for: bzip2, zlib, lz4, ncurses, libreadline, GMP
     # libffi, libpng, freetype, libyaml, cURL
 #   ('Tcl',         '8.6.8'),                  # KL 20171204, enters via Tk and SQLite
@@ -392,7 +394,7 @@ exts_list = [
 # Some packages for TensorFlow that may be useful to others also and for which
 # TensorFlow is not too picky on the version number.
     ('astar', '0.9', {
-        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': pymaj},
+        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': local_pymaj},
         'source_urls':    [PYPI_SOURCE],
         'use_pip':        True,
         'unpack_sources': False,
@@ -491,7 +493,7 @@ exts_list = [
     ('SIP', '4.19.8', { # Python 3.5 and later only! And only available as a wheel.
         'modulename':     'sip',
         # sip-4.19.8-cp37-cp37m-manylinux1_x86_64.whl
-        'source_tmpl':    '%%(namelower)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)sm-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'source_tmpl':    '%%(namelower)s-%%(version)s-cp%(local_pycpver)s-cp%(local_pycpver)sm-manylinux1_x86_64.whl' % {'local_pycpver': local_pycpver},
         'source_urls':    [PYPI_LOWER_SOURCE],
         'use_pip':        True,
         'unpack_sources': False,
@@ -512,7 +514,7 @@ exts_list = [
     ('prompt_toolkit', '2.0.9', { # depends on parso
         'source_urls': [PYPI_SOURCE],
     }),
-    ('mkl_random', mkl_random_version, {
+    ('mkl_random', local_mkl_random_version, {
         'modulename': 'mkl_random',
         # https://github.com/IntelPython/mkl_random/archive/v1.0.4.tar.gz
  #       'sources': [{ 'download_filename': 'v%(version)s.tar.gz',
@@ -521,7 +523,7 @@ exts_list = [
  #                  }],
         'use_pip':        True,
     }),
-    ('mkl_fft', mkl_fft_version, {
+    ('mkl_fft', local_mkl_fft_version, {
         'modulename': 'mkl_fft',
         'use_pip':        True,
     }),

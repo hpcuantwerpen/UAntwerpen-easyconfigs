@@ -241,8 +241,8 @@ local_pyshortver = '.'.join(SYS_PYTHON_VERSION.split('.')[0:2])
 
 sanity_check_paths = {
     'files': ['include/X11/Xlib.h', 'include/X11/Xutil.h'],
-    'dirs': ['include/GL', 'include/X11', 'include/X11/extensions', 'lib',
-             'lib/python%s/site-packages/xcbgen' % local_pyshortver, 'lib/pkgconfig', 'share/pkgconfig'],
+    'dirs':  ['include/GL', 'include/X11', 'include/X11/extensions', 'lib',
+              'lib/python%s/site-packages/xcbgen' % local_pyshortver, 'lib/pkgconfig', 'share/pkgconfig'],
 }
 
 moduleclass = 'vis'

@@ -8,8 +8,10 @@
 ##
 easyblock = 'ConfigureMake'
 
-name = 'PROJ'
+name =    'PROJ'
 version = '6.1.1'
+
+local_buildset = '2019b'
 
 homepage = 'https://proj.org/'
 
@@ -43,7 +45,7 @@ docurls = [
     'Man pages for the commands and the the pages geodesic and pj_init for the library functions',
 ]
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True, 'usempi': True}
 
 source_urls = ['http://download.osgeo.org/proj/']
@@ -55,13 +57,13 @@ dependencies = [
 ]
 
 builddependencies = [
-    ('buildtools', '%(toolchain_version)s', '', True)
+    ('buildtools', local_buildset, '', True)
 ]
 
 sanity_check_paths = {
     'files': ['bin/cct', 'bin/cs2cs', 'bin/geod', 'bin/gie', 'bin/proj', 'bin/projinfo',
               'lib/libproj.a', 'lib/libproj.%s' % SHLIB_EXT],
-    'dirs': ['include'],
+    'dirs':  ['include'],
 }
 
 moduleclass = 'lib'

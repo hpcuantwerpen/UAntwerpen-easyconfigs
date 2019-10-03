@@ -1,8 +1,12 @@
 name = 'SuiteSparse'
 version = '5.4.0'
-metis_ver = '5.1.0'
-metis_ver_suffix = '-i32-fp64'
-versionsuffix = '-METIS-%s' % metis_ver
+
+local_metis_ver = '5.1.0'
+local_metis_ver_suffix = '-i32-fp64'
+
+versionsuffix = '-METIS-%s' % local_metis_ver
+
+local_buildset = '2019b'
 
 homepage = 'http://faculty.cse.tamu.edu/davis/suitesparse.html'
 
@@ -18,7 +22,7 @@ factorization, Cholesky factorization and QR decomposition.
 Compiled with support for the METIS graph partitioner and with support for OpenMP.
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'unroll': True, 'pic': True}
 
 source_urls = ['http://faculty.cse.tamu.edu/davis/SuiteSparse/']
@@ -27,11 +31,11 @@ checksums =   ['374dd136696c653e34ef3212dc8ab5b61d9a67a6791d5ec4841efb838e94dbd1
 #patches=['SuiteSparse-5.3.0_intel_openmp.patch']
 
 dependencies = [
-    ('METIS', metis_ver, metis_ver_suffix)
+    ('METIS', local_metis_ver, local_metis_ver_suffix)
 ]
 
 builddependencies = [
-    ('buildtools', '%(toolchain_version)s', '', True), # for cmake
+    ('buildtools', local_buildset, '', True), # for cmake
 ]
 
 parallel = 1
