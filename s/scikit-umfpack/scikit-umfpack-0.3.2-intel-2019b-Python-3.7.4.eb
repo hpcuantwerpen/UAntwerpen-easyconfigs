@@ -1,14 +1,19 @@
 easyblock = 'PythonPackage'
 
-name = 'scikit-umfpack'
+name =    'scikit-umfpack'
 version = '0.3.2'
+
+local_python = 'Python'
+local_pyver =  '3.7.4'
+
+versionsuffix = "-%s-%s" % (local_python, local_pyver)
 
 homepage = 'https://scikit-umfpack.github.io/scikit-umfpack/'
 
 whatis = [
     "Name: scikit-umfpack",
     "Version: %s" % (version),
-    "Category: Python package",
+    "Category: local_python package",
     "Description: scikit-umfpack provides a wrapper of UMFPACK sparse direct solver to SciPy",
     "URL: %s"% (homepage),
 ]
@@ -18,7 +23,7 @@ scikit-umfpack provides a wrapper of UMFPACK sparse direct solver to SciPy.
 
 Installing scikits.umfpack also enables using UMFPACK solver via some of the
 scipy.sparse.linalg functions (only if SciPy >= 0.14.0 which is the case for
-the Python module loaded by this module).
+the local_python module loaded by this module).
 """
 
 docurls = [
@@ -28,15 +33,11 @@ docurls = [
 toolchain = {'name': 'intel', 'version': '2019b'}
 
 source_urls = [PYPI_SOURCE]
-sources = [SOURCE_TAR_GZ]
+sources =     [SOURCE_TAR_GZ]
 
-python = 'Python'
-pyver = '3.7.4'
-
-versionsuffix = "-%s-%s" % (python, pyver)
 dependencies = [
-    (python, pyver),
-#    ('SuiteSparse', '4.5.6', '-METIS-5.1.0'),  # In a Python compiled with UMFPACK support in NumPy, this already enters as a dependency through the Python module.
+    (local_python, local_pyver),
+#    ('SuiteSparse', '4.5.6', '-METIS-5.1.0'),  # In a local_python compiled with UMFPACK support in NumPy, this already enters as a dependency through the local_python module.
 ]
 
 builddependencies = [
@@ -46,16 +47,16 @@ builddependencies = [
 options = {'modulename': 'scikits'}
 
 # The trick with the site.cfg file in the source directory of scikit-umfpack is not needed
-# for a Python installation compiled with UMFPACK support in NumPy.
+# for a local_python installation compiled with UMFPACK support in NumPy.
 # prebuildopts  = 'echo "[umfpack]"                                  >site.cfg ; '
 # prebuildopts += 'echo "library_dirs = $EBROOTSUITESPARSE/lib"     >>site.cfg ; '
 # prebuildopts += 'echo "include_dirs = $EBROOTSUITESPARSE/include" >>site.cfg ; '
 # prebuildopts += 'echo "umfpack_libs = umfpack"                    >>site.cfg ; '
 
-pyshortver = '.'.join(pyver.split('.')[:-1])
+local_pyshortver = '.'.join(local_pyver.split('.')[:-1])
 sanity_check_paths = {
     'files': [],
-    'dirs': ['lib/python%s/site-packages/scikit_umfpack-%s-py%s-linux-x86_64.egg/scikits/umfpack' % (pyshortver, version, pyshortver)],
+    'dirs':  ['lib/python%s/site-packages/scikit_umfpack-%s-py%s-linux-x86_64.egg/scikits/umfpack' % (local_pyshortver, version, local_pyshortver)],
 }
 
 moduleclass = 'math'

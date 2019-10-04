@@ -3,7 +3,8 @@ easyblock = 'PythonBundle'
 name =           'Python-bioinformatics'
 version =        '2019b.00'
 versionsuffix =  '-Python-%(pyver)s'
-python_version = '2.7.16' # For some reason pyver does not work at the start of the processing.
+
+local_python_version = '2.7.16' # For some reason pyver does not work at the start of the processing.
 
 homepage = '(none)'
 
@@ -20,11 +21,11 @@ various researchers of the bio-informatics research groups.
 toolchain = {'name': 'intel', 'version': '2019b'}
 
 dependencies = [
-    ('Python', python_version),
+    ('Python', local_python_version),
 ]
 
-pycpver    = ''.join(python_version.split('.')[:2])
-pyvermajor = ''.join(python_version.split('.')[:1])
+local_pycpver    = ''.join(local_python_version.split('.')[:2])
+local_pyvermajor = ''.join(local_python_version.split('.')[:1])
 
 exts_list = [
     ('eutils', '0.4.1', { # 0.5.2 does not work with metapub 0.4.3.6, dependency of metapub on eutils will be removed in the future.
@@ -50,9 +51,6 @@ exts_list = [
         'source_urls': [PYPI_SOURCE],
     }),
 ]
-
-# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
-full_sanity_check = False
 
 sanity_check_paths = {
     'files': [],

@@ -1,15 +1,14 @@
 easyblock = 'Bundle'
 
+local_NSPR_version =     '4.22'          # https://archive.mozilla.org/pub/nspr/releases
+local_NSS_version =      '3.45'          # https://ftp.mozilla.org/pub/security/nss/releases/
 
-NSPR_version =     '4.22'          # https://archive.mozilla.org/pub/nspr/releases
-NSS_version =      '3.45'          # https://ftp.mozilla.org/pub/security/nss/releases/
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
 
-buildset =         '2019b'
-binutils_version = '2.32'     # A build dependency, as GCCcore with the system binutils might fail.
-gcc_version =      '8.3.0'
-
-name = 'NSS-NSPR'
-version = NSS_version + '-' + NSPR_version
+name =    'NSS-NSPR'
+version = local_NSS_version + '-' + local_NSPR_version
 
 homepage = '(none)'
 
@@ -31,8 +30,8 @@ packages:
 Note that for some applications, we have detected conflicts with the system
 OpenSSL libraries so use with care.
 """ % {
-    'NSPR': NSPR_version,
-    'NSS': NSS_version,
+    'NSPR': local_NSPR_version,
+    'NSS':  local_NSS_version,
 }
 
 docurls = [
@@ -40,19 +39,18 @@ docurls = [
     'NSS: web-based documentation on the home page: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS',
 ]
 
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
 toolchainopts = {'pic': True}
 
 builddependencies = [
-#    ('binutils',   binutils_version, '', ('GCCcore', gcc_version)),
-    ('binutils',   binutils_version, ),
-    ('buildtools', buildset,        '', True),
+    ('binutils',   local_binutils_version, ),
+    ('buildtools', local_buildset,        '', True),
 ]
 
 default_easyblock = 'ConfigureMake'
 
 components = [
-    ('NSPR', NSPR_version, {
+    ('NSPR', local_NSPR_version, {
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['https://archive.mozilla.org/pub/nspr/releases/v%(version)s/src/']
@@ -60,7 +58,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s/nspr',
         'configopts':  '--disable-debug --enable-optimize --enable-64bit',
     }),
-    ('NSS', NSS_version, {
+    ('NSS', local_NSS_version, {
         'sources':   [ {
                         'filename':    SOURCELOWER_TAR_GZ,
                         'source_urls': ['https://ftp.mozilla.org/pub/security/nss/releases/NSS_%(version_major)s_%(version_minor)s_RTM/src/']

@@ -1,11 +1,13 @@
 #easyblock = 'PythonPackage'
 easyblock = 'Bundle'
 
-name = 'vsc-mympirun'
-version = '4.1.9'  # Search PyPi vsc-mympirun
+name =          'vsc-mympirun'
+version =       '4.1.9'  # Search PyPi vsc-mympirun
 versionsuffix = '-Python-%(pyver)s'
 
-depversions = { 
+local_buildset = '2019b'
+
+local_depversions = { 
     'vsc-install': '0.12.7', # Search PyPi vsc-install
     'vsc-base':    '2.9.2',  # Search PyPi vsc-base
 } 
@@ -33,7 +35,7 @@ Run mympirun --help for more information on the mympirun command. There
 are also some instructions on the home page of the package.
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 # this is a bundle of Python packages
 exts_defaultclass = 'PythonPackage'
@@ -43,12 +45,12 @@ dependencies = [
 ]
 
 exts_list = [
-    ('vsc-install', depversions['vsc-install'], { 
+    ('vsc-install', local_depversions['vsc-install'], { 
         'modulename'  : 'vsc.install',
         'source_urls' : ['https://pypi.python.org/packages/source/v/vsc-install'],
         'sources'     : [SOURCE_TAR_GZ],
     }),
-    ('vsc-base', depversions['vsc-base'], {
+    ('vsc-base', local_depversions['vsc-base'], {
         'modulename'  : 'vsc.utils.fancylogger',
         'source_urls' : ['https://pypi.python.org/packages/source/v/vsc-base'],
         'sources'     : [SOURCE_TAR_GZ],

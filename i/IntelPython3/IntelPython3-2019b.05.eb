@@ -1,19 +1,19 @@
 easyblock = 'Bundle'
 
-name = 'IntelPython3'
+name =    'IntelPython3'
 version = '2019b.05'
 
-python_version = '3.6.9'
-intel_root     = '/apps/antwerpen/x86_64/centos7/intel-psxe/2019_update5'
+local_python_version = '3.6.9'
+local_intel_root     = '/apps/antwerpen/x86_64/centos7/intel-psxe/2019_update5'
 
-tcver          = ''.join(version.split('.')[:1])
-py_major       = python_version[0]
-py_major_minor = '.'.join(python_version.split('.')[:2])
+local_buildset       = ''.join(version.split('.')[:1])
+local_py_major       = local_python_version[0]
+local_py_major_minor = '.'.join(local_python_version.split('.')[:2])
 
 homepage = 'https://software.intel.com/en-us/distribution-for-python'
 
 whatis = [
-    'Description: Python '+ py_major_minor + ' from the Intel® Distribution for Python, powered by Anaconda.',
+    'Description: Python '+ local_py_major_minor + ' from the Intel® Distribution for Python, powered by Anaconda.',
 ]
 
 description = """
@@ -30,7 +30,7 @@ that Intel will solve bugs in your code, but it does mean that if we find a
 bug and can reproduce it in a small script, Intel will have a look at it
 and try to correct it in future versions.
 """ % {
-    'pyver': python_version
+    'pyver': local_python_version
 }
 
 toolchain = {'name': 'dummy', 'version': ''}
@@ -42,16 +42,16 @@ dependencies = [
 allow_prepend_abs_path = True
 
 modextrapaths = {
-    'CONDA_PREFIX':    intel_root + '/intelpython%s'     % py_major,
-    'PATH':            intel_root + '/intelpython%s/bin' % py_major,
-    'LD_LIBRARY_PATH': intel_root + '/intelpython%s/lib' % py_major,
+    'CONDA_PREFIX':    local_intel_root + '/intelpython%s'     % local_py_major,
+    'PATH':            local_intel_root + '/intelpython%s/bin' % local_py_major,
+    'LD_LIBRARY_PATH': local_intel_root + '/intelpython%s/lib' % local_py_major,
 }
 
 # The extra EB-vars are needed for compatibility with the regular EasyBuild
 # Python packages and the installation procedures for additional packages.
 modextravars = {
-    'EBROOTPYTHON':      intel_root + '/intelpython%s'     % py_major,
-    'EBVERSIONPYTHON':   python_version,
+    'EBROOTPYTHON':      local_intel_root + '/intelpython%s'     % local_py_major,
+    'EBVERSIONPYTHON':   local_python_version,
     'CONDA_DEFAULT_ENV': 'root',
 }
 
@@ -59,4 +59,4 @@ moduleclass = 'lang'
 
 modluafooter= """
 family("python%(pymm)s")
-""" % { 'pymm': py_major_minor }
+""" % { 'pymm': local_py_major_minor }

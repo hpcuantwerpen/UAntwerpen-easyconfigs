@@ -9,13 +9,13 @@ easyblock = 'PythonBundle'
 name = 'IntelPython3-Packages'
 version = '2019b'
 
-python_version = '3.6.8'
-gcc_version    = '8.3.0'
+local_python_version = '3.6.8'
+local_gcc_version    = '8.3.0'
 
-tcver      = ''.join(version.split('.')[:1])
-pycpver    = ''.join(python_version.split('.')[:2])
-pyvermajor = ''.join(python_version.split('.')[:1])
-pyshortver = '.'.join(python_version.split('.')[:2])
+local_buildset   = ''.join(version.split('.')[:1])
+local_pycpver    = ''.join(local_python_version.split('.')[:2])
+local_pyvermajor = ''.join(local_python_version.split('.')[:1])
+local_pyshortver = '.'.join(local_python_version.split('.')[:2])
 
 homepage = '(none)'
 
@@ -31,15 +31,15 @@ to make the module a superset of our regular Python/3.x modules.
 # We need GCCcore as the toolchain and not Intel as IntelPython compiles with gcc.
 # Otherwise some modules will be compiled with gcc but using Intel compiler flags
 # which does not work.
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 #toolchain = {'name': 'dummy', 'version': ''}
 
 dependencies = [
     ('IntelPython3', version, '',     True),
-    ('baselibs',     tcver),
-    ('SQLite',      '3.29.0', '',     ('intel', tcver)),  # Needed for pysqlite3
-    ('HDF5',        '1.8.21', '-MPI', ('intel', tcver)),  # Needed for hf5py. IntelPython3 loads intel anyway. 
-    ('buildtools',   tcver,   '',     True),              # for git
+    ('baselibs',     local_buildset),
+    ('SQLite',      '3.29.0', '',     ('intel', local_buildset)),  # Needed for pysqlite3
+    ('HDF5',        '1.8.21', '-MPI', ('intel', local_buildset)),  # Needed for hf5py. IntelPython3 loads intel anyway. 
+    ('buildtools',   local_buildset,   '',     True),              # for git
 ]
 
 exts_list = [
@@ -228,7 +228,7 @@ exts_list = [
 # Some packages for TensorFlow that may be useful to others also and for which
 # TensorFlow is not too picky on the version number.
     ('astar', '0.9', {
-        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': pyvermajor},
+        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': local_pyvermajor},
         'source_urls':    [PYPI_SOURCE],
         'use_pip':        True,
         'unpack_sources': False,
@@ -312,7 +312,7 @@ exts_list = [
     ('SIP', '4.19.8', { # Python 3.5 and later only! And only available as a wheel.
         'modulename':     'sip',
         # sip-4.19.8-cp37-cp37m-manylinux1_x86_64.whl
-        'source_tmpl':    '%%(namelower)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)sm-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'source_tmpl':    '%%(namelower)s-%%(version)s-cp%(local_pycpver)s-cp%(local_pycpver)sm-manylinux1_x86_64.whl' % {'local_pycpver': local_pycpver},
         'source_urls':    [PYPI_LOWER_SOURCE],
         'use_pip':        True,
         'unpack_sources': False,
@@ -335,15 +335,12 @@ exts_list = [
     }),
 ]
 
-# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
-full_sanity_check = False
-
 sanity_check_paths = {
     'files': [],
-    'dirs':  ['lib/python'+ pyshortver + '/site-packages'],
+    'dirs':  ['lib/python'+ local_pyshortver + '/site-packages'],
 }
 
 # As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
-# modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+# modextrapaths = {'PYTHONPATH': ['lib/python%(local_pyshortver)s/site-packages']}
 
 moduleclass = 'lib'

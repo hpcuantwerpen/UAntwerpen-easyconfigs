@@ -1,8 +1,10 @@
 easyblock = 'PythonPackage'
 
-name = 'vsc-install'
-version = '0.12.7'
+name =          'vsc-install'
+version =       '0.12.7'
 versionsuffix = '-Python-%(pyver)s'
+
+local_buildset = '2019b'
 
 homepage = 'https://pypi.python.org/pypi/vsc-install'
 
@@ -15,7 +17,7 @@ vsc-install provides shared setuptools functions and classes for Python
 libraries developed by UGent's HPC group
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 sources =     [SOURCE_TAR_GZ]
 source_urls = [PYPI_SOURCE]

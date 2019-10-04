@@ -1,10 +1,12 @@
-name = 'Boost'
-version = '1.70.0'
+name =          'Boost'
+version =       '1.70.0'
 versionsuffix = '-Python-%(pyver)s'
-python_version = '3.7.4'
 
-pycpver    = ''.join(python_version.split('.')[:2])
-pyvermajor = ''.join(python_version.split('.')[:1])
+local_python_version = '3.7.4'
+local_pycpver  =       ''.join(local_python_version.split('.')[:2])
+local_pyvermajor =     ''.join(local_python_version.split('.')[:1])
+
+local_buildset = '2019b'
 
 homepage = 'http://www.boost.org/'
 
@@ -37,10 +39,10 @@ docurls = [
 ] 
 
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'usempi': True, 'pic': True}
 
-sources = ['%%(namelower)s_%s.tar.gz' % '_'.join(version.split('.'))]
+sources =     ['%%(namelower)s_%s.tar.gz' % '_'.join(version.split('.'))]
 source_urls = ['https://sourceforge.net/projects/%(namelower)s/files/%(namelower)s/%(version)s']
 
 patches = [
@@ -48,7 +50,7 @@ patches = [
 ]
 
 dependencies = [
-    ('Python', python_version), # Brings in baselibs which is needed for bzip2, zlib and XZ.
+    ('Python', local_python_version), # Brings in baselibs which is needed for bzip2, zlib and XZ.
 ]
 
 # also build boost_mpi
@@ -58,8 +60,8 @@ boost_mpi = True
 # libboost_python3.so. So we define our own sanity checks which is a workaround because God
 # has decided that a sanity check cannot be skipped.
 sanity_check_paths = {
-    'files': [ 'lib/libboost_python' + pycpver + '.so.' + version,
-               'lib/libboost_numpy'  + pycpver + '.so.' + version ], # The latter only for Python builds that do contain numpy.
+    'files': [ 'lib/libboost_python' + local_pycpver + '.so.' + version,
+               'lib/libboost_numpy'  + local_pycpver + '.so.' + version ], # The latter only for Python builds that do contain numpy.
     'dirs':  [ 'include/boost', 'lib' ],
 }
 

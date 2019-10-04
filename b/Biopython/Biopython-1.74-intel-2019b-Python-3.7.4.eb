@@ -14,9 +14,11 @@
 ##
 easyblock = 'PythonPackage'
 
-name = 'Biopython'
-version = '1.74'
+name =          'Biopython'
+version =       '1.74'
 versionsuffix = '-Python-%(pyver)s'
+
+local_buildset = '2019b'
 
 homepage = 'http://www.biopython.org'
 
@@ -31,7 +33,7 @@ collaborative effort to develop Python libraries and applications which address
 the needs of current and future work in bioinformatics.
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 # http://biopython.org/DIST/biopython-1.74.tar.gz
 source_urls = ['http://biopython.org/DIST']

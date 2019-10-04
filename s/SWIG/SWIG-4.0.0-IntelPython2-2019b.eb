@@ -1,7 +1,7 @@
-name = 'SWIG'
-version = '4.0.0'
-tcver='2019b'
-versionsuffix = '-IntelPython2-' + tcver
+name =           'SWIG'
+version =        '4.0.0'
+local_buildset = '2019b'
+versionsuffix =  '-IntelPython2-' + local_buildset
 
 homepage = 'http://www.swig.org/'
 
@@ -34,7 +34,7 @@ source_urls = [SOURCEFORGE_SOURCE]
 sources =     [SOURCELOWER_TAR_GZ]
 
 dependencies = [
-    ('IntelPython2',   tcver),
+    ('IntelPython2',   local_buildset),
 ]
 
 moduleclass = 'devel'

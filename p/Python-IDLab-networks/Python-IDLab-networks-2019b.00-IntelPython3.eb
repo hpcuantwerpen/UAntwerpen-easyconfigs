@@ -13,33 +13,32 @@ easyblock = 'PythonBundle'
 name =           'Python-IDLab-networks'
 version =        '2019b.00'
 versionsuffix  = '-IntelPython3'
-python_version = '3.6.8' # For some reason pyver does not work at the start of the processing.
 
-buildset =   ''.join(version.split('.')[:1])
-pyshortver = '.'.join(python_version.split('.')[:2])
-pycpver    = ''.join(python_version.split('.')[:2])
-pyvermajor = ''.join(python_version.split('.')[:1])
+local_python_version = '3.6.8' # For some reason pyver does not work at the start of the processing.
+
+local_buildset =   ''.join(version.split('.')[:1])
+local_pyshortver = '.'.join(local_python_version.split('.')[:2])
+local_pycpver =    ''.join(local_python_version.split('.')[:2])
+local_pyvermajor = ''.join(local_python_version.split('.')[:1])
 
 homepage = '(none)'
 
 whatis = [
-    "Description: Additional Python %(pyshortver)s modules used at IDLab wireless network research.",
+    "Description: Additional Python %(local_pyshortver)s modules used at IDLab wireless network research.",
 ]
 
 description = """
-This module contains a number of additional packages for Python %(pyshortver)s used by
+This module contains a number of additional packages for Python %(local_pyshortver)s used by
 various researchers from the IDLab wireless network group.
 """
 
 toolchain = {'name': 'dummy', 'version': ''}
 
 dependencies = [
-    ('IntelPython3-Packages', buildset),
-    ('buildtools',            buildset),  # for git
+    ('IntelPython3-Packages', local_buildset),
+    ('buildtools',            local_buildset),  # for git
 ]
 
-pycpver    = ''.join(python_version.split('.')[:2])
-pyvermajor = ''.join(python_version.split('.')[:1])
 
 #install_option = '--install-option="--prefix=%(dir)s"' % { 'dir': installdir }
 
@@ -66,7 +65,7 @@ exts_list = [
 #        'prebuildopts': 'export CC=gcc && ',
         'source_urls': [PYPI_SOURCE],
         # gevent-1.4.0-cp37-cp37m-manylinux1_x86_64.whl (
-        'source_tmpl': '%%(name)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)sm-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'source_tmpl': '%%(name)s-%%(version)s-cp%(local_pycpver)s-cp%(local_pycpver)sm-manylinux1_x86_64.whl' % {'local_pycpver': local_pycpver},
         'use_pip': True,
         'unpack_sources': False,
     }),
@@ -112,15 +111,12 @@ exts_list = [
     }),
 ]
 
-# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
-full_sanity_check = False
-
 sanity_check_paths = {
     'files': [],
-    'dirs':  ['lib/python'+ pyshortver + '/site-packages'],
+    'dirs':  ['lib/python'+ local_pyshortver + '/site-packages'],
 }
 
 # As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
-# modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+# modextrapaths = {'PYTHONPATH': ['lib/python%(local_pyshortver)s/site-packages']}
 
 moduleclass = 'lib'

@@ -3,9 +3,10 @@
 # It is needed though for EasyBuild to get the right dependency change
 easyblock = 'Bundle'
 
-name = 'IntelPython2'
+name =    'IntelPython2'
 version = '2019b'
-intelpython_version = version + '.05'
+
+local_intelpython_version = version + '.05'
 
 homepage = 'https://software.intel.com/en-us/distribution-for-python'
 
@@ -21,7 +22,7 @@ aliases or symbolic links should have been used instead.
 toolchain = {'name': 'dummy', 'version': ''}
 
 dependencies = [
-    ('IntelPython2',  intelpython_version), # Not really needed as all libraries are included through symbolic links
+    ('IntelPython2', local_intelpython_version), # Not really needed as all libraries are included through symbolic links
 ]
 
 moduleclass = 'lang'

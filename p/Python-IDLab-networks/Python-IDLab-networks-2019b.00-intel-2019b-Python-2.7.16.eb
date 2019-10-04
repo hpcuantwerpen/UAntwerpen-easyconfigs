@@ -13,8 +13,9 @@ easyblock = 'PythonBundle'
 name =           'Python-IDLab-networks'
 version =        '2019b.00'
 versionsuffix =  '-Python-%(pyver)s'
-python_version = '2.7.16' # For some reason pyver does not work at the start of the processing.
 
+local_buildset =       '2019b'
+local_python_version = '2.7.16' # For some reason pyver does not work at the start of the processing.
 
 homepage = '(none)'
 
@@ -27,15 +28,15 @@ This module contains a number of additional packages for Python %(pyshortver)s u
 various researchers from the IDLab wireless network group.
 """
 
-toolchain = {'name': 'intel', 'version': '2019b'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 dependencies = [
-    ('Python',     python_version),
-    ('buildtools', '2019b', '', True),  # for git
+    ('Python',     local_python_version),
+    ('buildtools', local_buildset,      '', True),  # for git
 ]
 
-pycpver    = ''.join(python_version.split('.')[:2])
-pyvermajor = ''.join(python_version.split('.')[:1])
+local_pycpver    = ''.join(local_python_version.split('.')[:2])
+local_pyvermajor = ''.join(local_python_version.split('.')[:1])
 
 exts_list = [
     ('k7', '0.4.2', {
@@ -59,7 +60,7 @@ exts_list = [
 #        'prebuildopts': 'export CC=gcc && ',
         'source_urls': [PYPI_SOURCE],
         # gevent-1.4.0-cp27-cp37mu-manylinux1_x86_64.whl (
-        'source_tmpl': '%%(name)s-%%(version)s-cp%(pycpver)s-cp%(pycpver)smu-manylinux1_x86_64.whl' % {'pycpver': pycpver},
+        'source_tmpl': '%%(name)s-%%(version)s-cp%(local_pycpver)s-cp%(local_pycpver)smu-manylinux1_x86_64.whl' % {'local_pycpver': local_pycpver},
         'use_pip': True,
         'unpack_sources': False,
     }),
@@ -105,9 +106,6 @@ exts_list = [
         'source_urls': [PYPI_SOURCE],
     }),
 ]
-
-# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
-full_sanity_check = False
 
 sanity_check_paths = {
     'files': [],
