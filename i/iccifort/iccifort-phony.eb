@@ -1,15 +1,19 @@
 # This is an easyconfig file for EasyBuild, see http://hpcugent.github.io/easybuild
 easyblock = 'Toolchain'
 
-name = 'iccifort'
+name =    'iccifort'
 version = 'phony'
 
-#gccver = '8.3.0'
-#binutilsver = '2.32'
-#gccsuff = '-GCC-%s-%s' % (gccver, binutilsver)
-
 homepage = 'http://software.intel.com/en-us/intel-cluster-toolkit-compiler/'
-description = """Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran compilers, Intel MPI & Intel MKL."""
+
+whatis = [
+    'Description: iccifort dummy module to fool EasyBuild into thinking the Intel toolchain is installed in its hardcoded way.',
+]
+
+description = """
+Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran
+compilers, Intel MPI & Intel MKL.
+"""
 
 toolchain = {'name': 'dummy', 'version': 'dummy'}
 

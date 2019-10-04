@@ -1,10 +1,18 @@
 # This is an easyconfig file for EasyBuild, see http://hpcugent.github.io/easybuild
 
-name = 'impi'
+name =    'impi'
 version = 'phony'
 
 homepage = 'http://software.intel.com/en-us/intel-cluster-toolkit-compiler/'
-description = """Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran compilers, Intel MPI & Intel MKL."""
+
+whatis = [
+    'Description: impi dummy module to fool EasyBuild into thinking the Intel toolchain is installed in its hardcoded way.',
+]
+
+description = """
+Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran
+compilers, Intel MPI & Intel MKL.
+"""
 
 toolchain = {'name': 'dummy', 'version': 'dummy'}
 
