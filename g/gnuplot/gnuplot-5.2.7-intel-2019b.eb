@@ -14,9 +14,9 @@ easyblock = 'ConfigureMake'
 name =    'gnuplot'
 version = '5.2.7'
 
-buildset =         '2019b'
-gcc_version =      '8.3.0'
-binutils_version = '2.32'
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'http://gnuplot.sourceforge.net/'
 
@@ -41,13 +41,13 @@ docurls = [
     'Manual page for gnuplot',
 ]
 
-toolchain = {'name': 'intel', 'version': buildset}
+toolchain = {'name': 'intel', 'version': local_buildset}
 
-sources = [SOURCE_TAR_GZ]
+sources =     [SOURCE_TAR_GZ]
 source_urls = [('http://sourceforge.net/projects/gnuplot/files', 'download')]
 
 dependencies = [
-    ('baselibs', buildset, '', ('GCCcore', gcc_version)),
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)),
     ('libgd',    '2.2.5'),
 ]
 builddependencies = [
@@ -63,8 +63,8 @@ configopts += '--with-qt=no '
 
 # Enable or disable cairo output support.
 # Cairo terminal support requires cairo >= 1.2 cairo-pdf >= 1.2 pango >= 1.10 pangocairo >= 1.10 glib-2.0
-dependencies.append( ('cairo', '1.17.2', '', ('GCCcore', gcc_version)) )
-dependencies.append( ('Pango', '1.44.3', '', ('GCCcore', gcc_version)) )
+dependencies.append( ('cairo', '1.17.2', '', ('GCCcore', local_gcc_version)) )
+dependencies.append( ('Pango', '1.44.3', '', ('GCCcore', local_gcc_version)) )
 configopts += '--with-cairo '
 #configopts += '--without-cairo '
 
@@ -78,7 +78,7 @@ configopts += '--disable-wxwidgets '
 
 # Enable or disable X11 support.
 # The gnuplot manual advises to use the more modern Qt4/Qt5 or Cario terminals instead.
-dependencies.append( ('X11', buildset, '', ('GCCcore', gcc_version)) )  # May leave out since system X11 libraries on Hopper are sufficient.
+dependencies.append( ('X11', local_buildset, '', ('GCCcore', local_gcc_version)) )  # May leave out since system X11 libraries on Hopper are sufficient.
 configopts += '--with-x '
 #configopts += '--without-x '
 

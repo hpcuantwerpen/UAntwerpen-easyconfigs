@@ -1,12 +1,12 @@
 # This one does not yet work as HarBuzz >= 2.0 is needed for it....
 easyblock = 'MesonNinja'
 
-name = 'Pango'
+name =    'Pango'
 version = '1.44.3'
 
-buildset         = '2019b'
-gcc_version      = '8.3.0'
-binutils_version = '2.32'
+local_buildset         = '2019b'
+local_gcc_version      = '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'http://www.pango.org/'
 
@@ -34,21 +34,21 @@ docpaths = [
     'share/gtk-doc/html/pango'
 ]
 
-toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 source_urls = [FTPGNOME_SOURCE]
 sources =     [SOURCELOWER_TAR_XZ]
 
 dependencies = [
-    ('baselibs', buildset), # For FriBidi
-    ('X11',      buildset),
+    ('baselibs', local_buildset), # For FriBidi
+    ('X11',      local_buildset),
     ('GLib',     '2.61.2'),
     ('cairo',    '1.17.2'),
     ('HarfBuzz', '2.5.3'),
 ]
 
 builddependencies = [
-    ('buildtools',            buildset, '',              True), # For ninja, meson, pkg-config and for help2man to generate the man page.
+    ('buildtools',            local_buildset, '',              True), # For ninja, meson, pkg-config and for help2man to generate the man page.
     ('GObject-Introspection', '1.61.1'),
 ]
 
@@ -59,12 +59,12 @@ configopts = "--buildtype=release --default-library=both "
 sanity_check_paths = {
     'files': ['bin/pango-view', 'lib/libpango-1.0.%s' % SHLIB_EXT, 'lib/libpangocairo-1.0.%s' % SHLIB_EXT,
               'lib/libpangoft2-1.0.%s' % SHLIB_EXT, 'lib/libpangoxft-1.0.%s' % SHLIB_EXT],
-    'dirs': [],
+    'dirs':  [],
 }
 
 modextrapaths = {
     'GI_TYPELIB_PATH': 'share',
-    'XDG_DATA_DIRS': 'share',
+    'XDG_DATA_DIRS':   'share',
 }
 
 moduleclass = 'vis'
