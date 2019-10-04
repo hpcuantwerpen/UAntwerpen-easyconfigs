@@ -1,0 +1,74 @@
+easyblock = 'MakeCp'
+
+name =    'CPMD'
+version = '4.3'
+
+local_buildset = '2019b'
+
+homepage = 'http://www.cpmd.org'
+
+whatis = [
+    'Description: The CPMD code is a parallelized plane wave / pseudopotential implementation of Density Functional Theory, particularly designed for ab-initio molecular dynamics.',
+    'The executable in this module is a hybrid MPI/OpenMP application',
+]
+
+description = """
+The CPMD code is a parallelized plane wave / pseudopotential implementation of
+Density Functional Theory, particularly designed for ab-initio molecular
+dynamics.
+
+The code is developed  and distritributed by the CPMD consortium, established in
+2001. It is a virtual organization that comprises all the users and developers
+of the CPMD code around the world. 
+
+CPMD is jointly copyrighted by IBM Corporation and Max-Planck Institut,
+Stuttgart. 
+
+Though CPMD is freely available for non-profit orgznizations, it is licensed 
+software and users need to electronically register. Access is controlled 
+through the acpmd group. Please follow the instructions on:
+https://www.vscentrum.be/infrastructure/hardware/hardware-ua/licensed-software#cpmd
+
+The CPMD binary was compiled with support for MNPI and OpenMP (a so-called
+hybrid application).
+"""
+
+docurls = [
+    "Web-based tutorial: http://cpmd.org/cpmd-tutorial",
+    "Web-based documentation: http://cpmd.org/documentation",
+]
+
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+# You need to manually download the CPMD source file and necessary patch files.
+sources = ['cpmd-v%(version)s.tar.gz']
+# You also need to download the patches below except for the last one, which 
+# was locally generated with modifications to the compiler options.
+# (This patch file could be further improved to use compiler options from
+# EasyBuild, but you'll always need to change the CPP line.)
+# Please ensure that EasyBuild applies the patches in the correct order...
+patches = [
+    'patch.to.4612',
+    'patch.to.4615',
+    'patch.to.4616',
+    'patch.to.4621',
+    'patch.to.4624',
+    'CPMD-4.3-LINUX-X86_64-INTEL-MPI-FFTW.patch'
+]
+
+prebuildopts = './configure.sh -o LINUX-X86_64-INTEL-MPI-FFTW && '
+
+#parallel = 1
+
+files_to_copy = [
+    ( ['bin/cpmd.x'], 'bin'),
+]
+
+sanity_check_paths = {
+    'files': ['bin/cpmd.x'],
+    'dirs':  []
+}
+
+moduleclass = 'phys'

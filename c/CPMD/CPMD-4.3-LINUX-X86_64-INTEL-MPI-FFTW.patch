@@ -1,0 +1,40 @@
+Patch created by Kurt Lust, University of Antwerp.
+It corrects the CPP line for Intel Fortran, renames the compilers to be on the
+safe side, and replaces *xAVX options with -xHost.
+--- CPMD/configure/LINUX-X86_64-INTEL-MPI-FFTW.orig	2019-10-04 15:17:13.308486813 +0200
++++ CPMD/configure/LINUX-X86_64-INTEL-MPI-FFTW	2019-10-04 15:24:20.493562022 +0200
+@@ -11,12 +11,12 @@
+ #INFO#
+ 
+      IRAT=2
+-     FC='mpif90'
++     FC='mpiifort'
+      CC='icc'
+-     LD='mpif90'
++     LD='mpiifort'
+      FFLAGS_GROMOS='$(FFLAGS) -fixed'
+      FFLAGS_GROMOS_MODULES='$(FFLAGS)'
+-     CPP='/usr/bin/cpp -P -C -traditional'
++     CPP='fpp'
+      CPPFLAGS='-D__Linux -D__HAS_FFT_FFTW3 -D__PARALLEL -DLINUX_IFC -D__HASNT_OMP_45 \
+       -D__HASNT_F03_EXECUTE_COMMAND_LINE -D__HASNT_F08_ISO_FORTRAN_ENV -D_HASNT_MPI_30'
+      NOOPT_FLAG=' -O1 '
+@@ -27,14 +27,14 @@
+        FFLAGS='-g -O0 -I$(MKLROOT)/include/fftw -gen_interfaces -traceback -check all,noarg_temp_created '
+        CFLAGS='-g -O0 '
+      else
+-       FFLAGS='-O2 -I$(MKLROOT)/include/fftw -axAVX'
++       FFLAGS='-O2 -I$(MKLROOT)/include/fftw -xHost'
+        CFLAGS='-O2'
+      fi
+      if [ $omp ]; then
+-       FFLAGS=${FFLAGS}' -openmp '
+-       LIBS='-mkl=parallel -axAVX'
++       FFLAGS=${FFLAGS}' -qopenmp '
++       LIBS='-mkl=parallel -xHost'
+        OMP3_DISABLED=`{ ${FC} -v; } 2>&1 | ${AWK} '{ print ( $2 < "12.0.4" ) ? "true" : "false" }'`
+      else
+-       LIBS='-mkl=sequential -axAVX'
++       LIBS='-mkl=sequential -xHost'
+      fi
+      LFLAGS='-static-intel '${LIBS}
