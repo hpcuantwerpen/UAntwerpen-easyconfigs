@@ -66,10 +66,10 @@ preconfigopts = "./autogen.sh && "
 configopts = "--enable-doxygen-man --disable-openmp"
 
 sanity_check_paths = {
-    'files': ["include/libhmsbeagle-1/libhmsbeagle/%s" % includefile
-              for includefile in ["beagle.h", "platform.h"]] +
-             ["lib/libhmsbeagle%s.%s" % (libfile, SHLIB_EXT)
-              for libfile in ["-cpu", "-cpu-sse", "-jni", ""]],
+    'files': ["include/libhmsbeagle-1/libhmsbeagle/%s" % local_includefile
+              for local_includefile in ["beagle.h", "platform.h"]] +
+             ["lib/libhmsbeagle%s.%s" % (local_libfile, SHLIB_EXT)
+              for local_libfile in ["-cpu", "-cpu-sse", "-jni", ""]],
     'dirs':  []
 }
 

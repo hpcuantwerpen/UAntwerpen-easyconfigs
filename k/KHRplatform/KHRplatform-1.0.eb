@@ -1,6 +1,6 @@
 easyblock = 'Tarball'
 
-name = 'KHRplatform'
+name =    'KHRplatform'
 version = '1.0'
 
 homepage = '(none)'
