@@ -1,0 +1,121 @@
+# This does not work with the Intel 2019 compilers update 5, icc crashes on src/gromacs/pulling/pullutil.cpp
+easyblock = 'Bundle'
+
+name =          'GROMACS'
+version =       '2019.4'
+versionsuffix = '-UArecipe'
+
+local_buildset = '2019b'
+
+homepage = 'http://www.gromacs.org'
+
+whatis = [
+    'Description: GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles.',
+    'This module is built using our own UAntwerp-recipes that follow closely the instructions of the GROMACS authors.',
+]
+
+description = """
+GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the
+Newtonian equations of motion for systems with hundreds to millions of
+particles.
+
+Binaries included:
+* gmx: Compiled with support for OpenMP and GROMACS ThreadMPI
+* gmx_mpi: Compiled with support for MPI and OpenMP. The built-in ThreadMPI
+  support is turned off.
+* gmx_d: Compiled with support for OpenMP and GROMACS ThreadMPI and using 
+  double precision arithmetic.
+* gmx_d_mpi: Compiled with support for MPI and OpenMP and using double precision
+  arithmetic. The built-in ThreadMPI support is turned off.
+These binaries were built using our own UAntwerp recipes that follow closely
+the instructions of the GROMACS authors and leave their choice of compiler
+options as much as possible untouched.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'openmp': False, 'usempi': False}
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),   # For CMake
+]
+
+source_urls = ['ftp://ftp.gromacs.org/pub/gromacs/']
+
+# Problems with Bundle in EasyBuild 3.6.2:
+# - It is not possible to specify separate_start_dir. It is rejected in the 
+#   component specs and not honoured when defined as a variable the way it is 
+#   done in a regular CMakeMake EasyConfig.
+# - It only does the build and install steps for each component but does not
+#   run the tests. So we do it through the buildopts. runtest as a field is
+#   not honoured. And as a variable, it cause Bundle to malfunction.
+default_easyblock = 'CMakeMake'
+default_component_specs = {
+    'sources':   [SOURCELOWER_TAR_GZ],
+    'checksums': [ 'ba4366eedfc8a1dbf6bddcef190be8cd75de53691133f305a7f9c296e5ca1867',  # shasum -a 256 gromacs-2019.4.tar.gz
+                 ],
+    'preconfigopts' : '( [ -f CMakeCache.txt ] && /bin/rm CMakeCache.txt ) ; ' +
+                      '( [ -f Makefile ] && make clean ) ; ' ,
+#    'buildopts' : 'all -j 20',
+    'buildopts' : 'all check -j 20', 
+#    'installopts' : 'clean',   # To completely remove the build so that a new one can start clean.
+    'start_dir':   '%(namelower)s-%(version)s',
+}
+
+# We compile with the default options chosen by the CMake recipes. When checking
+# what the GROMACS compile did, it was clear that the authors have put some effort
+# in selecting compiler options for each compiler vendor, as the ones that are used
+# are all but trivial. However, it turned out that on Ivy Bridge CPUs, with their 
+# options not all tests passed correctly. Specifically, three tests of their vector
+# kernels for the exponential failed for arguments that produce a result close to
+# denormalized numbers. After testing several combinations of floating point
+# optimization options, it seems that setting -no-ftz is the key towards a solution.
+#
+# Note that we pass only our own extra options via CMAKE_C_FLAGS etc as the default
+# in GROMACS is to add these in front of the options it selects itsel (which someone
+# told me can also be turned off).
+#
+import os
+local_UAarch = os.environ['VSC_ARCH_LOCAL']
+if local_UAarch == "ivybridge":
+    local_compflags = '-no-ftz'
+elif local_UAarch == "broadwell":
+    local_compflags = ''
+else:
+    local_compflags = ''
+
+local_sercompsel = "-DCMAKE_C_COMPILER='icc'    -DCMAKE_CXX_COMPILER='icpc'    -DCMAKE_C_FLAGS='%(flags)s' -DCMAKE_CXX_FLAGS='%(flags)s' " % {'flags' : local_compflags}
+local_mpicompsel = "-DCMAKE_C_COMPILER='mpiicc' -DCMAKE_CXX_COMPILER='mpiicpc' -DCMAKE_C_FLAGS='%(flags)s' -DCMAKE_CXX_FLAGS='%(flags)s' " % {'flags' : local_compflags}
+local_gmxbaseopts  = "-DGMX_PREFER_STATIC_LIBS=ON "
+local_gmxbaseopts += "-DGMX_OPENMP=ON "
+local_gmxbaseopts += "-DGMX_SIMD=AUTO "
+local_gmxbaseopts += "-DGMX_GPU=OFF "
+local_gmxbaseopts += "-DGMX_X11=OFF "
+local_gmxbaseopts += "-DGMX_FFT_LIBRARY=mkl -DGMX_EXTERNAL_BLAS=ON -DGMX_EXTERNAL_LAPACK=ON "
+#local_gmxbaseopts += "-DREGRESSIONTEST_DOWNLOAD=ON "
+
+components = [
+    ('GROMACS', version, {
+        'configopts': local_sercompsel + local_gmxbaseopts + "-DGMX_MPI=OFF -DGMX_THREAD_MPI=ON  -DGMX_DOUBLE=OFF ",
+    }),
+    ('GROMACS', version, {
+        'configopts': local_sercompsel + local_gmxbaseopts + "-DGMX_MPI=OFF -DGMX_THREAD_MPI=ON  -DGMX_DOUBLE=ON ",
+    }),
+    ('GROMACS', version, {
+        'configopts': local_mpicompsel + local_gmxbaseopts + "-DGMX_MPI=ON  -DGMX_THREAD_MPI=OFF -DGMX_DOUBLE=OFF ",
+    }),
+    ('GROMACS', version, {
+        'configopts': local_mpicompsel + local_gmxbaseopts + "-DGMX_MPI=ON  -DGMX_THREAD_MPI=OFF -DGMX_DOUBLE=ON ",
+    }),
+] 
+
+# This does what GMXRC.bash does except that it does not enable the command completion.
+modextravars = {
+    'GROMACS_DIR': "%(installdir)s",
+    'GMXBIN':      "%(installdir)s/bin",
+    'GMXLDLIB':    "%(installdir)s/lib64",
+    'GMXMAN':      "%(installdir)s/share/man",
+    'GMXDATA':     "%(installdir)s/share/data",
+}
+
+moduleclass = 'bio'
+
