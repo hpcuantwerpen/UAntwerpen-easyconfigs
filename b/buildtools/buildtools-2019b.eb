@@ -302,6 +302,10 @@ components = [
 
 #parallel = 1
 
+postinstallcmds = [
+    'cd %(installdir)s/bin ; ln -s make gmake', # Some programs check for gmake first and fail if that version is too old.
+]
+
 modextrapaths = {'PYTHONPATH': ['lib/python%s/site-packages' % local_system_pyshortver]}
 
 moduleclass = 'devel'
