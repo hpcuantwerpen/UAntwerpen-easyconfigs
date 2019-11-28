@@ -170,6 +170,7 @@ components = [
         'source_urls': ['ftp://ftp.invisible-island.net/byacc//'],
         'checksums':   ['f87868167b920bf2cb30fc32b62f63ae15671181ef329226d1063100be02518d'],
         'start_dir':   '%(namelower)s-%(version)s',
+        'installopts': ' && mv %(installdir)s/bin/yacc %(installdir)s/bin/byacc && mv %(installdir)s/share/man/man1/yacc.1 %(installdir)s/share/man/man1/byacc.1',
         }),
     ('M4', local_m4_version, { # Uses gawk which for now we assume to be on the system
         'sources':     [SOURCELOWER_TAR_XZ],
