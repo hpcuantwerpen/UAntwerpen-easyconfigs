@@ -84,19 +84,88 @@ the patches but only apply them. E.g.,
 
 ### Amber and AmberTools dependencies
 
+Discovering the true dependencies requires a lot of engineering as there is no complete 
+list in the manual. It really requires looking into all output of configure and/or 
+cmake and sometimes even figuring it out from the output of the build process and from
+the source code.
+
 * libz
 * bzip2, though the CMake build process fails to recognize the library even though 
   it is provided through a module.
 * It is best to use an optimised BLAS and Lapack implementation. MKL is supported.
 * Arpack, but the code comes with an internal version (in AmberTools)
-* FFTW, but the code comes with an internal version and fails to recognize the one 
-  we build with EasyBuild according to the EasyConfigs in this repository.
+* FFTW, but the code comes with an internal version and fails to recognize an external 
+  FFTW3 library. The configure script in Amber 18 doesn't even try to find one.
 * netCDF, preferably with PnetCDF as the parallel backend for the old netCDF data
-  formats. The PnetCDF support is used by `cpptraj`.
+  formats. The PnetCDF support is used by `cpptraj`. The code contains an internal 
+  version; however, it is not clear if and when it tries to compile the internal PnetCDF. 
+  (TODO: Check further, maybe only included automatically in MPI builds which is actually 
+  very reasonable?)
 * Boost, though the code comes with an internal version
 * Perl 5, as it does install a number of Perl scripts (optional?)
 * Python, as some of the tools come as Python scripts. It is not clear which other
-  packages are needed...
+  packages are needed... The manual mentions that either Python 2.7 or Python 3.4 or
+  later should be used.
+  It is also not fully clear which other Python packages are needed, though 
+  the manual does mention:
+    * NumPy
+    * SciPy
+    * matplotlib
+    * cython
+    * IPython and notebook? Not useful for job scripts, these are tools for interactive 
+      work.
+
+### Other problems I ran into with Amber 18 and AmberTools 19
+
+The cmake build process clearly does not yet work properly when trying to do a MPI/OpenMP 
+build. Moreover, it fails to find libraries that are clearly present, e.g., libbz2.
+
+The configure script is considered to be mature even though there are features that 
+are marked as experimental, in particular `--prefix`. Note that without `--prefix`, one 
+needs to do an in-place build and then clean up (likely by hand) files that are not 
+needed for running Amber. In fact, all EasyConfigs I found (see further down) for versions 
+of Amber available in December 2019 used in-place builds. In some configurations we 
+got crashes during the build process that may be due to bugs in the Makefiles in combination 
+with a configure with `--prefix`.
+
+Usual practice with cmake or configure generated makefiles using libtool is that `VERBOSE=1` 
+or `V=1` show the full command being executed. This does not work with the Amber makefiles. 
+To discover what is really happening, set the variable SHELL in calls of make to `sh 
+-x`, hence add `SHELL='sh-s'` to the make command line.
+
+When selecting Intel as the compiler, the configure process does seem to know how to 
+set suitable compiler options without using environment variables such as CXX_FLAGS. 
+Some files are compiled with -O0 but this may be deliberate since they are known to 
+sometimes fail when optimization is turned on. However, though most modules are compiled 
+with very reasonable options, in some modules only -O or -O3 is used without -xHost. 
+This implies that these modules are only optimized for whatever Intel considers the 
+default processor for the version of the compiler, and this in turn implies that AVX 
+or younger vector instructions typically are not used. Which means that the performance 
+potential of every recent processor (where recent really is less than 6 years old) 
+remains unexploited.
+
+Likely suboptimal compile options were found in:
+ * UCPP: AmberTools/src/ucpp-1.3: No optimization options given
+ * CIFPARSE: AmberTools/src/cifparse: No optimization options given
+ * ANTECHAMBER: AmberTools/src/antechamber: No optimization options given
+ * REDUCE, 
+    * AmberTools/src/reduce/toolclasses: Uses only `-O`, without `-xHost`.
+    * AmberTools/src/reduce/libpdb: idem
+    * AmberTools/src/reduce/reduce_src: Uses `-O3` but no `-xHost`
+ * LEAP: AmberTools/src/leap/src/leap: No optimization options given
+ * EMIL: AmberTools/src/emil: Uses `-O3` but no `-xHost`
+ * NMRAUX:
+    * AmberTools/src/nmr_aux/prepare_input: No optimization options
+ * CPPTRAJ: AmberTools/src/cpptraj/src and subdirectories: Uses `-O3` but no `-xHost`
+ * AMBPDB: AmberTools/src/ambpdb: Uses `-O3` but no `-xHost`
+ * NAB: AmberTools/src/nab: No optimization options
+ * ETC: AmberTools/src/etc: No optimization options
+ * RISM: AmberTools/src/rism: The build process returns repeatedly to this directory, 
+   and somtimes files get compiled with very reasonable optimization options while 
+   sometimes these options appear to be completely missing.
+ * SAXS: AmberTools/src/saxs: Uses `-O3` but no `-xHost`
+ * CPHSTATS: AmberTools/src/cphstats: No optimization options
+ * NFE: AmberTools/src/nfe-umbrella-slice: No optimization options 
 
 
 ## Remarks about the EasyConfig
@@ -106,7 +175,7 @@ the patches but only apply them. E.g.,
   of Amber to work properly.
 * Places where other EasyConfigs for Amber can be found:
     * [EasyBuilder EasyConfig repository on github](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/a/Amber),
-      with the [matching EasyBlock](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/a/Amber).
+      with the [matching EasyBlock](https://github.com/easybuilders/easybuild-easyblocks/blob/develop/easybuild/easyblocks/a/amber.py).
       These EasyConfigs require a lot of patching of the Amber and AmberTools sources. 
       One problem with this is that even just a patch to Amber or AmberTools may invalidate 
       one or more of the EasyBuild-provided patches, making upgrading to a newer version 
