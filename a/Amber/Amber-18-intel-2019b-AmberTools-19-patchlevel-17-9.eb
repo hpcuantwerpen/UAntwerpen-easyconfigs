@@ -1,0 +1,154 @@
+# Remarks:
+# - See the README.md document in the directory on GitHub.
+# - Amber uses a script to download patches for Amber and Ambertools. 
+# - This script is inspired by the script from CSCS.
+easyblock = 'MakeCp'
+
+name =                 'Amber'
+version =              '18'
+local_ambertools_ver = '19'
+# Patch levels from http://ambermd.org/bugfixes16.html and http://ambermd.org/bugfixesat.html
+patchlevels =          (9, 17)  # (AmberTools, Amber), EasyBlock parameter. Look on http://ambermd.org/ATPatches.php and http://ambermd.org/AmberPatches.php for the numbers.
+#patchlevels =          (1, 1)  # (AmberTools, Amber), EasyBlock parameter. Look on http://ambermd.org/ATPatches.php and http://ambermd.org/AmberPatches.php for the numbers.
+versionsuffix =        '-AmberTools-%s-patchlevel-%s-%s' % (local_ambertools_ver, patchlevels[1], patchlevels[0])
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
+
+homepage = 'http://ambermd.org/amber.html'
+
+whatis = [
+    "Description: Amber is software for performing molecular dynamics and structure prediction",
+    "Contains: Amber %s patchlevel %s and AmberTools %s patchlevel %s" % (version, patchlevels[1], local_ambertools_ver, patchlevels[0]) ,    
+]
+
+description = """
+Amber (originally Assisted Model Building with Energy
+Refinement) is software for performing molecular dynamics and structure
+prediction.
+
+This module contains Amber %(v_amber)s patchlevel %(p_amber)s and AmberTools %(v_AT)s patchlevel %(p_AT)s.
+
+This module contains serial, OpenMP, MPI and hybrid MPI/OpenMP executables
+when they exist. Be careful as some of the auxiliary commands are just serial
+binaries while others are OpenMP.
+
+In fact, cpptraj is included in all 4 versions, respectively cpptraj, cpptraj.OMP,
+cpptraj.MPI and cpptraj.MPI.OMP. A few other commands have serial and MPI versions,
+the latter with the extension .MPI.
+""" % {
+    'v_amber': version,
+    'v_AT':    local_ambertools_ver,
+    'p_amber': patchlevels[1],
+    'p_AT':    patchlevels[0]
+}
+
+usage = """
+UAntwerp-specific: AmberTools is free software, but Amber itself is not. 
+Hence you need membership of the aamber group to be able to use this package.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': False, 'openmp': False}  # We do this via configure options.
+
+sources = [
+    { 'filename':    'Amber%(version)s.tar.bz2', 
+      'extract_cmd': 'tar xjf %s --strip-components=1' },
+    { 'filename':    'AmberTools%s.tar.bz2' % local_ambertools_ver,
+      'extract_cmd': 'tar xjf %s --strip-components=1' },
+]
+for local_i in range(1, patchlevels[1]+1):
+    sources.append( { 'download_filename': 'update.%s' % (local_i),
+                      'filename':          'Amber%s/update.%s' % (version, local_i),
+                      'source_urls':       ['https://ambermd.org/bugfixes/%s.0/' % (version)],
+                      'extract_cmd':       'mkdir -p .patches/Amber'+ version + '_Unapplied_Patches ; ' + 
+                                           'cp %s .patches/Amber'+ version + '_Unapplied_Patches'} )
+for local_i in range(1, patchlevels[0]+1):
+    sources.append( { 'download_filename': 'update.%s' % (local_i),
+                      'filename':          'AmberTools%s/update.%s' % (local_ambertools_ver, local_i),
+                      'source_urls':       ['https://ambermd.org/bugfixes/AmberTools/%s.0/' % (local_ambertools_ver)],
+                      'extract_cmd':       'mkdir -p .patches/AmberTools'+ local_ambertools_ver + '_Unapplied_Patches ; ' + 
+                                           'cp %s .patches/AmberTools'+ local_ambertools_ver + '_Unapplied_Patches'} )
+
+#checksums = [
+#    '2060897c0b11576082d523fb63a51ba701bc7519ff7be3d299d5ec56e8e6e277',  # Amber18.tar.bz2
+#    '0c86937904854b64e4831e047851f504ec45b42e593db4ded92c1bee5973e699',  # AmberTools19.tar.bz2
+#]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True), # For flex
+]
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version) ), # For zlib, bzip2
+#    ('netCDF',   '4.7.0', '-MPI'), # netCDF including the Fortran interface.
+#    ('Python',   '3.7.4'), # Already includes matplotlib @ UAntwerp, otherwise add!
+] # We use the internal Boost and FFTW3 as we have not yet succeeded to let the configure 
+  # recognize the preinstalled ones
+
+# The package needs to be build in place, --prefix option is too buggy.
+buildininstalldir = True
+
+# single make process since parallel builds might fail
+maxparallel = 1
+
+#
+# We abuse the configure step to apply the updates to the amber code as we cannot modify the 
+# patch phase where this should really be done.
+#
+with_configure = True
+configure_cmd  = 'export AMBERHOME=%(builddir)s && '
+configure_cmd += './update_amber --update-to %s/%s && ' % ("AmberTools", patchlevels[0])
+configure_cmd += './update_amber --update-to %s/%s && ' % ("Amber",      patchlevels[1])
+configure_cmd += 'echo "Updates done..." '
+# Note that you will see some junk in the output of the echo command as EasyBuild adds the options
+# it would also add to the regular configure command.
+
+#
+# We use the build phase to configure and build executables for serial, oppenmp, hybrid and mpi execution.
+# The order was taken from some EasyConfigs used by CSCS.
+#
+local_common_build_opts = '--no-updates -mkl -noX11 --skip-python intel'
+build_cmd  = 'export AMBERHOME=%(builddir)s && '
+# Serial build
+build_cmd += './configure ' + local_common_build_opts + ' && '
+build_cmd += "make install SHELL='sh -x' && "
+build_cmd += 'make clean && '
+# OpenMP build
+build_cmd += './configure -openmp ' + local_common_build_opts + ' && '
+build_cmd += "make install SHELL='sh -x' && "
+build_cmd += 'make clean && '
+# Hybrid MPI/OpenMP build
+build_cmd += './configure -openmp -intelmpi ' + local_common_build_opts + ' && '
+build_cmd += "make install SHELL='sh -x' && "
+build_cmd += 'make clean && '
+# MPI build
+build_cmd += './configure -intelmpi ' + local_common_build_opts + ' && '
+build_cmd += "make install SHELL='sh -x' && "
+build_cmd += 'make clean && '
+# Dummy command at the end.
+build_cmd += 'echo "Building done"'
+# Note that you will see some junk in the output of the echo command as EasyBuild adds the options
+# it would also add to the regular build command.
+
+# Nothing to copy as we do an in-place build, but EasyBuild requires this parameter.
+files_to_copy = []
+
+postinstallcmds = [
+    'cd %(installdir)s ; /bin/rm -rf AmberTools src benchmarks doc recipe test updateutils',
+    'cd %(installdir)s ; /bin/rm configure Makefile update_amber',
+    'cd %(installdir)s ; /bin/rm -rf cmake cmake-packaging CMakeLists.txt configure_cmake',
+]
+
+sanity_check_paths = {
+#    'files' : [ 'bin/pmemd.MPI', 'bin/pmemd' ],
+    'files' : [],
+    'dirs'  : [ 'dat' ],
+}
+
+modextravars = {
+    'AMBERHOME' : '%(builddir)s',
+}
+
+moduleclass = 'bio'

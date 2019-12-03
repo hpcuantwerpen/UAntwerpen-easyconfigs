@@ -191,7 +191,28 @@ Likely suboptimal compile options were found in:
       versions they build several build types together in one module, which may be 
       a good thing as otherwise some modules would be missing some commands (e.g., 
       the ones that don't support MPI, OpenMP or hybrid mode).
-* One should set the number of patches for AmberTools and Amber at the start of the 
+
+For the development of the EasyConfig used at UAntwerp, we started from the CSCS one
+but extended it in several ways.
+
+* As `--prefix` still works unreliably in Amber18, we do an in-place build and 
+  remove the sources afterwards.
+* As with the regular EasyConfig for Amber, one should set the number of patches 
+  for AmberTools and Amber at the start of the 
   EasyConfig file, see the variable patchlevel. To determine the correct number, go to
     * [AmberTools patches page](https://ambermd.org/ATPatches.php)
     * [Amber patches page](https://ambermd.org/AmberPatches.php)
+* We specify the extract command for the tar files so that the amberXX/-prefix is already
+  removed at the untar phase. Furthermore we extend the source list with all patches for
+  Amber and AmberTools, and make sure they are downloaded to the appropriate subdirectories
+  AmberXX and AmberToolsYY of the Sources subdirectory to avoid name conflicts. We use
+  `extract_cmd` to move these to the correct subdirectories of the unpacked sources.
+* As we cannot adapt the installation of the patches without writing or adapting the 
+  EasyBlock for Amber, we install the patches with `update_amber` during the configure phase.
+* Just as in the CSCS EasyConfig, we do 4 builds of Amber in the same directories, 
+  in the order serial, OpenMP, hybrid MPI+OpenMP and MPI. Note that the serial build is 
+  needed to ensure that the full set of tools is installed, as the other options only seem
+  to install those tools that support either OpenMP or MPI. However, by first doing the 
+  serial build, we also ensure that OpenMP versions of the tools will overwrite the serial
+  ones if they exist.
+* We use `postinstallcmds` to clean up the sources.
