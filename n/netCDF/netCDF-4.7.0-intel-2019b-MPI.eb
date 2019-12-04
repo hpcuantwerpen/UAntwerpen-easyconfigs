@@ -9,6 +9,7 @@ easyblock = 'Bundle'
 name =                  'netCDF'
 version =               '4.7.0'
 versionsuffix =         '-MPI'
+local_version_pnetcdf = '1.12.0'
 local_version_fortran = '4.4.5'
 local_version_cpp4 =    '4.3.0'
 local_version_cpp3 =    '4.2'
@@ -25,7 +26,7 @@ homepage = 'http://www.unidata.ucar.edu/software/netcdf/'
 
 whatis = [
     'Description: File format for array-oriented scientific data',
-    'This module contains the netCDF command line tools and static and shared libraries for C, C++ and Fortran, compiled with MPI support',
+    'This module contains the netCDF command line tools and static and shared libraries for C, C++ and Fortran, compiled with MPI support, and the PnetCDF backend',
 ] 
 
 description = """
@@ -54,6 +55,9 @@ Unidata Program Center in Boulder, Colorado, with contributions from many other
 netCDF users.
 
 This module contains the C, Fortran and both C++-interfaces and supports MPI.
+
+The PnetCDF back-end for parallel access to files in the non-HDF5-based formats
+is also available.
 """
 
 usage = """
@@ -66,7 +70,7 @@ The module contains a number of command line tools for managing netCDF files:
 * ncgen3: From a CDL file generate a netCDF classic or 64 bit classicfile, a
           C program, or a Fortran program
 There are also a number of commands to request information about the netCDF
-configuration: nc-config, ncxx4-config and nf-config.
+configuration: nc-config, ncxx4-config, nf-config and pnetcdf_version.
 
 The API is documented in the web-based documentation and to some extent also
 in the netcdf and netcds_fortran manual pages.
@@ -75,6 +79,7 @@ in the netcdf and netcds_fortran manual pages.
 docurls = [
     'Web-based documentation: https://www.unidata.ucar.edu/software/netcdf/docs/index.html',
     'Man pages for the command line utitlities (section 1) and netcdf and netcdf_fortran (section 3)',
+    'Web-based documentation for PnetCDF: https://parallel-netcdf.github.io/',
 ]
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
@@ -82,7 +87,8 @@ toolchainopts = {'pic': True, 'usempi': True}
 
 #sources = ['v%(version)s.tar.gz']
 source_urls = [
-    'ftp://ftp.unidata.ucar.edu/pub/netcdf/'
+    'ftp://ftp.unidata.ucar.edu/pub/netcdf/',
+    'https://parallel-netcdf.github.io/Release/',
 ]
 
 dependencies = [
@@ -94,20 +100,23 @@ builddependencies = [
     ('buildtools', local_buildset, '', True),
 ]
 
-# make sure both static and shared libs are built
-#configopts = [
-#    "-DBUILD_SHARED_LIBS=OFF ",
-#    "-DBUILD_SHARED_LIBS=ON ",
-#]
-
 default_easyblock = 'ConfigureMake'
 
 components = [
+    ('PnetCDF', local_version_pnetcdf, { 
+#       https://parallel-netcdf.github.io/Release/pnetcdf-1.12.0.tar.gz
+        'sources':    ['pnetcdf-%(version)s.tar.gz'],
+        'start_dir':  'pnetcdf-%(version)s',
+        'configopts': '--enable-shared --enable-static'
+    }),
     ('netCDF-C', version, { 
 #       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-c-4.6.3.tar.gz
-        'sources': ['netcdf-c-%(version)s.tar.gz'],
-        'start_dir': 'netcdf-c-%(version)s',
-        'configopts': '--enable-shared --enable-static'
+        'sources':        ['netcdf-c-%(version)s.tar.gz'],
+        'start_dir':      'netcdf-c-%(version)s',
+        'preconfigopts':  'LIBRARY_PATH=%(installdir)s/lib:${LIBRARY_PATH} CPATH=%(installdir)s/include:${CPATH} ',
+        'configopts':     '--enable-shared --enable-static --enable-pnetcdf --with-pnetcdf=%(installdir)s',
+        'prebuildopts':   'LIBRARY_PATH=%(installdir)s/lib:${LIBRARY_PATH} CPATH=%(installdir)s/include:${CPATH} ',
+        'preinstallopts': 'LIBRARY_PATH=%(installdir)s/lib:${LIBRARY_PATH} CPATH=%(installdir)s/include:${CPATH} ',
     }),
     ('netCDF-Fortran', local_version_fortran, { 
 #       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz
@@ -117,7 +126,7 @@ components = [
     }),
     ('netCDF-CXX3', local_version_cpp3, { 
 #       ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-cxx-4.2.tar.gz
-        'sources':   ['netcdf-cxx-%(version)s.tar.gz'],
+        'sources':    ['netcdf-cxx-%(version)s.tar.gz'],
         'start_dir':  'netcdf-cxx-%(version)s',
         'configopts': '--enable-shared --enable-static'
     }),
@@ -128,5 +137,12 @@ components = [
         'configopts': '--enable-shared --enable-static'
     }),
 ]
+
+sanity_check_paths = {
+    'files': ['bin/pnetcdf_version', 'bin/nc-config', 'bin/ncxx4-config', 'bin/nf-config'],
+    'dirs':  ['include', 'lib'],
+}
+
+modextravars = {'PNETCDF': '%(installdir)s'}
 
 moduleclass = 'data'
