@@ -167,6 +167,11 @@ Likely suboptimal compile options were found in:
  * CPHSTATS: AmberTools/src/cphstats: No optimization options
  * NFE: AmberTools/src/nfe-umbrella-slice: No optimization options 
 
+Programs that are compiled during the configure phase in a not so optimal way:
+  * Boost is compiled with the GNU C++ compiler instead of the Intel one. `-O3` is used 
+    but without `-march=native`. Though that probably does not matter to much for most 
+    of what is in Boost.
+   
 
 ## Remarks about the EasyConfig
 
@@ -216,3 +221,10 @@ but extended it in several ways.
   serial build, we also ensure that OpenMP versions of the tools will overwrite the serial
   ones if they exist.
 * We use `postinstallcmds` to clean up the sources.
+
+Some tricks in the EasyConfig to work around problems in Amber:
+* No host-specific optimizations in CPPTRAJ: The configure script of CPPTRAJ is called without 
+  the `-tune` from `AmberTools/src/configure2.*` option and therefore does only enable 
+  optimizations but no host-specific optimizations. There is a workaround by specifying the 
+  compiler option for the host-specific optimizations via the environment variable `TUNEFLAGS`.
+  

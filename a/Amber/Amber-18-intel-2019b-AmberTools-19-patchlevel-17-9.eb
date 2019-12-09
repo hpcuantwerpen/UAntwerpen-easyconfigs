@@ -82,7 +82,7 @@ builddependencies = [
 
 dependencies = [
     ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version) ), # For zlib, bzip2
-#    ('netCDF',   '4.7.0', '-MPI'), # netCDF including the Fortran interface.
+    ('netCDF',   '4.7.0', '-MPI'), # netCDF including the Fortran interface.
     ('Python',   '3.7.4'), # Already includes matplotlib @ UAntwerp, otherwise add!
 ] # We use the internal Boost and FFTW3 as we have not yet succeeded to let the configure 
   # recognize the preinstalled ones
@@ -110,22 +110,25 @@ configure_cmd += 'echo "Updates done..." '
 # The order was taken from some EasyConfigs used by CSCS.
 #
 local_common_build_opts = '--no-updates -mkl -noX11 --with-python ${EBROOTPYTHON}/bin/python --python-install local intel'
+local_netcdf            = '--with-netcdf ${EBROOTNETCDF} '
+local_pnetcdf           = '--with-netcdf ${EBROOTNETCDF} --with-pnetcdf ${EBROOTNETCDF} '
 build_cmd  = 'export AMBERHOME=%(builddir)s && '
+build_cmd += 'export TUNEFLAGS=\'-xHost\' && '
 build_cmd += 'PYTHONPATH=%(builddir)s/lib/python%(pyshortver)s/site-packages/:${PYTHONPATH} && '
 build_cmd += 'unset I_MPI_HYDRA_RMK && unset I_MPI_HYDRA_BOOTSTRAP && ' # Needed to be able to compile on a login node as otherwise some test in Python fails.
-build_cmd += './configure ' + local_common_build_opts + ' && '
+build_cmd += './configure ' + local_netcdf + local_common_build_opts + ' && '
 build_cmd += "make install SHELL='sh -x' && "
 build_cmd += 'make clean && '
 # OpenMP build
-build_cmd += './configure -openmp ' + local_common_build_opts + ' && '
+build_cmd += './configure -openmp ' + local_netcdf + local_common_build_opts + ' && '
 build_cmd += "make install SHELL='sh -x' && "
 build_cmd += 'make clean && '
 # Hybrid MPI/OpenMP build
-build_cmd += './configure -openmp -intelmpi ' + local_common_build_opts + ' && '
+build_cmd += './configure -openmp -intelmpi ' + local_pnetcdf + local_common_build_opts + ' && '
 build_cmd += "make install SHELL='sh -x' && "
 build_cmd += 'make clean && '
 # MPI build
-build_cmd += './configure -intelmpi ' + local_common_build_opts + ' && '
+build_cmd += './configure -intelmpi ' + local_pnetcdf + local_common_build_opts + ' && '
 build_cmd += "make install SHELL='sh -x' && "
 build_cmd += 'make clean && '
 # Dummy command at the end.
