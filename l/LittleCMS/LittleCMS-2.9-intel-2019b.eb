@@ -1,0 +1,40 @@
+easyblock = 'ConfigureMake'
+
+name =    'LittleCMS'
+version = '2.9'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
+
+homepage = 'http://www.littlecms.com/'
+
+whatis = [
+    "Description: LittleCMS is a small-footprint color management engine",
+]
+
+description = """
+Little CMS intends to be an OPEN SOURCE small-footprint color management engine,
+with special focus on accuracy and performance. 
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['http://sourceforge.net/projects/lcms/files/lcms/%(version)s/']
+sources = ['lcms2-%(version)s.tar.gz']
+checksums = ['48c6fdf98396fa245ed86e622028caf49b96fa22f3e5734f853f806fbc8e7d20']
+
+dependencies = [
+    ('baselibs',    local_buildset, '', ('GCCcore', local_gcc_version)), # For libjpeg-turbo
+]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True), # Not really needed, works with OS-provided tools also.
+]
+
+sanity_check_paths = {
+    'files': ['bin/jpgicc', 'bin/linkicc', 'bin/psicc', 'bin/transicc', 'include/lcms2.h', 'include/lcms2_plugin.h',
+              'lib/liblcms2.a', 'lib/liblcms2.%s' % SHLIB_EXT, 'lib/pkgconfig/lcms2.pc'],
+    'dirs': ['share/man'],
+}
+
+moduleclass = 'vis'
