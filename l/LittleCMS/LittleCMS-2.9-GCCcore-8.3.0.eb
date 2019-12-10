@@ -3,8 +3,9 @@ easyblock = 'ConfigureMake'
 name =    'LittleCMS'
 version = '2.9'
 
-local_buildset =    '2019b'
-local_gcc_version = '8.3.0'
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'http://www.littlecms.com/'
 
@@ -17,18 +18,19 @@ Little CMS intends to be an OPEN SOURCE small-footprint color management engine,
 with special focus on accuracy and performance. 
 """
 
-toolchain = {'name': 'intel', 'version': local_buildset}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 source_urls = ['http://sourceforge.net/projects/lcms/files/lcms/%(version)s/']
-sources = ['lcms2-%(version)s.tar.gz']
-checksums = ['48c6fdf98396fa245ed86e622028caf49b96fa22f3e5734f853f806fbc8e7d20']
+sources =     ['lcms2-%(version)s.tar.gz']
+checksums =   ['48c6fdf98396fa245ed86e622028caf49b96fa22f3e5734f853f806fbc8e7d20']
 
 dependencies = [
-    ('baselibs',    local_buildset, '', ('GCCcore', local_gcc_version)), # For libjpeg-turbo
+    ('baselibs',    local_buildset), # For libjpeg-turbo
 ]
 
 builddependencies = [
-    ('buildtools', '%(toolchain_version)s', '', True), # Not really needed, works with OS-provided tools also.
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True) # Not really needed, works with OS-provided tools also.
 ]
 
 sanity_check_paths = {
