@@ -7,10 +7,12 @@ easyblock = 'ConfigureMake'
 name = 'ImageMagick'
 version = '7.0.9-7'
 
-local_buildset =    '2019b'
-local_gcc_version = '8.3.0'
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
 
 homepage = 'http://www.imagemagick.org/'
+
 whatis = [
     "Description: ImageMagick is a software suite to create, edit, compose, or convert bitmap images",
     "Keywords: Visualization",
@@ -39,14 +41,14 @@ with other commands on the system, so you may need to specify the full path to a
 the ImageMagick commands or those other commands depending on the specific PATH.
 
 The module also creates aliases for all ImageMagick commands that do not contain 
-"Magick" or "magick" in their name. E.g., magick-animate is an alias for animate. 
+"Magick" or "magick" in their name. E.g., magick-animate is an alias for animate.
 """
 
 docurls = [
     "Man pages (section 1) for all commands"
 ]
 
-toolchain = {'name': 'intel', 'version': local_buildset}
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 # https://github.com/ImageMagick/ImageMagick/archive/7.0.8-27.tar.gz
 sources = [
@@ -55,17 +57,19 @@ sources = [
       'source_urls':       ['https://github.com/ImageMagick/ImageMagick/archive'],
     }
 ]
+
 checksums = ['601bb6efb64c7d28038cc255b0d4331a08690e6146252b21bf202b0fa33b68f6']
 
 dependencies = [
-    ('baselibs',    local_buildset, '', ('GCCcore', local_gcc_version)), # For bzip2, LibTIFF, JasPer, libjpeg-turbo
-    ('X11',         local_buildset, '', ('GCCcore', local_gcc_version)),
-    ('Ghostscript', '9.27',         '', ('GCCcore', local_gcc_version)),
+    ('baselibs',    local_buildset), # For bzip2, LibTIFF, JasPer, libjpeg-turbo
+    ('X11',         local_buildset),
+    ('Ghostscript', '9.27'),
     ('LittleCMS',   '2.9'),
 ]
 
 builddependencies = [
-    ('buildtools', '%(toolchain_version)s', '', True), # for pkg-config.
+    ('binutils',   local_binutils_version),
+    ('buildtools',  local_buildset,        '', True), # for pkg-config.
 ]
 
 configopts = "--with-gslib --with-x"
