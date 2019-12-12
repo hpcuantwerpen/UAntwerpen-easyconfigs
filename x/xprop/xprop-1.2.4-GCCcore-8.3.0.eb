@@ -1,0 +1,43 @@
+easyblock = 'ConfigureMake'
+
+name =    'xprop'
+version = '1.2.4'
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
+
+homepage = "http://www.x.org/wiki/"
+
+whatis = [
+    "Description: xprop is a utility for displayin window and font properties in an X server."    
+]
+
+description = """
+The xprop utility is for displaying window and font properties in an X server.
+One window or font is selected using the command line arguments or possibly
+in the case of a window, by clicking on the desired window. A list of
+properties is then given, possibly with formatting information.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
+
+source_urls = ['http://ftp.x.org/archive/individual/app/']
+sources =     [SOURCE_TAR_BZ2]
+checksums =   ['8c77fb096e46c60032b7e2bde9492c3ffcc18734f50b395085a5f10bfd3cf753']
+
+builddependencies = [
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True), # for pkg-config.
+]
+
+dependencies = [
+    ('X11', local_buildset, '', ('GCCcore', local_gcc_version)),
+]
+
+sanity_check_paths = {
+    'files': ['bin/xprop'],
+    'dirs':  [],
+}
+
+moduleclass = 'vis'
