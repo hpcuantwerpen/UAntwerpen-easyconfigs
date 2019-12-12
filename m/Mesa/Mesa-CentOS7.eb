@@ -1,0 +1,32 @@
+easyblock = 'Bundle'
+
+name =    'Mesa'
+version = 'CentOS7'
+
+homepage = 'https://www.mesa3d.org/'
+
+whatis = [
+    'Description: Mesa is an open-source implementation of the OpenGL specification - a system for rendering interactive 3D graphics.',
+    'This module is a dummy needed because some build recipes in the EasyBuild system check for the module.',
+]
+
+description = """
+Mesa is an open-source implementation of the OpenGL specification - 
+a system for rendering interactive 3D graphics.
+
+This module is a dummy needed because some build recipes in the 
+EasyBuild system check for the module.
+""" 
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+osdependencies = [
+    ('mesa-libGL-devel'),
+]
+
+modluafooter = """
+setenv("EBVERSIONMESA", "18.3.4-5")
+setenv("EBROOTMESA",    "/usr")
+"""
+
+moduleclass = 'vis'
