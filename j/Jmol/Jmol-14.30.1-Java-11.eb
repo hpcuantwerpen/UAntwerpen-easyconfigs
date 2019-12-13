@@ -1,0 +1,84 @@
+easyblock = 'MakeCp'
+
+name =          'Jmol'
+version =       '14.30.1'
+local_java =    'Java'
+local_javaver = '11'
+versionsuffix = '-%s-%s' % (local_java, local_javaver)
+
+homepage = 'http://jmol.sourceforge.net/'
+
+whatis = [
+    "Description: Jmol is an interactive viewer for three-dimensnional chemical structures"
+]
+
+description = """
+Jmol is a molecular viewer for 3D chemical structures implemented as a stand-alone local_java program 
+(Jmol.jar). Jmol can read many file types, including PDB, CIF, SDF, MOL, PyMOL PSE files, 
+and Spartan files, as well as output from Gaussian, GAMESS, MOPAC, VASP, CRYSTAL, CASTEP, 
+QuantumEspresso, VMD, and many other quantum chemistry programs. Files can be transferred 
+directly from several databases, including RCSB, EDS, NCI, PubChem, and MaterialsProject. 
+Multiple files can be loaded and compared. A rich scripting language and a well-developed 
+web API allow easy customization of the user interface. Features include interactive animation 
+and linear morphing. Jmol interfaces well with JSpecView for spectroscopy, JSME for 
+2D->3D conversion, POV-Ray for images, and CAD programs for 3D printing (VRML export).
+
+This module only supports the Jmol Java apps, not the other modes of running Jmol.
+"""
+
+usage = """
+The following Jmol commands are supported:
+* jmol.sh: Script that starts Jmol
+* jmol:    Alternative script to start Jmol
+
+Note that since this is an X program, your terminal window on the cluster needs to be
+connected to a X server. Hence either use ssh -X with an X server on your desktop/laptop
+or a VNC session.
+"""
+
+docurls = [
+    "Web-based documentation on http://jmol.sourceforge.net/docs/",
+]
+
+toolchain = {'name': 'dummy', 'version': ''}
+
+local_version_maj_min = '.'.join(version.split('.')[:2])
+# https://sourceforge.net/projects/jmol/files/Jmol/Version%2014.30/Jmol%2014.30.1/Jmol-14.30.1-binary.zip/download
+sources =     ['%(name)s-%(version)s-binary.zip']
+source_urls = ['https://sourceforge.net/projects/jmol/files/Jmol/Version%20' + local_version_maj_min + '/Jmol%20' + version]
+checksums =   ['ebd7edda119a8a969025a31c4957fb5cb15e9458a41c2f9c08c75af1e20cb96d']
+
+dependencies = [
+    (local_java, local_javaver)
+]
+
+skipsteps = [ 'configure', 'build']
+
+files_to_copy = [
+    (['jmol', 'jmol.sh'], 'bin'),
+    (['Jmol.jar', 'JSpecView.jar', 'JmolLib.jar', 'JmolData.jar', 'jspecview.properties'], 'jars'),
+    'CHANGES.txt',
+    'COPYRIGHT.txt',
+    'LEAME.txt',
+    'LICENSE.txt',
+    'README.txt',
+]
+
+postinstallcmds = [
+    'cd %(installdir)s/bin ; chmod a+x *',
+]
+
+sanity_check_paths = {
+    'files': ['bin/jmol.sh', 'jars/Jmol.jar'],
+    'dirs':  ['bin', 'jars'],
+}
+
+modextrapaths = {
+    'CLASSPATH': ['jars/Jmol.jar', 'jars/JSpecView.jar', 'jars/JmolLib.jar', 'jars/JmolData.jar'],
+}
+
+modextravars = { 
+    'JMOL_HOME' : '%(installdir)s/jars' 
+}
+
+moduleclass = 'bio'
