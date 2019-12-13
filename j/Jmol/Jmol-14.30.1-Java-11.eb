@@ -34,6 +34,15 @@ The following Jmol commands are supported:
 Note that since this is an X program, your terminal window on the cluster needs to be
 connected to a X server. Hence either use ssh -X with an X server on your desktop/laptop
 or a VNC session.
+
+WARNING: Java is not a good friend of X11 and remote computing. Java user interfaces
+can be slow when run over an X11 connection. Moreover, we have experienced that
+Java GUI programs start background processes that are not properly closed when
+closing the app, causing ssh connections to hang. For Jmol in particular, we have
+seen that processes named dbus-launch and dbus-daemon are started but not 
+properly closed. Hence if you log out from your ssh session that maintains the
+tunnel for X11, that ssh session will hang until you manually kill those
+processes.
 """
 
 docurls = [
