@@ -1,0 +1,100 @@
+easyblock = 'Bundle'
+
+name =          'ASE'
+version =       '3.18.1'
+versionsuffix = '-IntelPython3'
+
+local_buildset =         '2019b'
+local_python_version =   '3.6.9'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
+
+local_pyshortversion = '.'.join(local_python_version.split('.')[:-1])
+
+homepage = 'http://wiki.fysik.dtu.dk/ase'
+
+whatis = [
+    "Description: ASE is a python package providing an open source Atomic Simulation Environment in the Python scripting language.",
+]
+
+description = """
+The Atomic Simulation Environment (ASE) is a set of tools and Python modules for
+setting up, manipulating, running, visualizing and analyzing atomistic
+simulations. The code is freely available under the GNU LGPL license.
+
+ASE provides interfaces to different codes through Calculators which are used
+together with the central Atoms object and the many available algorithms in ASE.
+
+See the ASE web site for more information.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
+
+#source_urls = [PYPI_LOWER_SOURCE]
+#sources = [SOURCELOWER_TAR_GZ]
+#checksums = ['8fe49ddc5a554b69b6468dd1f45a29f67c61997319d0cb7e217e41a5aeef8fb4']
+
+# Compared to the EasyConfigs from EasyBuild:
+# - Tkinter (Python Tk interface) is part of the Python install, the package Tkinter
+#   is not needed, in fact, it seems to download the Python distribution????
+# - matplotlib is included in our own Python installations.
+dependencies = [
+    ('IntelPython3',          local_buildset, '', True),
+    ('IntelPython3-Packages', local_buildset),
+]
+
+builddependencies = [
+    ('binutils', local_binutils_version),
+]
+
+# This is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+
+exts_list = [
+    ('Werkzeug', '0.16.0', {
+        'modulename':  'werkzeug',
+        'source_urls': ['https://pypi.python.org/packages/source/W/Werkzeug'],
+    }),
+    ('MarkupSafe', '1.1.1', {
+        'modulename':  'markupsafe',
+        'source_urls': ['https://pypi.python.org/packages/source/M/MarkupSafe'],
+    }),
+    ('Jinja2', '2.10.3', {
+        'modulename':  'jinja2',
+        'source_urls': ['https://pypi.python.org/packages/source/J/Jinja2'],
+    }),
+    ('itsdangerous', '1.1.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/i/itsdangerous'],
+    }),
+#    ('Click', '7.0', { # Included in the Python 3.7.4 extension list.
+#        'modulename':  'click',
+#        'source_urls': ['https://pypi.python.org/packages/source/c/click'],
+#    }),
+    ('Flask', '1.1.1', {
+        'modulename':  'flask',
+        'source_urls': ['https://pypi.python.org/packages/source/F/Flask'],
+    }),
+    ('ase', version, {
+#        'sources'    : [SOURCELOWER_TAR_GZ],
+        'source_urls': ['https://pypi.python.org/packages/source/a/ase'],
+    }),
+]
+
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = True
+
+sanity_check_paths = {
+    'files': ['bin/ase'],
+    'dirs':  [],
+}
+
+# make sure Tkinter is available, otherwise 'ase gui' will not work
+sanity_check_commands = ["python -c 'import tkinter' "]
+
+# As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
+modextrapaths = {
+    'PYTHONPATH': ['lib/python'+ local_pyshortversion + '/site-packages']
+}
+
+moduleclass = 'chem'
