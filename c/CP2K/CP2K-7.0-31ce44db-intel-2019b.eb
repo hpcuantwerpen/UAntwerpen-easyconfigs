@@ -44,8 +44,6 @@ upstream_contacts = [
 
 toolchain = {'name': 'intel', 'version': '2019b'}
 
-maxparallel = 28
-
 sources = [{
     'filename': 'cp2k-7.0-31ce44db.tar.gz',
     'git_config': {
