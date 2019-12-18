@@ -1,0 +1,88 @@
+easyblock = "PythonPackage"
+
+name =          'GPAW'
+version =       '19.8.1'
+local_suffix =  '-Python-%(pyver)s'
+versionsuffix = '-Python-%(pyver)s-easybuilders'
+
+local_ASE_version = '3.18.1'
+
+local_buildset = '2019b'
+
+homepage = 'http://wiki.fysik.dtu.dk/gpaw'
+
+whatis = [
+    "Description: GPAW: DFT and beyond within the projector-augmented wave method.",
+    'This module also includes the compatible ASE version ' + local_ASE_version,
+]
+
+description = """
+GPAW is a density-functional theory (DFT) Python code based on the
+projector-augmented wave (PAW) method and the atomic simulation environment
+(ASE). It uses plane-waves, atom-centered basis-functions or real-space
+uniform grids combined with multigrid methods.
+
+This module also includes a matching version of ASE (version %(ASE_version)s),
+the Atomic Simulation Environment, which is used internally by GPAW.
+
+The GPAW manual advises the OMP_NUM_THREADS should be set to 1 so we do this
+in the module.
+
+The version in this module is compiled using the Intel MKL libraries for FFT.
+The optional libvdwxc support is NOT included in this module.
+The optional ELPA support is NOT included in this module.
+
+""" % {
+    'ASE_version': local_ASE_version,    
+}
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True}
+
+source_urls = [PYPI_LOWER_SOURCE]
+sources = [
+    SOURCELOWER_TAR_GZ,
+    {
+        'filename':          'GPAW-%(version)s-eb_customize_intel_MKLFFTW.py',
+        'download_filename': 'eb_customize.py',
+        'extract_cmd':       'cp %s gpaw-%(version)s/eb_customize.py'  
+    },
+]
+checksums = [
+    '79dee367d695d68409c4d69edcbad5c8679137d6715da403f6c2500cb2178c2a',  # gpaw-19.8.1.tar.gz
+#    'fd3668ae52683d4e36e9c8b4e3e69faa93d949601d1128662dc31be61876610c',  # GPAW-19.8.1-customize-intel.patch
+]
+
+dependencies = [
+    ('Python', '3.7.4'),
+    ('ASE', local_ASE_version, local_suffix),
+    ('libxc', '4.3.4'),
+]
+
+buildcmd = 'build --customize=eb_customize.py --remove-default-flags'
+install_target = 'install --customize=eb_customize.py --remove-default-flags'
+
+download_dep_fail = True
+use_pip = False
+
+# required because we're building Python packages using Intel compilers on top of Python built with GCC
+#check_ldshared = True
+
+postinstallcmds = [ # It turns out this runs in the build dir of the last extension.
+    'mkdir -p %(installdir)s/easybuild', # The directory is not yet created by EasyBuild when this executes.
+    'pwd ; ls',
+    'cp eb_customize.py   %(installdir)s/easybuild/GPAW-%(version)s-eb_customize_intel_MKLFFTW.py',
+    'cp configuration.log %(installdir)s/easybuild/GPAW_configuration.log',
+]
+
+sanity_check_paths = {
+    'files': ['bin/gpaw%s' % x for x in ['', '-analyse-basis', '-basis', '-mpisim', '-plot-parallel-timings',
+                                         '-python', '-runscript', '-setup', '-upfplot']],
+    'dirs': ['lib/python%(pyshortver)s/site-packages/%(namelower)s']
+}
+
+modextravars = {
+    'OMP_NUM_THREADS': '1',
+}
+
+moduleclass = 'chem'
