@@ -113,7 +113,8 @@ exts_list = [
     }),
     # GPAW and its dependencies
     ('gpaw', version, {
-        'source_urls':    PYPI_LOWER_SOURCE,
+#        'source_urls':    PYPI_LOWER_SOURCE, # Doesn't always work but don't understand why
+        'source_urls':    ['https://pypi.python.org/packages/source/g/gpaw'],
         'use_pip':        False,
         'buildcmd':       'build   --customize=../../GPAW_eb_customize.py --remove-default-flags',
         'buildopts':      ' && echo -e "\\nGPAW configuration log:\\n" && cat configuration.log && cp configuration.log ../../GPAW_configuration.log',

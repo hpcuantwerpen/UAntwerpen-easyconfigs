@@ -120,7 +120,8 @@ exts_list = [
     }),
     # GPAW and its dependencies
     ('gpaw', version, { # Includes binaries!
-        'source_urls':    PYPI_LOWER_SOURCE,
+#        'source_urls':    PYPI_LOWER_SOURCE, # Doesn't always work but don't understand why
+        'source_urls':    ['https://pypi.python.org/packages/source/g/gpaw'],
         'use_pip':        False,
         'check_ldshared': True, # Needed for a GCC-based Python with Intel-based extensions.
         'buildcmd':       'build   --customize=../../GPAW_eb_customize.py --remove-default-flags',
