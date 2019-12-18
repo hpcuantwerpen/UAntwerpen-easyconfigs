@@ -1,0 +1,66 @@
+easyblock = 'ConfigureMake'
+
+name =          'libvdwxc'
+version =       '0.4.0'
+versionsuffix = '-sequential'
+
+local_buildset = '2019b'
+
+homepage = 'http://libvdwxc.org'
+
+whatis = [
+    "Description: libvdwxc: A library for vdW-DF exchange-correlation functionals"
+]
+
+description = """
+libvdwxc is a general library for evaluating energy and potential for 
+exchange-correlation (XC) functionals from the vdW-DF family that can be used 
+with various of density functional theory (DFT) codes. This work was inspired 
+by success of libXC, a library for local and semilocal XC functionals. 
+At the moment, libvdwxc provides access to the DF1, DF2, and CX functionals 
+and interfaces for GPAW and Octopus. The library has been tested with respect 
+to the S22 test set, various bulk properties of metals and semiconductors, 
+and surface energies.
+
+libvdwxc and its development are hosted on gitlab. Bugs and feature requests 
+are ideally submitted via the gitlab issue tracker. The development team can 
+also be reached by email via questions@libvdwxc.org.
+
+If you use libvdwxc in your research please include the following citation in 
+publications or presentations:
+* A. H. Larsen, M. Kuisma, J. Löfgren, Y. Pouillon, P. Erhart, and P. Hyldgaard, 
+  libvdwxc: a library for exchange–correlation functionals in the vdW-DF family, 
+  Modelling Simul. Mater. Sci. Eng. 25, 065004 (2017), doi: 10.1088/1361-651X/aa7320
+  
+The -sequential version is compiled using a single threaded MKL library and
+without MPI support.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True, 'usempi': False}
+
+# Go to https://gitlab.com/libvdwxc/libvdwxc/-/tags to view the releases
+# https://gitlab.com/libvdwxc/libvdwxc/-/archive/0.4.0/libvdwxc-0.4.0.tar.bz2
+source_urls = ['https://gitlab.com/libvdwxc/libvdwxc/-/archive/%(version)s/']
+sources =     [SOURCE_TAR_BZ2]
+checksums =   ['5fcd37253489931b94ce865bb4e6942250665e269057a50bd532c8697ac19dc7']
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),
+]
+
+#preconfigopts = 'unset CC && unset FC && '
+preconfigopts = './autogen.sh && unset MPICC && unset MPIFC && '
+configopts  = '--without-mpi '
+configopts += 'FFTW3_INCLUDES="-I$MKLROOT/include/fftw" '
+configopts += 'FFTW3_LIBS="-lfftw3xc_intel_pic -lmkl_intel_lp64 -lmkl_sequential -lmkl_core" '
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ['libvdwxc_fdtest', 'libvdwxc_maintest',
+                                     'libvdwxc_q0test', 'libvdwxc_q0test2']] +
+             ['lib/lib%s.%s' % (x, y) for x in ['vdwxc', 'vdwxcfort']
+              for y in ['a', SHLIB_EXT]],
+    'dirs':  ['include'],
+}
+
+moduleclass = 'chem'
