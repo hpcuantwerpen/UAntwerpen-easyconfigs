@@ -1,0 +1,11 @@
+--- a/Makefile	2019-12-13 13:23:49.736475526 +0100
++++ b/Makefile	2019-12-17 14:29:37.864721990 +0100
+@@ -442,7 +442,7 @@
+ # use a force (fake) target to always rebuild this file but have Make consider this updated
+ # iff it was actually rewritten (a .PHONY target is always considered new)
+ $(GIT_REF): FORCE
+-	@$(CP2KHOME)/tools/build_utils/get_revision_number $(SRCDIR) > "$@.tmp"
++	echo "31ce44db" > "$@.tmp"
+ 	@cmp "$@.tmp" "$@" || mv -f "$@.tmp" "$@"
+ 
+ FORCE: ;

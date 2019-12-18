@@ -1,0 +1,11 @@
+--- a/fortran/Makefile.in	2019-08-05 15:36:43.000000000 +0200
++++ b/fortran/Makefile.in	2019-12-12 16:23:05.200101052 +0100
+@@ -32,7 +32,7 @@
+ 	grep '^#' $< | grep -v '#include' > $@
+ 
+ fortran_example: fortran_example.o libint_f.o
+-	$(LTLINK) $(CXX) $(CXXFLAGS) $(LDFLAGS) $(COMPUTE_LIB) $(SYSLIBS) $(FCLIBS) -o $@ $^
++	$(LTLINK) $(FC) $(FCFLAGS) $(LDFLAGS) $(COMPUTE_LIB) $(SYSLIBS) $(FCLIBS) -o $@ $^
+ 
+ ifeq ($(LIBINT_HAS_CXX11),yes)
+  ifeq ($(LIBINT_SUPPORTS_ONEBODY),yes)
