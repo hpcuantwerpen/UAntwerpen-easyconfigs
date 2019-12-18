@@ -68,8 +68,8 @@ use_fma4 =   False
 # see also http://www.fftw.org/doc/Extended-and-quadruple-precision-in-Fortran.html
 with_quad_prec = False
 
-# No MPI for now to test if this works.
-#with_mpi = False
+# Additional MPI interfaces needed for some packages.
+with_mpi = True
 
 # The testing fails when not done on a compute node as the MPI tests can't find a
 # hostfile or so. But you can comment this out.
