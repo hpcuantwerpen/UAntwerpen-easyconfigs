@@ -14,7 +14,10 @@ Protobuf contains several components
 * The src directory contains the actual sources for the protoc command and the
   protobuf libraries.
 * Then there are various interfaces to other languages
-   * python contains the Python interface.
+   * python contains the Python interfaces. There are multiple options for the
+     Python protobuf. There is a full Python implementation but that is less
+     speedy than the implementation that connects to a C++ library. We use the
+     latter.
 
 ## Problems installing protobuf
 
@@ -55,6 +58,19 @@ The workaround consists of:
   putting the current directory in front.
 
 ## Our EasyConfig files
+
+### Protobuf for the 2017 and 2018 toolchains
+
+* Those for the 2017 toolchains did not include Python support
+* Some EasyConfigs for the 2018 toolchains do include Python support. This was
+  needed for, e.g., TensorFlow. We build upon an EasyConfig we found elsewhere:
+   * Autotools-based configuration
+   * Build process also includes the build step for the Python extension. This
+     was added through `buildopts` that adds extra commands after the make 
+     process.
+   * Install process also includes the install step for the Python extension,
+     implemented through `installopts` that adds additional commands after the
+     `make install` for protobuf.
 
 ### Protobuf 3.11.2 for the 2019b toolchains (intel/2019b with GCCcore/8.3.0)
 
