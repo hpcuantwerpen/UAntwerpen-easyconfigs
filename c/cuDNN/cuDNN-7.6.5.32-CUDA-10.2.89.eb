@@ -1,0 +1,61 @@
+##
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+#
+# Author:    Stephane Thiell <sthiell@stanford.edu>
+##
+easyblock = 'Tarball'
+
+name =    'cuDNN'
+version = '7.6.5.32'
+local_cuda_version = '10.2.89'
+
+local_cuda_version_major_minor = '.'.join(local_cuda_version.split('.')[:2])
+
+versionsuffix = '-CUDA-%s' % local_cuda_version
+
+homepage = 'https://developer.nvidia.com/cudnn'
+whatis = [
+    'Description: NVIDIA CUDA Deep Neural Network library (cuDNN), a GPU-accelerated library of primitives for deep neural networks',
+    'This module is installed from a NVIDIA tarball'
+]
+
+description = """
+The NVIDIA CUDA® Deep Neural Network library (cuDNN) is a GPU-accelerate
+library of primitives for deep neural networks. cuDNN provides highly tuned
+implementations for standard routines such as forward and backward convolution,
+pooling, normalization, and activation layers. cuDNN is part of the NVIDIA Deep
+Learning SDK.
+
+Deep learning researchers and framework developers worldwide rely on cuDNN for
+high-performance GPU acceleration. It allows them to focus on training neural
+networks and developing software applications rather than spending time on
+low-level GPU performance tuning. cuDNN accelerates widely used deep learning
+frameworks, including Caffe2, MATLAB, Microsoft Cognitive Toolkit, TensorFlow,
+Theano, and PyTorch. See supported frameworks for more details. cuDNN is freely
+available to members of the NVIDIA Developer Program
+"""
+
+docurls = [ 
+    "NVIDIA deep learning SDK documentation on the web: http://docs.nvidia.com/deeplearning/sdk/index.html"
+]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+# Nvidia developer registration required.
+# Download link: https://developer.nvidia.com/rdp/cudnn-download
+# Douwnload in the section Library for Windows, Mac, Linux and Ubuntu (x86_64 architecture),
+# cuDNN library for Linux
+# Download as cudnn-10.2-linux-x64-v7.6.5.32.tgz
+sources =   ['%%(namelower)s-%s-linux-x64-v%%(version)s.tgz' % local_cuda_version_major_minor]
+checksums = ['600267f2caaed2fd58eb214ba669d8ea35f396a7d19b94822e6b36f9f7088c20']  # cudnn-10.2-linux-x64-v7.6.5.32.tgz
+
+dependencies = [
+    ('CUDA', local_cuda_version)
+]
+
+sanity_check_paths = {
+    'files': ['include/cudnn.h', 'lib64/libcudnn_static.a'],
+    'dirs':  ['include', 'lib64'],
+}
+
+moduleclass = 'numlib'

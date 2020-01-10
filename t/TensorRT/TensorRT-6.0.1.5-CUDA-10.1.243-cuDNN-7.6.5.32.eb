@@ -1,0 +1,74 @@
+##
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+#
+# Author:    Stephane Thiell <sthiell@stanford.edu>
+##
+easyblock = 'Tarball'
+
+name =                'TensorRT'
+version =             '6.0.1.5'
+local_cuda_version =  '10.1.243'
+local_cuDNN_version = '7.6.5.32'
+
+local_cuda_version_major_minor =  '.'.join(local_cuda_version.split('.')[:2])
+local_cuDNN_version_major_minor = '.'.join(local_cuDNN_version.split('.')[:2])
+
+versionsuffix = '-CUDA-%s-cuDNN-%s' % (local_cuda_version, local_cuDNN_version)
+
+homepage = 'https://developer.nvidia.com/tensorrt'
+
+whatis = [
+    'Description: NVIDIA TensorRT is a platform for high performance deep learning inference',
+    'This module is installed from a NVIDIA tarball'
+]
+
+description = """
+NVIDIA TensorRT™ is an SDK for high-performance deep learning inference. It 
+includes a deep learning inference optimizer and runtime that delivers low 
+latency and high-throughput for deep learning inference applications. 
+TensorRT-based applications perform up to 40x faster than CPU-only platforms 
+during inference. With TensorRT, you can optimize neural network models 
+trained in all major frameworks, calibrate for lower precision with high 
+accuracy, and finally deploy to hyperscale data centers, embedded, or 
+automotive product platforms.
+
+TensorRT is built on CUDA, NVIDIA’s parallel programming model, and enables 
+you to optimize inference for all deep learning frameworks leveraging 
+libraries, development tools and technologies in CUDA-X for artificial 
+intelligence, autonomous machines, high-performance computing, and graphics.
+
+TensorRT provides INT8 and FP16 optimizations for production deployments 
+of deep learning inference applications such as video streaming, speech 
+recognition, recommendation and natural language processing. Reduced 
+precision inference significantly reduces application latency, which is 
+a requirement for many real-time services, auto and embedded applications.
+
+You can import trained models from every deep learning framework into 
+TensorRT. After applying optimizations, TensorRT selects platform specific 
+kernels to maximize performance on Tesla GPUs in the data center, Jetson 
+embedded platforms, and NVIDIA DRIVE autonomous driving platforms.
+"""
+
+docurls = [ 
+    "NVIDIA deep learning SDK documentation on the web: http://docs.nvidia.com/deeplearning/sdk/index.html"
+]
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+# Registration required at the moment so you need to download it manually...
+# Download: https://developer.nvidia.com/compute/machine-learning/tensorrt/secure/6.0/GA_6.0.1.5/tars/TensorRT-6.0.1.5.CentOS-7.6.x86_64-gnu.cuda-10.1.cudnn7.6.tar.gz
+source_urls = ['https://developer.nvidia.com/compute/machine-learning/tensorrt/secure/%(version_major_minor)s/GA_%(version)s/tars/']
+sources =     ['TensorRT-%%(version)s.CentOS-7.6.x86_64-gnu.cuda-%s.cudnn%s.tar.gz' % (local_cuda_version_major_minor, local_cuDNN_version_major_minor)]
+checksums =   ['9c984e3629bdc21895bf314516b8b98ac4c8fe4acb929c5d14bceea9ad089f76']  # TensorRT-6.0.1.5.CentOS-7.6.x86_64-gnu.cuda-10.1.cudnn7.6.tar.gz
+
+dependencies = [
+    ('CUDA',  local_cuda_version),
+    ('cuDNN', local_cuDNN_version, '-CUDA-' + local_cuda_version),
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['include', 'lib64'],
+}
+
+moduleclass = 'numlib'
