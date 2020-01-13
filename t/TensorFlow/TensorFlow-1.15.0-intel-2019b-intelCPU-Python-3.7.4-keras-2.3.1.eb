@@ -1,0 +1,107 @@
+easyblock = 'Bundle'
+
+name          = 'TensorFlow'
+version       = '1.15.0'
+local_pyver   = '3.7.4'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
+
+local_tensorboard_version = version
+local_keras_version  =      '2.3.1'
+local_cuda_version   =      '10.0.130'
+local_cudnn_version  =      '7.6.5.32' 
+
+versionsuffix = '-intelCPU-Python-' + local_pyver + '-keras-' + local_keras_version
+
+homepage = 'https://www.tensorflow.org/'
+
+whatis = [
+    "Description: Tensorflow is an open-source library for machine intelligence",
+    "This module provides Intel-optimized (MKLDNN) binaries build for execution on a CPU only, downloaded from PyPi (intel-tensorflow package)."
+]
+
+description = """
+An open-source software library for Machine Intelligence.
+
+This module contains binaries build for x86 CPUs with explicit Intel
+support (using the Intel MKLDNN libraries). This is likely the best
+version of TensorFlow to use on Intel and probably AMD CPUs, but
+please compare.
+
+We still include the multiple-backend version of Keras. However, we
+advise users to transfer to the Keras integrated in TensorFlow itself as
+this is the future.
+
+Tensorflow doesn't compile properly with our compilers. Blame Google for a
+lousy build process with tools that lack the transparancy needed to easily
+solve build problems. Hence we use precompiled binaries, but we cannot
+exclude compatibility problems with our OS version.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+local_pycpver    = ''.join(local_pyver.split('.')[:2])
+local_pyvermajor = ''.join(local_pyver.split('.')[:1])
+
+# this is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+
+dependencies = [
+    ('Python',   local_pyver),
+    ('protobuf', '3.11.2',     '-Python-' + local_pyver, ('GCCcore', local_gcc_version)),
+    ('CUDA',     local_cuda_version,  '',                       True),
+    ('cuDNN',    local_cudnn_version, '-CUDA-' + local_cuda_version,   True),
+]
+
+exts_list = [
+    ('wrapt', '1.11.2', {
+        'source_urls': ['https://pypi.python.org/packages/source/w/wrapt'],
+    }),
+    ('astor', '0.8.0', { # 0.8.1 does not work, it produces an error during the sanity test.
+        'source_urls': ['https://pypi.python.org/packages/source/a/astor'],
+    }),
+    ('grpcio', '1.24.3', { # 1.26.0 does not compile with Intel
+        'source_urls': ['https://pypi.python.org/packages/source/g/grpcio'],
+        'modulename':  'grpc',
+    }),
+    ('Keras-Applications', '1.0.8', {
+        'source_urls': ['https://pypi.python.org/packages/source/K/Keras-Applications'],
+        'source_tmpl': 'Keras_Applications-%(version)s.tar.gz',
+#        'modulename':  'keras_applications', 
+    }),
+    ('Keras-Preprocessing', '1.1.0', {
+        'source_urls': ['https://pypi.python.org/packages/source/K/Keras-Preprocessing'],
+        'source_tmpl': 'Keras_Preprocessing-%(version)s.tar.gz',
+#        'modulename':  'keras_preprocessing', 
+    }),
+    ('intel-tensorflow', version, {
+        'source_urls':    ['https://pypi.python.org/packages/source/t/intel-tensorflow'],
+        'source_tmpl':    'intel_tensorflow-%%(version)s-cp%(local_pycpver)s-cp%(local_pycpver)sm-manylinux2010_x86_64.whl' % {'local_pycpver': local_pycpver},
+        'use_pip':        True,
+        'unpack_sources': False,
+        'modulename':     'tensorflow', 
+    }),
+    ('tensorboard', local_tensorboard_version, {
+        'source_urls':    ['https://pypi.python.org/packages/source/t/tensorboard'],
+        'source_tmpl':    'tensorboard-%%(version)s-py%(local_pyvermajor)s-none-any.whl' % {'local_pyvermajor': local_pyvermajor},
+        'use_pip':        True,
+        'unpack_sources': False,
+    }),
+    ('Keras', local_keras_version, {
+        'source_urls': ['https://pypi.python.org/packages/source/K/Keras'],
+    }),
+]
+
+# specify that Bundle easyblock should run a full sanity check, rather than just trying to load the module
+full_sanity_check = True
+
+sanity_check_paths = {
+#    'files': ['bin/tensorboard'],
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'
