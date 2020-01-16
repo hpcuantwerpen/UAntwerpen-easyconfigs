@@ -1,0 +1,88 @@
+##
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+#
+# Copyright:: Copyright 2012-2014 Cyprus Institute / CaSToRC, Uni.Lu/LCSB, NTUA
+# Authors::   George Tsouloupas <g.tsouloupas@cyi.ac.cy>, Fotis Georgatos <fotis@cern.ch>
+# License::   MIT/GPL
+# $Id$
+#
+# This work implements a part of the HPCBIOS project and is a component of the policy:
+# http://hpcbios.readthedocs.org/en/latest/HPCBIOS_2012-94.html
+#
+# Version >= 0.7.15
+# Author: Adam Huffman, Big Data Institute, University of Oxford
+#
+# Note that upstream development is mainly at: https://github.com/lh3/bwa
+##
+
+name =    'BWA'
+version = '0.7.17'
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
+
+homepage = 'http://bio-bwa.sourceforge.net/'
+
+whatis = [
+    "Description: BWA is the Burrows-Wheeler Aligner code",
+]
+
+description = """
+BWA is a software package for mapping DNA sequences against a large reference 
+genome, such as the human genome. It consists of three algorithms: 
+BWA-backtrack, BWA-SW and BWA-MEM. The first algorithm is designed for 
+Illumina sequence reads up to 100bp, while the rest two for longer sequences 
+ranged from 70bp to a few megabases. BWA-MEM and BWA-SW share similar features 
+such as the support of long reads and chimeric alignment, but BWA-MEM, which 
+is the latest, is generally recommended as it is faster and more accurate. 
+BWA-MEM also has better performance than BWA-backtrack for 70-100bp Illumina 
+reads.
+
+For all the algorithms, BWA first needs to construct the FM-index for the 
+reference genome (the index command). Alignment algorithms are invoked with 
+different sub-commands: aln/samse/sampe for BWA-backtrack, bwasw for BWA-SW 
+and mem for the BWA-MEM algorithm.
+
+If you use BWA-SW, please cite:
+  Li H. and Durbin R. (2010) Fast and accurate long-read alignment with 
+  Burrows-Wheeler Transform. Bioinformatics, Epub. [PMID: 20080505]
+"""
+
+usage = """
+BWA also has two perl scripts that should run with the system Perl. It
+is however always possible to load a Perl module from a matching 
+toolchain (in this case GCCcore-%(gcc)s or intel-%(buildset)s).
+""" % {
+    'gcc':      local_gcc_version,
+    'buildset': local_buildset
+}
+
+docurls = [
+    "Man pages in section 1: Use 'man bwa'",
+]
+
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
+
+source_urls = ['https://github.com/lh3/%(name)s/archive/']
+sources =     ['v%(version)s.tar.gz']
+checksums =   ['980b9591b61c60042c4a39b9e31ccaad8d17ff179d44d347997825da3fdf47fd']
+
+dependencies = [
+    ('baselibs', local_buildset), # For zlib
+]
+
+builddependencies = [
+    ('buildtools', local_buildset,         '', True), 
+    ('binutils',   local_binutils_version),   
+]
+
+buildopts = 'CC="$CC" CFLAGS="$CFLAGS"'  # The BWA Makefile has CC and CFLAGS hard-code so would
+                                         # not use the EasyBuild-provided values.
+
+sanity_check_paths = {
+    'files': ['bin/bwa', 'bin/qualfa2fq.pl', 'bin/xa2multi.pl', 'man/man1/bwa.1'],
+    'dirs':  [],    
+}
+
+moduleclass = 'bio'
