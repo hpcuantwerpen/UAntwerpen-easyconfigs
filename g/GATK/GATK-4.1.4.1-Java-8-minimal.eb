@@ -1,0 +1,106 @@
+easyblock = 'Tarball'
+
+name =          'GATK'
+version =       '4.1.4.1'
+
+local_java_version = '8' # It is not clear from the release notes to which extent Java 11 is tested.
+                         # It was work in progress for version 4.1.4.0.
+
+versionsuffix = '-Java-%(javaver)s-minimal'
+
+homepage = 'https://www.broadinstitute.org/gatk/'
+
+whatis = [
+    "Description: GATK is the Genome Analysis Toolkit from the Broad Institute",
+    "WARNING: This is a minimal installation without the Python and R dependencies"
+]
+
+description = """
+The GATK (Genome Analysis Toolkit) is the industry standard for identifying SNPs 
+and indels in germline DNA and RNAseq data. Its scope is now expanding to include 
+somatic short variant calling, and to tackle copy number (CNV) and structural 
+variation (SV). In addition to the variant callers themselves, the GATK also 
+includes many utilities to perform related tasks such as processing and quality 
+control of high-throughput sequencing data, and bundles the popular Picard toolkit.
+
+These tools were primarily designed to process exomes and whole genomes generated 
+with Illumina sequencing technology, but they can be adapted to handle a variety 
+of other technologies and experimental designs. And although it was originally 
+developed for human genetics, the GATK has since evolved to handle genome data 
+from any organism, with any level of ploidy.
+
+GATK4 aims to bring together well-established tools from the GATK and Picard codebases 
+under a streamlined framework, and to enable selected tools to be run in a massively 
+parallel way on local clusters or in the cloud using Apache Spark (the latter not
+supported at UAntwerp). It also contains many newly developed tools not present in 
+earlier releases of the toolkit.
+
+WARNING: This is a minimal installation without the Python and R dependencies (see 
+"Usage"). 
+"""
+
+usage = """
+In a number of cases the default options that GATK uses for the Java virtual machine
+may not be sufficient or be far from optimal. this is especially true for options that
+set the amount of memory the Java virtual machine can use. E.g.,
+  ./gatk --java-options "-Xmx4G -Xms4G" <rest of command>
+will set the maximum size of the memory allocation pool to 4G and use that also as
+the initial size of the memory pool (so that memory use of the code will be fairly
+constant during the run).
+
+GATK does offer some support for bash command line completion. To activate it, run
+  source $EBROOTGATK/gatk-completion.sh
+in the bash shell.
+
+Some GATK4 tools use R for plotting. The list of R dependencies is not clear from the
+documentation. If you use these tools, you'll need to also load the appropriate R module
+for the toolchain, but even then additional packages may or may not be needed.
+
+Some GATK 4 tools use Python, including some tools that use machine learning
+(through TensorFlow and Keras). Again, the list of Python packages and version numbers
+that are actually supported by the code is not documented so you will have to
+experiment with various Python modules.
+
+We cannot support interfacing to the cloud or using spark on/from our HPC system.
+
+Any comments on software that is needed to run GATK successfully is welcome
+at hpc@uantwerpen.be so that we can further extend our installation script.
+"""
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+source_urls = ['https://github.com/broadinstitute/gatk/releases/download/%(version)s/']
+sources =     ['gatk-%(version)s.zip']
+checksums =   ['21ae694cfc8b7447381ad5ce62ed4af22e53a228b12495bdcca7df0c73b09cea']
+
+dependencies = [
+    ('Java', local_java_version, '', True),
+]
+
+postinstallcmds = [
+    "/bin/rm %(installdir)s/gatk-package-%(version)s-spark.jar",
+    "cd %(installdir)s ; mkdir -p python ; cd python ; unzip ../gatkPythonPackageArchive.zip",
+]
+
+sanity_check_paths = {
+    'files': ['gatk'],
+    'dirs':  [],
+}
+
+sanity_check_commands = [
+    "gatk --help",
+    "gatk --list",  # This actually calls the JVM so is a more complete test than the previous one.
+]
+
+modextrapaths = {
+    'PATH':       '',
+    'PYTHONPATH': 'python',
+}
+
+modextravars = {
+    'GATK_LOCAL_JAR': '%(installdir)s/gatk-package-%(version)s-local.jar',
+    'GATK_JAR':       '%(installdir)s/gatk-package-%(version)s-local.jar',  # Very likely not used but found it in a Docker file (see README.md).
+}
+
+
+moduleclass = 'bio'

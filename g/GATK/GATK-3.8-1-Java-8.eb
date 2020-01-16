@@ -16,8 +16,10 @@
 easyblock = 'Tarball'
 
 name =          'GATK'
-version =       '3.7'
+version =       '3.8-1'
 versionsuffix = '-Java-%(javaver)s'
+
+local_key = '0-gf15c1c3ef'
 
 homepage = 'http://www.broadinstitute.org/gatk/'
 
@@ -33,10 +35,19 @@ data quality assurance. Its robust architecture, powerful processing engine and
 high-performance computing features make it capable of taking on projects of any size.
 """
 
+usage = """
+You need to run GATK via the Java Virtual Machine. Simply execute
+  java -jar $EBROOTGATK/GenomeAnalysisTK.jar
+You may have to add more options to the java command to specify, e.g., the amount of 
+memory that Java can use.
+"""
+
 toolchain = {'name': 'dummy', 'version': 'dummy'}
 
-# download manually from http://www.broadinstitute.org/gatk/download
-sources = ['GenomeAnalysisTK-%(version)s.tar.bz2']
+# Check download via https://software.broadinstitute.org/gatk/download/archive.
+# Automated download from EasyBuild does not work; the file we get is corrupt, so download by hand.
+#source_urls = ['https://storage.cloud.google.com/gatk-software/package-archive/gatk']
+sources =     ['package-archive_gatk_GenomeAnalysisTK-%(version)s-' + local_key + '.tar']
 
 dependencies = [('Java', '8')]
 
@@ -44,7 +55,7 @@ modloadmsg = "To execute GATK run: java -jar $EBROOTGATK/GenomeAnalysisTK.jar\n"
 
 sanity_check_paths = {
     'files': ["GenomeAnalysisTK.jar"],
-    'dirs':  ["resources"],
+    'dirs':  [], # The "resources" directory is no longer present in the archived files. Can they be recovered from the source files?
 }
 
 moduleclass = 'bio'
