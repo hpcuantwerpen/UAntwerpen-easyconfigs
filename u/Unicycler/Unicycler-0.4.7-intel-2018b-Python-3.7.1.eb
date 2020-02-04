@@ -7,7 +7,7 @@ versionsuffix = '-Python-%(pyver)s'
 homepage = 'https://github.com/rrwick/Unicycler'
 
 whatis = [
-   'Description: Unicycler is Python software combining sveral other packages in an assembly pipeline for bacterial genomes' 
+   'Description: Unicycler is Python software combining several other packages in an assembly pipeline for bacterial genomes' 
 ]
 
 description = """
