@@ -1,0 +1,47 @@
+easyblock = 'CMakeMake'
+
+name =    'NTPoly'
+version = '2.4'
+
+local_buildset = '2019b'
+
+homepage = 'https://github.com/william-dawson/NTPoly'
+
+whatis = [
+    "Description: NTPoly is a massively parallel library for computing the functions of sparse, symmetric matrices based on polynomial expansions.",
+    "The module provides both static and shared libraries"   
+]
+
+description = """
+NTPoly is a massively parallel library for computing the functions of sparse, 
+symmetric matrices based on polynomial expansions. For sufficiently sparse 
+matrices, most of the matrix functions in NTPoly can be computed in linear 
+time.
+
+The module contains both static and shared libraries. The library does use
+OpenMP.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True}
+
+sources =     [SOURCELOWER_TAR_GZ]
+source_urls = ['https://github.com/william-dawson/NTPoly/archive/ntpoly-v%(version_major_minor)s']
+checksums =   ['4f61e9b998d71155bde6da178f6e8e3b35f4530d6d2893373b3ac76c9b6c88f9']
+
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),  # for CMake
+]
+
+configopts = ['-DBUILD_SHARED_LIBS=ON',
+              '-DBUILD_SHARED_LIBS=OFF']
+
+sanity_check_paths = {
+    'files': ['include/%s.mod' % item for item in ['datatypesmodule', 'densitymatrixsolversmodule']] +
+             [('lib64/libNTPoly.so', 'lib/libNTPoly.so')] + 
+             [('lib64/libNTPoly.a',  'lib/libNTPoly.a')], 
+    'dirs':  []
+}
+
+moduleclass = 'math'
