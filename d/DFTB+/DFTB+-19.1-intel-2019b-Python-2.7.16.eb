@@ -1,0 +1,66 @@
+easyblock = 'ConfigureMake'
+
+name =          'DFTB+'
+version =       '19.1'
+versionsuffix = '-Python-%(pyver)s'
+
+local_buildset = '2019b'
+
+homepage = 'https://www.dftbplus.org'
+whatis = [
+    "Description: quantum mechanical simulation package based on the Density Functional Tight Binding method",
+]
+
+description = """
+DFTB+ is a fast and efficient versatile quantum mechanical simulation
+package.  It is based on the Density Functional Tight Binding (DFTB)
+method, containing almost all of the useful extensions which have been
+developed for the DFTB framework so far.  Using DFTB+ you can carry
+out quantum mechanical simulations like with ab-initio density
+functional theory based packages, but in an approximate way gaining
+typically around two orders of magnitude in speed.
+
+This module only supports OpenMP shared memory parallelism.  Use the
+MPI version of the module if you need to scale to more than one node.
+
+The module is compiled with the optional ELSI and ARPACK-ng support
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['https://www.dftbplus.org/fileadmin/DFTBPLUS/public/dftbplus/']
+sources = ['%(version)s/dftbplus-%(version)s.tar.xz']
+checksums = [
+    '78f45ef0571c78cf732a5493d32830455a832fa05ebcad43098895e46ad8d220', # dftbplus-19.1.tar.xz
+]
+
+dependencies = [
+    ('Python',    '2.7.16'),
+    ('arpack-ng', '3.6.3'),
+    ('ELSI',      '2.5.0')
+]
+
+skipsteps = ['configure']
+
+prebuildopts  = "(yes | ./utils/get_opt_externals ALL) && "    # Download all optional external components, including those with an incompatible license
+prebuildopts += "cp sys/make.x86_64-linux-intel make.arch && "
+prebuildopts += 'sed -i "s|-O2|$OPTFLAGS|g" make.arch && '
+prebuildopts += "sed -i 's|$(ROOT)/_install|%(installdir)s|' make.config && "
+
+buildopts  = "LNOPT='-static-intel' "
+buildopts += "WITH_ELSI=1 "
+buildopts += "WITH_ARPACK=1 "
+
+runtest = 'test'
+
+modextrapaths = {'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages'}
+
+sanity_check_paths = {
+    'files': ['bin/' + prog for prog in ['dftb+', 'dp_bands', 'dp_dos', 'gen2cif',
+                                         'gen2xyz', 'modes', 'waveplot', 'xyz2gen']],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages']
+}
+
+sanity_check_commands = [('python', '-c "import dptools"')]
+
+moduleclass = 'phys'
