@@ -1,0 +1,32 @@
+easyblock = 'ConfigureMake'
+
+name = 'BCFtools'
+version = '1.10.2'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
+
+homepage = 'https://www.htslib.org/'
+description = """Samtools is a suite of programs for interacting with high-throughput sequencing data.
+ BCFtools - Reading/writing BCF2/VCF/gVCF files and calling/filtering/summarising SNP and short indel sequence
+ variants"""
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+toolchainopts = {'pic': True}
+
+source_urls = ['https://github.com/samtools/%(namelower)s/releases/download/%(version)s']
+sources = [SOURCELOWER_TAR_BZ2]
+checksums = ['f57301869d0055ce3b8e26d8ad880c0c1989bf25eaec8ea5db99b60e31354e2c']
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib, bzip2, XZ and GSL
+]
+
+configopts = "--enable-libgsl"
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ['bcftools', 'plot-vcfstats', 'vcfutils.pl']],
+    'dirs': ['libexec/bcftools']
+}
+
+moduleclass = 'bio'
