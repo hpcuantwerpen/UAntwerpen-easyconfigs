@@ -66,7 +66,7 @@ if local_UAarch == "ivybridge":
 elif local_UAarch == "broadwell":
     local_common_configopts += '--disable-generic --disable-sse --disable-avx --enable-avx2  --disable-avx512 --disable-gpu '
 else:
-    local_common_configopts += '--disable-generic --disable-sse --disable-avx --disable-avx2 --denable-avx512 --disable-gpu '
+    local_common_configopts += '--disable-generic --disable-sse --disable-avx --disable-avx2 --enable-avx512  --disable-gpu '
 
 configopts = [
     local_common_configopts + '--with-mpi=yes --disable-openmp ' + local_mpi_configopts + local_mpi_noomp_configopts,
