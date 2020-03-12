@@ -13,9 +13,11 @@ name = 'ELPA'
 version = '2019.05.002'
 
 homepage = 'http://elpa.mpcdf.mpg.de'
+
 whatis = [
     "Description: ELPA - Eigenvalue SoLvers for Petaflop-Applications",
 ]
+
 description = """
 ELPA - Eigenvalue SoLvers for Petaflop-Applications.
 
