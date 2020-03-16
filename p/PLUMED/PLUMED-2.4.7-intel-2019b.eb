@@ -1,7 +1,7 @@
 easyblock = 'ConfigureMake'
 
 name = 'PLUMED'
-version = '2.4.6'
+version = '2.4.7'
 
 homepage = 'http://www.plumed.org'
 
