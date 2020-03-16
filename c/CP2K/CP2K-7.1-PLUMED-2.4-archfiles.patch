@@ -1,0 +1,125 @@
+Patching the arch files for use with PLUMED and EasyBuild
+--- cp2k-7.1/arch/Linux-x86-64-intel.popt.orig	2019-12-23 21:11:55.000000000 +0100
++++ cp2k-7.1/arch/Linux-x86-64-intel.popt	2020-03-13 16:16:37.000000000 +0100
+@@ -1,10 +1,13 @@
+ # Author: Alfio Lazzaro (alfio.lazzaro@chem.uzh.ch), UZH, 2018
+ # Note: add optimization flags specific for your system (e.g. -xHost).
+ 
+-LIBXSMM  = /home/users/p02464/libxsmm/1.8.3_skl_intel
+-LIBXC    = /home/users/p02464/libs/libxc/intel/4.0.3
+-LIBINT   = /home/users/p02464/libs/libint/intel/1.1.6
+-LIBELPA  = /home/users/p02464/libs/libelpa/intel/2017.05.002
++# Adapted by Thomas Danckaert (thomas.danckaert@uantwerpen.be) for use
++# with EasyBuild.
++include $(EBROOTPLUMED)/lib/plumed/src/lib/Plumed.inc.static
++LIBXSMM  = $(EBROOTLIBXSMM)
++LIBXC    = $(EBROOTLIBXC)
++LIBINT   = $(EBROOTLIBINT)
++LIBELPA  = $(EBROOTELPA)
+ 
+ CC       = cc
+ FC       = mpiifort
+@@ -12,9 +15,10 @@
+ AR       = ar -r
+ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
+ 	   -D__parallel -D__SCALAPACK \
+-	   -D__ELPA=201705 \
++	   -D__ELPA=201905 \
+ 	   -D__LIBXC \
+-           -D__LIBINT -D__LIBINT_MAX_AM=7 -D__LIBDERIV_MAX_AM1=6 \
++           -D__PLUMED2 \
++	   -D__LIBINT -D__LIBINT_MAX_AM=6 -D__LIBDERIV_MAX_AM1=5 \
+            -D__MAX_CONTR=4
+ CFLAGS   = $(DFLAGS) -O2
+ FCFLAGS  = $(DFLAGS) -O2 -funroll-loops -fpp -free
+@@ -23,19 +27,23 @@
+ FCFLAGS += -I${MKLROOT}/include -I${MKLROOT}/include/fftw
+ FCFLAGS += -I$(LIBXSMM)/include
+ FCFLAGS += -I$(LIBXC)/include
+-FCFLAGS += -I$(LIBELPA)/include/elpa-2017.05.002/modules -I$(LIBELPA)/include/elpa-2017.05.002/elpa
++FCFLAGS += -I$(LIBELPA)/include/elpa-$(EBVERSIONELPA)/modules -I$(LIBELPA)/include/elpa-$(EBVERSIONELPA)/elpa
+ LDFLAGS  = $(FCFLAGS) -static-intel
+ LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
+ LIBS     = -L$(LIBELPA)/lib -lelpa
++LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm
++LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
++LIBS    += -L$(LIBINT)/lib -lint2 -lstdc++
++# List of PLUMED object files in $(PLUMED_DEPENDENCIES) is enclosed by
++# single quotes, and therefore interpreted as a single filename.  We
++# need to remove the quotes for linking to succeed.
++LIBS    += $(subst $\',,$(PLUMED_DEPENDENCIES)) -lgsl -lz
+ MKL_LIB  = ${MKLROOT}/lib/intel64
+ LIBS    += $(MKL_LIB)/libmkl_scalapack_lp64.a -Wl,--start-group \
+ 	   $(MKL_LIB)/libmkl_intel_lp64.a ${MKL_LIB}/libmkl_sequential.a \
+ 	   $(MKL_LIB)/libmkl_core.a \
+            ${MKL_LIB}/libmkl_blacs_intelmpi_lp64.a -Wl,--end-group \
+-           -lpthread -lm
+-LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
+-LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
+-LIBS    += -L$(LIBINT)/lib -lderiv -lint -lstdc++
++           -liomp5 -lpthread -lm -ldl
+ 
+ # Required due to memory leak that occurs if high optimisations are used
+ mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
+--- cp2k-7.1/arch/Linux-x86-64-intel.psmp.orig	2019-12-23 21:11:55.000000000 +0100
++++ cp2k-7.1/arch/Linux-x86-64-intel.psmp	2020-03-13 16:16:50.000000000 +0100
+@@ -1,10 +1,13 @@
+ # Author: Alfio Lazzaro (alfio.lazzaro@chem.uzh.ch), UZH, 2018
+ # Note: add optimization flags specific for your system (e.g. -xHost).
+ 
+-LIBXSMM  = /home/users/p02464/libxsmm/1.8.3_skl_intel
+-LIBXC    = /home/users/p02464/libs/libxc/intel/4.0.3
+-LIBINT   = /home/users/p02464/libs/libint/intel/1.1.6
+-LIBELPA  = /home/users/p02464/libs/libelpa/intel/2017.05.002
++# Adapted by Thomas Danckaert (thomas.danckaert@uantwerpen.be) for use
++# with EasyBuild.
++include $(EBROOTPLUMED)/lib/plumed/src/lib/Plumed.inc.static
++LIBXSMM  = $(EBROOTLIBXSMM)
++LIBXC    = $(EBROOTLIBXC)
++LIBINT   = $(EBROOTLIBINT)
++LIBELPA  = $(EBROOTELPA)
+ 
+ CC       = cc
+ FC       = mpiifort
+@@ -12,9 +15,10 @@
+ AR       = ar -r
+ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
+ 	   -D__parallel -D__SCALAPACK \
+-	   -D__ELPA=201705 \
++	   -D__ELPA=201905 \
+ 	   -D__LIBXC \
+-           -D__LIBINT -D__LIBINT_MAX_AM=7 -D__LIBDERIV_MAX_AM1=6 \
++           -D__PLUMED2 \
++           -D__LIBINT -D__LIBINT_MAX_AM=6 -D__LIBDERIV_MAX_AM1=5 \
+            -D__MAX_CONTR=4
+ CFLAGS   = $(DFLAGS) -O2
+ FCFLAGS  = $(DFLAGS) -O2 -fopenmp -funroll-loops -fpp -free
+@@ -23,19 +27,23 @@
+ FCFLAGS += -I${MKLROOT}/include -I${MKLROOT}/include/fftw
+ FCFLAGS += -I$(LIBXSMM)/include
+ FCFLAGS += -I$(LIBXC)/include
+-FCFLAGS += -I$(LIBELPA)/include/elpa_openmp-2017.05.002/modules -I$(LIBELPA)/include/elpa_openmp-2017.05.002/elpa
++FCFLAGS += -I$(LIBELPA)/include/elpa_openmp-$(EBVERSIONELPA)/modules -I$(LIBELPA)/include/elpa_openmp-$(EBVERSIONELPA)/elpa
+ LDFLAGS  = $(FCFLAGS) -static-intel
+ LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
+ LIBS     = -L$(LIBELPA)/lib -lelpa_openmp
++LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm
++LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
++LIBS    += -L$(LIBINT)/lib -lint2 -lstdc++
++# List of PLUMED object files in $(PLUMED_DEPENDENCIES) is enclosed by
++# single quotes, and therefore interpreted as a single filename.  We
++# need to remove the quotes for linking to succeed.
++LIBS    += $(subst $\',,$(PLUMED_DEPENDENCIES)) -lgsl -lz
+ MKL_LIB  = ${MKLROOT}/lib/intel64
+ LIBS    += $(MKL_LIB)/libmkl_scalapack_lp64.a -Wl,--start-group \
+ 	   $(MKL_LIB)/libmkl_intel_lp64.a ${MKL_LIB}/libmkl_sequential.a \
+ 	   $(MKL_LIB)/libmkl_core.a \
+ 	   ${MKL_LIB}/libmkl_blacs_intelmpi_lp64.a -Wl,--end-group \
+-	   -lpthread -lm
+-LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
+-LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
+-LIBS    += -L$(LIBINT)/lib -lderiv -lint -lstdc++
++	   -liomp5 -lpthread -lm -ldl
+ 
+ # Required due to memory leak that occurs if high optimisations are used
+ mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F

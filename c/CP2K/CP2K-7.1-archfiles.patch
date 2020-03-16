@@ -1,0 +1,198 @@
+diff --git a/arch/Linux-x86-64-intel.popt b/arch/Linux-x86-64-intel.popt
+index d0c88b818..3eeb3bd04 100644
+--- a/arch/Linux-x86-64-intel.popt
++++ b/arch/Linux-x86-64-intel.popt
+@@ -1,10 +1,10 @@
+ # Author: Alfio Lazzaro (alfio.lazzaro@chem.uzh.ch), UZH, 2018
+ # Note: add optimization flags specific for your system (e.g. -xHost).
+ 
+-LIBXSMM  = /home/users/p02464/libxsmm/1.8.3_skl_intel
+-LIBXC    = /home/users/p02464/libs/libxc/intel/4.0.3
+-LIBINT   = /home/users/p02464/libs/libint/intel/1.1.6
+-LIBELPA  = /home/users/p02464/libs/libelpa/intel/2017.05.002
++LIBXSMM  = $(EBROOTLIBXSMM)
++LIBXC    = $(EBROOTLIBXC)
++LIBINT   = $(EBROOTLIBINT)
++LIBELPA  = $(EBROOTELPA)
+ 
+ CC       = cc
+ FC       = mpiifort
+@@ -12,9 +12,9 @@ LD       = mpiifort
+ AR       = ar -r
+ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
+ 	   -D__parallel -D__SCALAPACK \
+-	   -D__ELPA=201705 \
++	   -D__ELPA=201905 \
+ 	   -D__LIBXC \
+-           -D__LIBINT -D__LIBINT_MAX_AM=7 -D__LIBDERIV_MAX_AM1=6 \
++           -D__LIBINT \
+            -D__MAX_CONTR=4
+ CFLAGS   = $(DFLAGS) -O2
+ FCFLAGS  = $(DFLAGS) -O2 -funroll-loops -fpp -free
+@@ -23,19 +23,19 @@ FCFLAGS += -g -traceback
+ FCFLAGS += -I${MKLROOT}/include -I${MKLROOT}/include/fftw
+ FCFLAGS += -I$(LIBXSMM)/include
+ FCFLAGS += -I$(LIBXC)/include
+-FCFLAGS += -I$(LIBELPA)/include/elpa-2017.05.002/modules -I$(LIBELPA)/include/elpa-2017.05.002/elpa
++FCFLAGS += -I$(LIBELPA)/include/elpa-$(EBVERSIONELPA)/modules -I$(LIBELPA)/include/elpa-$(EBVERSIONELPA)/elpa
+ LDFLAGS  = $(FCFLAGS) -static-intel
+ LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
+ LIBS     = -L$(LIBELPA)/lib -lelpa
++LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
++LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
++LIBS    += -L$(LIBINT)/lib -lint2 -lstdc++
+ MKL_LIB  = ${MKLROOT}/lib/intel64
+ LIBS    += $(MKL_LIB)/libmkl_scalapack_lp64.a -Wl,--start-group \
+ 	   $(MKL_LIB)/libmkl_intel_lp64.a ${MKL_LIB}/libmkl_sequential.a \
+ 	   $(MKL_LIB)/libmkl_core.a \
+            ${MKL_LIB}/libmkl_blacs_intelmpi_lp64.a -Wl,--end-group \
+            -lpthread -lm
+-LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
+-LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
+-LIBS    += -L$(LIBINT)/lib -lderiv -lint -lstdc++
+ 
+ # Required due to memory leak that occurs if high optimisations are used
+ mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
+diff --git a/arch/Linux-x86-64-intel.psmp b/arch/Linux-x86-64-intel.psmp
+index ae7714705..f705c9a3b 100644
+--- a/arch/Linux-x86-64-intel.psmp
++++ b/arch/Linux-x86-64-intel.psmp
+@@ -1,10 +1,10 @@
+ # Author: Alfio Lazzaro (alfio.lazzaro@chem.uzh.ch), UZH, 2018
+ # Note: add optimization flags specific for your system (e.g. -xHost).
+ 
+-LIBXSMM  = /home/users/p02464/libxsmm/1.8.3_skl_intel
+-LIBXC    = /home/users/p02464/libs/libxc/intel/4.0.3
+-LIBINT   = /home/users/p02464/libs/libint/intel/1.1.6
+-LIBELPA  = /home/users/p02464/libs/libelpa/intel/2017.05.002
++LIBXSMM  = $(EBROOTLIBXSMM)
++LIBXC    = $(EBROOTLIBXC)
++LIBINT   = $(EBROOTLIBINT)
++LIBELPA  = $(EBROOTELPA)
+ 
+ CC       = cc
+ FC       = mpiifort
+@@ -12,9 +12,9 @@ LD       = mpiifort
+ AR       = ar -r
+ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
+ 	   -D__parallel -D__SCALAPACK \
+-	   -D__ELPA=201705 \
++	   -D__ELPA=201905 \
+ 	   -D__LIBXC \
+-           -D__LIBINT -D__LIBINT_MAX_AM=7 -D__LIBDERIV_MAX_AM1=6 \
++           -D__LIBINT \
+            -D__MAX_CONTR=4
+ CFLAGS   = $(DFLAGS) -O2
+ FCFLAGS  = $(DFLAGS) -O2 -fopenmp -funroll-loops -fpp -free
+@@ -23,19 +23,19 @@ FCFLAGS += -g -traceback
+ FCFLAGS += -I${MKLROOT}/include -I${MKLROOT}/include/fftw
+ FCFLAGS += -I$(LIBXSMM)/include
+ FCFLAGS += -I$(LIBXC)/include
+-FCFLAGS += -I$(LIBELPA)/include/elpa_openmp-2017.05.002/modules -I$(LIBELPA)/include/elpa_openmp-2017.05.002/elpa
++FCFLAGS += -I$(LIBELPA)/include/elpa_openmp-$(EBVERSIONELPA)/modules -I$(LIBELPA)/include/elpa_openmp-$(EBVERSIONELPA)/elpa
+ LDFLAGS  = $(FCFLAGS) -static-intel
+ LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
+ LIBS     = -L$(LIBELPA)/lib -lelpa_openmp
++LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
++LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
++LIBS    += -L$(LIBINT)/lib -lint2 -lstdc++
+ MKL_LIB  = ${MKLROOT}/lib/intel64
+ LIBS    += $(MKL_LIB)/libmkl_scalapack_lp64.a -Wl,--start-group \
+ 	   $(MKL_LIB)/libmkl_intel_lp64.a ${MKL_LIB}/libmkl_sequential.a \
+ 	   $(MKL_LIB)/libmkl_core.a \
+ 	   ${MKL_LIB}/libmkl_blacs_intelmpi_lp64.a -Wl,--end-group \
+ 	   -lpthread -lm
+-LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
+-LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
+-LIBS    += -L$(LIBINT)/lib -lderiv -lint -lstdc++
+ 
+ # Required due to memory leak that occurs if high optimisations are used
+ mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
+diff --git a/arch/Linux-x86-64-intel.sopt b/arch/Linux-x86-64-intel.sopt
+index a68e0c3b3..b3c1de6a8 100644
+--- a/arch/Linux-x86-64-intel.sopt
++++ b/arch/Linux-x86-64-intel.sopt
+@@ -1,9 +1,9 @@
+ # Author: Alfio Lazzaro (alfio.lazzaro@chem.uzh.ch), UZH, 2018
+ # Note: add optimization flags specific for your system (e.g. -xHost).
+ 
+-LIBXSMM  = /home/users/p02464/libxsmm/1.8.3_skl_intel
+-LIBXC    = /home/users/p02464/libs/libxc/intel/4.0.3
+-LIBINT   = /home/users/p02464/libs/libint/intel/1.1.6
++LIBXSMM  = $(EBROOTLIBXSMM)
++LIBXC    = $(EBROOTLIBXC)
++LIBINT   = $(EBROOTLIBINT)
+ 
+ CC       = icc
+ FC       = ifort
+@@ -11,7 +11,7 @@ LD       = ifort
+ AR       = ar -r
+ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
+ 	   -D__LIBXC \
+-           -D__LIBINT -D__LIBINT_MAX_AM=7 -D__LIBDERIV_MAX_AM1=6 \
++           -D__LIBINT \
+            -D__MAX_CONTR=4
+ CFLAGS   = $(DFLAGS) -O2
+ FCFLAGS  = $(DFLAGS) -O2 -funroll-loops -fpp -free
+@@ -22,13 +22,13 @@ FCFLAGS += -I$(LIBXSMM)/include
+ FCFLAGS += -I$(LIBXC)/include
+ LDFLAGS  = $(FCFLAGS) -static-intel
+ LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
++LIBS     = -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
++LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
++LIBS    += -L$(LIBINT)/lib -lint2 -lstdc++
+ MKL_LIB  = ${MKLROOT}/lib/intel64
+-LIBS     = -Wl,--start-group \
++LIBS     += -Wl,--start-group \
+            $(MKL_LIB)/libmkl_intel_lp64.a ${MKL_LIB}/libmkl_sequential.a \
+            $(MKL_LIB)/libmkl_core.a -Wl,--end-group -lpthread -lm
+-LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
+-LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
+-LIBS    += -L$(LIBINT)/lib -lderiv -lint -lstdc++
+ 
+ # Required due to memory leak that occurs if high optimisations are used
+ mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
+diff --git a/arch/Linux-x86-64-intel.ssmp b/arch/Linux-x86-64-intel.ssmp
+index db4b873aa..5f70414cb 100644
+--- a/arch/Linux-x86-64-intel.ssmp
++++ b/arch/Linux-x86-64-intel.ssmp
+@@ -1,9 +1,9 @@
+ # Author: Alfio Lazzaro (alfio.lazzaro@chem.uzh.ch), UZH, 2018
+ # Note: add optimization flags specific for your system (e.g. -xHost).
+ 
+-LIBXSMM  = /home/users/p02464/libxsmm/1.8.3_skl_intel
+-LIBXC    = /home/users/p02464/libs/libxc/intel/4.0.3
+-LIBINT   = /home/users/p02464/libs/libint/intel/1.1.6
++LIBXSMM  = $(EBROOTLIBXSMM)
++LIBXC    = $(EBROOTLIBXC)
++LIBINT   = $(EBROOTLIBINT)
+ 
+ CC       = icc
+ FC       = ifort
+@@ -11,7 +11,7 @@ LD       = ifort
+ AR       = ar -r
+ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
+ 	   -D__LIBXC \
+-	   -D__LIBINT -D__LIBINT_MAX_AM=7 -D__LIBDERIV_MAX_AM1=6 \
++	   -D__LIBINT \
+ 	   -D__MAX_CONTR=4
+ CFLAGS   = $(DFLAGS) -O2
+ FCFLAGS  = $(DFLAGS) -O2 -fopenmp -funroll-loops -fpp -free
+@@ -22,13 +22,13 @@ FCFLAGS += -I$(LIBXSMM)/include
+ FCFLAGS += -I$(LIBXC)/include
+ LDFLAGS  = $(FCFLAGS) -static-intel
+ LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
++LIBS     = -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
++LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
++LIBS    += -L$(LIBINT)/lib -lint2 -lstdc++
+ MKL_LIB  = ${MKLROOT}/lib/intel64
+-LIBS     = -Wl,--start-group \
++LIBS    += -Wl,--start-group \
+            $(MKL_LIB)/libmkl_intel_lp64.a ${MKL_LIB}/libmkl_sequential.a \
+            $(MKL_LIB)/libmkl_core.a -Wl,--end-group -lpthread -lm
+-LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
+-LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
+-LIBS    += -L$(LIBINT)/lib -lderiv -lint -lstdc++
+ 
+ # Required due to memory leak that occurs if high optimisations are used
+ mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
