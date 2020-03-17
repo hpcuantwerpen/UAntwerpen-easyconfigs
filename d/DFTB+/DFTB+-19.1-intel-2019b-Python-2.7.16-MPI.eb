@@ -1,7 +1,7 @@
 easyblock = 'ConfigureMake'
 
 name =          'DFTB+'
-version =       '18.2'
+version =       '19.1'
 versionsuffix = '-Python-%(pyver)s-MPI'
 
 local_buildset = '2019b'
@@ -24,17 +24,16 @@ This module supports MPI and hybrid MPI/OpenMP parallelism, but can't
 perform perform TD-DFTB calculations. You can use the pure OpenMP
 DFTB+ module for TD-DFTB calculations.
 
-The module is compiled with the optional ELSI and ARPACK-ng support
-and the optional components that the installation process downloads.
+The module is compiled with the optional ARPACK-ng support
+and the optional components that the installation process downloads
+.
 """
 
 toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = ['https://www.dftbplus.org/fileadmin/DFTBPLUS/public/dftbplus/']
-sources = ['%(version)s/dftbplus-%(version)s.tar.xz']
-checksums = [
-    'a0cb147915ff50404e58cf6202e9002038a8d027ca6508a2ec557cfef7af4e68', # dftbplus-19.1.tar.xz
-]
+sources =     ['%(version)s/dftbplus-%(version)s.tar.xz']
+checksums =   ['78f45ef0571c78cf732a5493d32830455a832fa05ebcad43098895e46ad8d220'] # dftbplus-19.1.tar.xz
 
 builddependencies = [
     ('buildtools', '%(toolchain_version)s', '', True), # for M4
@@ -43,29 +42,31 @@ builddependencies = [
 dependencies = [
     ('Python',    '2.7.16'),
     ('arpack-ng', '3.6.3'),
-    ('ELSI',      '2.5.0')
 ]
 
 skipsteps = ['configure']
 
-prebuildopts  = "(yes | ./utils/get_opt_externals ALL) && "
+prebuildopts  = "(yes | ./utils/get_opt_externals ALL) && "    # Download all optional external components, including those with an incompatible license
 prebuildopts += "cp sys/make.x86_64-linux-intel make.arch && "
 prebuildopts += 'sed -i "s|-O2|$OPTFLAGS|g" make.arch && '
+prebuildopts += 'sed -i "s|-standard-semantics|-assume nostd_mod_proc_name|g" make.arch && '
 prebuildopts += "sed -i 's|$(ROOT)/_install|%(installdir)s|' make.config && "
 
-buildopts  = "WITH_MPI=1 FXX=mpiifort LNOPT='-static-intel' "
-buildopts += "WITH_ELSI=1 "
+buildopts  = "WITH_MPI=1 FXX='mpiifort -assume nostd_mod_proc_name' LNOPT='-static-intel' "
+buildopts += "WITH_ELSI=0 "
 buildopts += "WITH_ARPACK=1 "
+buildopts += "WITH_GPU=0 "
+buildopts += "WITH_DFTD3=0 "
 
 testopts = 'WITH_MPI=1'
-runtest = 'test'
+runtest =  'test'
 
 modextrapaths = {'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages'}
 
 sanity_check_paths = {
     'files': ['bin/' + prog for prog in ['dftb+', 'dp_bands', 'dp_dos', 'gen2cif',
                                          'gen2xyz', 'modes', 'waveplot', 'xyz2gen']],
-    'dirs': ['lib/python%(pyshortver)s/site-packages']
+    'dirs':  ['lib/python%(pyshortver)s/site-packages']
 }
 
 sanity_check_commands = [('python', '-c "import dptools"')]
