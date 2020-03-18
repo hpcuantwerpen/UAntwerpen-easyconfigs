@@ -1,0 +1,65 @@
+easyblock = 'ConfigureMake'
+
+name =    'VSEARCH'
+version = '2.14.2'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
+
+homepage = 'https://github.com/torognes/vsearch'
+
+whatis = [
+    "Description: VSEARCH - An vectorized seach and alternative to USEARCH"    
+]
+
+description = """
+VSEARCH upports de novo and reference based chimera detection, clustering, 
+full-length and prefix dereplication, rereplication, reverse complementation, 
+masking, all-vs-all pairwise global alignment, exact and global alignment 
+searching, shuffling, subsampling and sorting. It also supports FASTQ file 
+analysis, filtering, conversion and merging of paired-end reads.
+
+VSEARCH stands for vectorized search, as the tool takes advantage of 
+parallelism in the form of SIMD vectorization as well as multiple threads 
+to perform accurate alignments at high speed. VSEARCH uses an optimal global 
+aligner (full dynamic programming Needleman-Wunsch), in contrast to USEARCH 
+which by default uses a heuristic seed and extend aligner. This usually 
+results in more accurate alignments and overall improved sensitivity 
+(recall) with VSEARCH, especially for alignments with gaps.
+
+NOTE: Given that the compiler options that the code choses are those for
+essentially a 15-year old Pentium 4 processor, the code may not be that well
+vectorized despite what it suggests and may not exploit more modern vector
+instructions at all.
+"""
+ 
+docurls = [
+    "Manual page vsearch in section 1",
+    "Manual downloadable from https://github.com/torognes/vsearch/releases/download/v%(version)s/vsearch_manual.pdf"
+] 
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['https://github.com/torognes/vsearch/archive']
+sources =     ['v%(version)s.tar.gz']
+checksums =   ['4eba7b28e23580a8874b528e5a7345938c8adfbf3fe7eccfe90b352dfc8a3506']
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True) # For autotools
+]
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)),
+]
+
+preconfigopts  = 'sed -i "s/AM_CXXFLAGS=-Wall.*/AM_CXXFLAGS=$EBVARCXXFLAGS/" src/Makefile.am && '
+preconfigopts += './autogen.sh && '
+
+configopts = '--disable-pdfman '
+
+sanity_check_paths = {
+    'files': ['bin/vsearch'],
+    'dirs':  [],
+}
+
+moduleclass = 'bio'
