@@ -50,10 +50,11 @@ sanity_check_paths = {
     'dirs':  ['lib/plumed']
 }
 
-modextrapaths = {
-    'PLUMED_KERNEL': 'lib/libplumedKernel.%s' % SHLIB_EXT,
-    'PLUMED_ROOT':   'lib/plumed',
+modextravars = {
+    'PLUMED_KERNEL':       '%(installdir)s/lib/libplumedKernel.' + SHLIB_EXT,
+    'PLUMED_ROOT':         '%(installdir)s/lib/plumed',
+    'PLUMED_INCLUDEDIR':   '%(installdir)s/include',
+    'PLUMED_PROGRAM_NAME': 'plumed',
 }
 
 moduleclass = 'chem'
-
