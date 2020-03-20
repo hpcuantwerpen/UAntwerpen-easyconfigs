@@ -18,3 +18,17 @@ in multiple ways.
 See the [Wiki of this repository](https://github.com/hpcuantwerpen/UAntwerpen-easyconfigs/wiki) for more informaton.
 
 It may be useful to also check our ["EasyBuild - The Missing Manual" OneNote](https://1drv.ms/f/s!AjGZCXJ9iRp3iptoom8jWWypyVu_0g).
+
+## Toolchains / build set
+
+### 2019b toolchains / build set
+
+Given that we started building before EasyBuild 4.0 was released, we decided to stick 
+with the 3.9.4 version as otherwise we got an unpleasant number of warnings about
+deprecated features. Yet we did start the EasyConfig files in such a way that they 
+would be easily portable to the 4.x versions of EasyBuild.
+
+### 2020a toolchains / build set
+
+For this build set we switched to EasyBuild 4.1 and later.
+
