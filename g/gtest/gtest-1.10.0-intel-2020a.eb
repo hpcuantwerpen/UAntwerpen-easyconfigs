@@ -1,0 +1,36 @@
+easyblock = "CMakeMake"
+
+name =    'gtest'
+version = '1.10.0'
+
+local_buildset = '2020a'
+
+homepage = 'https://code.google.com/p/googletest/'
+whatis = [
+    "Description: gtest is Google's framework for writing C++ tests on a variety of platforms",
+]
+
+description = """
+Google's framework for writing C++ tests on a variety of platforms
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+# https://github.com/google/googletest/archive/release-1.8.1.zip
+sources     = ['release-%(version)s.zip']
+source_urls = ['https://github.com/google/googletest/archive']
+checksums   = ['94c634d499558a76fa649edb13721dce6e98fb1e7018dfaeba3cd7a083945e91'] 
+
+builddependencies=[
+    ('buildtools', local_buildset, '', True),
+]
+
+
+#files_to_copy = ['lib', 'include']
+
+sanity_check_paths = {
+    'files': ['lib/libgtest.a', 'lib/libgtest_main.a', 'lib/libgmock.a', 'lib/libgmock_main.a'],
+    'dirs':  ['include'],
+}
+
+moduleclass = 'devel'
