@@ -1,0 +1,64 @@
+# Based on the EasyConfig file from 
+# https://github.com/ElectronicStructureLibrary/esl-easyconfigs/blob/master/easyconfigs/e/ELSI/
+easyblock = 'CMakeMake'
+
+name =    'ELSI'
+version = '2.5.0'
+
+local_buildset = '2020a'
+
+local_elpaver = '2019.11.001'
+
+homepage = 'https://wordpress.elsi-interchange.org/'
+
+whatis = [
+    "Description: ELSI provides and enhances scalable, open-source software library solutions for electronic structure calculations"
+]
+
+description = """
+ELSI provides and enhances scalable, open-source software library solutions 
+for electronic structure calculations in materials science, condensed matter 
+physics, chemistry, molecular biochemistry, and many other fields.  
+ELSI focuses on methods that solve or circumvent eigenvalue problems 
+in electronic structure theory. The ELSI infrastructure should 
+also be useful for other challenging eigenvalue problems.
+
+EigenExa support is not included due to compile problems.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True, 'usempi': True, 'openmp': False}
+
+sources =     ['%(namelower)s-interface-v%(version)s.tar.bz2']
+source_urls = ['https://git.elsi-interchange.org/elsi-devel/elsi-interface/-/archive/v%(version)s/']
+checksums =   ['1c9c865c563c8a18ebda74b8975a4adb3b28ad2b2efc8338268cb8ac595788e7']
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),  # for CMake
+]
+
+dependencies = [
+    ('NTPoly', '2.4'),
+    ('ELPA',   local_elpaver)
+]
+
+separate_build_dir = True
+
+configopts  = '-DUSE_EXTERNAL_ELPA=ON '
+configopts += '-DUSE_EXTERNAL_OMM=OFF '
+configopts += '-DENABLE_PEXSI=ON -DUSE_EXTERNAL_PEXSI=OFF '
+configopts += '-DENABLE_EIGENEXA=OFF ' # ON causes compilation problems
+configopts += '-DENABLE_SIPS=OFF '     # Causes compile problems
+configopts += '-DUSE_EXTERNAL_NTPOLY=ON '
+configopts += '-DENABLE_BSEPACK=ON -DUSE_EXTERNAL_BSEPACK=OFF '
+configopts += '-DENABLE_MAGMA=OFF '
+configopts += '-DINC_PATHS="$EBROOTELPA/include/elpa-%s/modules;$EBROOTNTPOLY/include"' % local_elpaver
+#              '-DINC_PATHS="$EBROOTELPA/include/elpa-%s/modules;$EBROOTNTPOLY/include"' % elpaver]
+
+sanity_check_paths = {
+    'files': ['include/elsi.h', 'include/elsi.mod'] +
+             [('lib64/libelsi.a', 'lib/libelsi.a')],
+    'dirs':  []
+}
+
+moduleclass = 'math'
