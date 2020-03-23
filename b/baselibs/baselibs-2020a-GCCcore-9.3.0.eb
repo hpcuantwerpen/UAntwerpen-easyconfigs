@@ -10,7 +10,7 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, brotli, bzip2, Szip, XZ utils, zlib, gzip, lz4, zstd, libb2, libarchive, " + 
+    "Contains: ncurses/ncursesw, readline, brotli, bzip2, Szip, XZ utils, zlib, gzip, lzip, lz4, zstd, libb2, libdeflate, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
     "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
@@ -35,6 +35,7 @@ local_lzip_version =         '1.21'          # http://download.savannah.gnu.org/
 local_zstd_version =         '1.4.4'         # https://github.com/facebook/zstd/releases
 local_libb2_version =        '0.98.1'        # https://github.com/BLAKE2/libb2/releases
 local_libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
+local_libdeflate_version =   '1.5'           # https://github.com/ebiggers/libdeflate/releases
 local_giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
 local_JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
 local_libjpegturbo_version = '2.0.4'         # https://sourceforge.net/projects/libjpeg-turbo/files/
@@ -117,12 +118,25 @@ Overview of included libraries:
   + zlib (version %(zlib)s): Free lossless data compression library, not 
     covered by any patents, for the popular .gz files.
   + gzip (version %(gzip)s): gzip data compression programs.
+  + lzip (version %(lzip)s): Lzip is a lossless data compressor with a user interface 
+    similar to the one of gzip or bzip2. Lzip can compress about as fast as gzip 
+    (lzip -0) or compress most files more than bzip2 (lzip -9). Decompression 
+    speed is intermediate between gzip and bzip2. Lzip is better than gzip 
+    and bzip2 from a data recovery perspective. Lzip has been designed, 
+    written, and tested with great care to replace gzip and bzip2 as the 
+    standard general-purpose compressed format for unix-like systems.
   + zstd (version %(zstd)s: Facebook Zstandard compression, a real-time 
     compression algorithm, providing high compression ratios. It offers a 
     very wide range of compression/speed trade-off, while being backed by a 
     very fast decoder. It also offers a special mode for small data, called 
     dictionary compression, and can create dictionaries from any sample set.
   + libb2 (version %(libb2)s): a C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp
+  + libdeflate (version %(libdeflate)s): libdeflate is a library for fast, whole-buffer DEFLATE-based 
+    compression and decompression. Libdeflate is heavily optimized. It is 
+    significantly faster than the zlib library, both for compression and 
+    decompression, and especially on x86 processors. In addition, libdeflate 
+    provides optional high compression modes that provide a better compression 
+    ratio than the zlib's "level 9".
   + libarchive (version %(libarchive)s): Multi-format archive and compression library.
 * Graphics file formats
   + giflib (version %(giflib)s): a library for reading and writing gif images. It is 
@@ -355,8 +369,10 @@ Overview of included libraries:
     'XZ': local_XZ_version,
     'zlib': local_zlib_version,
     'gzip': local_gzip_version,
+    'lzip': local_lzip_version,
     'zstd': local_zstd_version,
     'libb2': local_libb2_version,
+    'libdeflate': local_libdeflate_version,
     'libarchive': local_libarchive_version,
     'giflib': local_giflib_version,
     'JasPer': local_JasPer_version,
@@ -409,8 +425,11 @@ docurls = [
     'zlib: web-based manual on https://zlib.net/manual.html', 
     'gzip: Web-based documentation on https://www.gnu.org/software/gzip/manual/',
     'gzip: man pages for all commands (gzip, gunzip, gzexe, zcat, zcmp, zdiff, zforce, zgrep, zless, zmore, znew) in Section 1',
+    'lzip: Home page: https://www.nongnu.org/lzip/',
+     'lzip: Web-based manual on https://www.nongnu.org/lzip/manual/lzip_manual.html',
     'zstd: Web-based documentation via the home page: http://www.zstd.net/',
     'libb2: Home page: https://github.com/BLAKE2/libb2',
+    'libdeflate: Home page: https://github.com/ebiggers/libdeflate',
     'libarchive: Some web-based documentation on https://www.libarchive.org/',
     'giflib: home page with links to the documentation on http://giflib.sourceforge.net/',
     'libjpeg-turbo web-based documentation: https://libjpeg-turbo.org/Documentation',
@@ -657,6 +676,17 @@ components = [
         'sources':     [SOURCELOWER_TAR_GZ],
         'source_urls': ['https://github.com/BLAKE2/libb2/releases/download/v%(version)s'],
         'start_dir':   '%(namelower)s-%(version)s',
+    }),
+    ('libdeflate', local_libdeflate_version, {
+        'sources':     [ {
+                          # https://github.com/ebiggers/libdeflate/archive/v1.5.zip
+                          'download_filename': 'v%(version)s.zip',
+                          'filename':          SOURCELOWER_ZIP,
+                          'source_urls':       ['https://github.com/ebiggers/libdeflate/archive/']
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'skipsteps':   ['configure'],
+        'installopts': "PREFIX=%(installdir)s" 
     }),
     ('libarchive', local_libarchive_version, {
         'easyblock': 'CMakeMake',
