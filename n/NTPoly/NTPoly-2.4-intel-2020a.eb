@@ -38,7 +38,7 @@ configopts = ['-DBUILD_SHARED_LIBS=ON',
               '-DBUILD_SHARED_LIBS=OFF']
 
 sanity_check_paths = {
-    'files': ['include/%s.mod' % item for item in ['datatypesmodule', 'densitymatrixsolversmodule']] +
+    'files': ['include/%s.mod' % local_item for local_item in ['datatypesmodule', 'densitymatrixsolversmodule']] +
              [('lib64/libNTPoly.so', 'lib/libNTPoly.so')] + 
              [('lib64/libNTPoly.a',  'lib/libNTPoly.a')], 
     'dirs':  []
