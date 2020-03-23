@@ -1,0 +1,98 @@
+# The easyblock for MrBayes in EasyBuild 3.9.4 does not yet work for this version
+# as the sequence of commands to generate the configure script seems to have changed.
+# autoconf produces an error message about missing macros.
+easyblock = "ConfigureMake"
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+name =          'MrBayes'
+version =       '3.2.7' # 3.2.7a according to GitHub release tag, 3.2.7 according to the filename
+versionsuffix = '-MPI'
+
+homepage = 'http://mrbayes.csit.fsu.edu'
+
+whatis = [
+    'Description: MrBayes is a program for the Bayesian estimation of phylogeny',
+    'This module is compiled with MPI support enabled',
+]
+
+description = """
+MrBayes is a program for Bayesian inference and model choice across a wide
+range of phylogenetic and evolutionary models. MrBayes uses Markov chain
+Monte Carlo (MCMC) methods to estimate the posterior distribution of model
+parameters.
+
+Program features include:
+* A common command-line interface across Macintosh, Windows, and UNIX 
+  operating systems;
+* Extensive help available from the command line;
+* Analysis of nucleotide, amino acid, restriction site, and morphological 
+  data;
+* Mixing of data types, such as molecular and morphological characters,
+  in a single analysis;
+* Easy linking and unlinking of parameters across data partitions;
+* An abundance of evolutionary models, including 4x4, doublet, and codon models
+  for nucleotide data and many of the standard rate matrices for amino acid data;
+* Estimation of positively selected sites in a fully hierarchical Bayesian
+  framework;
+* Full integration of the BEST algorithms for the multi-species coalescent.
+* Support for complex combinations of positive, negative, and backbone
+  constraints on topologies;
+* Model jumping across the GTR model space and across fixed rate matrices for
+  amino acid data;
+* Monitoring of convergence during the analysis, and access to a wide range of
+  convergence diagnostics tools after the analysis has finished;
+* Rich summaries of posterior samples of branch and node parameters printed to
+  majority rule consensus trees in FigTree format;
+* Implementation of the stepping-stone method for accurate estimation of model
+  likelihoods for Bayesian model choice using Bayes factors;
+* The ability to spread jobs over a cluster of computers using MPI;
+* Support for the BEAGLE library, resulting in dramatic speedups for codon and
+  amino acid models on compatible hardware (NVIDIA graphics cards);
+* Checkpointing across all models, allowing the user to seemlessly extend a
+  previous analysis or recover from a system crash;
+
+This module was compiled with MPI support enabled.
+"""
+
+docurls = [
+    'Web-based documentation: http://mrbayes.sourceforge.net/manual.php',
+]
+
+docpaths = [
+    'doc',
+    'examples'
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+# https://github.com/NBISweden/MrBayes/archive/v3.2.7.tar.gz
+sources = [{
+             'download_filename': 'v%(version)s.tar.gz',
+             'filename':          SOURCE_TAR_GZ,
+             'source_urls':       ['https://github.com/NBISweden/MrBayes/archive'],
+          }]
+
+dependencies = [
+    ('beagle-lib', '3.1.2'),
+    ('baselibs',   local_buildset, '', ('GCCcore', local_gcc_version)),  # for libreadline
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),
+]
+
+#preconfigopts  = 'aclocal -I lib/autoconf && libtoolize && autoconf && '
+preconfigopts  = 'aclocal && '
+
+configopts  = '--with-beagle=$EBROOTBEAGLEMINLIB '
+configopts += '--with-mpi '
+
+sanity_check_paths = {
+    'files': ["bin/mb"],
+    'dirs':  ['share/doc/mrbayes', 'share/examples/mrbayes'],
+}
+
+moduleclass = 'bio'
