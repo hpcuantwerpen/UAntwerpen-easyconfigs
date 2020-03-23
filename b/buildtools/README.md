@@ -63,15 +63,15 @@ The contents of the module evolved over time. It does contain a subset of:
 Versions used:
 * Byacc 20191125
 * Flex 2.6.4
-* git 2.25.2 
+* git 2.26.0 
 * GNU Autoconf 2.69
-* GNU Automake 1.16.1
+* GNU Automake 1.16.2
 * GNU Bison 3.5.3
 * GNU libtool 2.4.6
 * GNU M4 1.4.18
 * GNU make 4.3. Switched back to .tar.gz as there was no .tar.bz2 file anymore
 * GNU sed 4.8
-* CMake 3.16.5
+* CMake 3.17.0
 * Ninja 1.10.0
 * Meson 0.53.2
 * NASM 2.13.03

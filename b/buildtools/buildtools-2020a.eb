@@ -23,9 +23,9 @@ local_system_pyshortver = '3.6'
 
 # Version info:   
 local_autoconf_version =         '2.69'       # Autoconf   20120424 - Check on https://ftp.gnu.org/gnu/autoconf/
-local_autoconf_archive_version = '2019.01.06' # Autoconf Archive 20190106 - check on https://ftp.gnu.org/gnu/autoconf-archive/
-local_automake_version =         '1.16.1'     # Automake   20180311 - Check on https://ftp.gnu.org/gnu/automake/
-local_cmake_version =            '3.16.5'     # CMake      20200304 - Check on https://cmake.org/download/
+local_autoconf_archive_version = '2019.01.06' # Autoconf-Archive 20190106 - check on https://ftp.gnu.org/gnu/autoconf-archive/
+local_automake_version =         '1.16.2'     # Automake   20200321 - Check on https://ftp.gnu.org/gnu/automake/
+local_cmake_version =            '3.17.0'     # CMake      20200320 - Check on https://cmake.org/download/
 local_ninja_version =            '1.10.0'     # Ninja      20200128 - Check on https://ninja-build.org/
 local_meson_version =            '0.53.2'     # Meson      20200225 - Check on https://pypi.org/project/meson/#history
 local_doxygen_version =          '1.8.16'     # Doxygen    20191227 - Check on http://www.doxygen.nl/download.html
@@ -42,7 +42,7 @@ local_patchelf_version =         '0.10'       # patchelf   20190328 - Check on h
 local_bison_version =            '3.5.3'      # Bison      20200308 - Check on http://ftp.gnu.org/gnu/bison/
 local_flex_version =             '2.6.4'      # flex       20170506 - Check on https://github.com/westes/flex/releases
 local_byacc_version =            '20191125'   # byacc      20191125 - Check on ftp://ftp.invisible-island.net/byacc
-local_git_version =              '2.25.2'     # git        20200317 - Check on https://github.com/git/git/releases
+local_git_version =              '2.26.0'     # git        20200323 - Check on https://github.com/git/git/releases
 # Not yet included due to build problems:
 # SCons      3.0.0     20170918
 homepage = 'http://www.gnu.org'
@@ -154,7 +154,7 @@ components = [
                              'filename'          : 'git-%(version)s.tar.gz',
                              'source_urls'       : ['https://github.com/git/git/archive'],
                          } ],
-        'checksums':     ['80d5565c8800b4a7e918bfcbb348023be6956be9e3f3958646024ef558dfd99a'],
+        'checksums':     ['2a93b9a3276464507922134bfba9be466427ab6a843e3773849050e3d05250d0'],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'make configure && ',
         'configopts':    "--with-libpcre --with-python=/usr/bin/python --enable-pthreads='-lpthread'",
@@ -199,7 +199,7 @@ components = [
     ('Automake', local_automake_version, {
         'sources':     [SOURCELOWER_TAR_XZ],
         'source_urls': [GNU_SOURCE],
-        'checksums':   ['5d05bb38a23fd3312b10aea93840feec685bdf4a41146e78882848165d3ae921'],
+        'checksums':   ['ccc459de3d710e066ab9e12d2f119bd164a08c9341ca24ba22c9adaa179eedd0'],
         'start_dir':   '%(namelower)s-%(version)s'
         }),
     ('help2man', local_help2man_version, {
@@ -233,7 +233,7 @@ components = [
     ('CMake', local_cmake_version, {
         'sources':     [SOURCELOWER_TAR_GZ],
         'source_urls': ['https://cmake.org/files/v%(version_major_minor)s'],
-        'checksums':   ['5f760b50b8ecc9c0c37135fae5fbf00a2fef617059aa9d61c1bb91653e5a8bfc'],
+        'checksums':   ['b74c05b55115eacc4fa2b77a814981dbda05cdc95a53e279fe16b7b272f00847'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '-- -DCMAKE_USE_OPENSSL=1'
         }),
