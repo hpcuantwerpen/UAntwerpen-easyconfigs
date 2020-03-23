@@ -1,0 +1,51 @@
+easyblock = 'ConfigureMake'
+
+name =    'Tcl'
+version = '8.6.10'
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'http://www.tcl.tk/'
+
+whatis = [
+    'Description: Tcl, the Tool Command Language, an interpreted dynamic programming language',
+    'This module provides the Tcl command line tool and shared libraries',
+]
+
+description = """
+Tcl (Tool Command Language) is a very powerful but easy to learn dynamic
+programming language, suitable for a very wide range of uses, including web and
+desktop applications, networking, administration, testing and many more. Open
+source and business-friendly, Tcl is a mature yet evolving language that is
+truly cross platform, easily deployed and highly extensible.
+"""
+
+usage = """
+The module provides tclsh8.6, the Tcl interpreter.
+
+Documentation  is avaialble through the Tcl web site. There are also a few
+manual pages in section 3 and n.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+sources =     ['%(namelower)s%(version)s-src.tar.gz']
+source_urls = ["http://prdownloads.sourceforge.net/tcl"]
+checksums =   ['5196dbf6638e3df8d5c87b5815c8c2b758496eb6f0e41446596c9a4e638d87ed']
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib
+]
+
+configopts = '--enable-threads EXTRA_INSTALL="install-private-headers"'
+
+runtest = 'test'
+
+start_dir = 'unix'
+
+postinstallcmds = [
+    'cd %(installdir)s/bin ; ln -s tclsh%(version_major_minor)s tclsh',
+] 
+
+moduleclass = 'lang'

@@ -1,0 +1,82 @@
+easyblock = 'Bundle'
+
+name =    "SMALT"
+version = "0.7.6"
+
+local_bambamc_version =  '0.0.50-release-20140430085950'
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = "https://www.sanger.ac.uk/science/tools/smalt-0"
+
+whatis = [
+    "Description: SMALT aligns DNA sequencing reads with a reference genome."
+]
+
+description = """
+SMALT aligns DNA sequencing reads with a reference genome.
+
+Reads from a wide range of sequencing platforms can be processed, for example 
+Illumina, Roche-454, Ion Torrent, PacBio or ABI-Sanger. Paired reads are 
+supported. There is no support for SOLiD reads.
+
+A mode for the detection of split (chimeric) reads is provided. Multi-threaded 
+program execution is supported.
+
+SMALT was installed with the optional bambamc library to also use SAM/BAM
+files as input or BAM files as output.
+
+Note that SMALT hasn't been maintained since late 2014. Hence it is time
+to look out for better more modern software.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),  # For additional reproducibility of the installation.    
+]
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)),
+]
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ('BAMBAMC', local_bambamc_version, {
+        'sources':       [ {
+                            # https://github.com/gt1/bambamc/archive/0.0.50-release-20140430085950.zip
+                            'download_filename': '%(version)s.zip',
+                            'filename':          SOURCELOWER_ZIP,
+                            'source_urls':       ['https://github.com/gt1/bambamc/archive/']
+                         } ],
+        'checksums':     ['72bd4cec8847225f93bbdbe650f0651048354bf77d32b00e8e3d8d7864a27750'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'configopts':    '--enable-static --disable-shared',
+    }),
+    ('SMALT', version, {
+        'sources':       [ {
+                            'filename':    SOURCELOWER_TAR_GZ,
+                            'source_urls': [SOURCEFORGE_SOURCE]
+                         } ],
+        'checksums':     ['89ccdfe471edba3577b43de9ebfdaedb5cd6e26b02bf4000c554253433796b31'],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'BAMBAMC_CFLAGS="-I%(installdir)s/include" BAMBAMC_LIBS="-L%(installdir)s/lib -lbambamc" ',
+        'configopts':    '--with-bambamc',
+    }),
+]
+
+postinstallcmds = [
+  'rm -rf %(installdir)s/lib %(installdir)s/include',
+  'mv %(installdir)s/share %(installdir)s/test',
+  'cp -r %(builddir)s/smalt-%(version)s/test/data %(installdir)s/test',
+  'rm -f %(installdir)s/test/data/Makefile*',
+]
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ['simread', 'smalt', 'mixreads', 'readstats']],
+    'dirs':  []
+}
+
+moduleclass = 'bio'
