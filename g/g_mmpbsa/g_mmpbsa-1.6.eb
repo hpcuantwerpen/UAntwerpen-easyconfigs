@@ -1,0 +1,23 @@
+easyblock = 'Tarball'
+
+name = 'g_mmpbsa'
+version = '1.6'
+
+homepage = 'http://rashmikumari.github.io/g_mmpbsa/'
+description = """The tool calculates components of binding energy using MM-PBSA
+method except the entropic term and energetic contribution of each residue to
+the binding using energy decomposition scheme."""
+
+
+toolchain = {'name': 'dummy', 'version': 'dummy'}
+
+sources = ['%(namelower)s-%(version)s.tar.gz']
+
+modextrapaths = {'PATH': ['']}
+
+sanity_check_paths = {
+    'files': ['g_mmpbsa', 'energy2bfac'],
+    'dirs': [''],
+}
+
+moduleclass = 'bio'
