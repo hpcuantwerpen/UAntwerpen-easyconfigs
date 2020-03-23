@@ -1,0 +1,52 @@
+easyblock = 'CMakeMake'
+
+name =    'MEGAHIT'
+version = '1.2.9'
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'https://github.com/voutcn/megahit'
+
+whatis = [
+    "Description: MEGAHIT: An ultra-fast single-node solution for large and complex metagenomics assembly via succinct de Bruijn graph"    
+]
+description = """
+MEGAHIT is an ultra-fast and memory-efficient NGS assembler. It is optimized 
+for metagenomes, but also works well on generic single genome assembly (small 
+or mammalian size) and single-cell assembly.
+"""
+
+usage = """
+The MEGAHIT executable is a Python script. It should run with the system
+Python on the UAntwerp systems. However, any of the other Python modules
+in the toolchain should also work.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['https://github.com/voutcn/%(namelower)s/archive/']
+sources =     ['v%(version)s.zip']
+checksums =   ['10a1e730e8e276132ae50312ce650db6359467f2f7bf78e1969f8dd2b4a81ef4']
+
+# Runs fine with the system Python.
+#multi_deps = {'Python': ['3.7.4', '2.7.16']}
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),
+]
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # For zlib, gzip and bzip2
+]
+
+sanity_check_paths = {
+    'files': [
+        'bin/%(namelower)s',
+        'bin/%(namelower)s_core',
+        'bin/%(namelower)s_core_no_hw_accel',
+        'bin/%(namelower)s_core_popcnt',
+        'bin/%(namelower)s_toolkit',
+    ],
+    'dirs': [],
+}

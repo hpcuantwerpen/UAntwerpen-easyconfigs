@@ -1,0 +1,52 @@
+# This file is an EasyBuild reciPY as per https://github.com/hpcugent/easybuild
+# Author: Pablo Escobar Lopez
+# Swiss Institute of Bioinformatics
+# Biozentrum - University of Basel
+# 2016-11-07 modified by:
+# Adam Huffman
+# The Francis Crick Institute
+
+easyblock = 'ConfigureMake'
+
+name =    'GMAP-GSNAP'
+version = '2020-03-12'
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'http://research-pub.gene.com/gmap/'
+
+whatis = [
+    "Description: GMAP-GSNAP: Genomippic Mapping and Alignment Program / Genomic Short-read Nucleotide Alignment Program"]
+
+description = """
+GMAP: A Genomic Mapping and Alignment Program for mRNA and EST Sequences
+GSNAP: Genomic Short-read Nucleotide Alignment Program
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+sources =     [SOURCELOWER_TAR_GZ]
+source_urls = ['http://research-pub.gene.com/gmap/src/']
+checksums =   ['9bf015fa8ca977b06cb6c22f16af4f67b673fd11b7644f42f710f96086ee23b4']
+
+patches = ['GMAP-GSNAP-2019-06-10_cpuid.patch']
+
+# with these deps you can use standard compressed files
+# to support files in gobby format take a look at README for extra dependencies
+# http://research-pub.gene.com/gmap/src/README
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib and bzip2
+]
+
+# you can change the MAX_READLENGTH for GSNAP with something like this.
+# details in the README http://research-pub.gene.com/gmap/src/README
+# configopts = 'MAX_READLENGTH=250'
+
+sanity_check_paths = {
+    'files': ['bin/gmap', 'bin/gsnap'],
+    'dirs':  [],
+}
+
+moduleclass = 'bio'

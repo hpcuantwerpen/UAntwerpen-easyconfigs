@@ -13,7 +13,7 @@
 
 There is support for MEGAHIT in the EasyBuilders tree.
 
-### 1.2.9 for intel 2019b
+### 1.2.9 for intel 2019b and 2020a
 
 * We started from a standard EasyBuild recipe for GCCcore but compiled with the Intel 
   compiler.
