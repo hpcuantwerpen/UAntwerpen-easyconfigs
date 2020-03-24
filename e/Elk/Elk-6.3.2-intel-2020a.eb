@@ -1,0 +1,63 @@
+# TODO: Add support for Wannier (see the setup script in the root directory of the  code)
+easyblock = 'MakeCp'
+
+name =    'Elk'
+version = '6.3.2'
+
+local_buildset = '2020a'
+
+homepage = 'http://elk.sourceforge.net/'
+
+whatis = [
+    "Description: Elk is an all-electron full-potential linearised augmented-plane wave (FP-LAPW) code."
+    "The module includes support for Wannier90."
+]
+
+description = """
+An all-electron full-potential linearised augmented-plane wave (FP-LAPW) code with
+many advanced features. Written originally at Karl-Franzens-Universität Graz as a milestone of the
+EXCITING EU Research and Training Network, the code is designed to be as simple as possible so that
+new developments in the field of density functional theory (DFT) can be added quickly and reliably.
+
+Elk was compiled with support for MPI, OpenMP, MKL and Wannier90.
+
+The vimelk command can be used to enable vim syntax coloring.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'openmp': True, 'usempi': True}
+
+sources     = [SOURCELOWER_TGZ]
+source_urls = [SOURCEFORGE_SOURCE]
+checksums =   ['75508387ef502998b1c1f68bef132da557681fffc706642d6ad54632cc8f9a8a']
+
+dependencies = [
+    ('libxc',     '4.3.4'),
+    ('Wannier90', '3.1.0'),
+]
+
+
+# make.inc file is generated interactively by "setup" command, creating it here
+prebuildopts  = 'echo "F90_OPTS = $FFLAGS" > make.inc && '
+prebuildopts += 'echo "F77_OPTS = $FFLAGS -assume protect_parens" >> make.inc && '
+prebuildopts += 'echo "LIB_LPK = $LIBLAPACK" >> make.inc && '
+prebuildopts += 'echo "LIB_libxc = $EBROOTLIBXC/lib/libxcf90.a $EBROOTLIBXC/lib/libxc.a" >> make.inc && '
+prebuildopts += 'echo "SRC_libxc = libxc_funcs.f90 libxc.f90 libxcifc.f90" >> make.inc && '
+prebuildopts += 'echo "SRC_FFT = zfftifc_fftw.f90" >> make.inc && '
+prebuildopts += 'echo "SRC_OBLAS = oblas_stub.f90" >> make.inc && '
+prebuildopts += 'echo "SRC_BLIS = blis_stub.f90" >> make.inc && '
+prebuildopts += 'echo "SRC_W90S = " >> make.inc && '
+prebuildopts += 'echo "LIB_W90 = $EBROOTWANNIER90/lib/libwannier.a" >> make.inc && '
+
+buildopts = 'all'
+
+parallel = 1
+
+files_to_copy = [(['src/elk', 'src/spacegroup/spacegroup', 'src/eos/eos', 'src/vimelk'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/elk', 'bin/spacegroup', 'bin/eos'],
+    'dirs':  []
+}
+
+moduleclass = 'phys'

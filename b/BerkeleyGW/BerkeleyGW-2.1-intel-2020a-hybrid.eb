@@ -1,0 +1,105 @@
+easyblock = 'ConfigureMake'
+
+name =          'BerkeleyGW'
+version =       '2.1'
+versionsuffix = "-hybrid"
+
+local_buildset = '2020a'
+
+homepage = 'http://www.berkeleygw.org'
+whatis = [
+    "Description: BerkeleyGW is a set of computer codes calculates the quasiparticle properties and the optical responses of a large variety of materials.",
+    "This package provides hybrid OpenMP/MPI executables",
+    "Keywords: GW, Bethe-Salpter",
+]
+
+description = """
+The BerkeleyGW Package is a set of computer codes that calculates the
+quasiparticle properties and the optical responses of a large variety of
+materials from bulk periodic crystals to nanostructures such as slabs, wires
+and molecules. The package takes as input the mean-field results from various
+electronic structure codes such as the Kohn-Sham DFT eigenvalues and eigenvectors
+computed with PARATEC, Quantum ESPRESSO, SIESTA, PARSEC, Abinit, Octopus, or
+TBPW (aka EPM). The package consists of the three main component codes: 
+* Epsilon computes the irreducible polarizability in the Random Phase
+  Approximation and uses it to generate the dielectric matrix and its inverse.
+* Sigma computes the self-energy corrections to the DFT eigenenergies using the
+  GW approximation of Hedin and Lundqvist, applying the first-principles
+  methodology of Hybertsen and Louie within the generalized plasmon-pole model
+  for the frequency-dependent dielectric matrix.
+* BSE solves the Bethe-Salpeter equation for correlated electron-hole excitations.
+
+When using BerkeleyGW, you are expected to cite the following papers and
+acknowledge the use of the BerkeleyGW package in your publications.
+* Mark S. Hybertsen and Steven G. Louie, "Electron correlation in semiconductors
+  and insulators: Band gaps and quasiparticle energies," Phys. Rev. B 34, 5390 (1986)
+* Michael Rohlfing and Steven G. Louie, "Electron-hole excitations and optical
+  spectra from first principles," Phys. Rev. B 62, 4927 (2000)
+* Jack Deslippe, Georgy Samsonidze, David A. Strubbe, Manish Jain, Marvin L.
+  Cohen, and Steven G. Louie, "BerkeleyGW: A Massively Parallel Computer Package
+  for the Calculation of the Quasiparticle and Optical Properties of Materials
+  and Nanostructures," Comput. Phys. Commun. 183, 1269 (2012)
+  (http://arxiv.org/abs/1111.4429)
+Papers #1 and #3 should be cited when discussing quasiparticle properties, and
+papers #2 and #3 should be cited when discussing optical properties.
+
+Executables in this module are compiled as hybrid OpemnMP/MPI-applications
+so start the programs in an appropriate way (and don't forget to specify
+OMP_NUM_THREADS).
+"""
+
+docurls = [
+    "The documentation is available after loading the module in $EBROOTBERKELEYGW/share/BerkeleyGW"    
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True, 'openmp': True}
+# Toolchain opts:
+# - MPI is definitely used
+# - Some of the example config files to use multithreaded BLAS libraries and
+#   the -qopenmp compiler flag so we also set openmp to true.
+#   The BSE, Sigma and Epsilon codes do support OpenMP, and some of the others
+#   might through libraries they include.
+
+# https://berkeley.box.com/s/ze3azi5vlyw7hpwvl9i5f82kaiid6g0x
+source_urls = ['https://berkeley.box.com/shared/static/']
+sources = [ { 'download_filename': 'ze3azi5vlyw7hpwvl9i5f82kaiid6g0x.gz?download', 
+              'filename': SOURCE_TAR_GZ
+            } ]
+patches = [
+    'BerkeleyGW-2.1_fix_path.patch',
+]
+checksums = [
+    '31f3b643dd937350c3866338321d675d4a1b1f54c730b43ad74ae67e75a9e6f2',  # BerkeleyGW-2.1.tar.gz
+    '7f9664ae16efe38863932449c057a7000dcdcb2b5f01837ea94a7c4dd7ca1d97',  # BerkeleyGW-2.1_fix_path.patch
+]
+
+dependencies = [
+    ('HDF5', '1.10.6', '-MPI'),
+]
+
+skipsteps = ['configure']
+
+prebuildopts = 'cp config/generic.mpi.linux.mk arch.mk && '
+
+buildopts  = 'all-flavors COMPFLAG=-DINTEL PARAFLAG="-DMPI -DOMP" DEBUGFLAG="" F90free="$MPIF90 -free" LINK="$MPIF90" '
+buildopts += 'FOPTS="$FFLAGS" MOD_OPT="-module " C_PARAFLAG="$PARAFLAG" CC_COMP="$MPICXX" C_COMP="$MPICC" '
+buildopts += 'FCPP="cpp -C -P -ffreestanding" C_LINK="$MPICXX" C_OPTS="$CFLAGS" MKLPATH="$MKLROOT" '
+buildopts += 'MATHFLAG="-DUSESCALAPACK -DUNPACKED -DUSEFFTW3 -DHDF5" '
+buildopts += 'LAPACKLIB="$LIBLAPACK" BLACSDIR="$BLACS_LIB_DIR" BLACS="$LIBBLACS" SCALAPACKLIB="$LIBSCALAPACK" '
+buildopts += 'FFTWINCLUDE="$FFTW_INC_DIR" FFTWLIB="$MKLROOT/lib/intel64/libfftw3xf_intel.a" '
+buildopts += 'HDF5INCLUDE="$EBROOTHDF5/include" HDF5LIB="-lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 -lz" '
+
+# "all-flavors" cleans and compiles everything again
+preinstallopts = 'sed -i "s/install: all-flavors/install: all/" Makefile && '
+
+installopts = 'INSTDIR=%(installdir)s'
+
+sanity_check_paths = {
+    'files': ['bin/' + local_prog + '.' + local_flavor + '.x'
+              for local_prog in ['epsilon', 'sigma', 'kernel', 'absorption', 'nonlinearoptics', 'parabands']
+              for local_flavor in ['real', 'cplx']],
+    'dirs': []
+}
+
+moduleclass = 'phys'
