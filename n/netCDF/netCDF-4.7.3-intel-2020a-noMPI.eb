@@ -1,0 +1,164 @@
+easyblock = 'Bundle'
+#
+# Bundle to install netCDF together with the Fortran and both C++ interfaces
+# in a single directory structure. Installing in separate directories/modules
+# has caused trouble in the past with configure scripts expecting all interface
+# libraries to be in the same directory.
+# 
+
+name =                  'netCDF'
+version =               '4.7.3'
+versionsuffix =         '-noMPI'
+local_version_fortran = '4.5.2'
+local_version_cpp4 =    '4.3.1'
+local_version_cpp3 =    '4.2'
+# Version numbers on 20200325
+# netCDF-C:       4.7.3
+# netCDF-Fortran: 4.5.2
+# netCDF-4 C++:   4.3.1
+# netCDF-3 C++:   4.2 (legacy C++)
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'http://www.unidata.ucar.edu/software/netcdf/'
+
+whatis = [
+    'Description: File format for array-oriented scientific data',
+    'This module contains the netCDF command line tools and static and shared libraries for C, C++ and Fortran, compiled without MPI support',
+] 
+
+description = """
+NetCDF (network Common Data Form) is a set of interfaces for array-oriented data
+access and a freely distributed collection of data access libraries for C,
+Fortran, C++, Java, and other languages. The netCDF libraries support a
+machine-independent format for representing scientific data. Together, the
+interfaces, libraries, and format support the creation, access, and sharing of
+scientific data.
+
+NetCDF data is:
+* Self-Describing. A netCDF file includes information about the data it contains.
+* Portable. A netCDF file can be accessed by computers with different ways of
+  storing integers, characters, and floating-point numbers.
+* Scalable. A small subset of a large dataset may be accessed efficiently.
+* Appendable. Data may be appended to a properly structured netCDF file without
+  copying the dataset or redefining its structure.
+* Sharable. One writer and multiple readers may simultaneously access the same
+  netCDF file.
+* Archivable. Access to all earlier forms of netCDF data will be supported by
+  current and future versions of the software.
+
+The netCDF software was developed by Glenn Davis, Russ Rew, Ed Hartnett, John
+Caron, Dennis Heimbigner, Steve Emmerson, Harvey Davies, and Ward Fisher at the
+Unidata Program Center in Boulder, Colorado, with contributions from many other
+netCDF users.
+
+This module contains the C, Fortran and both C++-interfaces but does not support
+MPI.
+
+Version numbers:
+* netCDF-C %(netcdfc)s
+* netCDF-Fortran %(netcdff)s
+* netCDF4-C++ %(netcdf4)s
+* netCDF3-C++ %(netcdf3)s
+""" % {
+    'netcdfc': version,
+    'netcdff': local_version_fortran,
+    'netcdf4': local_version_cpp4,
+    'netcdf3': local_version_cpp3,
+}
+
+usage = """
+The module contains a number of command line tools for managing netCDF files:
+* nccopy: Copy a netCDF file, optionally changing format, compression, or
+          chunking in the output
+* ncdump: Convert netCDF file to text form (CDL)
+* ncgen:  From a CDL file generate a netCDF-3 file, a netCDF-4 file or a C
+          program
+* ncgen3: From a CDL file generate a netCDF classic or 64 bit classicfile, a
+          C program, or a Fortran program
+There are also a number of commands to request information about the netCDF
+configuration: nc-config, ncxx4-config, nf-config and pnetcdf_version.
+
+The API is documented in the web-based documentation and to some extent also
+in the netcdf and netcds_fortran manual pages.
+"""
+
+docurls = [
+    'Web-based documentation: https://www.unidata.ucar.edu/software/netcdf/docs/index.html',
+    'Man pages for the command line utitlities (section 1) and netcdf and netcdf_fortran (section 3)',
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True, 'usempi': False}
+
+dependencies = [
+    ('baselibs', local_buildset, '',      ('GCCcore', local_gcc_version)), # for cURL, zlib and Szip
+    ('HDF5',     '1.10.6',       '-noMPI'),
+]
+
+builddependencies = [ 
+    ('buildtools', local_buildset, '', True),
+]
+
+default_easyblock = 'ConfigureMake'
+
+local_set_libs = 'LIBRARY_PATH=%(installdir)s/lib:${LIBRARY_PATH} LD_LIBRARY_PATH=%(installdir)s/lib:${LD_LIBRARY_PATH} CPATH=%(installdir)s/include:${CPATH} '
+
+components = [
+    ('netCDF-C', version, { 
+        # https://github.com/Unidata/netcdf-c/archive/v4.7.3.zip
+        'sources':        [{
+                              'filename':          SOURCELOWER_ZIP,
+                              'download_filename': 'v%(version)s.zip',
+                              'source_urls':       ['https://github.com/Unidata/netcdf-c/archive/']
+                          }],
+        'start_dir':      'netcdf-c-%(version)s',
+        'configopts':     '--enable-shared --enable-static ',
+    }),
+    ('netCDF-Fortran', local_version_fortran, { 
+        # https://github.com/Unidata/netcdf-fortran/archive/v4.5.2.zip
+        'sources':        [{
+                              'filename':          SOURCELOWER_ZIP,
+                              'download_filename': 'v%(version)s.zip',
+                              'source_urls':       ['https://github.com/Unidata/netcdf-fortran/archive/']
+                          }],
+        'start_dir':      'netcdf-fortran-%(version)s',
+        'preconfigopts':  local_set_libs,
+        'configopts':     '--enable-shared --enable-static',
+        'prebuildopts':   local_set_libs,
+        'preinstallopts': local_set_libs,
+    }),
+    ('netCDF-CXX4', local_version_cpp4, { 
+        # https://github.com/Unidata/netcdf-cxx4/archive/v4.3.1.zip
+        'sources':        [{
+                              'filename':          SOURCELOWER_ZIP,
+                              'download_filename': 'v%(version)s.zip',
+                              'source_urls':       ['https://github.com/Unidata/netcdf-cxx4/archive/']
+                          }],
+        'start_dir':      'netcdf-cxx4-%(version)s',
+        'preconfigopts':  local_set_libs,
+        'configopts':     '--enable-shared --enable-static',
+        'prebuildopts':   local_set_libs,
+        'preinstallopts': local_set_libs,
+    }),
+    ('netCDF-CXX3', local_version_cpp3, { 
+        # https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-cxx-4.2.tar.gz
+        'sources':        [{
+                              'filename':          'netcdf-cxx-%(version)s.tar.gz',
+                              'source_urls':       ['https://www.unidata.ucar.edu/downloads/netcdf/ftp/']
+                          }],
+        'start_dir':      'netcdf-cxx-%(version)s',
+        'preconfigopts':  local_set_libs,
+        'configopts':     '--enable-shared --enable-static',
+        'prebuildopts':   local_set_libs,
+        'preinstallopts': local_set_libs,
+    }),
+]
+
+sanity_check_paths = {
+    'files': ['bin/nc-config', 'bin/ncxx4-config', 'bin/nf-config'],
+    'dirs':  ['include', 'lib'],
+}
+
+moduleclass = 'data'
