@@ -85,7 +85,8 @@ Suggested dependencies:
 
 * [GitHub](https://github.com/cp2k/cp2k/tree/44b70af5aa9628cb07451649d52548a7bc5d8de1)
      * [Scripts for dependencies](https://github.com/cp2k/cp2k/tree/44b70af5aa9628cb07451649d52548a7bc5d8de1/tools/toolchain/scripts)
-* This commit already uses Libint 2.x
+* This commit already uses Libint 2.x. Note that we use a version of Libint
+  specifically packaged and configured for CP2K.
 * Only a version without PLUMED was tested.
 * There was a patch needed to hardcode the revision in the Makefile as automatic
   detection does not work when used with EasyBuild. EasyBuild does not store
@@ -121,7 +122,7 @@ Suggested dependencies:
   <tr><td>ELPA</td>   <td>2019.05.001</td>  <td>2019.05.002</td></tr>
   <tr><td>Libint</td> <td>2.6.0</td>        <td>2.6.0</td></tr>
   <tr><td>libxc</td>  <td>4.3.4</td>        <td>4.3.4</td></tr>
-  <tr><td>libxsmm</td><td>1.14</td>         <td>1.14</td></tr>
+  <tr><td>libxsmm</td><td>1.14</td>         <td>1.14 in 2019b, 1.15 in 2020a</td></tr>
   <tr><td>PLUMED</td> <td>2.5.2</td>        <td>2.5.4</td></tr>
   <tr><td>GSL</td>    <td>2.5</td>          <td>2.5</td></tr>
 <table>

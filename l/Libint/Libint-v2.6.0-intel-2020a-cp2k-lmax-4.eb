@@ -1,0 +1,43 @@
+easyblock = 'ConfigureMake'
+
+name =          'Libint'
+version =       'v2.6.0'
+versionsuffix = '-cp2k-lmax-4'
+
+local_buildset = '2020a'
+
+homepage = 'https://github.com/cp2k/libint-cp2k'
+
+whatis = [
+    "Description: Libint: a library for the evaluation of molecular integrals of many-body operators over Gaussian functions."
+    "This version is configured specifically for CP2K"
+]
+
+description = """
+Libint is a library for the evaluation of molecular integrals of many-body 
+operators over Gaussian functions
+
+This module does not include the complete Libint package with compiler etc.,
+but uses pre-configured sources specifically for use with CP2K.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+sources =     ['%(namelower)s-%(version)s%(versionsuffix)s.tgz']
+source_urls = ['https://github.com/cp2k/libint-cp2k/releases/download/%(version)s/']
+
+patches = ['%(name)s-%(version)s-fortran_example.patch']
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True)
+]
+
+configopts = ' --enable-fortran '
+# configopts += ' --with-real-type=libint2::simd::VectorAVXDouble
+
+sanity_check_paths = {
+    'files': ['include/libint2.h', 'include/libint_f.mod', 'lib/libint2.a'],
+    'dirs' : ['include/libint2']
+}
+
+moduleclass = 'chem'
