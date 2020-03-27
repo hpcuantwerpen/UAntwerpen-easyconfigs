@@ -1,0 +1,49 @@
+easyblock = 'EB_SuperLU'
+
+name =    'SuperLU_DIST'
+version = '6.3.0'
+
+local_scotch_ver = '6.0.7'
+
+local_buildset = '2020a'
+
+homepage = 'https://github.com/xiaoyeli/superlu_dist'
+
+whatis = [
+    "Description: SuperLU_DIST is the distributed memory version of SuperLU, a general purpose library for the direct solution of large, sparse, nonsymmetric systems of linear equations",
+]
+
+description = """
+SuperLU is a general purpose library for the direct solution of large, 
+sparse, nonsymmetric systems of linear equations on distributed high 
+performance machines.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True, 'usempi': True}
+
+# https://github.com/xiaoyeli/superlu_dist/archive/v6.3.0.zip
+sources =     ['v%(version)s.zip']
+source_urls = ['https://github.com/xiaoyeli/superlu_dist/archive/']
+checksums =   ['889cb024685d5db2297c83b0ebc11f1f4654d1477e8031ef48a47aa80cbd2f73']
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True), # for CMake
+]
+
+dependencies = [
+    ('SCOTCH', local_scotch_ver, '-compat-SuperLU')
+]
+
+configopts = [ "-DUSE_XSDK_DEFAULTS=FALSE -Denable_blaslib=OFF " +
+               "-DTPL_PARMETIS_LIBRARIES='-lptscotchparmetis -lptscotch -lscotchmetis -lscotch -lptscotcherr -lz' " +
+               "-DTPL_PARMETIS_INCLUDE_DIRS=$EBROOTSCOTCH/include" ]
+
+skipsteps = ['test']
+
+sanity_check_paths = {
+    'files': ['include/superlu_defs.h', ('lib/libsuperlu_dist.a', 'lib64/libsuperlu_dist.a')],
+    'dirs':  []
+}
+
+moduleclass = 'numlib'

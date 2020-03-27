@@ -1,0 +1,49 @@
+name =          'SCOTCH'
+version =       '6.0.7'
+versionsuffix = '-compat-SuperLU'
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'http://gforge.inria.fr/projects/scotch/'
+
+whatis = [
+    'Description: SCOTCH is a software package for graph and mesh/hypergraph partitioning, graph clustering, and sparse matrix ordering',
+    'This module provides the executables and static libraries',
+]
+
+description = """
+SCOTCH is a software package and libraries for sequential and parallel graph
+partitioning, static mapping, and sparse matrix block ordering, and sequential
+mesh and hypergraph partitioning.
+
+This module provides the executables and static libraries. It was compiled with
+some additional options to be used with the SuperLU_DIST modules.
+"""
+
+docurls = [
+    'Man pages in section 1 for the executables',
+    'Downloadable PDF user manual at https://gforge.inria.fr/docman/view.php/248/8261/ptscotch_user6.0.pdf',
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True}
+
+dependencies = [
+    ('baselibs',    local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib
+]
+
+# https://gforge.inria.fr/frs/download.php/file/38040/scotch_6.0.7.tar.gz
+source_urls = ['http://gforge.inria.fr/frs/download.php/file/38040/']
+sources =     ['%(namelower)s_%(version)s.tar.gz']
+checksums =   ['094e7672d7856236777f5d1988c4cdf6c77c3a8d2fac3d8f770e0b42a08d4ccb'] 
+
+# The SCOTCH EasyBlock removes metis.h and parmetis.h from the include directory
+# which is not a good idea if the software is to be used with SCOTCH.
+# So we get them from the sources.
+postinstallcmds = [
+    'cp %(builddir)s/scotch_%(version)s/src/libscotchmetis/metis.h    %(installdir)s/include',
+    'cp %(builddir)s/scotch_%(version)s/src/libscotchmetis/parmetis.h %(installdir)s/include'   
+]
+
+moduleclass = 'math'

@@ -16,3 +16,5 @@ header files in the SCOTCH include dirs (removed there by the SCOTCH
 EasyBlock) and can then compile SuperLU without additional patches, at least
 if no Metis or parMetis module is loaded which may conflict with those
 header files.
+
+For the 2020a toolchains, we switched to downloads from the GitHub.
