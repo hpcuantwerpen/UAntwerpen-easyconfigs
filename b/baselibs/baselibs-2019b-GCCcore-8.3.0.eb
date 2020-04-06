@@ -991,7 +991,12 @@ sanity_check_paths = {
 }
 
 modextravars = {
-    'CURL_INCLUDES': '%(installdir)s/include'
+    'CURL_INCLUDES': '%(installdir)s/include',
+# Compatibility with EasyBlocks that check for certain software.
+    'EBROOTGMP':     '%(installdir)s',
+    'EBVERSIONGMP':  local_GMP_version,
+    'EBROOTMPFR':    '%(installdir)s',
+    'EBVERSIONMPFR': local_MPFR_version,
 }
 
 modextrapaths = {
