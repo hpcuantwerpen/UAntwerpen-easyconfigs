@@ -1,0 +1,72 @@
+easyblock = 'CMakeMake'
+
+name =          'RAxML-NG'
+version =       '0.9.0'
+versionsuffix = '-pthreads-hopper'
+
+local_buildset =    '2019b'
+local_gcc_version = '8.3.0'
+
+homepage = 'https://github.com/amkozlov/raxml-ng'
+
+whatis = [
+    "Description: RAxML-NG is a phylogenetic tree inference tool which uses maximum-likelihood (ML) optimality criterion.",
+]
+
+description = """
+RAxML-NG is a phylogenetic tree inference tool which uses maximum-likelihood (ML)
+optimality criterion. Its search heuristic is based on iteratively performing a
+series of Subtree Pruning and Regrafting (SPR) moves, which allows to quickly
+navigate to the best-known ML tree. RAxML-NG is a successor of RAxML (Stamatakis
+2014) and leverages the highly optimized likelihood computation implemented in
+libpll (Flouri et al. 2014).
+This version was compiled with support for multithreading and can use only one
+node.
+
+Due to bugs and bad decisions in the configuration process of RAxML-NG and its
+dependencies, the binaries are suboptimal even on Ivybridge CPUs. Hence the 
+package is currently only available on Hopper.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
+# Optimization target is provided by the RAxML and PLL-modules configure scripts.
+#toolchainopts = {'optarch': False, 'cstd': 'c++11'}
+
+# The archives from GitHub are not complete as they do not contain the dependencies.
+# Hence we use the EasuBuild functionality to do a recursive clone of the repository
+# and create our own source tar file from there.
+sources = [{
+    'filename': SOURCE_TAR_GZ,
+    'git_config': {
+        'url':       'https://github.com/amkozlov',
+        'repo_name': 'raxml-ng',
+        'tag':       '%(version)s',
+        'recursive': True,
+    },
+}]
+
+dependencies = [
+    ('baselibs', local_buildset), # For GMP    
+]
+
+builddependencies = [
+    ( 'buildtools', local_buildset,    '', True ), # CMake, flex, Bison
+    ( 'gtest',      '1.8.1' ),
+]
+
+separate_build_dir = True
+
+
+configopts  = '-DENABLE_RAXML_SIMD=ON -DENABLE_PLLMOD_SIMD=ON '
+configopts += '-DUSE_MPI=OFF -DUSE_PTHREADS=ON '
+configopts += '-DUSE_TERRAPHAST=ON '
+configopts += '-DENABLE_GMP=ON '
+configopts += '-DCMAKE_CXX_FLAGS_RELEASE="" '
+configopts += '-DGTEST_ROOT=$EBROOTGTEST .'
+
+sanity_check_paths = {
+    'files': ["bin/raxml-ng"],
+    'dirs':  [],
+}
+
+moduleclass = 'bio'
