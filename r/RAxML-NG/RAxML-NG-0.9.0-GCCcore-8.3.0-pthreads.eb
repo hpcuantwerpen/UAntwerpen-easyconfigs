@@ -2,7 +2,7 @@ easyblock = 'CMakeMake'
 
 name =          'RAxML-NG'
 version =       '0.9.0'
-versionsuffix = '-pthreads-hopper'
+versionsuffix = '-pthreads'
 
 local_buildset =    '2019b'
 local_gcc_version = '8.3.0'
@@ -44,6 +44,10 @@ sources = [{
         'recursive': True,
     },
 }]
+patches=[
+    'RAxML-NG-%(version)s_CMakeLists.patch',
+    'RAxML-NG-%(version)s_terraphast_bugfix.patch'  # This one should not be needed in later versions as the bug has already been fixed in the upstream code.
+]
 
 dependencies = [
     ('baselibs', local_buildset), # For GMP    
@@ -56,14 +60,18 @@ builddependencies = [
 
 separate_build_dir = True
 
-
-configopts  = '-DENABLE_RAXML_SIMD=ON -DENABLE_PLLMOD_SIMD=ON '
-configopts += '-DUSE_MPI=OFF -DUSE_PTHREADS=ON '
-configopts += '-DUSE_TERRAPHAST=ON '
-configopts += '-DENABLE_GMP=ON '
-configopts += '-DCMAKE_C_FLAGS_RELEASE="" '
-configopts += '-DCMAKE_CXX_FLAGS_RELEASE="" '
-configopts += '-DGTEST_ROOT=$EBROOTGTEST .'
+#configopts  = '-DENABLE_RAXML_SIMD=ON -DENABLE_PLLMOD_SIMD=ON '
+local_base_configopts  = '-DENABLE_PLLMOD_SIMD=ON -DSSE_FLAGS="" -DAVX_FLAGS="" -DAVX2_FLAGS="" '  # These are already enabled if needed through the EasyBuild flags.
+local_base_configopts += '-DBUILD_AS_LIBRARY=OFF '
+local_base_configopts += '-DUSE_PTHREADS=ON '
+local_base_configopts += '-DUSE_TERRAPHAST=ON '
+local_base_configopts += '-DUSE_GMP=ON -DGMP_PREFIX=$EBROOTBASELIBS '
+local_base_configopts += '-DCMAKE_C_FLAGS_RELEASE="" '
+local_base_configopts += '-DCMAKE_CXX_FLAGS_RELEASE="" '
+local_base_configopts += '-DENFORCE_COMPILER_FLAGS=OFF '
+local_base_configopts += '-DGTEST_ROOT=$EBROOTGTEST '
+local_mpi_configopts   = '-DUSE_MPI=OFF '
+configopts = local_mpi_configopts + local_base_configopts
 
 sanity_check_paths = {
     'files': ["bin/raxml-ng"],
