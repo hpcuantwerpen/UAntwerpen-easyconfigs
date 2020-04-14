@@ -12,10 +12,10 @@ whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
     "Contains: ncurses/ncursesw, readline, brotli, bzip2, Szip, XZ utils, zlib, gzip, lzip, lz4, zstd, libb2, libdeflate, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
-    "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, " + 
+    "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, libidn, libidn2, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
-    "file, gc, libevent, libffi, libyaml, PCRE, PCRE2, UDUNITS, D-Bus, util-linux.",
+    "file, gc, libevent, libffi, libyaml, PCRE, PCRE2, UDUNITS, D-Bus, util-linux, wget.",
 ]
 
 local_binutils_version = '2.34'     # A build dependency, as GCCcore with the system binutils might fail.
@@ -60,6 +60,8 @@ local_gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gette
 local_ICU_version =          '66.1'          # http://site.icu-project.org/home
 local_libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
 local_libunistring_version = '0.9.10'        # https://ftp.gnu.org/gnu/libunistring/
+local_libidn_version =       '1.35'          # https://ftp.gnu.org/gnu/libidn/
+local_libidn2_version =      '2.3.0'         # https://ftp.gnu.org/gnu/libidn/
 local_file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
 local_gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
 local_libffi_version =       '3.3'           # ftp://sourceware.org/pub/libffi/
@@ -68,6 +70,7 @@ local_PCRE_version =         '8.44'          # https://ftp.pcre.org/pub/pcre/
 local_PCRE2_version =        '10.33'         # https://ftp.pcre.org/pub/pcre/
 local_UDUNITS_version =      '2.2.26'        # ftp://ftp.unidata.ucar.edu/pub/udunits
 local_util_version =         '2.35'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
+local_wget_version =         '1.20.3'        # https://ftp.gnu.org/gnu/wget/
 local_pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
 local_freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
 local_fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
@@ -224,6 +227,10 @@ Overview of included libraries:
     FTP uploading, HTTP form based upload, proxies, cookies, user+password
     authentication (Basic, Digest, NTLM, Negotiate, Kerberos), file transfer
     resume, http proxy tunneling and more.
+  + wget (version %(wget)s): GNU Wget is a free software package for retrieving 
+    files using HTTP, HTTPS and FTP, the most widely-used Internet protocols. 
+    It is a non-interactive command line tool, so it may easily be called from 
+    scripts, cron jobs, terminals without X-Windows support, etc.
   + expat (version %(expat)s): Expat is an XML parser library written in C.
     It is a stream-oriented parser in which an application registers handlers
     for things the parser might find in the XML document (like start tags).
@@ -385,6 +392,7 @@ Overview of included libraries:
     'LAME': local_LAME_version,
     'opus': local_libopus_version,
     'cURL': local_cURL_version,
+    'wget': local_wget_version,
     'expat': local_expat_version,
     'xml2': local_libxml2_version,
     'xslt': local_libxslt_version,
@@ -444,6 +452,7 @@ docurls = [
     'GMP web-based documentation: https://gmplib.org/manual/',
     'cURL: web-based documentation: https://curl.haxx.se/docs/',
     'cURL: man pages for the curl and curl-config commands (section 1) and the library functions (section 3)',
+    'wget: man page for the wget command (section 1)'
     'expat: web-based documentation: https://libexpat.github.io/doc/',
     'expat: man page for xmlwf',
     'ICU: web-based documentation at http://site.icu-project.org/home',
@@ -459,6 +468,10 @@ docurls = [
     'gettext: man pages for all command line tools (man section 1) and for the API (man section 3)',
     'libevent: web-based documentation on the home page: https://libevent.org/',
     'libffi: Man pages for the library (ffi) and the functions ffi_prep_cif, ffi_prep_cif_var and ffi_call',
+    'libidn: web-based manual pages on https://www.gnu.org/software/libidn/manual',
+    'libidn: man pages for the idn command (section 1) and the API (section 3)',
+    'libidn2: web-based manual pages on https://www.gnu.org/software/libidn2/manual',
+    'libidn2: man pages for the idn2 command (section 1) and the API (section 3)',
     'libiconv: web-based documentation on https://www.gnu.org/software/libiconv/',
     'libiconv: manual pages for the iconv command and iconv_open, iconv_close, iconvctl, iconv_open_into',
     'libunistring: web-based manual: https://www.gnu.org/software/libunistring/manual/libunistring.html',
@@ -836,6 +849,21 @@ components = [
         'preconfigopts': 'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ',
         'configopts':  '--with-pic --without-python',
     }),
+    ('libidn', local_libidn_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       }],
+        'start_dir':   'libidn-%(version)s',
+    }),
+
+    ('libidn2', local_libidn2_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['https://ftp.gnu.org/gnu/libidn/']
+                       }],
+        'start_dir':   'libidn2-%(version)s',
+    }),
 #    ('NSPR', NSPR_version, {
 #        'sources':     [ {
 #                          'filename':    SOURCELOWER_TAR_GZ,
@@ -998,6 +1026,15 @@ components = [
                        "--without-python ",
         'start_dir':   '%(namelower)s-%(version)s'
     }),
+    ('wget', local_wget_version, { # depends on PCRE, libidn and zlib.
+        'sources':       [ {
+                            'filename':    SOURCELOWER_TAR_GZ,
+                            'source_urls': [GNU_SOURCE]
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': "export PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:/usr/lib64/pkgconfig:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig && ",
+        'configopts':    '--with-ssl=openssl ',
+    }),
 #
 # Graphics
 #
@@ -1030,7 +1067,7 @@ components = [
 
 sanity_check_paths = {
     'files': [],
-    'dirs': ['include']
+    'dirs':  ['include']
 }
 
 modextravars = {
