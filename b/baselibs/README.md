@@ -1,5 +1,14 @@
 # Baselibs
 
+## Remarks on individual packages
+
+### wget
+
+* wget can now use libidn2 instead of libidn and PCRE2 instead of PCRE.
+* According to the [EasyBuilders recipes](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/w/wget)
+  wget 1.20 needs OpenSSL 1.0.1s or newer or GnuTLS 1.2.11 or newer, with GnuTLS being 
+  the default it looks for if no --with-ssl is specified.
+
 ## EasyConfigs
 
 ### 2020a bundle
