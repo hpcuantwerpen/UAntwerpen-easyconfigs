@@ -26,3 +26,7 @@ additions to avoid installing those package separately.
   We don't have standard Meson and Ninja modules, but include both tools
   in our buildtools bundle and set appropriate EB values so that the
   MesonNinja EasyBlock recognizes them and thinks they are properly installed.
+* Added package:
+    * xprop
+
+

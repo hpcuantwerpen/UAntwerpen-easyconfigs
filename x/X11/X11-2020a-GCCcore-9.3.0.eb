@@ -1,7 +1,7 @@
 easyblock = 'Bundle'
 
-name =    'X11'
-version = '2020a'
+name =          'X11'
+version =       '2020a'
 
 local_gcc_version =      '9.3.0'
 local_binutils_version = '2.34'
@@ -24,7 +24,20 @@ mandate the user interface – this is handled by individual programs. As such,
 the visual styling of X-based environments varies greatly; different programs
 may present radically different interfaces.
 
-This module contains static and shared libraries for a lot of libraries from the X11 system
+This module contains static and shared libraries for a lot of libraries from the X11 system.
+
+This version does contain some additional tools and libraries on top of the standard
+EasyBuild X11 modules:
+* libdrm: Direct Rendering Manager runtime library.
+* DBus: D-Bus is a message bus system, a simple way for applications to talk
+  to one another.  In addition to interprocess communication, D-Bus helps
+  coordinate process lifecycle; it makes it simple and reliable to code
+  a "single instance" application or daemon, and to launch applications
+  and daemons on demand when their services are needed.
+* xporp: The xprop utility is for displaying window and font properties in an X server.
+  One window or font is selected using the command line arguments or possibly
+  in the case of a window, by clicking on the desired window. A list of
+  properties is then given, possibly with formatting information.
 """
 
 toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
@@ -238,6 +251,13 @@ components = [ # Update done on 2020-03-27
                        }],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--without-systemdsystemunitdir',
+    }),
+    ('xprop', '1.2.4', { # 2019-03-10 https://www.x.org/archive/individual/app/, used by FLTK
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_BZ2,
+                          'source_urls': ['http://ftp.x.org/archive/individual/app/']
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s',
     }),
 ]
 
