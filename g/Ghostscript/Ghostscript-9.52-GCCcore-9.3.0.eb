@@ -1,0 +1,72 @@
+easyblock = 'ConfigureMake'
+
+name =    'Ghostscript'
+version = '9.52'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'  
+
+homepage = 'http://ghostscript.com'
+whatis = [
+   'Desription: Ghostscript is a versatile processor for PostScript data with the ability to render PostScript to different targets.'
+]
+
+description = """
+Ghostscript is a high quality, high performance Postscript and PDF interpreter
+and rendering engine. The package provides, among others, various commands
+to convert between Postscript files, PDF files and Encapsulated Postscript
+files, but can also render Postscript and PDF to some raster graphics
+files.
+
+Some interesting commands:
+* gs: The Ghostscript interpreter and main workhorse of the package
+* ps2pdf: Postscript to Adobe PDF
+* pdf2ps: Adobe PDF to Postscript
+* ps2epsi: Postscript to Encapsulated Postscript
+
+All commands come with help through man pages.
+"""
+
+examples = """
+Check the manual pages by typing, e.g.,
+  man gs
+at the Linux command prompt after loading this module.
+"""
+
+docurls = [
+    'Web-based documentation: https://www.ghostscript.com/doc/%(version)s/Readme.htm'
+]
+
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = [
+    'https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs%(version_major)s%(version_minor)s/',
+]
+sources =     ['ghostscript-%(version)s.tar.gz']
+checksums =   ['c2501d8e8e0814c4a5aa7e443e230e73d7af7f70287546f7b697e5ef49e32176']
+
+dependencies = [
+    ('baselibs', local_buildset), # zlib, libpng, libjpeg-turbo, expoat, LibTIFF, freetype
+    ('GLib',     '2.64.1'),
+    ('cairo',    '1.17.2'),
+]
+
+builddependencies = [
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
+]
+
+# Do not use local copies of zlib, jpeg, freetype, and png
+preconfigopts  = "mv zlib zlib.no && mv jpeg jpeg.no && mv freetype freetype.no && mv libpng libpng.no && "
+preconfigopts += 'export LIBS="$LIBS -lz" && '
+
+configopts = "--with-system-libtiff --enable-dynamic"
+
+sanity_check_paths = {
+    'files': ['bin/gs'],
+    'dirs':  ['lib/ghostscript', 'share/man'],
+}
+
+moduleclass = 'tools'
