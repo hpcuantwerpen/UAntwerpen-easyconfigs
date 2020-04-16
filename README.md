@@ -15,6 +15,13 @@ in multiple ways.
   [netCDF modules](https://github.com/hpcuantwerpen/UAntwerpen-easyconfigs/tree/master/n/netCDF)
   that include the base libraries and the Fortran and dual C++ interfaces in a single module.
 
+Not all EasyConfig files included in this repository are recipes that we actually install. 
+Some were only used during the development of some of our bigger bundles but included 
+in this repository for those who it may be useful for, as it does include packages 
+that are not yet supported by the official EasyBuilders distribution. These recipes 
+typically have the version suffix -baslibsDevel or -X11Devel after the bundle they 
+are included in.
+
 See the [Wiki of this repository](https://github.com/hpcuantwerpen/UAntwerpen-easyconfigs/wiki) for more informaton.
 
 It may be useful to also check our ["EasyBuild - The Missing Manual" OneNote](https://1drv.ms/f/s!AjGZCXJ9iRp3iptoom8jWWypyVu_0g).

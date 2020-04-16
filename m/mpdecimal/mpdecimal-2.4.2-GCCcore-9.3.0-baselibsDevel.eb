@@ -4,7 +4,7 @@ easyblock = 'ConfigureMake'
 
 name =          'mpdecimal'
 version =       '2.4.2'
-versionsuffix = '-BundleTest'
+versionsuffix = '-baselibsDevel'
 
 local_buildset =         '2020a'
 local_gcc_version =      '9.3.0'

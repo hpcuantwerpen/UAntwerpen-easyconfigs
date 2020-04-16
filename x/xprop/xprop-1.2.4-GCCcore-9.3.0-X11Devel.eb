@@ -1,7 +1,9 @@
+# Installation test before inclusion in the X11 2020a bundle.
 easyblock = 'ConfigureMake'
 
-name =    'xprop'
-version = '1.2.4'
+name =          'xprop'
+version =       '1.2.4'
+versionsuffix = '-X11Devel'
 
 local_buildset =         '2020a'
 local_gcc_version =      '9.3.0'

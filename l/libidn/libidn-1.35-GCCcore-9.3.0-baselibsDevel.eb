@@ -1,7 +1,9 @@
+# Test build for inclusion in the baselibs 2020a bundle.
 easyblock = 'ConfigureMake'
 
-name =    'libidn'
-version = '1.35'
+name =          'libidn'
+version =       '1.35'
+versionsuffix = '-baselibsDevel'
 
 local_buildset =         '2020a'
 local_gcc_version =      '9.3.0'
