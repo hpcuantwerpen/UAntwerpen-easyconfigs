@@ -55,6 +55,7 @@ local_libcerf_version =      '1.13'          # https://jugit.fz-juelich.de/mlz/l
 local_GMP_version =          '6.2.0'         # https://ftp.gnu.org/gnu/gmp/
 local_MPFR_version =         '4.0.2'         # https://ftp.gnu.org/gnu/mpfr/
 local_MPC_version =          '1.1.0'         # https://ftp.gnu.org/gnu/mpc/
+local_mpdecimal_version =    '2.4.2'         # https://www.bytereef.org/mpdecimal/
 local_fribidi_version =      '1.0.9'         # https://github.com/fribidi/fribidi/releases 
 local_gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
 local_ICU_version =          '66.1'          # http://site.icu-project.org/home
@@ -288,6 +289,15 @@ Overview of included libraries:
     is a major design goal.
     The library is built upon and follows the same principles as GNU MPFR.
     MPFR is free. It is distributed under the GNU Lesser General Public License.
+  + mpdecimal (version %(mpdecimal)s): The libmpdecimal library, a package for 
+    correctly-rounded arbitrary precision decimal floating point arithmetic.
+    libmpdec is a complete implementation of the General Decimal Arithmetic 
+    Specification. The specification, written by Mike Cowlishaw from IBM, 
+    defines a general purpose arbitrary precision data type together with 
+    rigorously specified functions and rounding behavior. As described in the 
+    scope section of the specification, libmpdec will - with minor restrictions - 
+    also conform to the IEEE 754-2008 Standard for Floating-Point Arithmetic, 
+    provided that the appropriate context parameters are set.
 * Drawing graphics
   + pixman (version %(pixman)s): a low-level software library for pixel manipulation, 
     providing features such as image compositing and trapezoid rasterization. 
@@ -401,6 +411,7 @@ Overview of included libraries:
     'GMP': local_GMP_version,
     'MPFR': local_MPFR_version,
     'MPC': local_MPC_version,
+    'mpdecimal': local_mpdecimal_version,
     'pixman': local_pixman_version,
     'freetype': local_freetype_version,
     'fontconfig': local_fontconfig_version,
@@ -450,6 +461,7 @@ docurls = [
     'GSL manual: https://www.gnu.org/software/gsl/doc/html/index.html',
     'libcerf homepage: https://jugit.fz-juelich.de/mlz/libcerf',
     'GMP web-based documentation: https://gmplib.org/manual/',
+    'mpdecimal web-based documentation: https://www.bytereef.org/mpdecimal/doc/libmpdec/index.html',
     'cURL: web-based documentation: https://curl.haxx.se/docs/',
     'cURL: man pages for the curl and curl-config commands (section 1) and the library functions (section 3)',
     'wget: man page for the wget command (section 1)'
@@ -494,6 +506,12 @@ builddependencies = [
     ('binutils',   local_binutils_version, ),
     ('buildtools', version,                '', True),
 ]
+
+osdependencies = [
+    ('openssl-devel', 'libssl-dev', 'libopenssl-devel'), # For wget
+#    ('gnutls-devel', 'gnutls-dev', 'libgnutls-devel'),   # Alternative for wget, but then configopts needs to be removed.
+]
+
 
 default_easyblock = 'ConfigureMake'
 
@@ -938,6 +956,13 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-gmp=%(installdir)s --with-mpfr=%(installdir)s'
+    }),
+    ('mpdecimal', local_mpdecimal_version, {
+         'sources':    [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': ['https://www.bytereef.org/software/mpdecimal/releases/']
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s',
     }),
 #
 # Miscellaneous

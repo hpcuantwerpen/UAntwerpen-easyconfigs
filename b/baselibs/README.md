@@ -21,6 +21,8 @@
 * Added wget to the bundle. Not really a library, but it is a tool that gets used by
   some packages and that requires other components from baseutils, so this is a better
   place to put it than, e.g., our buildtools module.
+* Added mpdecimal to the bundle, a library that is used by Python in its built-in
+  cdecimal package.
 
 
 
