@@ -1,0 +1,49 @@
+name =    'OpenFOAM'
+version = '6'
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
+
+homepage = 'http://www.openfoam.com/'
+
+whatis = [
+    'Description: OpenFOAM is a free, open-source CFD package, from OpenFOAM.com',
+]
+
+description = """
+OpenFOAM is a free, open source CFD software package. OpenFOAM has an extensive
+range of features to solve anything from complex fluid flows involving chemical 
+reactions, turbulence and heat transfer, to solid dynamics and electromagnetics.
+
+This module contains version %(version)s as distributed by OpenFOAM.com.
+
+As the module has been compiled for the compute nodes, no 3D graphics features
+have been included.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'cstd': 'c++11'}
+
+source_urls = ['https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive']
+sources =     ['version-%(version)s.tar.gz']
+patches =     ['OpenFOAM-%(version)s-cleanup.patch']
+checksums = [
+    '32a6af4120e691ca2df29c5b9bd7bc7a3e11208947f9bccf6087cfff5492f025',  # version-6.tar.gz
+    '5accbde6bde116691ea6a4666348f85487b5d5503a9761435c2cb1412b036c28',  # OpenFOAM-6-cleanup.patch
+]
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # libreadline and ncurses
+    # OpenFOAM requires 64 bit METIS using 32 bit indexes (array indexes)
+    ('METIS',    '5.1.0', '-i32-fp64'),
+    ('SCOTCH',   '6.0.7'),
+    ('CGAL',     '4.10.2', '-forOpenFOAM6'), # This works
+#    ('ParaView', '5.4.1', '-mpi'),
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True) # CMake, flex and Bison.
+]
+
+moduleclass = 'cae'

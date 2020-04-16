@@ -94,5 +94,26 @@
 * Manual intervention after installation: Outcomment the line that loads the 
   settings for ParaView in OpenFOAM-4.1/etc/bashrc.
 
+### Version 6 with Intel 2019b
+
+* Official dependencies in [ThirdParty-6](https://github.com/OpenFOAM/ThirdParty-6)
+     * [Scotch 6.0.6](https://www.labri.fr/perso/pelegrin/scotch/)
+     * [ParaView](https://github.com/Kitware/ParaView) 5.4.0
+     * [CGAL 4.10](https://github.com/CGAL/cgal/tree/releases/CGAL-4.10.2), compiled with Boost 1.55.0
+     * [libccmio 2.6.1](https://portal.nersc.gov/svn/visit/trunk/third_party/libccmio-2.6.1.tar.gz): 
+       Not clear what this is needed for.
+* We stuck to CGAL 4.10, but used a more recent Boost (1.70.0), used Scots 6.0.7 which 
+  should only be a patchlevel upgrade and hence not really different. Since none of 
+  the EasyBuild builds we looked at includes libccmio, we didn't use it. We also include
+  Metis which is an optional dependency.
+* The recipe is a mix of the recipe used on the VSC Tier-1 system and our recipe for
+  version 4.1. We omitted all GUI stuff as in our 4.1 recipe, but used for the dependencies
+  versions that were very close to those used on the Tier-1.
+* This compiles correctly with the Intel 2019b compilers.
+
+
 ### Version v1912 with the 2019b toolchain.
+
+Does not work. There are definitely MPI link problems as the wrappers are not always 
+used, but it is not clear if that is the only problem.
 
