@@ -620,6 +620,7 @@ components = [
 #
     ('brotli', local_brotli_version, {
         'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
         'sources':     [ {
                           'download_filename': 'v%(version)s.tar.gz',
                           'filename':          SOURCELOWER_TAR_GZ,
@@ -721,6 +722,7 @@ components = [
     }),
     ('libarchive', local_libarchive_version, {
         'easyblock': 'CMakeMake',
+        'separate_build_dir': False,
         'sources':   [ {
                          # https://www.libarchive.org/downloads/libarchive-3.3.3.tar.gz
                          # https://github.com/libarchive/libarchive/archive/v3.4.0.tar.gz
@@ -745,6 +747,7 @@ components = [
     }),
      ('libjpeg-turbo', local_libjpegturbo_version, {
         'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [SOURCEFORGE_SOURCE]
@@ -754,6 +757,7 @@ components = [
      }),
     ('JasPer', local_JasPer_version, { 
         'easyblock':     'CMakeMake',
+        'separate_build_dir': False,
         'sources':       [ {
                             'filename':    SOURCELOWER_TAR_GZ,
                             'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/']
@@ -809,6 +813,7 @@ components = [
     }),
     ('x265', local_x265_version, {
         'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
         'sources':     [ {
                           'filename':    '%(name)s_%(version)s.tar.gz',
                           'source_urls': ['http://ftp.videolan.org/pub/videolan/x265/', 'http://download.videolan.org/pub/videolan/x265/']
@@ -916,6 +921,7 @@ components = [
     }),
     ('libcerf', local_libcerf_version, {
         'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
         # https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v1.13/libcerf-v1.13.tar.bz2
         # The problem with this link is that whatever .tar.gz file you request to it, it will
         # produce a file with that name and a version of libcerf into it, so we try to isolate 
