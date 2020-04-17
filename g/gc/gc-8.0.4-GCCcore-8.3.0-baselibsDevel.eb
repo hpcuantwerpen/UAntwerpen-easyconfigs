@@ -1,0 +1,55 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
+
+name =          'gc'
+version =       gc_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://hboehm.info/gc/'
+whatis = [
+    "Description: gc is the Boehm-Demers-Weiser conservative garbage collector, a garbage collecting replacement for C malloc or C++ new",
+    "This module provides static and shared libraries and header files"
+]
+
+description = """
+The Boehm-Demers-Weiser conservative garbage collector can be used as a garbage
+collecting replacement for C malloc or C++ new.
+"""
+
+docpaths = [
+    'share/doc/gc'
+]
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+
+source_urls = [
+    'http://hboehm.info/gc/gc_source/',
+    'https://github.com/ivmai/libatomic_ops/archive/',
+]
+sources = [
+    SOURCE_TAR_GZ,
+    'libatomic_ops-7_4_4.tar.gz',
+]
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+preconfigopts = "ln -s %(builddir)s/libatomic_ops*/ libatomic_ops && "
+
+configopts = '--enable-threads=posix'
+
+sanity_check_paths = {
+    'files': ['include/gc.h', 'lib/libcord.%s' % SHLIB_EXT, 'lib/libgc.%s' % SHLIB_EXT],
+    'dirs':  ['include/gc', 'share'],
+}
+
+moduleclass = 'lib'

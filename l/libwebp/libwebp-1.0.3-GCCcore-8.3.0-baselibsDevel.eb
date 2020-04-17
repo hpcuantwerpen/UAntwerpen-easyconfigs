@@ -1,0 +1,57 @@
+# NOTE: Can use SDL (optional), not yet included and doesn't seem to make sense
+# unless OpenGL is also used.
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
+libjpegturbo_version = '2.0.2'         # https://sourceforge.net/projects/libjpeg-turbo/files/
+libpng_version =       '1.6.37'        # http://www.libpng.org/pub/png/libpng.html
+libtiff_version =      '4.0.10'        # http://www.simplesystems.org/libtiff/
+libwebp_version =      '1.0.3'         # https://github.com/webmproject/libwebp/releases
+
+name =          'libwebp'
+version =       libwebp_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'https://developers.google.com/speed/webp/'
+
+whatis = [
+    "Description: libwebp is a library to encode and decode images in WebP format"
+]
+
+description = """
+WebP is a modern image format that provides superior lossless and lossy 
+compression for images on the web. Using WebP, webmasters and web developers 
+can create smaller, richer images that make the web faster.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = ['https://storage.googleapis.com/downloads.webmproject.org/releases/webp']
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['e20a07865c8697bba00aebccc6f54912d6bc333bb4d604e6b07491c1a226b34f']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('giflib',        giflib_version,       versionsuffix),
+    ('libjpeg-turbo', libjpegturbo_version, versionsuffix),
+    ('libpng',        libpng_version,       versionsuffix),
+    ('LibTIFF',       libtiff_version,      versionsuffix),
+]
+
+configopts = '--enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras'
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['include', 'lib']
+}
+
+moduleclass = 'lib'

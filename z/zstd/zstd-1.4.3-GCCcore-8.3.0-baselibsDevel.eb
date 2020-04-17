@@ -1,0 +1,67 @@
+easyblock = 'ConfigureMake'
+
+buildset =         '2019b'
+gcc_version =      '8.3.0'
+binutils_version = '2.32'
+
+XZ_version =       '5.2.4'  # https://tukaani.org/xz/
+zlib_version =     '1.2.11' # https://zlib.net/
+lz4_version =      '1.9.1'  # https://github.com/lz4/lz4/releases
+gzip_version =     '1.10'   # https://ftp.gnu.org/gnu/gzip/
+zstd_version =     '1.4.3'  # https://github.com/facebook/zstd/releases
+
+name =          'zstd'
+version =       zstd_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'https://facebook.github.io/zstd'
+
+whatis = [
+    "Descriptions: zstd provides Zstandard, a real-time compression algorithm providing high compression ratios.",
+]
+
+description = """
+Zstandard is a real-time compression algorithm, providing high compression
+ratios. It offers a very wide range of compression/speed trade-off, while 
+being backed by a very fast decoder. It also offers a special mode for 
+small data, called dictionary compression, and can create dictionaries
+from any sample set.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+sources =   [ {
+                # https://www.libarchive.org/downloads/libarchive-3.3.3.tar.gz
+                # https://github.com/libarchive/libarchive/archive/v3.4.0.tar.gz
+                'download_filename': 'v%(version)s.tar.gz',
+                'filename':          SOURCELOWER_TAR_GZ,
+                'source_urls':       ['https://github.com/facebook/zstd/archive/']
+              } ]
+source_urls = []
+checksums =   ['5eda3502ecc285c3c92ee0cc8cd002234dee39d539b3f692997a0e80de1d33de']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('zlib', zlib_version, versionsuffix),
+    ('gzip', gzip_version, versionsuffix),
+    ('XZ',   XZ_version,   versionsuffix),
+    ('lz4',  lz4_version,  versionsuffix),
+]
+
+skipsteps = ['configure']
+
+runtest = 'check'
+
+installopts = "PREFIX=%(installdir)s"
+
+sanity_check_paths = {
+    'files': ["bin/zstd", "lib/libzstd.%s" % SHLIB_EXT, "include/zstd.h"],
+    'dirs':  ["lib/pkgconfig"]
+}
+
+moduleclass = 'lib'

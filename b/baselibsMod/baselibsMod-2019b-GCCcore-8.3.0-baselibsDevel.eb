@@ -1,0 +1,130 @@
+easyblock = 'Bundle'
+
+name = 'baselibsMod'
+version = '2019b'
+versionsuffix = '-baselibsDevel'
+
+buildset =         '2019b'
+gcc_version =      '8.3.0'
+binutils_version = '2.32'
+
+ncurses_version =      '6.1'           # https://ftp.gnu.org/pub/gnu/ncurses/
+libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+brotli_version =       '1.0.7'         # https://github.com/google/brotli/releases
+bzip2_version =        '1.0.6'         # http://www.bzip.org/downloads.html
+bzip2_major_minor =    '1.0'    
+Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
+XZ_version =           '5.2.4'         # https://tukaani.org/xz/
+zlib_version =         '1.2.11'        # https://zlib.net/
+gzip_version =         '1.10'          # https://ftp.gnu.org/gnu/gzip/
+lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releases
+zstd_version =         '1.4.3'         # https://github.com/facebook/zstd/releases
+libb2_version =        '0.98.1'        # https://github.com/BLAKE2/libb2/releases
+libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
+giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
+JasPer_version =       '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
+libjpegturbo_version = '2.0.2'         # https://sourceforge.net/projects/libjpeg-turbo/files/
+libpng_version =       '1.6.37'        # http://www.libpng.org/pub/png/libpng.html
+libtiff_version =      '4.0.10'        # http://www.simplesystems.org/libtiff/
+libwebp_version =      '1.0.3'         # https://github.com/webmproject/libwebp/releases
+x264_version =         '20190721-2245' # https://download.videolan.org/pub/videolan/x264/snapshots/
+x265_version =         '3.1.1'         # http://download.videolan.org/pub/videolan/x265/
+LAME_version =         '3.100'         # http://lame.sourceforge.net/
+libopus_version =      '1.3.1'         # http://opus-codec.org/downloads/
+cURL_version =         '7.65.3'        # https://curl.haxx.se/download/
+expat_version =        '2.2.7'         # https://github.com/libexpat/libexpat/releases
+libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
+libxslt_version =      '1.1.33'        # http://xmlsoft.org/sources/
+GSL_version =          '2.5'           # https://ftp.gnu.org/gnu/gsl/
+libcerf_version =      '1.13'          # https://jugit.fz-juelich.de/mlz/libcerf/-/releases
+GMP_version =          '6.1.2'         # https://ftp.gnu.org/gnu/gmp/
+MPFR_version =         '4.0.2'         # https://ftp.gnu.org/gnu/mpfr/
+MPC_version =          '1.1.0'         # https://ftp.gnu.org/gnu/mpc/
+fribidi_version =      '1.0.5'         # https://github.com/fribidi/fribidi/releases 
+gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
+ICU_version =          '64.2'          # http://site.icu-project.org/home
+libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
+libunistring_version = '0.9.10'        # https://ftp.gnu.org/gnu/libunistring/
+file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
+gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
+libffi_version =       '3.2.1'         # ftp://sourceware.org/pub/libffi/
+libyaml_version =      '0.2.2'         # https://github.com/yaml/libyaml/releases
+PCRE_version =         '8.43'          # https://ftp.pcre.org/pub/pcre/
+PCRE2_version =        '10.33'         # https://ftp.pcre.org/pub/pcre/
+UDUNITS_version =      '2.2.26'        # ftp://ftp.unidata.ucar.edu/pub/udunits
+util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
+pixman_version =       '0.38.4'        # https://www.cairographics.org/releases/
+freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
+fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
+libevent_version =     '2.1.11'        # https://libevent.org/
+#NSPR_version =         '4.22'          # https://archive.mozilla.org/pub/nspr/releases
+#NSS_version =          '3.45'          # https://ftp.mozilla.org/pub/security/nss/releases/
+
+homepage = '(None)'
+
+whatis = [
+    'Description: Test module for developing baselibs',
+]
+
+description = """
+This is just a test module to develop baselibs and not meant to be used by regular users.
+""" 
+
+toolchain = {'name': 'GCCcore', 'version': gcc_version}
+
+dependencies = [
+    ('ncurses',       ncurses_version,      versionsuffix),
+    ('libreadline',   libreadline_version,  versionsuffix),
+    ('libiconv',      libiconv_version,     versionsuffix),
+    ('gettext',       gettext_version,      versionsuffix),
+    ('FriBidi',       fribidi_version,      versionsuffix),
+    ('ICU',           ICU_version,          versionsuffix),
+    ('libunistring',  libunistring_version, versionsuffix),
+    ('bzip2',         bzip2_version,        versionsuffix),
+    ('lz4',           lz4_version,          versionsuffix),   
+    ('Szip',          Szip_version,         versionsuffix),
+    ('zlib',          zlib_version,         versionsuffix),
+    ('gzip',          gzip_version,         versionsuffix),
+    ('XZ',            XZ_version,           versionsuffix),
+    ('zstd',          zstd_version,         versionsuffix),
+    ('libb2',         libb2_version,        versionsuffix),
+    ('libarchive',    libarchive_version,   versionsuffix),
+    ('giflib',        giflib_version,       versionsuffix),
+    ('libjpeg-turbo', libjpegturbo_version, versionsuffix),
+    ('JasPer',        JasPer_version,       versionsuffix),
+    ('libpng',        libpng_version,       versionsuffix),
+    ('LibTIFF',       libtiff_version,      versionsuffix),
+    ('x264',          x264_version,         versionsuffix),
+    ('x265',          x265_version,         versionsuffix),
+    ('LAME',          LAME_version,         versionsuffix),
+    ('libopus',       libopus_version,      versionsuffix),
+    ('cURL',          cURL_version,         versionsuffix),
+    ('expat',         expat_version,        versionsuffix),
+    ('libxml2',       libxml2_version,      versionsuffix),
+    ('libxslt',       libxslt_version,      versionsuffix),
+#    ('NSPR',          NSPR_version,         versionsuffix),
+#    ('NSS',           NSS_version,          versionsuffix),
+    ('GSL',           GSL_version,          versionsuffix),
+    ('libcerf',       libcerf_version,      versionsuffix),
+    ('GMP',           GMP_version,          versionsuffix),
+    ('MPFR',          MPFR_version,         versionsuffix),
+    ('MPC',           MPC_version,          versionsuffix),
+    ('file',          file_version,         versionsuffix),
+    ('gc',            gc_version,           versionsuffix),
+    ('libevent',      libevent_version,     versionsuffix),
+    ('libffi',        libffi_version,       versionsuffix),
+    ('libyaml',       libyaml_version,      versionsuffix),
+    ('PCRE',          PCRE_version,         versionsuffix),
+    ('PCRE2',         PCRE2_version,        versionsuffix),
+    ('UDUNITS',       UDUNITS_version,      versionsuffix),
+    ('util-linux',    util_version,         versionsuffix),
+    ('pixman',        pixman_version,       versionsuffix),
+    ('freetype',      freetype_version,     versionsuffix),
+    ('fontconfig',    fontconfig_version,   versionsuffix),   
+]
+
+altroot = 'GCCcore'
+altversion = 'GCCcore'
+
+# this bundle serves as a compiler-only toolchain, so it should be marked as compiler (important for HMNS)
+moduleclass = 'compiler'

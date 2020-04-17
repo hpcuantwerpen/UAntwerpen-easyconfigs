@@ -1,0 +1,65 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+zlib_version =         '1.2.11'        # https://zlib.net/
+bzip2_version =        '1.0.6'         # http://www.bzip.org/downloads.html
+PCRE2_version =        '10.33'         # https://ftp.pcre.org/pub/pcre/
+
+name =          'PCRE2'
+version =       PCRE2_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.pcre.org/'
+
+whatis = [
+    'Description: PCRE2 is a library for Perl-compatible regular expressions, this one with the version 2 API',
+    'This package provides some command line tools and static and shared libraries'
+]
+
+description = """
+The PCRE library is a set of functions that implement regular expression pattern
+matching using the same syntax and semantics as Perl 5. PCRE has its own native
+API, as well as a set of wrapper functions that correspond to the POSIX regular
+expression API. The PCRE library is free, even for building proprietary software.
+"""
+
+docurls = [
+    "Man pages in section 1 (pcre2grep, pcre2test) and 3 (API, start with pcre2)",
+    "http://www.pcre.org/current/doc/html/",
+]
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = ['http://download.sourceforge.net/pcre']
+sources =     [SOURCELOWER_TAR_BZ2]
+checksums =   ['35514dff0ccdf02b55bd2e9fa586a1b9d01f62332c3356e379eabb75f789d8aa']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('libreadline', libreadline_version,  versionsuffix),
+    ('zlib',        zlib_version,         versionsuffix),
+    ('bzip2',       bzip2_version,        versionsuffix),
+]
+
+configopts  = "--with-pic --disable-cpp --enable-newline-is-any "
+configopts += "--enable-pcre2-16 --enable-pcre2-32 " 
+configopts += "--enable-jit "
+configopts += "--enable-pcre2grep-libz --enable-pcre2grep-libbz2 --enable-pcre2test-libreadline "
+
+#configopts = "--enable-shared --enable-jit --enable-pcre2-16 --enable-unicode"
+
+sanity_check_paths = {
+    'files': ["bin/pcre2-config", "bin/pcre2grep", "bin/pcre2test", "lib/libpcre2-8.a", "lib/libpcre2-16.a"],
+    'dirs': [],
+}
+
+moduleclass = 'devel'

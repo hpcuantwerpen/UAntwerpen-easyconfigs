@@ -1,0 +1,50 @@
+##
+# This file is an EasyBuild reciPY as per https://github.com/hpcugent/easybuild
+#
+##
+
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+zlib_version =         '1.2.11'        # https://zlib.net/
+file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
+
+name =          'file'
+version =       file_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.darwinsys.com/file/'
+
+whatis = [
+    "Description: file provides the file command, a 'file type guesser",
+]
+
+description = """
+The file command is 'a file type guesser', that is, a command-line tool
+that tells you in words what kind of data a file contains.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('zlib', zlib_version, versionsuffix),
+]
+
+source_urls = ['ftp://ftp.astron.com/pub/file/']
+sources = [SOURCE_TAR_GZ]
+
+sanity_check_paths = {
+    'files': ['bin/file', 'include/magic.h', 'lib/libmagic.%s' % SHLIB_EXT],
+    'dirs': ['share']
+}
+
+moduleclass = 'system'

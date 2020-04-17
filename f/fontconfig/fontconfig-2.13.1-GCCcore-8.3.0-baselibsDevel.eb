@@ -1,0 +1,50 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+expat_version =        '2.2.7'         # https://github.com/libexpat/libexpat/releases
+util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
+freetype_version =     '2.10.1'        # https://download.savannah.gnu.org/releases/freetype/
+fontconfig_version =   '2.13.1'        # https://www.freedesktop.org/software/fontconfig/release/
+
+name =          'fontconfig'
+version =       fontconfig_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.freedesktop.org/software/fontconfig'
+
+whatis = [
+    'Description: A library for system-wide font configuration',
+    'The module contains a number of command line tools and a shared library',
+]
+
+description = """
+Fontconfig is a library designed to provide system-wide font configuration,
+customization and application access.
+
+The module contains a number of command line tools and a shared library.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+
+source_urls = ['http://www.freedesktop.org/software/fontconfig/release/']
+sources = [SOURCE_TAR_GZ]
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),  # for gperf, needed from version 2.12.4 on.
+]
+
+dependencies = [
+    ('expat',      expat_version,    versionsuffix),
+    ('util-linux', util_version,     versionsuffix),
+    ('freetype',   freetype_version, versionsuffix),
+]
+
+configopts = '--disable-docs '
+
+moduleclass = 'vis'

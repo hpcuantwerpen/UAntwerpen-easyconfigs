@@ -1,0 +1,46 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+NSPR_version =         '4.22'          # https://archive.mozilla.org/pub/nspr/releases
+
+name =         'NSPR'
+version =       NSPR_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR'
+
+whatis = [
+    "Description: NSPR is the Netscape Portable Runtime and provides a platform-neutral API for system level and libc-like functions"
+]
+
+description = """
+Netscape Portable Runtime (NSPR) provides a platform-neutral API for system
+level  and libc-like functions.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = ['https://archive.mozilla.org/pub/nspr/releases/v%(version)s/src/']
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['c9e4b6cc24856ec93202fe13704b38b38ba219f0f2aeac93090ce2b6c696d430']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+configopts = "--disable-debug --enable-optimize --enable-64bit"
+
+sanity_check_paths = {
+    'files': ['bin/nspr-config', 'lib/libnspr%(version_major)s.a', 'lib/libnspr%%(version_major)s.%s' % SHLIB_EXT,
+              'lib/libplc%(version_major)s.a', 'lib/libplc%%(version_major)s.%s' % SHLIB_EXT,
+              'lib/libplds%(version_major)s.a', 'lib/libplds%%(version_major)s.%s' % SHLIB_EXT,
+              'lib/pkgconfig/nspr.pc'],
+    'dirs':  ['include/nspr'],
+}
+
+moduleclass = 'lib'

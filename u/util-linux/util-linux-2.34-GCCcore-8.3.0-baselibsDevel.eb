@@ -1,0 +1,66 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+ncurses_version =      '6.1'           # https://ftp.gnu.org/pub/gnu/ncurses/
+libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+zlib_version =         '1.2.11'        # https://zlib.net/
+libxslt_version =      '1.1.33'        # http://xmlsoft.org/sources/
+gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
+util_version =         '2.34'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
+
+name =          'util-linux'
+version =       util_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.kernel.org/pub/linux/utils/util-linux'
+
+whatis = [
+   'Description: A number of libraries and linux utilities used by Glib'
+]
+
+description = """
+A set of Linux utilities and libraries used by Glib. Many of the commands
+are standard on Linux systems.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = ['%s/v%%(version_major_minor)s' % homepage]
+sources =     [SOURCELOWER_TAR_XZ]
+checksums =   ['743f9d0c7252b6db246b659c1e1ce0bd45d8d4508b4dfa427bbb4a3e9b9f62b5']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('ncurses',     ncurses_version,     versionsuffix),
+    ('libreadline', libreadline_version, versionsuffix),
+    ('zlib',        zlib_version,        versionsuffix),
+    ('libxslt',     libxslt_version,     versionsuffix),  # Not clear if this is a true dependency or only a build dependency, but configure looks for it.
+    ('gettext',     gettext_version,     versionsuffix),
+]
+
+# disable account related utilities (they need OS dependent pam-devel files)
+# disable wall and friends (requires group changing permissions for install user)
+# install systemd service files in install dir
+# install bash completion files in install dir
+configopts  = "--disable-chfn-chsh --disable-login --disable-su "
+configopts += "--disable-wall --disable-use-tty-group "
+configopts += "--disable-makeinstall-chown --disable-makeinstall-setuid "
+configopts += "--with-systemdsystemunitdir='${prefix}/systemd' "
+configopts += "--with-bashcompletiondir='${prefix}/share/bash-completion/completions' "
+# disable building Python bindings (since we don't include Python as a dep)
+configopts += "--without-python "
+
+sanity_check_paths = {
+    'files': ['lib/lib%s.a' % x for x in ['blkid', 'mount', 'uuid']],
+    'dirs': ['include', 'bin', 'share', 'sbin'],
+}
+
+moduleclass = 'tools'

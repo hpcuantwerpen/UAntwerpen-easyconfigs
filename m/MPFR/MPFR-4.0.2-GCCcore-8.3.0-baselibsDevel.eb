@@ -1,0 +1,60 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+GMP_version =          '6.1.2'         # https://ftp.gnu.org/gnu/gmp/
+MPFR_version =         '4.0.2'         # https://ftp.gnu.org/gnu/mpfr/
+
+name = 'MPFR'
+version = MPFR_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.mpfr.org'
+
+whatis = [
+    'Description: The MPFR library is a C library for multiple-precision floating-point computations with correct rounding.',
+    'This module provides both static and shared libraries',
+]
+
+description = """
+The MPFR library is a C library for multiple-precision floating-point
+computations with correct rounding. MPFR is based on the GMP multiple-precision
+library.
+
+The main goal of MPFR is to provide a library for multiple-precision
+floating-point computation which is both efficient and has a well-defined
+semantics. It copies the good ideas from the ANSI/IEEE-754 standard for
+double-precision floating-point arithmetic (53-bit significand).
+
+MPFR is free. It is distributed under the GNU Lesser General Public License
+(GNU Lesser GPL), version 3 or later.\
+
+The module provides both static and shared libraries.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = ['http://www.mpfr.org/mpfr-%(version)s/']
+sources =     [SOURCELOWER_TAR_XZ]
+checksums =   ['1d3be708604eae0e42d578ba93b390c2a145f17743a744d8f3f8c2ad5855a38a']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('GMP',         GMP_version,         versionsuffix),
+]
+
+runtest = 'check'
+
+sanity_check_paths = {
+    'files': ['lib/libmpfr.%s' % SHLIB_EXT, 'lib/libmpfr.a', 'include/mpfr.h'],
+    'dirs': [],
+}
+
+moduleclass = 'math'

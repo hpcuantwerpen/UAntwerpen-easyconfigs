@@ -1,0 +1,75 @@
+easyblock = 'ConfigureMake'
+
+buildset =         '2019b'
+gcc_version =      '8.3.0'
+binutils_version = '2.32'
+
+ncurses_version =      '6.1'           # https://ftp.gnu.org/pub/gnu/ncurses/
+libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+
+name =          'libreadline'
+version =       libreadline_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'https://tiswww.cwru.edu/php/chet/readline/rltop.html'
+
+whatis = [
+    'Description: GNU readline library for command line editing',
+    'This module provides static and shared libraries'
+]
+
+description = """
+The GNU Readline library provides a set of functions for use by applications
+that allow users to edit command lines as they are typed in. Both Emacs and vi
+editing modes are available.  The Readline library includes additional functions
+to maintain a list of previously-entered command lines, to recall and perhaps
+reedit those lines, and perform csh-like history expansion on previous commands.
+"""
+
+usage = """
+Documentation is available through man pages after loading the module:
+man 3 readline
+man 3 history
+
+The info tool is also supported.
+"""
+
+docurls = [
+   'Web-based readline user interface documentation: https://tiswww.cwru.edu/php/chet/readline/rluserman.html',
+   'Web-based libreadline documentation: https://tiswww.cwru.edu/php/chet/readline/readline.html',
+   'Web-based libhistory documentation: https://tiswww.cwru.edu/php/chet/readline/history.html',
+   'Man pages in section 3 for readline and history, and texinfo support',
+]
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+sources = ['readline-%(version)s.tar.gz']
+source_urls = ['http://ftp.gnu.org/gnu/readline']
+
+# Patch that was needed before doesn't seem to be needed for 7.0.
+#patches = ['libreadline-%(version)s-bugfix.patch']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('ncurses', ncurses_version, versionsuffix),
+]
+
+# for the termcap symbols, use EB ncurses
+preconfigopts = "env LDFLAGS='-lncurses'"
+
+sanity_check_paths = {
+    'files': ['lib/libreadline.a', 'lib/libhistory.a'] +
+    ['include/readline/%s' % x for x in ['chardefs.h', 'history.h', 'keymaps.h', 'readline.h', 'rlconf.h',
+                                         'rlstdc.h', 'rltypedefs.h', 'tilde.h']],
+    'dirs': [],
+}
+modextrapaths = {
+    'INFOPATH' : 'share/info',
+}
+
+moduleclass = 'lib'

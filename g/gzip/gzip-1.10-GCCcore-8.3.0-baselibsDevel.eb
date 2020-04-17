@@ -1,0 +1,42 @@
+easyblock = 'ConfigureMake'
+
+buildset =         '2019b'
+gcc_version =      '8.3.0'
+binutils_version = '2.32'
+
+gzip_version =     '1.10'    # https://ftp.gnu.org/gnu/gzip/
+
+name =          'gzip'
+version =       gzip_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.gnu.org/software/gzip/'
+
+whatis = [
+    "Description: gzip provides the gzip data compression programs",
+]
+
+description = """
+gzip (GNU zip) is a popular data compression program as a replacement for compress
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = [GNU_SOURCE]
+sources =     [SOURCE_TAR_GZ]
+checksums =   ['c91f74430bf7bc20402e1f657d0b252cb80aa66ba333a25704512af346633c68']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+sanity_check_paths = {
+    'files': ["bin/gunzip", "bin/gzip", "bin/uncompress"],
+    'dirs': [],
+}
+
+sanity_check_commands = [True, ('gzip', '--version')]
+
+moduleclass = 'tools'

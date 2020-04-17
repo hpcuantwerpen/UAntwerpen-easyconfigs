@@ -1,0 +1,61 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2019b'
+gcc_version =          '8.3.0'
+binutils_version =     '2.32'
+
+x264_version =         '20190721-2245' # https://download.videolan.org/pub/videolan/x264/snapshots/
+
+name =          'x264'
+version =       x264_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.videolan.org/developers/x264.html'
+
+whatis = [
+    "Description: x264 is a free library and application for H.264/MPEG-4 AVC encoding, made by the VideoLAN organization",
+    "This module provides both the command line tool and static and shared libraries"
+]
+
+description = """
+x264 is a free software library and application for encoding video streams
+into the H.264/MPEG-4 AVC compression format, and is released under the
+terms of the GNU GPL. It is developed by the VideoLAN organization.
+
+This module provides the encodign tool x264 and static and shared libraries.
+"""
+
+examples = """
+This package does not come with much integrated documentation. It is however
+possible to get some help information for the x264 command line tool using
+the --help option, which includes a few examples.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = [
+    'https://download.videolan.org/pub/videolan/x264/snapshots/',
+    'ftp://ftp.videolan.org/pub/videolan/x264/snapshots/',
+]
+sources = ['x264-snapshot-%(version)s-stable.tar.bz2']
+checksums = ['1da29c2d745fce49c6c4822ae191a32ae761e6c163046090cdb744ceb6b45024']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+configopts = " --enable-shared --enable-static"
+
+installopts  = ' && cp -r doc %(installdir)s'
+installopts += ' && cp AUTHORS %(installdir)s'
+installopts += ' && cp COPYING %(installdir)s'
+
+sanity_check_paths = {
+    'files': ['bin/x264', 'include/x264_config.h', 'include/x264.h',
+              'lib/libx264.a', 'lib/libx264.%s' % SHLIB_EXT],
+    'dirs':  [],
+}
+
+moduleclass = 'vis'
