@@ -46,4 +46,9 @@ builddependencies = [
     ('buildtools', local_buildset, '', True) # CMake, flex and Bison.
 ]
 
+# Since we didn't install paraview, we need to remove a line from bashrc.
+postinstallcmds = [
+    "cd %(installdir)s/OpenFOAM-%(version)s/etc ; sed -e 's/\(_foamSource.*paraview\)/#\\1/' -i bashrc",
+]
+
 moduleclass = 'cae'
