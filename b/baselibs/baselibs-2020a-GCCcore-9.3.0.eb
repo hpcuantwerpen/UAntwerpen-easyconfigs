@@ -34,6 +34,8 @@ local_lz4_version =          '1.9.1'         # https://github.com/lz4/lz4/releas
 local_lzip_version =         '1.21'          # http://download.savannah.gnu.org/releases/lzip/
 local_zstd_version =         '1.4.4'         # https://github.com/facebook/zstd/releases
 local_libb2_version =        '0.98.1'        # https://github.com/BLAKE2/libb2/releases
+local_LZO_version =          '2.10'          # http://www.oberhumer.com/opensource/lzo/#download
+local_blosc_version =        '1.18.1'        # https://github.com/Blosc/c-blosc/releases
 local_libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
 local_libdeflate_version =   '1.5'           # https://github.com/ebiggers/libdeflate/releases
 local_giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
@@ -135,6 +137,25 @@ Overview of included libraries:
     very fast decoder. It also offers a special mode for small data, called 
     dictionary compression, and can create dictionaries from any sample set.
   + libb2 (version %(libb2)s): a C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp
+  + LZO (version %(LZO)s): a portable lossless data compression library written in ANSI C.
+    It offers pretty fast compression and *extremely* fast decompression.
+    It also includes slower compression levels achieving a quite competitive 
+    compression ratio while still decompressing at this very high speed.
+    It is faster than zlip or BZIP2, but doesn't compress as well as those
+    packages do.
+  + Blosc (version %(blosc)s): a high performance compressor optimized for binary data. It has been 
+    designed to transmit data to the processor cache faster than the traditional, 
+    non-compressed, direct memory fetch approach via a memcpy() OS call. Blosc is 
+    the first compressor (that I'm aware of) that is meant not only to reduce the 
+    size of large datasets on-disk or in-memory, but also to accelerate 
+    memory-bound computations (which is typical in vector-vector operations).
+    It uses the blocking technique (as described in this article) to reduce activity 
+    on the memory bus as much as possible. In short, the blocking technique works 
+    by dividing datasets in blocks that are small enough to fit in L1 cache of 
+    modern processor and perform compression/decompression there. It also 
+    leverages SIMD (SSE2) and multi-threading capabilities present in nowadays 
+    multi-core processors so as to accelerate the compression/decompression 
+    process to a maximum.
   + libdeflate (version %(libdeflate)s): libdeflate is a library for fast, whole-buffer DEFLATE-based 
     compression and decompression. Libdeflate is heavily optimized. It is 
     significantly faster than the zlib library, both for compression and 
@@ -389,6 +410,8 @@ Overview of included libraries:
     'lzip': local_lzip_version,
     'zstd': local_zstd_version,
     'libb2': local_libb2_version,
+    'LZO': local_LZO_version,
+    'blosc': local_blosc_version,
     'libdeflate': local_libdeflate_version,
     'libarchive': local_libarchive_version,
     'giflib': local_giflib_version,
@@ -445,9 +468,11 @@ docurls = [
     'gzip: Web-based documentation on https://www.gnu.org/software/gzip/manual/',
     'gzip: man pages for all commands (gzip, gunzip, gzexe, zcat, zcmp, zdiff, zforce, zgrep, zless, zmore, znew) in Section 1',
     'lzip: Home page: https://www.nongnu.org/lzip/',
-     'lzip: Web-based manual on https://www.nongnu.org/lzip/manual/lzip_manual.html',
+    'lzip: Web-based manual on https://www.nongnu.org/lzip/manual/lzip_manual.html',
     'zstd: Web-based documentation via the home page: http://www.zstd.net/',
     'libb2: Home page: https://github.com/BLAKE2/libb2',
+    'LZO: Home page http://www.oberhumer.com/opensource/lzo/', 
+    'Blosc: Home page https://blosc.org/',
     'libdeflate: Home page: https://github.com/ebiggers/libdeflate',
     'libarchive: Some web-based documentation on https://www.libarchive.org/',
     'giflib: home page with links to the documentation on http://giflib.sourceforge.net/',
@@ -457,7 +482,7 @@ docurls = [
     'libwebp: Manual pages for cwebp and dwebp in section 1',
     'x264: Some information on http://www.videolan.org/developers/x264.html',
     'x265: web-based documentation: http://x265.readthedocs.io/en/default/',
-    'libopus: web-based documentation on the home page: http://opus-codec.org/'
+    'libopus: web-based documentation on the home page: http://opus-codec.org/',
     'GSL manual: https://www.gnu.org/software/gsl/doc/html/index.html',
     'libcerf homepage: https://jugit.fz-juelich.de/mlz/libcerf',
     'GMP web-based documentation: https://gmplib.org/manual/',
@@ -708,6 +733,22 @@ components = [
         'sources':     [SOURCELOWER_TAR_GZ],
         'source_urls': ['https://github.com/BLAKE2/libb2/releases/download/v%(version)s'],
         'start_dir':   '%(namelower)s-%(version)s',
+    }),
+    ('LZO', local_LZO_version, {
+        'sources':     [SOURCELOWER_TAR_GZ],
+        'source_urls': ['https://www.oberhumer.com/opensource/lzo//download'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--enable-shared --enable-static',
+    }),
+    ('Blosc', local_blosc_version, {
+        'easyblock': 'CMakeMake',
+        'separate_build_dir': False,
+        'sources':   [ {
+                         'download_filename': 'v%(version)s.tar.gz',
+                         'filename':          SOURCELOWER_TAR_GZ,
+                         'source_urls':       ['https://github.com/Blosc/c-blosc/archive/']
+                     } ],
+        'start_dir': 'c-blosc-%(version)s',
     }),
     ('libdeflate', local_libdeflate_version, {
         'sources':     [ {

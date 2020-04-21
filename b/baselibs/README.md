@@ -23,6 +23,8 @@
   place to put it than, e.g., our buildtools module.
 * Added mpdecimal to the bundle, a library that is used by Python in its built-in
   cdecimal package.
+* Added LZO and Blosc to the bundle. These libraries are used by PyTables (tables
+  on PyPi) which is used by pandas, a package popular with our big data users.
 
 
 
