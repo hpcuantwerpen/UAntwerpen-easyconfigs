@@ -67,6 +67,7 @@ local_libidn_version =       '1.35'          # https://ftp.gnu.org/gnu/libidn/
 local_libidn2_version =      '2.3.0'         # https://ftp.gnu.org/gnu/libidn/
 local_file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
 local_gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
+local_GDBM_version =         '1.18.1'        # https://ftp.gnu.org/gnu/gdbm/
 local_libffi_version =       '3.3'           # ftp://sourceware.org/pub/libffi/
 local_libyaml_version =      '0.2.2'         # https://github.com/yaml/libyaml/releases
 local_PCRE_version =         '8.44'          # https://ftp.pcre.org/pub/pcre/
@@ -360,6 +361,17 @@ Overview of included libraries:
     re-implementation of the original file command shipped with Bell Labs UNIX.
   + gc (version %(gc)s): gc is the Boehm-Demers-Weiser conservative garbage
     collector, a garbage collecting replacement for C malloc or C++ new.
+  + GDBM (version %(GDBM)s): GNU dbm (or GDBM, for short) is a library of database functions that use 
+    extensible hashing and work similar to the standard UNIX dbm. These routines 
+    are provided to a programmer needing to create and manipulate a hashed 
+    database.
+    The basic use of GDBM is to store key/data pairs in a data file. Each key 
+    must be unique and each key is paired with only one data item.
+    The library provides primitives for storing key/data pairs, searching and 
+    retrieving the data by its key and deleting a key along with its data. It 
+    also support sequential iteration over all key/data pairs in a database.
+    For compatibility with programs using old UNIX dbm function, the package 
+    also provides traditional dbm and ndbm interfaces.
   + libevent (version %(event)s): The libevent API provides a mechanism to 
     execute a callback function when a specific event occurs on a file 
     descriptor or after a timeout has been reached. Furthermore, libevent
@@ -445,6 +457,7 @@ Overview of included libraries:
     'unistring': local_libunistring_version,
     'filev': local_file_version,
     'gc': local_gc_version,
+    'GDBM': local_GDBM_version,
     'event': local_libevent_version,
     'ffi': local_libffi_version,
     'yaml': local_libyaml_version,
@@ -501,6 +514,8 @@ docurls = [
     'file: home page is https://www.darwinsys.com/file/', 
     'FriBidi: home page is https://github.com/fribidi/fribidi',
     'gc: web-based documentation on the home page http://hboehm.info/gc/',
+    'GDBM: Web-based documentation: http://puszcza.gnu.org.ua/software/gdbm/manual/gdbm.html',
+    'GDBM: Support for the info command (info gdbm)',
     'gettext: web-based documentation: https://www.gnu.org/software/gettext/manual/index.html',
     'gettext: man pages for all command line tools (man section 1) and for the API (man section 3)',
     'libevent: web-based documentation on the home page: https://libevent.org/',
@@ -1033,6 +1048,13 @@ components = [
         'start_dir':     '%(name)s-%(version)s',
         'preconfigopts': "ln -s %(builddir)s/libatomic_ops*/ libatomic_ops && ",
         'configopts':    '--enable-threads=posix',
+    }),
+    ('GDBM', local_GDBM_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_GZ,
+                          'source_urls': [GNU_SOURCE]
+                       }],
+        'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('libevent', local_libevent_version, {
         'sources':     [ {

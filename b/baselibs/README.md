@@ -25,6 +25,6 @@
   cdecimal package.
 * Added LZO and Blosc to the bundle. These libraries are used by PyTables (tables
   on PyPi) which is used by pandas, a package popular with our big data users.
-
+* Added GDBM, usefull for the dbm package in the Python standard library.
 
 
