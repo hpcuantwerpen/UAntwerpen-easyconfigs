@@ -2,19 +2,16 @@
 #
 easyblock = 'ConfigureMake'
 
-buildset =             '2019b'
-gcc_version =          '8.3.0'
-binutils_version =     '2.32'
+local_buildset =             '2020a'
+local_gcc_version =          '9.3.0'
+local_binutils_version =     '2.34'
 
-ncurses_version =      '6.1'           # https://ftp.gnu.org/pub/gnu/ncurses/
-libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
-libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
-libunistring_version = '0.9.10'        # https://ftp.gnu.org/gnu/libunistring/
-gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
+local_ncurses_version =      '6.2'           # https://ftp.gnu.org/pub/gnu/ncurses/
+local_gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
 
 name =          'gettext'
-version =       gettext_version
-versionsuffix = '-baselibsDevel' # though it will actually pick up libiconv on the UAntwerp systems instead.
+version =       local_gettext_version
+versionsuffix = '-minimal-baselibsDevel' # though it will actually pick up libiconv on the UAntwerp systems instead.
 
 homepage = 'http://www.gnu.org/software/gettext/'
 
@@ -56,25 +53,21 @@ docurls = [
     'Man pages for all command line tools (man section 1) and for the API (man section 3)',
 ]
 
-toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
 toolchainopts = {'pic': True}
 
-sources =     [SOURCE_TAR_GZ]
+sources = [SOURCE_TAR_GZ]
 source_urls = [GNU_SOURCE]
 
 builddependencies = [
-    ('binutils',   binutils_version),
-    ('buildtools', buildset,         '', True),
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
 ]
 
 dependencies = [
-    ('ncurses',      ncurses_version,      versionsuffix),
-#    ('libxml2',      libxml2_version,      versionsuffix),
-    ('libiconv',     libiconv_version,     versionsuffix),
-#    ('libunistring', libunistring_version, versionsuffix),
+    ('ncurses', local_ncurses_version, '-baselibsDevel'),
 ]
 
 configopts = '--without-emacs --with-libncurses-prefix=$EBROOTNCURSES --with-included-libunistring --with-included-libxml'
-#configopts = '--without-emacs --with-libunistring-prefix=$EBROOTLIBUNISTRING --with-libxml2-prefix=$EBROOTLIBXML2'
 
 moduleclass = 'vis'
