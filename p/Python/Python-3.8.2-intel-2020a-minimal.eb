@@ -1,0 +1,128 @@
+name =          'Python'
+version =       '3.8.2'
+versionsuffix = '-minimal'
+
+local_mkl_random_version = '1.0.4' # Because of the special download procedure.
+local_mkl_fft_version    = '1.0.14' 
+
+local_pymaj   = ''.join(version.split('.')[:1])
+local_pycpver = ''.join(version.split('.')[:2])
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'http://python.org/'
+
+whatis = [
+    'Description: Python %(version)s interpreter with a range of optional packages'
+]
+
+description = """
+This is the Python %(version_major_minor)s interpreter with only those packages
+that are essential to install your own packages.
+"""
+
+usage = """
+There is ample documentation about Python available on the web; please check
+there or any good book about Python for usage information.
+
+To get a list of installed Python packages, load this module file and then
+execute
+pydoc modules
+
+The preferred way to install additional Python modules in your own directories
+is to put them in you /data directory using pip or easy_install.
+Instructions can be found at:
+https://vlaams-supercomputing-centrum-vscdocumentation.readthedocs-hosted.com/en/latest/software/python_package_management.html#alternatives-to-conda
+(but replace /user with /data).
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True}
+
+#source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
+#sources = [SOURCE_TGZ]
+sources = [
+    { 
+        'filename':   SOURCE_TGZ,
+        'source_urls': ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
+    },
+# Using download_filename / filename in the exts_list does not work, but downloading
+# here does the job...
+    { 
+        'download_filename': 'v' + local_mkl_random_version + '.tar.gz',
+        'filename': 'mkl_random-'+ local_mkl_random_version + '.tar.gz',
+        'source_urls': ['https://github.com/IntelPython/mkl_random/archive']
+    }, 
+    { 
+        'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
+        'filename': 'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
+        'source_urls': ['https://github.com/IntelPython/mkl_fft/archive']
+    }, 
+]
+
+# python needs bzip2 to build the bz2 package in the Python stdlib
+dependencies = [
+    ('baselibs',    local_buildset, '', ('GCCcore', local_gcc_version)),
+    # Baselibs is used for: bzip2, zlib, lz4, ncurses, libreadline, GMP
+    # libffi, libpng, freetype, libyaml, cURL
+    ('Tk',          '8.6.10'),                 # Core Python uses Tcl/Tk. This will also load Tcl
+    ('SQLite',      '3.31.1'),                 # KL 20171204
+    ('HDF5',        '1.10.6', '-MPI'),       # KL 20180629, needed for hf5py 
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),   # matplotlib is incompatible with buildtools
+]
+
+osdependencies = [
+    ('openssl-devel', 'libssl-dev', 'libopenssl-devel')
+]
+
+# --with-system-ffi is ignored on the cluster
+configopts  = '--with-system-expat --with-system-libmpdec --with-dbmliborder=gdbm '
+preconfigopts  = 'OPENSSL_INCLUDES="/usr/include" OPENSSL_LDFLAGS="-L/usr/lib64" OPENSSL_LIBS="-lssl -lcrypto" ' # May be needed to avoid linking with the libssl from NSS if present.
+preconfigopts += 'CFLAGS="$CFLAGS -fwrapv" ' # See README.md
+
+# Python EasyBlock options. This are in fact the default values in EB 4.2 but since
+# we have bad experiences with defaults changing we prefer to specify them anyway.
+optimized        = True
+use_lto          = None
+ulimit_unlimited = False
+
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  True,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+# order is important!
+# package versions updated 20190730
+# skipsteps=['extensions'] # This doesn't work unfortunately.
+exts_list = [
+#
+# Reploace the included pip and setuptools with newer versions.
+#    
+    ('pip', '20.0.2', {
+        'use_pip': False,
+        'checksums': ['7db0c8ea4c7ea51c8049640e8e6e7fde949de672bfa4949920675563a5a6967f'],
+    }),
+    ('setuptools', '45.2.0', {
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'checksums': ['89c6e6011ec2f6d57d43a3f9296c4ef022c2cbf49bab26b407fe67992ae3397f'],
+    }),
+    ('wheel', '0.34.2', {
+        'checksums': ['8788e9155fe14f54164c1b9eb0a319d98ef02c160725587ad60f14ddc57b6f96'],
+    }),
+    ('setuptools_scm', '3.5.0', {
+        'checksums': ['5bdf21a05792903cafe7ae0c9501182ab52497614fa6b1750d9dbae7b60c1a87'],
+    }),
+]
+
+moduleclass = 'lang'
+
+modluafooter= """
+family("python%(version_major_minor)s")
+"""
+

@@ -1,0 +1,601 @@
+name =    'Python'
+version = '3.8.2'
+
+local_mkl_random_version = '1.1.1' # Check on https://github.com/IntelPython/mkl_random/releases
+local_mkl_fft_version    = '1.1.0' # Check on https://github.com/IntelPython/mkl_fft/releases
+
+local_pymaj   = ''.join(version.split('.')[:1])
+local_pycpver = ''.join(version.split('.')[:2])
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'http://python.org/'
+
+whatis = [
+    'Description: Python %(version)s interpreter with a range of optional packages'
+]
+
+description = """
+This is the Python %(version_major_minor)s interpreter with several additional packages requested by
+UAntwerp researchers installed.
+
+If you don't find your favourite packages in this module, check the other
+modules that have Python in their name, try to install them in your
+personal directories and/or contact UAntwerp HPC support
+at hpc@uantwerpen.be.
+"""
+
+usage = """
+There is ample documentation about Python available on the web; please check
+there or any good book about Python for usage information.
+
+To get a list of installed Python packages, load this module file and then
+execute
+pydoc modules
+
+The preferred way to install additional Python modules in your own directories
+is to put them in you /data directory using pip or easy_install.
+Instructions can be found at:
+https://vlaams-supercomputing-centrum-vscdocumentation.readthedocs-hosted.com/en/latest/software/python_package_management.html#alternatives-to-conda
+(but replace /user with /data).
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True}
+
+#source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
+#sources = [SOURCE_TGZ]
+sources = [
+    { 
+        'filename':   SOURCE_TGZ,
+        'source_urls': ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
+    },
+# Using download_filename / filename in the exts_list does not work, but downloading
+# here does the job...
+    { 
+        'download_filename': 'v' + local_mkl_random_version + '.tar.gz',
+        'filename': 'mkl_random-'+ local_mkl_random_version + '.tar.gz',
+        'source_urls': ['https://github.com/IntelPython/mkl_random/archive']
+    }, 
+    { 
+        'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
+        'filename': 'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
+        'source_urls': ['https://github.com/IntelPython/mkl_fft/archive']
+    }, 
+]
+
+# python needs bzip2 to build the bz2 package
+dependencies = [
+#
+# Core Python dependencies
+#
+    ('baselibs',    local_buildset, '', ('GCCcore', local_gcc_version)),
+    # See the README
+    # Baselibs is used for: bzip2, zlib, lz4, ncurses, libreadline, GMP
+    # libffi, libpng, freetype, libyaml, cURL
+    ('Tk',          '8.6.10'),               # And this will also include Tcl
+    ('SQLite',      '3.31.1'),
+#
+# Extension package dependencies
+#
+    ('HDF5',        '1.10.6', '-MPI'),       # KL 20180629, needed for hf5py 
+#    ('SuiteSparse', '4.5.6',  '-METIS-5.1.0'), # KL 20180703, for umfpack support in NumPy.
+    ('SuiteSparse', '5.7.1',  '-METIS-5.1.0'), # KL 20180703, for umfpack support in NumPy.
+#    ('protobuf',    '3.5.0'),  # KL 20171204, protobuf now again in a separate module, faster code than the PyPi module
+    # OS dependency should be preferred if the os version is more recent then this version,
+    # it's nice to have an up to date openssl for security reasons
+    # ('OpenSSL', '1.0.2h'),
+]
+
+builddependencies = [
+#    ('buildtools', local_buildset, '', True),   # matplotlib is incompatible with buildtools
+]
+
+osdependencies = [
+    ('openssl-devel', 'libssl-dev', 'libopenssl-devel')
+]
+
+# --with-system-ffi is ignored on the cluster
+configopts  = '--with-system-expat --with-system-libmpdec --with-dbmliborder=gdbm '
+preconfigopts  = 'OPENSSL_INCLUDES="/usr/include" OPENSSL_LDFLAGS="-L/usr/lib64" OPENSSL_LIBS="-lssl -lcrypto" ' # May be needed to avoid linking with the libssl from NSS if present.
+preconfigopts += 'CFLAGS="$CFLAGS -fwrapv" ' # See comment from Stefan Krah on https://software.intel.com/en-us/forums/intel-c-compiler/topic/849064 and https://bugs.python.org/issue40223
+
+# Python EasyBlock options. This are in fact the default values in EB 4.2 but since
+# we have bad experiences with defaults changing we prefer to specify them anyway.
+optimized        = True
+use_lto          = None
+ulimit_unlimited = False
+
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  True,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+# order is important!
+# package versions updated 20190730
+# skipsteps=['extensions'] # This doesn't work unfortunately.
+exts_list = [
+#
+# Reploace the included pip and setuptools with newer versions.
+#    
+    ('pip', '20.0.2', {
+        'use_pip': False,
+        'checksums': ['7db0c8ea4c7ea51c8049640e8e6e7fde949de672bfa4949920675563a5a6967f'],
+    }),
+    ('setuptools', '45.2.0', {
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'checksums': ['89c6e6011ec2f6d57d43a3f9296c4ef022c2cbf49bab26b407fe67992ae3397f'],
+    }),
+    ('wheel', '0.34.2', {
+        'checksums': ['8788e9155fe14f54164c1b9eb0a319d98ef02c160725587ad60f14ddc57b6f96'],
+    }),
+    ('setuptools_scm', '3.5.0', {
+        'checksums': ['5bdf21a05792903cafe7ae0c9501182ab52497614fa6b1750d9dbae7b60c1a87'],
+    }),
+#    ('setuptools_scm', '3.5.0', {
+#        'source_urls': [PYPI_SOURCE],
+#    }),
+#
+# Regular packages. The first two are used a lot
+#
+    ('nose', '1.3.7', {
+        'checksums': ['f1bffef9cbc82628f6e7d7b40d7e255aefaa1adb6a1b1d26c69a8b79e6208a98'],
+    }),
+    ('Cython', '0.29.16', { # Needed for NumPy according to the NumPy documentation.
+        'checksums': ['232755284f942cbb3b43a06cd85974ef3c970a021aef19b5243c03ee2b08fa05'],
+    }),
+    ('numpy', '1.18.3', {
+        'source_urls': ['https://pypi.python.org/packages/source/n/numpy/'],
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'patches':     ['numpy-1.12.0-mkl.patch'],
+        'checksums': [
+            'e46e2384209c91996d5ec16744234d1c906ab79a701ce1a26155c9ec890b8dc8',
+            'f212296ed289eb1b4e3f703997499dee8a2cdd0af78b55e017477487b6377ca4',  # numpy-1.12.0-mkl.patch
+        ],
+    }),
+    ('mkl_random', local_mkl_random_version, { # Does require NumPy
+        'sources':   [{
+                       'download_filename': 'v' + local_mkl_random_version + '.tar.gz',
+                       'filename':          'mkl_random-'+ local_mkl_random_version + '.tar.gz',
+                       'source_urls':       ['https://github.com/IntelPython/mkl_random/archive']
+                     }], 
+        'checksums': ['e57d2d57e2796f408fd64fd723bf14259537965af50dd92be049417edfba8816'],
+        'skipsteps': ['install'],
+    }),   
+    ('mkl_fft', local_mkl_fft_version, { # Does require NumPy
+        'sources': [{
+                     'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
+                     'filename':          'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
+                     'source_urls':       ['https://github.com/IntelPython/mkl_fft/archive']
+                    }], 
+        'checksums': ['bad1b957e457e9dc596b54047c741df5b6e78f677e2c8a67b62d8cbf2ce9ae83'],
+        'skipsteps': ['install'],
+    }),   
+    ('scipy', '1.4.1', {
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'checksums':   ['dee1bbf3a6c8f73b6b218cb28eed8dd13347ea2f87d572ce19b289d6fd3fbc59'],
+    }),
+    ('mpi4py', '3.0.3', {
+        'source_urls': ['https://bitbucket.org/mpi4py/mpi4py/downloads/'],
+        'checksums':   ['012d716c8b9ed1e513fcc4b18e5af16a8791f51e6d1716baccf988ad355c5a1f'],
+    }),
+    ('lz4', '3.0.2', { # Useful option for joblib
+        'checksums': ['9c9f6a8b71c18c24bd83537a4d616f0301623a5e98db7c7ca956d608e1bcd4c7'],
+    }),
+    ('PyYAML', '5.3.1', {  # Interface to libyaml in baselibs, needed for PyTorch
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'source_urls': [PYPI_LOWER_SOURCE],
+        'checksums':   ['b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d'],
+        'modulename':  'yaml',
+    }),
+    ('pycparser', '2.20', { # Needed for cryptography
+        'checksums':   ['2d475327684562c3a96cc71adf7dc8c4f0565175cf86b6d7a404ff4c771f15f0'],
+    }),
+    ('cffi', '1.14.0', { # Uses libffi from baselibs
+        'checksums':   ['2d384f4a127a15ba701207f7639d94106693b6cd64173d6c8988e2c25f3ac2b6'],
+    }),
+    ('six', '1.14.0', { # Needed among others for h5py.
+        'checksums': ['236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a'],
+    }),
+    ('cryptography', '2.9.1', { # Links to libssl, libcrypto and other security libraries, but also libpcre (baselibs)
+        'checksums':   ['ce0bd68b4b946bd4bcebc3d4d1325bf0e938e445ae18cedddd60e33dd85a368e'],
+    }),
+    ('PyNaCl', '1.3.0', { # USes six, cffi and pycparser
+        'source_urls': [PYPI_LOWER_SOURCE],
+        'checksums':   ['0c6100edd16fefd1557da078c7a31e7b7d7a52ce39fdca2bec29d4f7b6e7600c'],
+        'modulename':  'nacl',
+    }),
+    ('ecdsa', '0.15', { # Requires six, links to system libraries
+        'checksums':   ['8f12ac317f8a1318efa75757ef0a651abe12e51fc1af8838fb91079445227277'],
+    }),
+    ('bcrypt', '3.1.7', { # REquires six, cffi and pycparser
+        'checksums':   ['0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42'],
+    }),
+    ('pkgconfig', '1.5.1', { # Found in setup.py of h5py.
+        'checksums': ['97bfe3d981bab675d5ea3ef259045d7919c93897db7d3b59d4e8593cba8d354f'],
+        'use_pip':   False, # Fails with use_pip True
+    }),
+    ('h5py', '2.10.0', { # Needed by CMT. Needs six.
+        'preconfigopts':  'CC=mpiicc HDF5_MPI="ON"',
+        'prebuildopts':   'export CC=mpiicc && export HDF5_MPI="ON" && python setup.py configure --mpi --hdf5=$EBROOTHDF5 && ',
+        'preinstallopts': 'CC=mpiicc HDF5_MPI="ON"',
+        'checksums':      ['84412798925dc870ffd7107f045d7659e60f5d46d1c70c700375248bf6bf512d'],
+    }),
+    ('numexpr', '2.7.1', {  # Requirement tables
+        'checksums': ['b0d239d9827e1bcee08344fd05835823bc60aff97232e35a928214d03ff802b1'],
+    }),
+    ('pycrypto', '2.6.1', {
+        'checksums': ['f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c'],
+        'modulename': 'Crypto',
+    }),
+    ('tables', '3.6.1', {  # Also known as PyTables, and can be used by pandas
+        'checksums': ['49a972b8a7c27a8a173aeb05f67acb45fe608b64cd8e9fa667c0962a60b71b49'],
+        # The LIBS part works around a bug in the installation procedure of tables. 
+        # The _sysconfigdata_ of Python contains LIBS="-liomp5 -lpthread" and the installation
+        # routine adds another -l in front of each.
+        'preconfigopts':  'CC=mpiicc CXX=mpiicpc BZIP2_DIR=$EBROOTBASELIBS LZO2_DIR=$EBROOTBASELIBS BLOSC_DIR=$EBROOTBASELIBS LIBS="iomp5 pthread" ',
+        'prebuildopts':   'CC=mpiicc CXX=mpiicpc BZIP2_DIR=$EBROOTBASELIBS LZO2_DIR=$EBROOTBASELIBS BLOSC_DIR=$EBROOTBASELIBS LIBS="iomp5 pthread" ',
+        'preinstallopts': 'CC=mpiicc CXX=mpiicpc BZIP2_DIR=$EBROOTBASELIBS LZO2_DIR=$EBROOTBASELIBS BLOSC_DIR=$EBROOTBASELIBS LIBS="iomp5 pthread" ',
+        'use_pip':   False, # Fails with use_pip True
+    }),
+    ('psutil', '5.7.0', {
+        'checksums':   ['685ec16ca14d079455892f25bd124df26ff9137664af445563c1bd36629b5e0e'],
+    }),
+    ('netifaces', '0.10.9', { # Interfaces to system libraries, no further dependencies
+        'checksums':   ['2dee9ffdd16292878336a58d04a20f0ffe95555465fee7c9bd23b3490ef2abf3'],
+    }),
+    ('pyzmq', '19.0.0', { # Interfaces to system libraries, but no other Python dependencies
+        'modulename':  'zmq',
+        'checksums':   ['5e1f65e576ab07aed83f444e201d86deb01cd27dcf3f37c727bc8729246a60a8'],
+    }),
+#
+# Packages that interface to multiple libraries without specifically exposing their API  
+#   
+    ('pyparsing', '2.4.7', {
+        'checksums': ['c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1'],
+    }),
+    ('kiwisolver', '1.2.0', {
+        'checksums': ['247800260cd38160c362d211dcaf4ed0f7816afb5efe56544748b21d6ad6d17f'],
+    }),
+    ('Cycler', '0.10.0', {    # Requirement for matplotlib according to the documentation.
+        'modulename': 'cycler',
+        'source_tmpl': 'cycler-%(version)s.tar.gz',
+    }),
+    ('python-dateutil', '2.8.1', { # Requirement for matplotlib and pandas
+        'modulename':  'dateutil',
+        'checksums':   ['73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c'],
+    }),
+    ('matplotlib', '3.2.1', {  # Problem: The test infrastructure is not integrated in the distribution.
+        'checksums': ['ffe2f9cdcea1086fc414e82f42271ecf1976700b8edd16ca9d376189c6d93aee'],
+    }),
+    ('pytz', '2019.3', {  # Requirement for pandas
+        'checksums': ['b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be'],
+    }),       
+    ('pandas', '1.0.3', {
+        'checksums': ['32f42e322fb903d0e189a4c10b75ba70d90958cc4f66a1781ed027f1a1d14586'],
+    }),
+    ('joblib', '0.14.1', {
+        'checksums': ['0630eea4f5664c463f23fbf5dcfc54a2bc6168902719fa8e19daf033022786c8'],
+    }),
+    ('scikit-learn', '0.22.2.post1', { # Lots of code but uses only standard libraries.
+        'source_tmpl': 'scikit-learn-%(version)s.tar.gz',
+        'checksums':   ['57538d138ba54407d21e27c306735cbd42a6aae0df6a5a30c7a6edde46b0017d'],
+        'modulename':  'sklearn',
+    }),
+    ('lxml', '4.5.0', { # libxml2 and libxslt but no other dependencies
+        'checksums':   ['8620ce80f50d023d414183bf90cc2576c2837b88e00bea3f33ad2630133bbb60'],
+    }),
+    ('gmpy2', '2.0.8', { # Uses libgmp, libmpc and libmpfr from baselibs
+                         # Found in miniconda installations
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'checksums':   ['dd233e3288b90f21b0bb384bcc7a7e73557bb112ccf0032ad52aa614eb373d3f'],
+    }),
+#
+# C packages
+#
+    ('tinyarray', '1.2.2', { # data type, uses system libraries
+        'checksums':   ['660d6d8532e1db5efbebae2861e5733a7082486fbdeb47d57d84b8f477d697e4'],
+    }),
+    ('greenlet', '0.4.15', { # No dependencies but uses system libraries
+        'checksums':   ['9416443e219356e3c31f1f918a91badf2e37acf297e2fa13d24d1cc2380f8fbc'],
+    }),
+    ('ujson', '2.0.3', { # No dependencies but uses system libraries
+        'checksums':   ['bd2deffc983827510e5145fb66e4cc0f577480c62fe0b4882139f8f7d27ae9a3'],
+    }),
+    ('scandir', '1.10.0', {  # No dependencies but uses system libraries
+        'checksums':   ['4d4631f6062e658e9007ab3149a9b914f3548cb38bfb021c64f39a025ce578ae'],
+    }),
+    ('blist', '1.3.6', { # REMOVE IN FUTURE VERSION? CODE NOT MAINTAINED. C-code
+        'checksums': ['3a12c450b001bdf895b30ae818d4d6d3f1552096b8c995f0fe0c74bef04d1fc3'],
+    }),
+    ('memory_profiler', '0.57.0', { # Uses psutil, contains C code using standard libraries
+        'checksums':   ['23b196f91ea9ac9996e30bfab1e82fecc30a4a1d24870e81d1e81625f786a2c3'],
+    }),
+    ('pycosat', '0.6.3', { # Links to standard C libraries. Found in miniconda installations. No further dependencies.
+        'source_tmpl': '%(name)s-%(version)s.zip',
+        'checksums':   ['4c99874946a7e939bb941bbb019dd2c20e6068e3107c91366e7779c69d70e0ed'],
+    }),
+    ('ruamel.yaml.clib', '0.2.0', { # Needed for ruamel.yaml, links to standard system libraries
+                                    # Found in miniconda installations
+                                    # Install together with ruamel.yaml as there is no import to test.
+        'modulename':  'ruamel.yaml',
+        'checksums':   ['b66832ea8077d9b3f6e311c4a53d06273db5dc2db6e8a908550f3c14d67e718c'],
+        'use_pip':     True, # pip mandatory for this package.
+    }),
+    ('ruamel.yaml', '0.16.10', { # New API which is incompatible with previous versions, from 0.16.0 also split in two modules....
+                                 # Pure Python, ruamel.yaml.clib installed as separate package.
+        'modulename':  'ruamel.yaml',
+        'checksums':   ['099c644a778bf72ffa00524f78dd0b6476bca94a1da344130f4bf3381ce5b954'],
+        'use_pip':     True, # pip mandatory for this package.
+    }),
+    ('toml', '0.10.0', { # Pure Python, no dependencies, needed for sip
+        'checksums':   ['229f81c57791a41d65e399fc06bf0848bab550a9dfd5ed66df18ce5f05e73d5c'],
+    }),
+    ('packaging', '20.3', {  # Needed for sip
+        'checksums': ['3c292b474fda1671ec57d46d739d072bfd495a4f51ad01a055121d81e952b7a3'],
+    }),
+    ('sip', '5.2.0', { # Needs pyparsing, six, packaging, toml, and links to standard system libraries
+        'modulename':  'sipbuild',
+        'checksums':   ['3d3f279a61d54d832b12496409811ee062dab1ac05a1e7b40824f63b423fb0e7'],
+    }),
+#
+# Faster packages
+#
+    ('filelock', '3.0.12', {
+        'checksums': ['18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59'],
+    }),
+    ('appdirs', '1.4.3', {
+        'checksums': ['9e5896d1372858f8dd3344faf4e5014d21849c756c8d5701f78f8a103b372d92'],
+    }),
+    ('distlib', '0.3.0', {
+        'source_tmpl': 'distlib-%(version)s.zip',
+        'checksums': ['2e166e231a26b36d6dfe35a48c4464346620f8645ed0ace01ee31822b288de21'],
+    }),
+    ('virtualenv', '20.0.17', {
+        'checksums': ['c8364ec469084046c779c9a11ae6340094e8a0bf1d844330fc55c1cefe67c172'],
+    }),
+    ('attrs', '19.3.0', {
+        'checksums': ['f7b7ce16570fe9965acd6d30101a28f62fb4a7f9e926b3bbc9b61f8b04247e72'],
+        'modulename': 'attr',
+    }),
+    ('more-itertools', '8.2.0', {
+        'modulename':  'more_itertools',
+        'checksums': ['b1ddb932186d8a6ac451e1d95844b382f55e12686d51ca0c68b6f61f2ab7a507'],
+    }),    
+    ('py', '1.8.1', { # Needed for pytest
+        'checksums': ['5e27081401262157467ad6e7f851b7aa402c5852dbcb3dae06768434de5752aa'],
+    }),
+    ('wcwidth', '0.1.9', {
+        'checksums': ['ee73862862a156bf77ff92b09034fc4825dd3af9cf81bc5b360668d425f3c5f1'],
+    }),  
+    ('pluggy', '0.13.1', {
+        'checksums': ['15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0'],
+    }),
+    ('pytest', '5.4.1', { # Needed for recent versions of kwant (which is not installed here)
+        'checksums': ['84dde37075b8805f3d1f392cc47e38a0e59518fb46a431cfdaf7cf1ce805f970'],
+    }),
+    ('arff', '2.4.0', { # Pure Python, no dependencies
+        'source_tmpl': 'liac-%(name)s-%(version)s.tar.gz',
+        'source_urls': ['https://pypi.python.org/packages/source/l/liac-arff/'],
+        'checksums':   ['47afcd1fd248b2892f66075987422d0576fc2c2fd0811d0cbd32f2135b065df5'],
+    }),
+    ('asn1crypto', '1.3.0', { # Pure Python, no dependencies
+        'checksums':   ['5a215cb8dc12f892244e3a113fe05397ee23c5c4ca7a69cd6e69811755efc42d'],
+    }),
+    ('idna', '2.9', { # Pure Python, no dependencies
+        'checksums':   ['7588d1c14ae4c77d74036e8c22ff447b26d0fde8f007354fd48a7814db15b7cb'],
+    }),
+    ('pyasn1', '0.4.8', { # Pure Python, no dependencies
+        'checksums':   ['aef77c9fb94a3ac588e87841208bdec464471d9871bd5050a287cc9a475cd0ba'],
+    }),
+    ('ipaddress', '1.0.23', { # Pure Python, no dependencies
+        'checksums':   ['b7f8e0369580bb4a24d5ba1d7cc29660a4a6987763faf1d8a8046830e020e7e2'],
+    }),
+    ('netaddr', '0.7.19', { # Pure Python, no dependencies
+        'checksums':   ['38aeec7cdd035081d3a4c306394b19d677623bf76fa0913f6695127c7753aefd'],
+    }),
+    ('chardet', '3.0.4', { # Pure Python, no dependencies
+        'checksums':   ['84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae'],
+    }),
+    ('urllib3', '1.25.8', { # Pure Python, no dependencies
+        'checksums':   ['87716c2d2a7121198ebcb7ce7cccf6ce5e9ba539041cfbaeecfb641dc0bf6acc'],
+    }),
+    ('certifi', '2020.4.5.1', { # Pure Python, no dependencies
+        'checksums':   ['51fcb31174be6e6664c5f69e3e1691a2d72a1a12e90f872cbdb1567eb47b6519'],
+    }),
+    ('requests', '2.23.0', { # Needed for the easyconfig update script. Needs chardet, idna, urllib3, certifi
+        'checksums':   ['b3f43d496c6daba4493e7c431722aeb7dbc6288f52a6e04e7b6023b0247817e6'],
+    }),
+    ('tabulate', '0.8.7', {  # Pure Python, no dependencies
+        'checksums':   ['db2723a20d04bcda8522165c73eea7c300eda74e0ce852d9022e0159d7895007'],
+    }),
+    ('argparse', '1.4.0', { # Pure Python, no dependencies
+        'checksums':   ['62b089a55be1d8949cd2bc7e0df0bddb9e028faefc8c32038cc84862aefdd6e4'],
+    }),
+    ('mock', '4.0.2', { # Pure Python, no dependencies
+        'checksums':   ['dd33eb70232b6118298d516bbcecd26704689c386594f0f3c4f13867b2c56f72'],
+    }),
+    ('paramiko', '2.7.1', { # USes bcrupt, cryptography, pynacl, cffi, six, pycparser but is pure python.
+        'checksums':   ['920492895db8013f6cc0179293147f830b8c7b21fdfc839b6bad760c27459d9f'],
+    }),
+    ('decorator', '4.4.2', { # Pure Python, no dependencies
+        'checksums':   ['e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7'],
+    }),
+    ('funcsigs', '1.0.2', { # Pure Python, no dependencies
+        'checksums':   ['a7bb0f2cf3a3fd1ab2732cb49eba4252c2af4240442415b4abce3b87022a8f50'],
+    }),
+    ('bitstring', '3.1.6', { # Pure Python, no dependencies
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'checksums':   ['c97a8e2a136e99b523b27da420736ae5cb68f83519d633794a6a11192f69f8bf'],
+    }),
+    ('pbr', '5.4.5', { # Pure Python, no dependencies
+        'checksums':   ['07f558fece33b05caf857474a366dfcc00562bca13dd8b47b2b3e22d9f9bf55c'],
+    }),
+    ('lockfile', '0.12.2', { # Pure Python, no dependencies
+        'checksums':   ['6aed02de03cba24efabcd600b30540140634fc06cfa603822d508d5361e9f799'],
+    }),
+    ('scoop', '0.7.1.1', { # Needs greenlet, pyzmq, argparse but is pure Python
+        'checksums':   ['d8b6444c7bac901171e3327a97e241dde63f060354e162a65551fd8083ca62b4'],
+    }),
+    ('absl-py', '0.9.0', { # Pure Python, depends on six
+        'modulename': 'absl',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'checksums':   ['75e737d6ce7723d9ff9b7aa1ba3233c34be62ef18d5859e706b8fdc828989830'],
+    }), 
+    ('xlrd', '1.2.0', { # Pure Python, no dependencies
+        'checksums':   ['546eb36cee8db40c3eaa46c351e67ffee6eeb5fa2650b71bc4c758a29a1b29b2'],
+    }),
+    ('py_expression_eval', '0.3.9', { # Pure Python, no dependencies
+        'checksums':   ['d80a948f91f78d08f789b0a7c3fb2bd9a34ad625f5ce88c262a6c91189a4abb9'],
+    }),
+    ('atomicwrites', '1.3.0', { # Pure Python, no dependencies
+        'checksums':   ['75a9445bac02d8d058d5e1fe689654ba5a6556a1dfd8ce6ec55a0ed79866cfa6'],
+    }),
+    ('pathlib2', '2.3.5', { # Pure Python, no dependencies
+        'checksums':   ['6cd9a47b597b37cc57de1c05e56fb1a1c9cc9fab04fe78c29acd090418529868'],
+    }),
+    ('zipp', '1.2.0', { # Pure Python, no dependencies, found a 3.1 but that doesn't work
+        'checksums': ['c70410551488251b0fee67b460fb9a536af8d6f9f008ad10ac51f615b6a521b1'],
+    }),
+    ('importlib-metadata', '1.6.0', { # Pure Python, but depends on zipp
+        'modulename':  'importlib_metadata',
+        'source_tmpl': 'importlib_metadata-%(version)s.tar.gz',
+        'checksums':   ['34513a8a0c4962bc66d35b359558fd8a5e10cd472d37aec5f66858addef32c1e'],
+    }),
+    ('click', '7.1.1', { # Pure Python, no dependencies
+        'modulename':  'click',
+        'checksums':   ['8a18b4ea89d8820c5d0c7da8a64b2c324b4dabb695804dbfea19b9be9d88c0cc'],
+    }),
+    ('future', '0.18.2', { # Pure Python, no dependencies
+        'checksums':   ['b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d'],
+    }),
+    ('paycheck', '1.0.2', { # Pure Python, no dependencies
+        'checksums':   ['6db7fc367c146cd59d2327ad4d2d6b0a24bc1be2d6953bb0773cbf702ee1ed34'],
+    }),
+#
+# Special stuff, don't remember who needs this
+#
+    ('deap', '1.3.1', { # Needs NumPy
+        'checksums':   ['11f54493ceb54aae10dde676577ef59fc52d52f82729d5a12c90b0813c857a2f'],
+#        'patches': [
+#            'deap-1.0.2_setup-open-README-utf8.patch',
+#        ],
+    }),
+#
+# Requested by Yannick Engelman
+#
+    ('mpmath', '1.1.0', { # Pure Python, uses GMP but through Python standard library
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'checksums':   ['fc17abe05fbab3382b61a123c398508183406fa132e0223874578e20946499f6'],
+    }),
+## Some packages for TensorFlow that may be useful to others also and for which
+## TensorFlow is not too picky on the version number.
+    ('astar', '0.9', { # Pure Python yet onluy available as a wheel. No dependencies
+        'source_tmpl':    '%%(name)s-%%(version)s-py%(pyv)s-none-any.whl' % {'pyv': local_pymaj},
+        'checksums':      ['e1d20e5b1c12e87fb97d4da61569bb37174234899f1ddf23278aea7ad7e39569'],
+        'unpack_sources': False,
+    }),
+    ('gast', '0.3.3', { # Pure Python, no dependencies
+        'checksums':   ['b881ef288a49aa81440d2c5eb8aeefd4c2bb8993d5f50edae7413a85bfdb3b57'],
+    }),
+    ('termcolor', '1.1.0', { # Pure Python, no dependencies
+        'checksums':   ['1d6d69ce66211143803fbc56652b41d73b4a400a2891d7bf7a1cdf4c02de613b'],
+    }),
+#
+# New dependecy for kwant, and uses mpmath
+#
+    ('sympy', '1.5.1', { # Pure Python, depends on mpmath
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'checksums':   ['d77901d748287d15281f5ffe5b0fef62dd38f357c2b827c44ff07f35695f4e7e'],
+    }),
+#
+# Other packages that were used by some other software installed at UAntwerp but
+# might be of more general use.
+#
+    ('PrettyTable', '0.7.2', { # Pure Python, no dependencies
+        'source_tmpl': 'prettytable-%(version)s.tar.gz', # %(namelower)s does not work at this location...
+        'checksums':   ['2d5460dc9db74a32bcc8f9f67de68b2c4f4d2f01fa3bd518764c69156d9cacd9'],
+        'modulename':  'prettytable',
+    }),
+#
+# Added for USPEX (Rolando Saniz and Marnik Berckx)
+# Consider moving this to the USPEX module?
+#
+    ('spglib', '1.15.0', { # Needs NumPy. Contains a shared library
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'checksums':   ['c3c1406f879da5686f39e4bd4c68a666bca94c59f3a57819068275b5a6a0e262'],
+    }),
+    ('pysqlite3', '0.4.2', {  # Not sure if it uses the right SQLite implememtation.
+        'modulename':  'pysqlite3',
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+        'checksums':   ['71935c305aadd1ec2e69ed772624f3523afb50a6d0a24a383d76c3752aac1afc'],
+    }),
+#
+# Usefull for LAMMPS
+#
+    ('networkx', '2.4', { # Pure Python, but needs decorator
+        'source_tmpl': '%(name)s-%(version)s.tar.gz',
+#        'checksums':   ['11f54493ceb54aae10dde676577ef59fc52d52f82729d5a12c90b0813c857a2f'],
+    }),
+#
+# Popular extensions found in miniconda installations
+#
+    ('pyOpenSSL', '19.1.0', { # Python wrapper around OpenSSL, but doesn't link itself
+                              # Pure Python, depends on six, cffi, pycparser and cryptography
+        'modulename':  'OpenSSL',
+        'source_urls': ['https://pypi.python.org/packages/source/P/PyOpenSSL'],
+        'checksums':   ['9a24494b2602aaf402be5c9e30a0b82d4a5c67528fe8fb475e3f3bc00dd69507'],
+    }),
+    ('PySocks', '1.7.1', { # Pure Python, no dependencies
+        'modulename':  'socks',
+        'checksums':   ['3f8804571ebe159c380ac6de37643bb4685970655d3bba243530d6558b799aa0'],
+    }),
+    ('xonsh', '0.9.17', { # Pure Python, no dependencies
+        'checksums':   ['f3623e04626e62400e5d14ac7b3a0d5af01d7241df4e5f1e1f2361b39ef5b263'],
+    }),
+    ('libarchive', '0.4.7', { # Pure Python, uses nose
+        'checksums':   ['829dc298a08877f62335d528973bc034f7c1e8a03c16bfc1fa561e164e76a365'],
+    }),
+    ('parso', '0.7.0', { # Pure Python, no dependencies
+        'checksums':   ['908e9fae2144a076d72ae4e25539143d40b8e3eafbaeae03c1bfe226f4cdf12c'],
+    }),
+    ('jedi', '0.17.0', { # Pure Python, depends on parso
+        'checksums':   ['df40c97641cb943661d2db4c33c2e1ff75d491189423249e989bcea4464f3030'],
+    }),
+    ('prompt_toolkit', '3.0.5', { # Pure Python, depends on wcwidth
+        'checksums':   ['563d1a4140b63ff9dd587bda9557cffb2fe73650205ab6f4383092fb882e7dc8'],
+    }),
+#
+# Bioinformatics stuff
+#
+# pysam needs refinement, adapt SAMtools module instead?
+    ('pysam', '0.15.4', {  # Move to BioInformatics-specific module?
+        'checksums': ['a535e15cbd6e27f4ab74cabca30ca1df7eea283cb91d3b536d47fe113fee066f'],
+    }),
+########
+## Other
+##   We will include this in a separate module to have a proper binary installation.
+##    ('protobuf', '3.4.0', { # Needed for TensorFlow, uses the protobuf module.
+##        'modulename': 'google.protobuf',
+##        'source_urls': ['https://pypi.python.org/packages/source/p/protobuf'],
+##        'checksums':   ['11f54493ceb54aae10dde676577ef59fc52d52f82729d5a12c90b0813c857a2f'],
+##    }),
+]
+
+# The next block does not work in a Python EasyBlock EasyConfig: There is no 
+# substitution of the variables....
+#postinstallcmds = [
+#    # The next command is needed to make sure the sanity check for ruamel.yaml.clib works.
+#    # Manual installtion via pip --install-option="--prefix... does create that directory.
+#    "mkdir -p %(installdir)s/lib/python%(pyshortver)s/site-packages/ruamel/yaml/clib" % { 'installdir': installdir },
+#]
+
+moduleclass = 'lang'
+
+modluafooter= """
+family("python%(version_major_minor)s")
+"""
+
