@@ -1054,7 +1054,8 @@ components = [
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
                        }],
-        'start_dir':   '%(namelower)s-%(version)s'
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--enable-libgdbm-compat --with-libiconv-prefix=%(installdir)s',
     }),
     ('libevent', local_libevent_version, {
         'sources':     [ {
