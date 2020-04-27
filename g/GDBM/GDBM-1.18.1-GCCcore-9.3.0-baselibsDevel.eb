@@ -6,6 +6,7 @@ local_binutils_version =     '2.34'
 
 local_ncurses_version =      '6.2'           # https://ftp.gnu.org/pub/gnu/ncurses/
 local_libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+local_libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
 local_gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
 local_GDBM_version =         '1.18.1'        # https://ftp.gnu.org/gnu/gdbm/
 
@@ -56,6 +57,7 @@ checksums =   ['86e613527e5dba544e73208f42b78b7c022d4fa5a6d5498bf18c8d6f745b91dc
 builddependencies = [
     ('binutils',   local_binutils_version),
     ('buildtools', local_buildset,         '', True),
+    ('libiconv',   local_libiconv_version, versionsuffix),
     ('gettext',    local_gettext_version,  versionsuffix), # Really a build dependency? It doesn't seem to link to it.
 ]
 
@@ -63,6 +65,9 @@ dependencies = [
     ('ncurses',     local_ncurses_version,     versionsuffix),
     ('libreadline', local_libreadline_version, versionsuffix),
 ]
+
+# Note there is also libintl but that is part of the GNU C library so we son\'t use our own.
+configopts = '--enable-libgdbm-compat --with-libiconv-prefix=$EBROOTLIBICONV'
 
 sanity_check_paths = {
     'files': ['lib/libgdbm.%s' % SHLIB_EXT, 'lib/libgdbm.a', 'include/gdbm.h',
