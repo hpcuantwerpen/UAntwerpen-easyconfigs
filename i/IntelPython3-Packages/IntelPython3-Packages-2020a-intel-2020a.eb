@@ -364,15 +364,15 @@ exts_list = [
     ('prompt_toolkit', '3.0.5', { # Pure Python, depends on wcwidth
         'checksums':   ['563d1a4140b63ff9dd587bda9557cffb2fe73650205ab6f4383092fb882e7dc8'],
     }),
-#
-# Bioinformatics stuff
-#
-# pysam needs refinement, adapt SAMtools module instead?
-    ('pysam', '0.15.4', {  # Move to BioInformatics-specific module?
-        'checksums': ['a535e15cbd6e27f4ab74cabca30ca1df7eea283cb91d3b536d47fe113fee066f'],
-    }),
 ########
 ## Other
+##
+## Bioinformatics stuff
+##
+## pysam needs refinement, adapt SAMtools module instead?
+#    ('pysam', '0.15.4', {  # Move to BioInformatics-specific module?
+#        'checksums': ['a535e15cbd6e27f4ab74cabca30ca1df7eea283cb91d3b536d47fe113fee066f'],
+#    }),
 ##   We will include this in a separate module to have a proper binary installation.
 ##    ('protobuf', '3.4.0', { # Needed for TensorFlow, uses the protobuf module.
 ##        'modulename': 'google.protobuf',
