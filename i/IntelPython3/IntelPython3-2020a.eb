@@ -1,0 +1,29 @@
+# IMPORTANT NOTE: This is just a dummy easyconfig, create 2019b as an alias or
+# symbolic link to the proper 2019b.XX module file that is actually in use.
+# It is needed though for EasyBuild to get the right dependency change
+easyblock = 'Bundle'
+
+name =    'IntelPython3'
+version = '2020a'
+
+local_interpython_update = '01'
+local_intelpython_version = version[0:4] + '.' + local_interpython_update
+
+homepage = 'https://software.intel.com/en-us/distribution-for-python'
+
+whatis = [
+    'Description: Dummy IntelPython3 module; this should never have been installed and lmod aliases or symbolic links should have been used instead.',
+]
+
+description = """
+Dummy IntelPython3 module; this should never have been installed and lmod 
+aliases or symbolic links should have been used instead.
+]""" 
+
+toolchain = SYSTEM
+
+dependencies = [
+    ('IntelPython3',  local_intelpython_version), # Not really needed as all libraries are included through symbolic links
+]
+
+moduleclass = 'lang'
