@@ -1,12 +1,13 @@
 easyblock = 'Bundle'
 
-name =    "SMALT"
-version = "0.7.6"
-
-local_bambamc_version =  '0.0.50-release-20140430085950'
-
 local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
+
+local_bambamc_version =  '0.0.50-release-20140430085950' # Unmnaintained
+local_SMALT_version =    '0.7.6'  # https://sourceforge.net/projects/smalt/
+
+name =    "SMALT"
+version = local_SMALT_version
 
 homepage = "https://www.sanger.ac.uk/science/tools/smalt-0"
 
