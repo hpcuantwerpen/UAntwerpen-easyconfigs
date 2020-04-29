@@ -1,0 +1,234 @@
+easyblock = 'Bundle'
+
+local_buildset         = '2020a'
+local_gcc_version      = '9.3.0'
+
+name =          'BioTools'
+version =       '2020a.00'
+
+homepage = '(none)'
+
+# We list all libraries in a whatis line so that they can be found by module keyword.
+# Contrary to what the LMOD documentation makes you believe, it seems that help is
+# not searched when using module keyword.
+whatis = [
+    "Description: A number of bioinformatics tools, installed together as a bundle",
+    "Contains: BEDTools, HTSlib/BCFtools/SAMtools, fastp, MCL, MUSCLE, VSEARCH"
+]
+
+local_BCFtools_version = '1.10.2' # https://github.com/samtools/bcftools/releases
+local_BEDTools_version = '2.29.2' # https://github.com/arq5x/bedtools2/releases
+local_fastp_version =    '0.20.1' # https://github.com/OpenGene/fastp/releases
+local_HTSlib_version =   '1.10.2' # https://github.com/samtools/htslib/releases
+local_MCL_version =      '14.137' # https://micans.org/mcl/
+local_MEGAHIT_version =  '1.2.9' # https://github.com/voutcn/megahit/releases
+local_MUSCLE_version =   '3.8.31' # http://drive5.com/muscle/downloads.htm
+local_SAMtools_version = '1.10'   # https://github.com/samtools/samtools/releases
+local_VSEARCH_version =  '2.14.2' # https://github.com/torognes/vsearch/releases
+
+description = """
+This module provides a number of useful bio-informatics tools.
+
+Overview of the included tools and libraries:
+
+* bedtools (version %(bedtools)s): Collectively, the bedtools utilities are a 
+  swiss-army knife of tools for a wide-range of genomics analysis tasks. The 
+  most widely-used tools enable genome arithmetic: that is, set theory on the genome. 
+  For example, bedtools allows one to intersect, merge, count, complement, and 
+  shuffle genomic intervals from multiple files in widely-used genomic file formats 
+  such as BAM, BED, GFF/GTF, VCF. While each individual tool is designed to do a 
+  relatively simple task (e.g., intersect two interval files), quite sophisticated 
+  analyses can be conducted by combining multiple bedtools operations on the UNIX 
+  command line.
+  bedtools is developed in the Quinlan laboratory at the University of Utah 
+  and benefits from fantastic contributions made by scientists worldwide.
+* fastp (version %(fastp)s): a tool designed to provide fast all-in-one preprocessing 
+  for FastQ files. This tool is developed in C++ with multithreading supported 
+  to afford high performance.
+* HTSlib (version %(HTSlib)s): HTSlib is an implementation of a unified C library for 
+  accessing common file formats, such as SAM, CRAM and VCF, used for high-throughput 
+  sequencing data, and is the core library used by samtools and bcftools. 
+  HTSlib implements a generalized BAM index, with file extension .csi 
+  (coordinate-sorted index). The HTSlib file reader first looks for the new index 
+  and then for the old if the new index is absent.
+  This project also includes the popular tabix indexer, which indexes both .tbi 
+  and .csi formats, and the bgzip compression utility.
+* BCFtools (version %(BCFtools)s): BCFtools is a program for variant calling and manipulating 
+  files in the Variant Call Format (VCF) and its binary counterpart BCF. All commands 
+  work transparently with both VCFs and BCFs, both uncompressed and BGZF-compressed. In 
+  order to avoid tedious repetion, throughout this document we will use "VCF" and "BCF" 
+  interchangeably, unless specifically noted.
+  Most commands accept VCF, bgzipped VCF and BCF with filetype detected automatically 
+  even when streaming from a pipe. Indexed VCF and BCF work in all situations. 
+  Unindexed VCF and BCF and streams work in most, but not all situations. In general, 
+  whenever multiple VCFs are read simultaneously, they must be indexed and therefore 
+  also compressed.
+* SAMtools (version %(SAMtools)s): SAMtools provide various utilities for manipulating 
+  alignments in the SAMformat, including sorting, merging, indexing and generating 
+  alignments in aper-position format.
+  SAMtools is implemented as a couple of executables and a number of scripts.Some scripts 
+  (in particular the LUA scripts) may require additional modules.
+* MCL (version %(MCL)s): The MCL algorithm is short for the Markov Cluster 
+  Algorithm, a fast and scalableunsupervised cluster algorithm for graphs 
+  (also known as networks) based onsimulation of (stochastic) flow in graphs.
+  The software is licensed under the GNU General Public License, version 3. It
+  implies that the source code is available, and the license gives you the freedom
+  to study the code and modify it in any way that you see fit. If you pass parts
+  or all of the code, compiled parts of the code, or a derived product on to
+  others, you have to make the code available to them on the same conditions.
+  The authors do ask though to quote a number of publications when using the
+  software, see https://micans.org/mcl/index.html?sec_license.
+  The package consists of executables only, no libraries. Documentation is
+  provided through man pages and the package homepage.
+* MUSCLE (version %(MUSCLE)s): MUSCLE is one of the best-performing multiple 
+  alignment programs according to published benchmark tests, with accuracy and 
+  speed that are consistently better than CLUSTALW. MUSCLE can align hundreds 
+  of sequences in seconds. Most users learn everything they need to know about 
+  MUSCLE in a few minutes—only a handful of command-line options are needed 
+  to perform common alignment tasks.
+* VSEARCH (version %(VSEARCH)s): VSEARCH upports de novo and reference based 
+  chimera detection, clustering, full-length and prefix dereplication, 
+  rereplication, reverse complementation, masking, all-vs-all pairwise 
+  global alignment, exact and global alignment searching, shuffling, 
+  subsampling and sorting. It also supports FASTQ file analysis, filtering, 
+  conversion and merging of paired-end reads.
+  VSEARCH stands for vectorized search, as the tool takes advantage of 
+  parallelism in the form of SIMD vectorization as well as multiple threads 
+  to perform accurate alignments at high speed. VSEARCH uses an optimal global 
+  aligner (full dynamic programming Needleman-Wunsch), in contrast to USEARCH 
+  which by default uses a heuristic seed and extend aligner. This usually 
+  results in more accurate alignments and overall improved sensitivity 
+  (recall) with VSEARCH, especially for alignments with gaps.
+  NOTE: Given that the compiler options that the code choses are those for
+  essentially a 15-year old Pentium 4 processor, the code may not be that well
+  vectorized despite what it suggests and may not exploit more modern vector
+  instructions at all.
+""" % {
+    'bedtools': local_BEDTools_version,
+    'fastp':    local_fastp_version,
+    'HTSlib':   local_HTSlib_version,
+    'BCFtools': local_BCFtools_version,
+    'SAMtools': local_SAMtools_version,
+    'MCL':      local_MCL_version,
+    'MUSCLE':   local_MUSCLE_version,
+    'VSEARCH':  local_VSEARCH_version,
+}
+
+docurls = [
+    'bedtools: Web-based documentation on http://bedtools.readthedocs.io/',
+    'fastpp:   Web-based documentation on https://github.com/OpenGene/fastp/blob/master/README.md',
+    'HTSlib:   Man pages in sections 1, 5 and 7',
+    'BCFtools: Web-based documentation on http://samtools.github.io/bcftools/howtos/index.html',
+    'BCFtools: Man page bcftools in section 1',
+    'SAMtools: Man page for the samtools and wgsim commands (section 1)',
+    'MCL:      Man pages (sections 1, 5 and 7) - try \man mcl\ as a starting point',
+    'MUSCLE:   Web-based documentation on http://drive5.com/muscle/manual/',
+    'VSEARCH:  Man page vsearch in section 1',
+    'VSEARCH:  Manual downloadable from https://github.com/torognes/vsearch/releases/download/v%(version)s/vsearch_manual.pdf',
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True} # To ensure that we can link static libraries into shared ones.
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),
+]
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), 
+]
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ('MUSCLE', local_MUSCLE_version, {
+        'easyblock':     'MakeCp',
+        'sources':       [ {
+                            'filename':    '%(namelower)s%(version)s_src.tar.gz',
+                            'source_urls': ['http://www.drive5.com/muscle/downloads%(version)s/']
+                         } ],
+        'patches':       ['MUSCLE-%(version)s_easyconfig_vars.patch'],
+        'start_dir':     '%(namelower)s%(version)s/src',
+        'files_to_copy': [(["muscle"], 'bin')],
+    }),
+    ('BEDTools', local_BEDTools_version, {
+        'sources':      [ {
+                           'filename':    'bedtools-%(version)s.tar.gz',
+                           'source_urls': ['https://github.com/arq5x/bedtools2/releases/download/v%(version)s/']
+                        } ],
+        'start_dir':    'bedtools2',
+        'skipsteps':    ['configure'],
+        'prebuildopts': 'sed -e "s/-g -Wall -O2/-Wall/" -i Makefile && ',
+        'buildopts':    'CXX="$CXX" CC="$CC" CFLAGS="$CFLAGS" VERBOSE=1',
+        'installopts':  'prefix=%(installdir)s CXX="$CXX" VERBOSE=1',
+    }),
+    ('fastp', local_fastp_version, {
+        'sources':        [ {
+                             'download_filename': 'v%(version)s.zip',
+                             'filename':          SOURCELOWER_ZIP,
+                             'source_urls':       ['https://github.com/OpenGene/fastp/archive/'],
+                          } ],
+        'start_dir':      '%(namelower)s-%(version)s',
+        'skipsteps':      ['configure'],
+        'buildopts':      'CXXFLAGS="${CXXFLAGS} -I./inc"',
+        'preinstallopts': 'mkdir -p %(installdir)s/bin && ',
+        'installopts':    'PREFIX=%(installdir)s',
+    }),
+    ('MCL', local_MCL_version, {
+        'sources':      [ {
+                           'filename':    '%(namelower)s-%(version_major)s-%(version_minor)s.tar.gz',
+                           'source_urls': ['http://micans.org/%(namelower)s/src/']
+                        } ],
+        'start_dir':    'mcl-%(version_major)s-%(version_minor)s',
+        'installopts':  ' && cp %(builddir)s/mcl-%(version_major)s-%(version_minor)s/src/alien/oxygen/src/mclblastline %(installdir)s/bin ' + 
+                        ' && cp %(builddir)s/mcl-%(version_major)s-%(version_minor)s/src/alien/oxygen/src/mcxdeblast   %(installdir)s/bin',
+    }),
+    ('VSEARCH', local_VSEARCH_version, {
+        'sources':       [ {
+                            'download_filename': 'v%(version)s.tar.gz',
+                            'filename':          SOURCELOWER_TAR_GZ,
+                            'source_urls':       ['https://github.com/torognes/vsearch/archive']
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'sed -i "s/AM_CXXFLAGS=-Wall.*/AM_CXXFLAGS=$EBVARCXXFLAGS/" src/Makefile.am && ' +
+                         './autogen.sh && ',
+
+        'configopts':    '--disable-pdfman ',
+    }),
+    ('HTSlib', local_HTSlib_version, {
+        'sources':      [ {
+                           'filename':    SOURCELOWER_TAR_BZ2,
+                           'source_urls': ['https://github.com/samtools/%(namelower)s/releases/download/%(version)s/']
+                        } ],
+        'start_dir':    '%(namelower)s-%(version)s',
+    }),
+    ('BCFtools', local_BCFtools_version, {
+        'sources':      [ {
+                           'filename':    SOURCELOWER_TAR_BZ2,
+                           'source_urls': ['https://github.com/samtools/%(namelower)s/releases/download/%(version)s/']
+                        } ],
+        'start_dir':    '%(namelower)s-%(version)s',
+        'configopts':   '--enable-libgsl --with-htslib=%(installdir)s',
+    }),
+    ('SAMtools', local_SAMtools_version, {
+        'sources':      [ {
+                           'filename':    SOURCELOWER_TAR_BZ2,
+                           'source_urls': ['https://github.com/samtools/%(namelower)s/releases/download/%(version)s/']
+                        } ],
+        'start_dir':    '%(namelower)s-%(version)s',
+        'configopts':   '--with-ncurses --with-htslib=%(installdir)s',
+    }),
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['bin']
+#    'dirs':  ['bin', 'lib', 'include', 'share/man']
+}
+
+moduleclass = 'bio'
+
+
+
+
+

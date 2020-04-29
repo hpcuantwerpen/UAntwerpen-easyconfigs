@@ -1,0 +1,29 @@
+# Patch to compile MUSCLE using EasuyBuild-set variables and without
+# static linking as some systems don't have static versions of some
+# basic libraries installed.
+# Only tested with intel/2017a toolchain, but probably works with foss also.
+# Developed by Kurt Lust, UAntwerpen.
+--- muscle3.8.31-orig/src/mk	2010-05-02 01:15:42.000000000 +0200
++++ muscle3.8.31/src/mk	2017-04-04 11:41:21.131020000 +0200
+@@ -5,16 +5,13 @@
+ rm -f *.o muscle.make.stdout.txt muscle.make.stderr.txt
+ for CPPName in $CPPNames
+ do
+-  echo $CPPName >> /dev/tty
+-  g++ $ENV_GCC_OPTS -c -O3 -msse2 -mfpmath=sse -D_FILE_OFFSET_BITS=64 -DNDEBUG=1 $CPPName.cpp -o $CPPName.o  >> muscle.make.stdout.txt 2>> muscle.make.stderr.txt
++  echo "$CXX -c $CXXFLAGS -D_FILE_OFFSET_BITS=64 -DNDEBUG=1 $CPPName.cpp -o $CPPName.o"
++  $CXX -c $CXXFLAGS -D_FILE_OFFSET_BITS=64 -DNDEBUG=1 $CPPName.cpp -o $CPPName.o  #>> muscle.make.stdout.txt 2>> muscle.make.stderr.txt
+ done
+ 
+-LINK_OPTS=
+-if [ `uname -s` == Linux ] ; then
+-    LINK_OPTS=-static
+-fi
+-g++ $LINK_OPTS $ENV_LINK_OPTS -g -o muscle $ObjNames  >> muscle.make.stdout.txt 2>> muscle.make.stderr.txt
+-tail muscle.make.stderr.txt
++echo "$CXX -o muscle $ObjNames $LDFLAGS"
++$CXX -o muscle $ObjNames $LDFLAGS  #>> muscle.make.stdout.txt 2>> muscle.make.stderr.txt
++#tail muscle.make.stderr.txt
+ 
+ strip muscle
+ ls -lh muscle

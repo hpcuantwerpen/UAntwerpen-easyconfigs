@@ -1,0 +1,132 @@
+easyblock = 'Bundle'
+
+local_buildset         = '2020a'
+local_gcc_version      = '9.3.0'
+
+local_Python3_version =  '3.8.2'     # https://www.python.org/downloads/
+
+name =          'BioTools-Python'
+version =       '2020a.00'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = '(none)'
+
+# We list all libraries in a whatis line so that they can be found by module keyword.
+# Contrary to what the LMOD documentation makes you believe, it seems that help is
+# not searched when using module keyword.
+whatis = [
+    "Description: A number of Python bioinformatics tools, installed together as a bundle",
+    "Contains: Biopython, Flye, pysam, SICER2"
+]
+
+local_Biopython_version = '1.76'   # https://pypi.org/project/biopython/
+local_Flye_version =      '2.7.1'  # https://github.com/fenderglass/Flye/releases
+local_Pysam_version =     '0.15.4' # https://pypi.org/project/pysam/
+local_SICER2_version =    '1.0.2'  # https://pypi.org/project/SICER2/
+
+description = """
+This module provides a number of useful Python bio-informatics tools, often
+tools that wrap around tools in the BioTools package.
+
+Overview of the included tools and libraries:
+
+* Biopython (version %(biopython)s): a set of freely available tools for 
+  biological computation written in Python by an international team of 
+  developers. It is a distributed collaborative effort to develop Python 
+  libraries and applications which address the needs of current and future 
+  work in bioinformatics.
+* FLye (version %(Flye)s): a de novo assembler for single molecule sequencing reads, 
+  such as those producedby PacBio and Oxford Nanopore Technologies. It is 
+  designed for a wide range of datasets, from small bacterial projects to 
+  large mammalian-scale assemblies. The package represents a complete pipeline: 
+  it takes raw PacBio / ONT reads as input and outputs polished contigs. Flye 
+  also has a special mode for metagenome assembly.
+* pysam (version %(Pysam)s): a python module for reading and manipulating Samfiles. 
+  It's a lightweight wrapper of the samtools C-API. Pysam also includes an interface 
+  for tabix.
+* SICER2 (version %(SICER2)s): Redesigned and improved ChIP-seq broad peak calling tool SICER.
+  Chromatin immunoprecipitation combined with high-throughput sequencing 
+  (ChIP-seq) can be used to map binding sites of a protein of interest in 
+  the genome. Histone modifications usually occupy broad chromatin domains 
+  and result in diffuse patterns in ChIP-seq data that make it difficult to 
+  identify signal enrichment. SICER, a spatial clustering approach for the 
+  identification of ChIP-enriched regions, was developed for calling broad 
+  peaks from ChIP-seq data.
+  Usability of the original SICER software has been affected by increased 
+  throughputs of ChIP-seq experiments over the years. We now present SICER2 
+  a more user-friendly version of SICER that has been redisgned and streamlined 
+  to handle large ChIP-seq data sets. This new Python package supports multiple 
+  job submissions on cluster systems and parallel processing on multicore 
+  architectures.
+""" % { 
+    'biopython': local_Biopython_version,
+    'Flye':      local_Flye_version,
+    'Pysam':     local_Pysam_version,
+    'SICER2':    local_SICER2_version,
+}
+
+docurls = [
+    'biopython: Web-based information on https://biopython.org/'
+    'Flye:      Web-based manual on https://github.com/fenderglass/Flye/blob/flye/docs/USAGE.md',    
+    'Pysam:     Web-based documentation on https://pysam.readthedocs.io/en/latest/',
+    'SICER2:    Web-based documentation on https://zanglab.github.io/SICER2/',
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+dependencies = [
+    ('Python',   local_Python3_version),
+    ('BioTools', version),  
+]
+
+default_easyblock = "Tarball"
+default_component_specs = {
+    'skipsteps': ['install'],
+}
+
+exts_defaultclass = 'PythonPackage'
+exts_filter = ("python -c 'import %(ext_name)s'", '')
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  False,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+components = [    
+    ('Flye', local_Flye_version, {
+        'sources' :  [{
+                       'download_filename': '%(version)s.zip', 
+                       'filename': '%(namelower)s-%(version)s.zip', 
+                       'source_urls': ['https://github.com/fenderglass/Flye/archive/'] 
+                     }],
+        'start_dir': '%(name)s-%(version)s',
+    }),   
+]
+
+exts_list = [
+    ('biopython', local_Biopython_version, {
+        'modulename': 'Bio',
+    }),   
+    ('flye', local_Flye_version, {
+        'source_tmpl': 'flye-%(version)s.zip',
+    }),   
+    ('pysam', local_Pysam_version, {
+        # 'preinstallopts': 'HTSLIB_LIBRARY_DIR=$EBROOTBIOTOOLS/lib HTSLIB_INCLUDE_DIR=$EBROOTBIOTOOLS/include ',
+    }),   
+    ('SICER2', local_SICER2_version, {
+        'modulename': 'sicer',
+    }),   
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextrapaths = {
+    'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages',   
+}
+
+moduleclass = 'bio'
+
