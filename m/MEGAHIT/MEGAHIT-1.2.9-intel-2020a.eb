@@ -5,9 +5,8 @@ local_gcc_version = '9.3.0'
 
 local_MEGAHIT_version =  '1.2.9' # https://github.com/voutcn/megahit/releases
 
-name =          'MEGAHIT'
-version =       local_MEGAHIT_version
-versionsuffix = '-biotoolsDevel'
+name =    'MEGAHIT'
+version = local_MEGAHIT_version
 
 homepage = 'https://github.com/voutcn/megahit'
 

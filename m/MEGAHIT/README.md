@@ -8,6 +8,7 @@
 * MEGAHIT is mostly C/C++ code, but the script that starts the code is written in Python. 
   It does seem to work with the standard system Python though.
 * MEGAHIT has a built-in test: after loading the module, run ``megahit --test``. 
+* Building MEGAHIT fails in EasyBuild when the 'pic'-toolchainopt is True.
 
 ## EasyConfigs
 
@@ -23,4 +24,5 @@ There is support for MEGAHIT in the EasyBuilders tree.
   the megahit script works fine with the system Python, we outcommented that line
   and instead give some information in our the usage field.
 * Tested by running ``megahit --test`` which runs MEGAHIT on a toy dataset.
-* 2020a: Moved ot the BioTools bundle
+* 2020a: Tried to move to the BioTools bundle, but does not yet work as it fails to
+  compile with -fPIC.
