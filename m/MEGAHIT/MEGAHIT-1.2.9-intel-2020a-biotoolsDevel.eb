@@ -1,16 +1,20 @@
 easyblock = 'CMakeMake'
 
-name =    'MEGAHIT'
-version = '1.2.9'
-
 local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
+
+local_MEGAHIT_version =  '1.2.9' # https://github.com/voutcn/megahit/releases
+
+name =          'MEGAHIT'
+version =       local_MEGAHIT_version
+versionsuffix = '-biotoolsDevel'
 
 homepage = 'https://github.com/voutcn/megahit'
 
 whatis = [
     "Description: MEGAHIT: An ultra-fast single-node solution for large and complex metagenomics assembly via succinct de Bruijn graph"    
 ]
+
 description = """
 MEGAHIT is an ultra-fast and memory-efficient NGS assembler. It is optimized 
 for metagenomes, but also works well on generic single genome assembly (small 

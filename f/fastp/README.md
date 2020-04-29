@@ -22,7 +22,7 @@
 
 There is support for fastp in EasyBuild. We did make a couple of changes though.
 
-### Version 0.20.0 - Intel 2019b and 2020a
+### Version 0.20.0 - Intel 2019b and 0.20.1 - Intel 2020a
 
 * Added the missing dependency for zlib. In our case, this is the baselibs
   package.
@@ -32,5 +32,6 @@ There is support for fastp in EasyBuild. We did make a couple of changes though.
   behaviour which is most in line with what EasyBuild expects.
 * Did specify the C++ standard in toolchainopts since the default compiler options
   imposed this.
+* Moved to the BioTools bundle for the 2020a toolchains.
 
 

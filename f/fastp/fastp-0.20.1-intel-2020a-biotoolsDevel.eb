@@ -1,10 +1,13 @@
 easyblock = 'ConfigureMake'
 
-name =    'fastp'
-version = '0.20.0'
-
 local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
+
+local_fastp_version = '0.20.1' # https://github.com/OpenGene/fastp/releases
+
+name =          'fastp'
+version =       local_fastp_version
+versionsuffix = '-biotoolsDevel'
 
 homepage = 'https://github.com/OpenGene/fastp'
 
@@ -21,9 +24,14 @@ high performance.
 toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'cstd': 'c++11'}
 
-source_urls = ['https://github.com/OpenGene/fastp/archive/']
-sources =     ['v%(version)s.tar.gz']
-checksums =   ['8d751d2746db11ff233032fc49e3bcc8b53758dd4596fdcf4b4099a4d702ac22']
+#source_urls = ['https://github.com/OpenGene/fastp/archive/']
+#sources =     ['v%(version)s.tar.gz']
+sources = [ {
+    'download_filename': 'v%(version)s.zip',
+    'filename':          SOURCELOWER_ZIP,
+    'source_urls':       ['https://github.com/OpenGene/fastp/archive/'],
+} ]
+checksums =   ['e95310e021c64ac018e2501f92e31a6974e2e0ada0659b4a28bf0c46e9f683a1']
 
 dependencies = [
     ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib

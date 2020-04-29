@@ -5,10 +5,13 @@
 
 easyblock = 'MakeCp'
 
-name =    'MUSCLE'
-version = '3.8.31'
-
 local_buildset = '2020a'
+
+local_MUSCLE_version =   '3.8.31' # http://drive5.com/muscle/downloads.htm
+
+name =          'MUSCLE'
+version =       local_MUSCLE_version
+versionsuffix = '-biotoolsDevel'
 
 homepage = 'http://drive5.com/muscle/'
 

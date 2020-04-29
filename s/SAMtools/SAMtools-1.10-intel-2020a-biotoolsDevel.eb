@@ -9,11 +9,16 @@
 # Modified by: Adam Huffman
 # The Francis Crick Institute
 ##
-name =    'SAMtools'
-version = '1.10'
 
 local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
+
+local_HTSlib_version =   '1.10.2' # https://github.com/samtools/htslib/releases
+local_SAMtools_version = '1.10'   # https://github.com/samtools/samtools/releases
+
+name =          'SAMtools'
+version =       local_SAMtools_version
+versionsuffix = '-biotoolsDevel'
 
 homepage = 'http://www.htslib.org/'
 
@@ -47,7 +52,11 @@ builddependencies = [
 ]
 
 dependencies = [
-    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for ncurses, zlib, bzip2, XZ, libdeflate and cURL
+    ('baselibs', local_buildset,       '',            ('GCCcore', local_gcc_version)), # for ncurses, zlib
+    ('HTSlib',   local_HTSlib_version, versionsuffix),
 ]
+
+configopts  = '--with-ncurses '
+configopts += '--with-htslib=$EBROOTHTSLIB '
 
 moduleclass = 'bio'

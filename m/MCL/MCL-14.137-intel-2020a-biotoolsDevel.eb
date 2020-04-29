@@ -1,9 +1,12 @@
 easyblock = 'ConfigureMake'
 
-name =    'MCL'
-version = '14.137'
-
 local_buildset = '2020a'
+
+local_MCL_version =      '14.137' # https://micans.org/mcl/
+
+name =          'MCL'
+version =       local_MCL_version
+versionsuffix = '-biotoolsDevel'
 
 homepage = 'http://micans.org/mcl/'
 
@@ -30,7 +33,7 @@ provided through man pages and the package homepage.
 """
 
 docurls = [
-    "man pages (sections 1, 5 and 7) - try 'man mcl' as a starting point",
+    'Man pages (sections 1, 5 and 7) - try \man mcl\ as a starting point',
 ]
 
 toolchain = {'name': 'intel', 'version': local_buildset}
@@ -39,10 +42,15 @@ source_urls = ['http://micans.org/%(namelower)s/src/']
 sources =     ['%(namelower)s-%(version_major)s-%(version_minor)s.tar.gz']
 
 # see https://github.com/sanger-pathogens/Roary/issues/217 for more information
-postinstallcmds = [
-     'cp -p src/alien/oxygen/src/mclblastline %(installdir)s/bin',
-     'cp -p src/alien/oxygen/src/mcxdeblast %(installdir)s/bin',
-]
+# Postinstallopts is not ideal in a Bundle (when including in BioTools) as these
+# commands are only executed at the very end.
+installopts  = ' && cp %(builddir)s/mcl-%(version_major)s-%(version_minor)s/src/alien/oxygen/src/mclblastline %(installdir)s/bin '
+installopts += ' && cp %(builddir)s/mcl-%(version_major)s-%(version_minor)s/src/alien/oxygen/src/mcxdeblast   %(installdir)s/bin'
+
+#postinstallcmds = [
+#     'cp -p src/alien/oxygen/src/mclblastline %(installdir)s/bin',
+#     'cp -p src/alien/oxygen/src/mcxdeblast %(installdir)s/bin',
+#]
 
 sanity_check_paths = {
     'files': ['bin/mcl'],

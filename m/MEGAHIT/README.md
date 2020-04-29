@@ -23,3 +23,4 @@ There is support for MEGAHIT in the EasyBuilders tree.
   the megahit script works fine with the system Python, we outcommented that line
   and instead give some information in our the usage field.
 * Tested by running ``megahit --test`` which runs MEGAHIT on a toy dataset.
+* 2020a: Moved ot the BioTools bundle
