@@ -1,0 +1,73 @@
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+# Author: Pablo Escobar Lopez
+# sciCORE - University of Basel
+# SIB Swiss Institute of Bioinformatics
+# 0.9.1.4:
+# Modified by: Adam Huffman
+# The Francis Crick Institute
+# Modified by: Erich Birngruber
+# Gregor Mendel Institute
+# Modified by: Pavel Grochal
+# INUITS
+
+easyblock = 'PythonPackage'
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+local_IntelPython3_major_minor = '3.7'
+
+local_Pysam_version = '0.15.4' # https://pypi.org/project/pysam/
+
+name =          'Pysam'
+version =       local_Pysam_version
+versionsuffix = '-IntelPython3-biotoolsDevel'
+
+homepage = 'https://github.com/pysam-developers/pysam'
+
+whatis = [
+    "Description: Pysam is a python module for reading and manipulating Samfiles."
+]
+
+description = """
+Pysam is a python module for reading and manipulating Samfiles. It's a 
+lightweight wrapper of the samtools C-API. Pysam also includes an 
+interface for tabix.
+"""
+
+docurls = [
+    'Web-based documentation on https://pysam.readthedocs.io/en/latest/'
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+#source_urls = ['https://github.com/pysam-developers/pysam/archive/']
+#sources =     ['v%(version)s.tar.gz']
+sources =     ['%(namelower)s-%(version)s.tar.gz']
+source_urls = [PYPI_SOURCE]
+checksums =   ['a535e15cbd6e27f4ab74cabca30ca1df7eea283cb91d3b536d47fe113fee066f']
+
+dependencies = [
+    ('baselibs',              local_buildset, '', ('GCCcore', local_gcc_version)), # ncurses, cURL, XZ
+    ('IntelPython3-Packages', local_buildset)
+]
+
+#req_py_majver = 3 # Avoids reverting to the system Python?
+download_dep_fail = True
+use_pip =           True
+sanity_pip_check =  False # Otherwise we get an error message about scoop requiring argparse.
+
+# Needed to build with IntelPython3
+preinstallopts = 'LDSHARED="icc -shared" '
+
+# Use external HTSlib etc: that only works for matching versions. Depending on where you look,
+# you get different version numbers, but it is certain that 0.15.4 does not support the current
+# versions (which are 1.10.x).
+#preinstallopts = 'HTSLIB_LIBRARY_DIR=$EBROOTBIOTOOLS/lib HTSLIB_INCLUDE_DIR=$EBROOTBIOTOOLS/include '
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python' + local_IntelPython3_major_minor + '/site-packages'],
+}
+
+moduleclass = 'bio'

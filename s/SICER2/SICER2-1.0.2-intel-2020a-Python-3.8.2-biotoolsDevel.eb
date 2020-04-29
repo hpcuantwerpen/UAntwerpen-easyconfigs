@@ -1,0 +1,95 @@
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+# Author: Pablo Escobar Lopez
+# sciCORE - University of Basel
+# SIB Swiss Institute of Bioinformatics
+# 0.9.1.4:
+# Modified by: Adam Huffman
+# The Francis Crick Institute
+# Modified by: Erich Birngruber
+# Gregor Mendel Institute
+# Modified by: Pavel Grochal
+# INUITS
+
+easyblock = 'PythonPackage'
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+local_SICER2_version =   '1.0.2'  # https://pypi.org/project/SICER2/
+local_Python3_version =  '3.8.2'
+local_BEDTools_version = '2.29.2' # https://github.com/arq5x/bedtools2/releases
+
+name =          'SICER2'
+version =       local_SICER2_version
+versionsuffix = '-Python-' + local_Python3_version + '-biotoolsDevel'
+
+homepage = 'https://github.com/zanglab/SICER2'
+
+whatis = [
+    "Description: SICER2: Redesigned and improved ChIP-seq broad peak calling tool SICER"
+]
+
+description = """
+Chromatin immunoprecipitation combined with high-throughput sequencing 
+(ChIP-seq) can be used to map binding sites of a protein of interest in 
+the genome. Histone modifications usually occupy broad chromatin domains 
+and result in diffuse patterns in ChIP-seq data that make it difficult 
+to identify signal enrichment. SICER, a spatial clustering approach for 
+the identification of ChIP-enriched regions, was developed for calling 
+broad peaks from ChIP-seq data.
+
+Usability of the original SICER software has been affected by increased 
+throughputs of ChIP-seq experiments over the years. We now present SICER2, 
+a more user-friendly version of SICER that has been redisgned and 
+streamlined to handle large ChIP-seq data sets. This new Python package 
+supports multiple job submissions on cluster systems and parallel 
+processing on multicore architectures.
+
+For more information about the original SICER algorithm, please see,
+
+“A clustering approach for identification of enriched domains from histone 
+modification ChIP-Seq data” Chongzhi Zang, Dustin E. Schones, Chen Zeng, 
+Kairong Cui, Keji Zhao, and Weiqun Peng, Bioinformatics 25, 1952 - 1958 (2009)
+
+In addition, we present an alternative algorithm for identification of broad 
+domains from ChIP-seq data called RECOGNICER. It uses a coarse-graining 
+approach to identify broad domains on both fine and coarse scale.
+"""
+
+docurls = [
+    'Web-based documentation on https://zanglab.github.io/SICER2/'
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+#source_urls = ['https://github.com/pysam-developers/pysam/archive/']
+#sources =     ['v%(version)s.tar.gz']
+sources =     ['%(name)s-%(version)s.tar.gz']
+source_urls = [PYPI_SOURCE]
+checksums =   ['736789e9117c3ebe88766f19f3cdf7e57d645557abce799e1fe3d31fa29badaf']
+
+dependencies = [
+    ('baselibs', local_buildset,         '',               ('GCCcore', local_gcc_version)), # ncurses, cURL, XZ
+    ('Python',   local_Python3_version), 
+    ('BEDTools', local_BEDTools_version, '-biotoolsDevel'),
+]
+
+download_dep_fail = True
+use_pip =           True
+sanity_pip_check =  False # Otherwise we get an error message about scoop requiring argparse.
+
+options = {
+    'modulename': 'sicer',
+}
+
+# Use external HTSlib etc: that only works for matching versions. Depending on where you look,
+# you get different version numbers, but it is certain that 0.15.4 does not support the current
+# versions (which are 1.10.x).
+#preinstallopts = 'HTSLIB_LIBRARY_DIR=$EBROOTBIOTOOLS/lib HTSLIB_INCLUDE_DIR=$EBROOTBIOTOOLS/include '
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'bio'
