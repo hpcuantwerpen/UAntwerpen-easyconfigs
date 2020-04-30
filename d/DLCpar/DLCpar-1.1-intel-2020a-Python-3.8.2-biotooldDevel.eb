@@ -1,0 +1,42 @@
+# Developed by Kurt Lust, UAntwerpen
+#
+# Implicit requirements: Numpy (1.10.4 or greater)
+
+easyblock = 'PythonPackage'
+
+local_buildset = '2020a'
+
+local_Python3_version = '3.8.2'                  # https://www.python.org/downloads/
+
+local_DLCpar_version =    '1.1'    # https://www.cs.hmc.edu/~yjw/software/dlcpar/
+
+name =          'DLCpar'
+version =       local_DLCpar_version
+versionsuffix = '-Python-%(pyver)s-biotoolsDevel'
+
+homepage = 'https://www.cs.hmc.edu/~yjw/software/dlcpar/'
+
+whatis = [
+    "Description: DLCpar is a Python package implementing reconciliation method for inferring gene duplications, losses, and coalescence"
+]
+
+description = """
+DLCpar is a reconciliation method for inferring gene duplications, losses, 
+and coalescence (accounting for incomplete lineage sorting).
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['https://www.cs.hmc.edu/~yjw/software/dlcpar/pub/sw']
+sources =     [SOURCELOWER_TAR_GZ]
+
+dependencies = [
+    ('Python', local_Python3_version)
+]
+
+sanity_check_paths = {
+    'files': [ "bin/%s" % x for x in ['dlcoal_to_dlcpar', 'dlcpar', 'dlcpar_search', 'dlcpar_to_dlcoal', 'tree-events-dlc', 'tree-events-dlcpar']],
+    'dirs':  [ 'lib/python%(pyshortver)s/site-packages/dlcpar' ]
+}
+
+moduleclass = 'bio'
