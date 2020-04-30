@@ -26,7 +26,7 @@
 
 The first EasyConfigs covered by this documentation are those for version 19.1.
 
-### Version 19.1 (for Intel 2019b)
+### Version 19.1 (for Intel 2020a)
 
 * Compiled our own ARPACK-ng module to include with DFTB+. This required
   some additional variables that should be defined when calling make, hence are
@@ -36,9 +36,10 @@ The first EasyConfigs covered by this documentation are those for version 19.1.
     * One without MPI support that contains all subprograms
     * One with MPI support where one subprogram is missing due to lack of MPI support.
       It also lacks the ELSI support.
-* Some tests in the MPI module failed when using Python 3.7.4. Hence we switched back
+* 2019b: Some tests in the MPI module failed when using Python 3.7.4. Hence we switched back
   to Python 2.7.16.
-
+* 2020a: Used Python 3.8.2 for testing as we do no longer support Python 2.7. 
+  All tests now worked without problems.
 
 ### TODO
 

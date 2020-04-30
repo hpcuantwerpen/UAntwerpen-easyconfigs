@@ -1,0 +1,76 @@
+easyblock = 'ConfigureMake'
+
+local_buildset = '2020a'
+
+local_DFTBplus_version = '19.1'                  # https://github.com/dftbplus/dftbplus/releases
+local_arpackng_version = '3.6.3'                 # 
+local_Python3_version =  '3.8.2'                 # https://www.python.org/downloads/
+
+name =          'DFTB+'
+version =       local_DFTBplus_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://www.dftbplus.org'
+
+whatis = [
+    "Description: quantum mechanical simulation package based on the Density Functional Tight Binding method",
+]
+
+description = """
+DFTB+ is a fast and efficient versatile quantum mechanical simulation
+package.  It is based on the Density Functional Tight Binding (DFTB)
+method, containing almost all of the useful extensions which have been
+developed for the DFTB framework so far.  Using DFTB+ you can carry
+out quantum mechanical simulations like with ab-initio density
+functional theory based packages, but in an approximate way gaining
+typically around two orders of magnitude in speed.
+
+This module only supports OpenMP shared memory parallelism.  Use the
+MPI version of the module if you need to scale to more than one node.
+
+The module is compiled with the optional ARPACK-ng support
+and the optional components that the installation process downloads
+and enables by default.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['https://www.dftbplus.org/fileadmin/DFTBPLUS/public/dftbplus/']
+sources =     ['%(version)s/dftbplus-%(version)s.tar.xz']
+checksums =   ['78f45ef0571c78cf732a5493d32830455a832fa05ebcad43098895e46ad8d220'] # dftbplus-19.1.tar.xz
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True), # for reproducability of the build process. Uses M4?
+]
+
+dependencies = [
+    ('Python',    local_Python3_version),
+    ('arpack-ng', local_arpackng_version),
+]
+
+skipsteps = ['configure']
+
+prebuildopts  = "(yes | ./utils/get_opt_externals ALL) && "    # Download all optional external components, including those with an incompatible license
+prebuildopts += "cp sys/make.x86_64-linux-intel make.arch && "
+prebuildopts += 'sed -i "s|-O2|$OPTFLAGS|g" make.arch && '
+prebuildopts += "sed -i 's|$(ROOT)/_install|%(installdir)s|' make.config && "
+
+buildopts  = "WITH_MPI=0 FXX=ifort LNOPT='-static-intel' "
+buildopts += "WITH_ELSI=0 "
+buildopts += "WITH_ARPACK=1 "
+buildopts += "WITH_GPU=0 "
+buildopts += "WITH_DFTD3=0 "
+
+runtest = 'test'
+
+modextrapaths = {'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages'}
+
+sanity_check_paths = {
+    'files': ['bin/' + local_prog for local_prog in ['dftb+', 'dp_bands', 'dp_dos', 'gen2cif',
+                                                     'gen2xyz', 'modes', 'waveplot', 'xyz2gen']],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages']
+}
+
+sanity_check_commands = [('python', '-c "import dptools"')]
+
+moduleclass = 'phys'
