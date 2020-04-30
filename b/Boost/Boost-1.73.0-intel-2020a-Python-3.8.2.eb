@@ -1,0 +1,79 @@
+# Uses specific Boost EasyBlock
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+local_Boost_version = '1.73.0'                   # https://www.boost.org/users/download/
+local_Python3_version = '3.8.2'                  # https://www.python.org/downloads/
+
+name =          'Boost'
+version =       local_Boost_version
+versionsuffix = '-Python-%(pyver)s'
+
+#local_python_version = '3.7.4'
+#local_pycpver  =       ''.join(local_python_version.split('.')[:2])
+#local_pyvermajor =     ''.join(local_python_version.split('.')[:1])
+
+homepage = 'http://www.boost.org/'
+
+whatis = [
+    'Description: A collection of peer-reviewed portable C++ source libraries'
+    'This module includes static ans shared libraries, compiled with MPI support and boost_python for Python %(pyshortver)s'
+]
+
+description = """
+Boost provides free peer-reviewed portable C++ source libraries.
+
+We emphasize libraries that work well with the C++ Standard Library. Boost
+libraries are intended to be widely useful, and usable across a broad spectrum
+of applications. The Boost license encourages both commercial and non-commercial
+use.
+
+We aim to establish "existing practice" and provide reference implementations so
+that Boost libraries are suitable for eventual standardization. Ten Boost
+libraries are included in the C++ Standards Committee's Library Technical Report
+(TR1) and in the new C++11 Standard. C++11 also includes several more Boost
+libraries in addition to those from TR1. More Boost libraries are proposed for
+standardization in C++17.
+
+This module includes static and shared libraries, compiled with MPI support.
+It also includes the boost_python library for Python %(pyshortver)s.
+"""
+
+docurls = [
+    'Web-based documentation: http://www.boost.org/doc/libs/' + '_'.join(version.split('.')),
+] 
+
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True, 'pic': True}
+
+sources =     ['%%(namelower)s_%s.tar.gz' % '_'.join(version.split('.'))]
+source_urls = ['https://sourceforge.net/projects/%(namelower)s/files/%(namelower)s/%(version)s']
+
+patches = [
+    'Boost-1.73.0_fix-Python3.patch' # Patch actually hasn't modified for a number of versions.
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),
+]
+
+dependencies = [
+    ('baselibs', local_buildset,        '', ('GCCcore', local_gcc_version)), # for bzip2, XZ and zlib
+    ('Python',   local_Python3_version), 
+]
+
+# also build boost_mpi
+boost_mpi = True
+
+# The EasyBlock is not yet adapted for Boost 1.65.0, which has renamed libboost_python.so to
+# libboost_python3.so. So we define our own sanity checks which is a workaround because God
+# has decided that a sanity check cannot be skipped.
+#sanity_check_paths = {
+#    'files': [ 'lib/libboost_python' + local_pycpver + '.so.' + version,
+#               'lib/libboost_numpy'  + local_pycpver + '.so.' + version ], # The latter only for Python builds that do contain numpy.
+#    'dirs':  [ 'include/boost', 'lib' ],
+#}
+
+moduleclass = 'devel'
