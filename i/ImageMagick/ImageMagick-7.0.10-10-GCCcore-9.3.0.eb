@@ -1,0 +1,102 @@
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+# Author: Ravi Tripathi
+# Email: ravi89@uab.edu
+
+easyblock = 'ConfigureMake'
+
+local_buildset         = '2020a'
+local_gcc_version      = '9.3.0'
+local_binutils_version = '2.34'
+
+local_Ghostscript_version = '9.52'                # https://www.ghostscript.com/index.html
+local_ImageMagick_version = '7.0.10-10'           # https://github.com/ImageMagick/ImageMagick/releases
+local_LittleCMS_version =   '2.9'                 # http://www.littlecms.com
+
+name =    'ImageMagick'
+version = local_ImageMagick_version
+
+homepage = 'http://www.imagemagick.org/'
+
+whatis = [
+    "Description: ImageMagick is a software suite to create, edit, compose, or convert bitmap images",
+    "Keywords: Visualization",
+]
+
+description = """
+ImageMagick is a software suite to create, edit, compose, or convert bitmap images
+
+It can read and write images in a variety of formats (over 200) including PNG,
+JPEG, GIF, HEIC, TIFF, DPX, EXR, WebP, Postscript, PDF, and SVG. Use ImageMagick
+to resize, flip, mirror, rotate, distort, shear and transform images, adjust
+image colors, apply various special effects, or draw text, lines, polygons,
+ellipses and Bézier curves.
+
+ImageMagick is free software delivered as a ready-to-run binary distribution or
+as source code that you may use, copy, modify, and distribute in both open and
+proprietary applications. It is distributed under a derived Apache 2.0 license.
+
+ImageMagick utilizes multiple computational threads to increase performance and
+can read, process, or write mega-, giga-, or tera-pixel image sizes.
+"""
+
+usage = """
+Note that the ImageMagick commands don't have very well chosen names. They may clash
+with other commands on the system, so you may need to specify the full path to access
+the ImageMagick commands or those other commands depending on the specific PATH.
+
+The module also creates aliases for all ImageMagick commands that do not contain 
+"Magick" or "magick" in their name. E.g., magick-animate is an alias for animate.
+"""
+
+docurls = [
+    "Man pages (section 1) for all commands"
+]
+
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
+
+# https://github.com/ImageMagick/ImageMagick/archive/7.0.8-27.tar.gz
+sources = [
+    { 'filename':          'ImageMagick-%(version)s.tar.gz',
+      'download_filename': '%(version)s.tar.gz',
+      'source_urls':       ['https://github.com/ImageMagick/ImageMagick/archive'],
+    }
+]
+
+checksums = ['52afac02954c6c6f593e2842fbecb630a765e2152eb84a5f4bb47429ae20db5a']
+
+dependencies = [
+    ('baselibs',    local_buildset), # For bzip2, LibTIFF, JasPer, libjpeg-turbo
+    ('X11',         local_buildset),
+    ('Ghostscript', local_Ghostscript_version),
+    ('LittleCMS',   local_LittleCMS_version),
+]
+
+builddependencies = [
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True), # for pkg-config.
+]
+
+configopts = "--with-gslib --with-x"
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ['bin', 'etc/%(name)s-%(version_major)s', 'include/%(name)s-%(version_major)s', 'lib', 'share'],
+}
+
+modextravars = {'MAGICK_HOME': '%(installdir)s'}
+
+modaliases = {
+    'magick-animate':    '%(installdir)s/bin/animate',
+    'magick-compare':    '%(installdir)s/bin/compare',
+    'magick-composite':  '%(installdir)s/bin/composite',
+    'magick-conjure':    '%(installdir)s/bin/conjure',
+    'magick-convert':    '%(installdir)s/bin/convert',
+    'magick-display':    '%(installdir)s/bin/display',
+    'magick-identify':   '%(installdir)s/bin/identify',
+    'magick-import':     '%(installdir)s/bin/import',
+    'magick-mogrify':    '%(installdir)s/bin/mogrify',
+    'magick-montage':    '%(installdir)s/bin/montage',
+    'magick-stream':     '%(installdir)s/bin/stream',
+}
+
+moduleclass = 'vis'

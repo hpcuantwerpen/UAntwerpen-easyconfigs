@@ -1,0 +1,77 @@
+# Note that we tried 1.61.1 also, but that has a new build process (Meson/Ninja)
+# and we wait for support from EasyBuild rather than figuring it out ourselves.
+#
+easyblock = 'MesonNinja'
+
+local_buildset         = '2020a'
+local_gcc_version      = '9.3.0'
+local_binutils_version = '2.34'
+
+local_cairo_version =      '1.17.2'              # https://www.cairographics.org
+local_GLib_version =       '2.64.1'              # https://github.com/GNOME/glib/releases
+local_GObject_version =    '1.64.1'              # https://github.com/GNOME/gobject-introspection/releases
+local_Python3_version =    '3.8.2'               # https://www.python.org/downloads/
+
+name =    'GObject-Introspection'
+version = local_GObject_version
+
+homepage = 'https://wiki.gnome.org/GObjectIntrospection/'
+
+whatis = [
+    'Description: GNOME middleware layer between C libraries and language bindings',
+    'This module provides the command line utilities and static and shared libraries',
+]
+
+description = """
+GObject introspection is a middleware layer between C libraries (using GObject)
+and language bindings. The C library can be scanned at compile time and generate
+a metadata file, in addition to the actual native C library. Then at runtime,
+language bindings can read this metadata and automatically provide bindings to
+call into the C library.
+
+This module provides the command line tools and static and shared libraries.
+It was compiled to use Python 2.7.
+"""
+
+docurls = [
+    'Web-based documentation: https://developer.gnome.org/gi/',
+]
+
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
+
+source_urls = [FTPGNOME_SOURCE]
+sources =     [SOURCELOWER_TAR_XZ]
+checksums =   ['80beae6728c134521926affff9b2e97125749b38d38744dc901f4010ee3e7fa7']
+
+builddependencies = [
+    ('buildtools', local_buildset,         '', True), # For meson, ninja and pkg-config, tried to use also flex and Bison from buildtools
+    ('cairo',      local_cairo_version),
+    ('binutils',   local_binutils_version)
+]
+
+dependencies = [
+    ('Python',   local_Python3_version, '', ('intel', local_buildset)),  # Now requires Python 3 which didn't work in some older versions..
+    ('GLib',     local_GLib_version),
+    ('baselibs', local_buildset), # for libffi
+]
+
+#preconfigopts = "env GI_SCANNER_DISABLE_CACHE=true "
+configopts  = "--buildtype=release "
+
+# avoid using hard-coded path to 'python3' in shebang of scripts
+#preconfigopts += "PYTHON=python3 "
+#buildopts = "PYTHON=python3 "
+
+modextrapaths = {
+    'GI_TYPELIB_PATH': 'share',
+    'XDG_DATA_DIRS': 'share',
+}
+
+sanity_check_paths = {
+    'files': ['bin/g-ir-%s' % x for x in ['annotation-tool', 'compiler', 'generate', 'scanner']] +
+             ['lib/libgirepository-1.0.%s' % SHLIB_EXT],
+#             ['lib/libgirepository-1.0.%s' % x for x in [SHLIB_EXT, 'a']], # The MesonNinja build process cannot be convinced to build a static lib.
+    'dirs':  ['include', 'share']
+}
+
+moduleclass = 'devel'

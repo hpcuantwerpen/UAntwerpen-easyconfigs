@@ -1,0 +1,44 @@
+# Installation process must be run on a compute node since one of the tests uses MPI.
+
+local_buildset         = '2020a'
+local_gcc_version      = '9.3.0'
+
+local_NEURON_version =      '7.7.2'               # https://neuron.yale.edu/neuron/
+local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+
+name =          'NEURON'
+version =       local_NEURON_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'http://www.neuron.yale.edu/neuron'
+
+whatis = [
+    'Description: NEURON: Empirically-based simulations of neurons and networks of neurons',
+    'This module also contains the Python interface to Python %(pyver)s',
+]
+
+description = """
+NEURON provides a powerful and flexible environment for implementing biologically
+realistic models of electrical and chemical signaling in neurons and networks of
+neurons. This article describes the concepts and strategies that have guided the
+design and implementation of this simulator, with emphasis on those features
+that are particularly relevant to its most efficient use.
+
+The software was compiled with support for Python %(pyver)s.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+sources =     ['nrn-%(version)s.tar.gz']
+source_urls = ['http://www.neuron.yale.edu/ftp/neuron/versions/v%(version_major_minor)s/%(version)s/']
+#checksums =   ['4feefda6a6ed1d8c5e03f61d4a57ecfa8385e2f935f335a546989dcc976fde5b']
+
+dependencies = [
+    ('baselibs', local_buildset,        '', ('GCCcore', local_gcc_version)), # for libreadline and ncurses
+    ('Python',   local_Python3_version)
+]
+
+# When not building on a compute node, uncomment the next line.
+#skipsteps = ['sanitycheck']
+
+moduleclass = 'math'
