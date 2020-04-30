@@ -16,11 +16,13 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of Python bioinformatics tools, installed together as a bundle",
-    "Contains: Biopython, Flye, pysam, SICER2"
+    "Contains: Biopython, DLCpar, Flye, HTSeq, pysam, SICER2"
 ]
 
 local_Biopython_version = '1.76'   # https://pypi.org/project/biopython/
+local_DLCpar_version =    '1.1'    # https://www.cs.hmc.edu/~yjw/software/dlcpar/
 local_Flye_version =      '2.7.1'  # https://github.com/fenderglass/Flye/releases
+local_HTSeq_version =     '0.12.4' #https://pypi.org/project/HTSeq/
 local_Pysam_version =     '0.15.4' # https://pypi.org/project/pysam/
 local_SICER2_version =    '1.0.2'  # https://pypi.org/project/SICER2/
 
@@ -35,12 +37,17 @@ Overview of the included tools and libraries:
   developers. It is a distributed collaborative effort to develop Python 
   libraries and applications which address the needs of current and future 
   work in bioinformatics.
+* DLCpar (version %(DLCpar)s): DLCpar is a reconciliation method for inferring 
+  gene duplications, losses, and coalescence (accounting for incomplete  
+  lineage sorting).
 * FLye (version %(Flye)s): a de novo assembler for single molecule sequencing reads, 
   such as those producedby PacBio and Oxford Nanopore Technologies. It is 
   designed for a wide range of datasets, from small bacterial projects to 
   large mammalian-scale assemblies. The package represents a complete pipeline: 
   it takes raw PacBio / ONT reads as input and outputs polished contigs. Flye 
   also has a special mode for metagenome assembly.
+* HTSeq (version %(HTSeq)s): A framework to process and analyze data from 
+  high-throughput sequencing (HTS) arrays
 * pysam (version %(Pysam)s): a python module for reading and manipulating Samfiles. 
   It's a lightweight wrapper of the samtools C-API. Pysam also includes an interface 
   for tabix.
@@ -60,14 +67,18 @@ Overview of the included tools and libraries:
   architectures.
 """ % { 
     'biopython': local_Biopython_version,
+    'DLCpar':    local_DLCpar_version,
     'Flye':      local_Flye_version,
+    'HTSeq':     local_HTSeq_version,
     'Pysam':     local_Pysam_version,
     'SICER2':    local_SICER2_version,
 }
 
 docurls = [
-    'biopython: Web-based information on https://biopython.org/'
-    'Flye:      Web-based manual on https://github.com/fenderglass/Flye/blob/flye/docs/USAGE.md',    
+    'biopython: Web-based information on https://biopython.org/',
+    'DLCpar:    See https://www.cs.hmc.edu/~yjw/software/dlcpar/',
+    'Flye:      Web-based manual on https://github.com/fenderglass/Flye/blob/flye/docs/USAGE.md',
+    'HTSeq:     Web-based documentation on https://htseq.readthedocs.io/',
     'Pysam:     Web-based documentation on https://pysam.readthedocs.io/en/latest/',
     'SICER2:    Web-based documentation on https://zanglab.github.io/SICER2/',
 ]
@@ -116,7 +127,17 @@ exts_list = [
     }),   
     ('SICER2', local_SICER2_version, {
         'modulename': 'sicer',
-    }),   
+    }),
+    ('HTSeq', local_HTSeq_version, {
+        'modulename': 'HTSeq',
+    }),
+#
+# Considered for removal in future versions
+#
+    ('DLCpar', local_DLCpar_version, {
+        'source_tmpl': '%(namelower)s-%(version)s.tar.gz',
+        'source_urls': ['https://www.cs.hmc.edu/~yjw/software/dlcpar/pub/sw']
+    })
 ]
 
 sanity_check_paths = {

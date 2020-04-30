@@ -8,12 +8,20 @@ often wrappers around tools included in the BioTools bundle.
 * [biopython](https://biopython.org/) ([PyPi](https://pypi.org/project/biopython/)})
 * [Flye](https://github.com/fenderglass/Flye)
     * Tricky since it can only be downloaded from GitHub with a meaningless filename
+* [HTSeq](https://pypi.org/project/HTSeq/) ([Documentation](https://htseq.readthedocs.io/) 
+  and [development on GitHub](https://github.com/htseq/htseq))
+    * Uses Pysam
 * [pysam]https://pypi.org/project/pysam/) ([homepage on GitHub](https://github.com/pysam-developers/pysam))
     * Can use HTSlib from BioTools only if versions match which is rarely the case,
       so by default we use the internal one.
 * [SICER2](https://pypi.org/project/SICER2/) ([Homepage/documentation](https://zanglab.github.io/SICER2/))
     * Uses BEDTools, though I can't find how to indicate it during installation that
       BEDTools is available, so it might just use commands from BEDTools at runtime.
+
+Packages that should be considered for total removal:
+* [DLCpar](https://www.cs.hmc.edu/~yjw/software/dlcpar/)
+    * Doesn't seem to be fully Python 3 compliant, I see problems in the install 
+      log files.
 
 Note that several of these tools use other tools, but rather than being able to use 
 an existing version, include their own. Hence those tools may all behave differently 
