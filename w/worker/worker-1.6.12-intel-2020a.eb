@@ -1,0 +1,145 @@
+easyblock = 'ConfigureMake'
+
+local_buildset = '2020a'
+
+local_worker_version =      '1.6.12'              # https://github.com/gjbex/worker/releases
+
+name =    'worker'
+version = local_worker_version
+
+#
+# Set the cluster configuration
+#
+# worker needs to find the correct mpirun and therefore uses the toolchain, which is
+# set through the next two variables.
+local_tcname = 'intel'
+local_tcver =  local_buildset
+# Worker also needs the path to the toolchain modules, which for UAntwerp is constructed
+# from the <cluster>-<os>-pair and the toolchain version number. Therefore the next variable:
+local_UAOS = 'centos7'
+# The number of cores per node is also set in the worker configuration file.
+import os as local_os
+local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
+if local_UAarch == "ivybridge":
+    local_cores_per_node = 20
+elif local_UAarch == "broadwell":
+    local_cores_per_node = 28
+elif local_UAarch == "rome":
+    local_cores_per_node = 64
+else:
+    local_cores_per_node = 12
+
+#
+# Pretty standard easyconfig part, but don't forget to consider updating the
+# Perl module version numbers.
+#
+
+homepage = 'https://github.com/gjbex/worker'
+whatis = [
+    "Description: Worker is a framework to organize the execution of many similar jobs in parameter exploration within a single Torque job slot"
+]
+
+description = """
+The Worker framework has been developed to help deal with parameter exploration
+experiments that would otherwise result in many jobs, forcing the user resort to
+scripting to retain her sanity; see also
+https://vscentrum.be/neutral/documentation/cluster-doc/running-jobs/worker-framework
+or http://worker.readthedocs.io/en/latest/.
+
+Note that Torque uses MPI internally, but it maintains a link to the appropriate
+executable internally so the toolchain will not be loaded at runtime. Loading
+another toolchain than the on indicated in the name of the module is not 
+guaranteed to always work though.
+"""
+
+docurls = [
+    'Worker documentation site: http://worker.readthedocs.io/en/latest/',
+    'VSC web site: https://vscentrum.be/neutral/documentation/cluster-doc/running-jobs/worker-framework',
+] 
+
+toolchain = SYSTEM
+
+source_urls = ['https://github.com/gjbex/worker/archive/']
+sources =     ['%(version)s.tar.gz']
+
+builddependencies = [(local_tcname, local_tcver)]
+versionsuffix =     '-%s-%s' % (local_tcname, local_tcver)
+
+osdependencies = [
+  'perl',                                    # We use the system perl.
+  ('perl-devel', 'perl-ExtUtils-ParseXS'),   # Need xsubpp for the installation of Template.
+  'perl-ExtUtils-MakeMaker',                 # Not needed if ExtUtils::MakeMaker is included in the extensions list.
+#  'perl-AppConfig',                          # Not needed if AppConfig is included in the extensions list.
+]
+
+exts_defaultclass = 'PerlModule'
+
+exts_list = [
+#
+# The following ones are Perl core modules, though they appear to not always be installed
+# by the Perl RPMs
+#
+#    ('ExtUtils::MakeMaker', '7.24', {
+#        'source_tmpl': 'ExtUtils-MakeMaker-%(version)s.tar.gz',
+#        'source_urls': ['https://cpan.metacpan.org/authors/id/B/BI/BINGOS'],
+#    }),
+    ('AppConfig', '1.71', {
+        'source_tmpl': 'AppConfig-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/N/NE/NEILB'],
+    }),
+#
+# The following are non-core modules. We cannot rely on them being present in the system Perl.
+#
+    ('Config::General', '2.63', {
+        'source_tmpl': 'Config-General-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/T/TL/TLINDEN'],
+    }),
+    ('IO::Stringy', '2.113', {   # For IO::Scalar
+        'source_tmpl': 'IO-Stringy-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/C/CA/CAPOEIRAB'],
+    }),
+    ('Set::Scalar', '1.29', {
+        'source_tmpl': 'Set-Scalar-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/D/DA/DAVIDO'],
+    }),
+    ('Template', '2.29', {
+        'source_tmpl': 'Template-Toolkit-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/A/AT/ATOOMIC'],
+    }),
+    ('Text::CSV', '2.00', {
+        'source_tmpl': 'Text-CSV-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI'],
+    }),
+    ('DBI', '1.643', {
+        'source_tmpl': 'DBI-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/T/TI/TIMB'],
+    }),
+    ('DBD::SQLite', '1.64', {
+        'source_tmpl': 'DBD-SQLite-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI'],
+    }),
+    ('Date::Language', '2.32', { # For Date::Parse
+        'source_tmpl': 'TimeDate-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/A/AT/ATOOMIC'],
+    }),
+]
+
+modextrapaths = {
+    'PERL5LIB': ['share/perl5', 'lib64/perl5'],
+}
+
+# adjust worker configuration file
+# note: tweak this to your local setup
+postinstallcmds = [
+    'sed -i "s/ cores_per_node = .*/ cores_per_node = %d/g" %%(installdir)s/conf/worker.conf' % (local_cores_per_node),
+    'sed -i "s@ qsub = .*@ qsub = `which qsub`@g" %(installdir)s/conf/worker.conf',
+    'sed -i "s/ email = .*/ email = hpc@uantwerpen.be/g" %(installdir)s/conf/worker.conf',
+    'sed -i "s/ unload_modules = .*/ unload_modules = intel/g" %(installdir)s/conf/worker.conf',
+    'sed -i "s@ mpi_module = .*@ mpi_module = %s/%s@g" %%(installdir)s/conf/worker.conf' % (local_tcname, local_tcver),
+    'sed -i "s/ mpirun_options =.*/ mpirun_options = -genv I_MPI_WAIT_MODE 1/g" %(installdir)s/conf/worker.conf',
+# /apps/antwerpen/modules/centos7/software-broadwell/system and /2019b
+    'sed -i "s@ module_path = .*@ module_path = /apps/antwerpen/modules/%s/software-%s/system /apps/antwerpen/modules/%s/software-%s/%s@g" %%(installdir)s/conf/worker.conf' % (local_UAOS, local_UAarch, local_UAOS, local_UAarch, local_tcver),
+]
+
+moduleclass = 'tools'
+
