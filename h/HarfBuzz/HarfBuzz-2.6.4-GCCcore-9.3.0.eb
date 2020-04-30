@@ -1,0 +1,67 @@
+easyblock = 'ConfigureMake'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'
+
+local_cairo_version =       '1.17.2'              # https://www.cairographics.org
+local_GLib_version =        '2.64.1'              # https://github.com/GNOME/glib/releases
+local_GObject_version =     '1.64.1'              # https://github.com/GNOME/gobject-introspection/releases
+local_HarfBuzz_version =    '2.6.4'               # https://www.freedesktop.org/software/harfbuzz/release/
+
+name =    'HarfBuzz'
+version = local_HarfBuzz_version
+
+homepage = 'http://www.freedesktop.org/wiki/Software/HarfBuzz'
+
+whatis = [
+    'Description: HarfBuzz is an OpenType text shaping engine',
+    'This module provides the command line tools and static and shared libraries'
+]
+
+description = """
+HarfBuzz is an OpenType text shaping engine.
+
+The current HarfBuzz codebase, formerly known as harfbuzz-ng, is versioned 1.x.x
+and is stable and under active maintenance. This is what is used in latest
+versions of Firefox, GNOME, ChromeOS, Chrome, LibreOffice, XeTeX, Android, and
+KDE, among other places.
+
+This module provides the command line tools and static and shared libraries.
+"""
+
+docpaths = [
+    'share/gtk-doc/html/harfbuzz',
+]
+
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
+
+source_urls = ['http://www.freedesktop.org/software/harfbuzz/release/']
+sources =     [SOURCELOWER_TAR_XZ]
+
+dependencies = [
+    ('GLib',     local_GLib_version),
+    ('cairo',    local_cairo_version),
+    ('baselibs', local_buildset), # for freetype and ICU
+]
+
+builddependencies = [
+    ('GObject-Introspection', local_GObject_version),
+    ('binutils',              local_binutils_version)
+]
+
+configopts = "--enable-introspection=yes --with-gobject=yes --enable-static --enable-shared --with-cairo "
+
+parallel = 1
+
+modextrapaths = {
+    'GI_TYPELIB_PATH': 'share',
+    'XDG_DATA_DIRS': 'share',
+}
+
+sanity_check_paths = {
+    'files': ['lib/libharfbuzz.%s' % SHLIB_EXT, 'bin/hb-view'],
+    'dirs':  []
+}
+
+moduleclass = 'vis'
