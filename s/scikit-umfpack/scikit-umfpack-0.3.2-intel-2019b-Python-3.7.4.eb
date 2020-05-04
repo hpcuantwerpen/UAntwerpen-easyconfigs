@@ -1,50 +1,47 @@
 easyblock = 'PythonPackage'
 
-local_buildset =         '2020a'
+name =    'scikit-umfpack'
+version = '0.3.2'
 
-local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
-local_SWIG_version =        '4.0.1'               # http://www.swig.org/download.html
-local_sk_umfpack_version =  '0.3.2'               # https://pypi.org/project/scikit-umfpack/
+local_python = 'Python'
+local_pyver =  '3.7.4'
 
-name =          'scikit-umfpack'
-version =       local_sk_umfpack_version
-versionsuffix = "-Python-%(pyver)s"
+versionsuffix = "-%s-%s" % (local_python, local_pyver)
 
 homepage = 'https://scikit-umfpack.github.io/scikit-umfpack/'
 
 whatis = [
-    "Name:        scikit-umfpack",
-    "Version:     %s" % (version),
-    "Category:    Python packages",
+    "Name: scikit-umfpack",
+    "Version: %s" % (version),
+    "Category: local_python package",
     "Description: scikit-umfpack provides a wrapper of UMFPACK sparse direct solver to SciPy",
-    "URL:         %s" % (homepage),
-    "Keyword:     linear algebra, sparse direct solver",
+    "URL: %s"% (homepage),
 ]
 
 description = """
 scikit-umfpack provides a wrapper of UMFPACK sparse direct solver to SciPy.
 
-Installing scikit.umfpack also enables using UMFPACK solver via some of the
+Installing scikits.umfpack also enables using UMFPACK solver via some of the
 scipy.sparse.linalg functions (only if SciPy >= 0.14.0 which is the case for
-the Python module loaded by this module).
+the local_python module loaded by this module).
 """
 
 docurls = [
     'Web-based documentation: https://scikit-umfpack.github.io/scikit-umfpack/',
 ]
 
-toolchain = {'name': 'intel', 'version': local_buildset}
+toolchain = {'name': 'intel', 'version': '2019b'}
 
 source_urls = [PYPI_SOURCE]
 sources =     [SOURCE_TAR_GZ]
 
 dependencies = [
-    ('Python', local_Python3_version),
+    (local_python, local_pyver),
 #    ('SuiteSparse', '4.5.6', '-METIS-5.1.0'),  # In a local_python compiled with UMFPACK support in NumPy, this already enters as a dependency through the local_python module.
 ]
 
 builddependencies = [
-    ('SWIG', local_SWIG_version, versionsuffix),
+    ('SWIG', '4.0.0', versionsuffix),
 ]
 
 options = {'modulename': 'scikits'}
@@ -56,9 +53,10 @@ options = {'modulename': 'scikits'}
 # prebuildopts += 'echo "include_dirs = $EBROOTSUITESPARSE/include" >>site.cfg ; '
 # prebuildopts += 'echo "umfpack_libs = umfpack"                    >>site.cfg ; '
 
+local_pyshortver = '.'.join(local_pyver.split('.')[:-1])
 sanity_check_paths = {
     'files': [],
-    'dirs':  ['lib/python%(pyshortver)s/site-packages/scikit_umfpack-%(version)s-py%(pyshortver)s-linux-x86_64.egg/scikits/umfpack'],
+    'dirs':  ['lib/python%s/site-packages/scikit_umfpack-%s-py%s-linux-x86_64.egg/scikits/umfpack' % (local_pyshortver, version, local_pyshortver)],
 }
 
 moduleclass = 'math'
