@@ -1,0 +1,90 @@
+# Developed by Kurt Lust, UAntwerpen
+#
+# Implicit requirements: 
+# - NumPy >= 1.14.1
+# - SciPy >=0.14
+# - Tinyarray >= 1.2
+# - BLAS and LAPACK
+# Recommended dependencies:
+# - matplotlib >= 1.4.2
+# - SymPy >= 0.7.6
+# - Uses single-core MUMPS (optionally)
+# - py.test testing framework >= 2.8
+# - nose testing framework no longer needed for version 1.3
+
+easyblock = 'PythonPackage'
+
+local_buildset =         '2020a'
+
+local_kwant_version =       '1.4.2'               # https://pypi.org/project/kwant/
+local_MUMPS_version =       '5.3.1'               # http://mumps.enseeiht.fr/
+local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+local_sk_umfpack_version =  '0.3.2'               # https://pypi.org/project/scikit-umfpack/
+
+name =          'kwant'
+version =       local_kwant_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://kwant-project.org'
+
+whatis = [
+    "Name:        kwant",
+    "Version:     %s" % (version),
+    "Category:    Python package",
+    "Description: Kwant is a free (open source) Python package for numerical calculations on tight-binding models with a strong focus on quantum transport.",
+    "URL:         %s" % (homepage),
+]
+
+description = """
+Kwant is a free (open source) Python package for numerical calculations on
+tight-binding models with a strong focus on quantum transport. It is designed to
+be flexible and easy to use. Thanks to the use of innovative algorithms, Kwant
+is often faster than other available codes, even those entirely written in the
+low level FORTRAN and C/C++ languages.
+
+Tight-binding models can describe a vast variety of systems and phenomena in
+quantum physics. Therefore, Kwant can be used to simulate metals, graphene,
+topological insulators, quantum Hall effect, superconductivity, spintronics,
+molecular electronics, any combination of the above, and many other things.
+
+Kwant does not use the traditional input files often found in scientific
+software packages. Instead, one writes short programs in the powerful yet
+easy-to-learn Python language. These programs define a system and calculate its
+quantum properties (conductance, density of states, etc). 
+
+Note that the package relies on purely sequential, single-core libraries...
+"""
+
+docurls = [
+    'Web-based documentation: https://kwant-project.org/doc/',
+]
+
+req_py_majver=3
+req_py_minver=4
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = [PYPI_SOURCE]
+sources =     [SOURCELOWER_TAR_GZ]
+
+dependencies = [
+    ('Python',         local_Python3_version),
+    ('scikit-umfpack', local_sk_umfpack_version, '-Python-%(pyver)s' ),
+    ('MUMPS',          local_MUMPS_version,      '-noOpenMP-noMPI'),
+]
+
+prebuildopts  = 'echo "[mumps]"  >build.conf && '
+prebuildopts += 'echo "libraries = zmumps mumps_common pord metis esmumps scotch scotcherr mpiseq ifcore" >>build.conf && '
+prebuildopts += 'echo "library_dirs = $EBROOTMUMPS/lib $EBROOTSCOTCH/lib $EBROOTMETIS/lib $MKLROOT/../compiler/lib/intel64_lin" >>build.conf && '
+#prebuildopts += 'echo "[lapack]" >>build.conf && '
+#prebuildopts += 'echo "libraries = mkl_intel_lp64 mkl_sequential mkl_core mkl_def" >>build.conf && '
+#prebuildopts += 'echo "library_dirs = $MKLROOT/lib/intel64_lin" >>build.conf && '
+#prebuildopts += 'echo "extra_link_args = -Wl,-rpath=$MKLROOT/lib/intel64_lin" >>build.conf && '
+prebuildopts += 'echo "build.conf is:" && cat build.conf && '
+
+sanity_check_paths = {
+     'files': ['bin/f2py'],
+     'dirs' : ['lib/python%(pyshortver)s/site-packages/kwant-%(version)s-py%(pyshortver)s-linux-x86_64.egg']
+}
+
+moduleclass = 'phys'
