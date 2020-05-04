@@ -7,11 +7,15 @@
 #
 easyblock = 'MakeCp'
 
-name =          'MUMPS'
-version =       '5.2.1'
-versionsuffix = '-noOpenMP-noMPI'
-
 local_buildset = '2020a'
+
+local_METIS_version =       '5.1.0'               # http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
+local_MUMPS_version =       '5.3.1'               # http://mumps.enseeiht.fr/
+local_SCOTCH_version =      '6.0.7'               # https://gforge.inria.fr/projects/scotch/
+
+name =          'MUMPS'
+version =       local_MUMPS_version
+versionsuffix = '-noOpenMP-noMPI'
 
 homepage = 'http://graal.ens-lyon.fr/MUMPS/'
 
@@ -27,16 +31,16 @@ does it use OpenMP; it is only meant for kwant since this package officially
 requires a single core, non-distributed-memory version of MUMPS.
 """
 
-toolchain = {'name': 'intel', 'version': local_buildset}
+toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True, 'openmp': False, 'usempi': False}
 
 source_urls = ['http://mumps.enseeiht.fr/']
 sources =     ['%(name)s_%(version)s.tar.gz']
-checksums =   ['d988fc34dfc8f5eee0533e361052a972aa69cc39ab193e7f987178d24981744a']
+checksums =   ['774fc9411a3ab4704bc907cb7d30090ce6a65b83cde32549c58d3e9f63594e1a']
 
 dependencies = [
-    ('SCOTCH', '6.0.7'),
-    ('METIS',  '5.1.0',  '-i32-fp64'),
+    ('SCOTCH', local_SCOTCH_version),
+    ('METIS',  local_METIS_version,  '-i32-fp64'),
 ]
 
 parallel = 1
@@ -76,4 +80,3 @@ sanity_check_paths = {
 }
 
 moduleclass = 'math'
-
