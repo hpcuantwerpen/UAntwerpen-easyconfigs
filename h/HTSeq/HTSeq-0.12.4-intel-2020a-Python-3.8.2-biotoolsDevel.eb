@@ -1,0 +1,51 @@
+# Tried to install this in the default Python module, but there are problems with the default
+# sanity checks.
+#
+easyblock = "PythonPackage"
+
+local_buildset =         '2020a'
+
+local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+
+local_Pysam_version =     '0.15.4' # https://pypi.org/project/pysam/
+local_HTSeq_version =     '0.12.4' #https://pypi.org/project/HTSeq/
+
+name =          'HTSeq'
+version =       local_HTSeq_version
+versionsuffix = '-Python-%(pyver)s-biotoolsDevel'
+
+homepage = 'https://htseq.readthedocs.io/'
+
+whatis = [
+    "Description: HTSeq is a framework to process and analyze data from high-throughput sequencing (HTS) arrays"
+]
+
+description = """
+A framework to process and analyze data from high-throughput sequencing (HTS) arrays
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = [PYPI_SOURCE]
+sources =     [SOURCE_TAR_GZ]
+
+#builddependencies = [
+#    ('SWIG', local_SWIG_version, '-Python-%(pyver)s'),
+#]
+
+dependencies = [
+    ('Python', local_Python3_version), # Needs NumPy, pysam, matplotlib and to build Cython
+    ('Pysam',  local_Pysam_version,   versionsuffix)
+]
+
+use_pip = True
+download_dep_fail = True
+
+sanity_check_paths = {
+    'files': ['bin/htseq-count', 'bin/htseq-qa'],
+    'dirs':  ["lib/python%(pyshortver)s/site-packages/"],
+}
+
+options = {'modulename': '%(name)s'}
+
+moduleclass = 'bio'
