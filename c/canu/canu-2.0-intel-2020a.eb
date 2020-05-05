@@ -1,0 +1,63 @@
+easyblock = 'MakeCp'
+
+local_buildset = '2020a'
+
+local_Boost_version =       '1.73.0'              # https://www.boost.org/users/download/
+local_canu_version =        '2.0'                 # https://github.com/marbl/canu/releases
+local_gnuplot_version =     '5.4.0'               # http://gnuplot.sourceforge.net/
+local_Perl_version =        '5.30.2'              # https://www.perl.org/get.html
+
+local_JAVA_version = '11'
+
+name =    'canu'
+version = local_canu_version
+#versionsuffix = '-Perl-%(perlver)s'
+
+homepage = 'http://canu.readthedocs.io'
+
+whatis = [
+    "Description: Canu is a fork of the Celera Assembler designed for high-noise single-molecule sequencing",
+]
+
+description = """
+Canu is a fork of the Celera Assembler designed for high-noise single-molecule sequencing.
+
+Canu is a hierarchical assembly pipeline which runs in four steps:
+* Detect overlaps in high-noise sequences using MHAP
+* Generate corrected sequence consensus
+* Trim corrected sequences
+* Assemble trimmed corrected sequences
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+github_account = 'marbl'
+sources = [{
+    'download_filename': 'v%(version)s.tar.gz',
+    'filename':          SOURCE_TAR_GZ,
+    'source_urls':       [GITHUB_LOWER_SOURCE],
+}]
+checksums =   ['e2e6e8b5ec4dd4cfba5e372f4a64b2c01fbd544d4b5867746021f10771a6f4ef']
+
+dependencies = [
+    ('Java',    local_JAVA_version,    '', True),
+    ('Perl',    local_Perl_version),
+    ('gnuplot', local_gnuplot_version),
+    ('Boost',   local_Boost_version),
+]
+
+start_dir = 'src'
+
+files_to_copy = ['Linux-amd64/bin', 'Linux-amd64/lib', 'Linux-amd64/share', 'README*']
+
+sanity_check_paths = {
+    'files': ['bin/canu', 'lib/libcanu.a'],
+    'dirs': ['lib/site_perl', 'share'],
+}
+
+sanity_check_commands = [
+    "canu -version",
+    "canu -options",
+]
+
+moduleclass = 'bio'

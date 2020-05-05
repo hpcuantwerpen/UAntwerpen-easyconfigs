@@ -21,3 +21,7 @@ standard ones.
 ### Canu 1.9 in Intel/2019b
 
 * Started from EasyConfigs for version 1.8 with Intel 2017b and 1.9 with GCCcore.
+
+### Canu 2.0 in Intel/2020a
+
+* Trivial adaptations of the 1.9 EasyConfig
