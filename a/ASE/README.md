@@ -18,7 +18,7 @@ ASE needs a number of other Python packages:
   [SciPy.org](https://www.scipy.org/)) - Included in the standard UAntwerp Python bundles
 * [matplotlib](https://pypi.org/project/matplotlib/), at least version 2.0.0 
   (status for ASE 3.18.1) - Included in the standard UAntwerp Python
-* tkinter, the TK interface, is a standard component of recent Python distributions.
+* tkinter, the TK interface, is a part of the Standard Python Library on recent versions
 * [Flask](https://pypi.org/project/Flask/) needs to be installed. It brings with it a set of other dependencies: 
     * [Werkzeug](https://pypi.org/project/Werkzeug/)
     * [Jinja2](https://pypi.org/project/Jinja2/), and this one needs
@@ -32,13 +32,14 @@ UAntwerp Python bundles.
 ## EasyConfig
 
 Nothing special here. We've chosen to install ASE together with all missing
-dependencies through a "Bundle" EasyConfig. This does imply that we need to 
-set `PYTHONPATH` by hand.
+dependencies through a "PythonBundle" EasyBlock (from 2020a on) of a
+"Bundle" EasyBlock. The latter requires setting `PYTHONPATH` by hand.
 
-## Checking the build result
+## Checking the build result of Python packages
 
-* Search in the EasyBuild log file for `python setup` to see if the compilation
-  did not produce errors. Some packages have Python fallback code if the compilation
-  fails, so the standard EasyBuild sanity check will not detect these problems,
-  but the result will be a much slower Python package.
+* Search in the EasyBuild log file for `python setup` or `pip install` (depending on
+  the installation method) to see if the compilation  did not produce errors. Some 
+  packages have Python fallback code if the compilation fails, so the standard 
+  EasyBuild sanity check will not detect these problems, but the result will be 
+  a much slower Python package.
 
