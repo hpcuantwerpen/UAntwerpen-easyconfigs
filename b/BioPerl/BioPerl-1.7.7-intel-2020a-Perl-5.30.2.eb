@@ -1,0 +1,106 @@
+# easybuild easyconfig
+#
+#  John Dey jfdey@fredhutch.org
+#
+#  Fred Hutchinson Cancer Research Center
+
+easyblock = 'Bundle'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_Perl_version =        '5.30.2'              # https://www.perl.org/get.html
+
+local_BioPerl_version =     '1.7.7'               # https://metacpan.org/pod/BioPerl
+local_XML_LibXML_version =  '2.0204'              # https://metacpan.org/pod/XML::LibXML
+
+name =          'BioPerl'
+version =       local_BioPerl_version
+versionsuffix = '-Perl-%(perlver)s'
+
+homepage = 'http://www.bioperl.org/'
+
+whatis = [
+    'Description: BioPerl is the product of a community effort to produce Perl code which is useful in biology.'
+]
+
+description = """
+BioPerl is the product of a community effort to produce Perl code which is 
+useful in biology. Examples include Sequence objects, Alignment objects and 
+database searching objects. These objects not only do what they are 
+advertised to do in the documentation, but they also interact - Alignment 
+objects are made from the Sequence objects, Sequence objects have access 
+to Annotation and SeqFeature objects and databases, Blast objects can be 
+converted to Alignment objects, and so on. This means that the objects 
+provide a coordinated and extensible framework to do computational biology.
+
+BioPerl development focuses on Perl classes, or code that is used to create 
+objects representing biological entities. There are scripts provided in the 
+scripts/ and examples/ directories but scripts are not the main focus of the 
+BioPerl developers. Of course, as the objects do most of the hard work for 
+you, all you have to do is combine a number of objects together sensibly 
+to make useful scripts.
+
+The intent of the BioPerl development effort is to make reusable tools that 
+aid people in creating their own sites or job-specific applications.
+
+The BioPerl website at http://bioperl.org also attempts to maintain links 
+and archives of standalone bio-related Perl tools that are not affiliated 
+or related to the core BioPerl effort. Check the site for useful code 
+ideas and contribute your own if possible.
+"""
+
+docurls = [
+    'Man pages in section 1 and 3',
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+dependencies = [
+    ('Perl',     local_Perl_version),
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for libxml2
+#    ('XML-LibXML', '2.0132',           versionsuffix),
+]
+
+#options = {'modulename': 'Bio::Perl'}
+exts_defaultclass = 'PerlModule'
+exts_filter = ("perldoc -lm %(ext_name)s ", "")
+
+exts_list = [
+    ('Alien::Base::Wrapper', '2.22', {
+        # https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Alien-Build-2.22.tar.gz
+        'source_tmpl': 'Alien-Build-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/'],
+        'checksums':   ['3804e743b715b531e058c145da67de122bc5d5f3b03e75bfc9d2fc7544e488ef'],
+    }),
+    ('File::chdir', '0.1010', {
+        # https://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/File-chdir-0.1010.tar.gz
+        'source_tmpl': 'File-chdir-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/'],
+        'checksums':   ['efc121f40bd7a0f62f8ec9b8bc70f7f5409d81cd705e37008596c8efc4452b01'],
+    }),
+    ('Alien::Libxml2', '0.16', {
+        # https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Alien-Libxml2-0.16.tar.gz
+        'source_tmpl': 'Alien-Libxml2-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/'],
+        'checksums':   ['56f06a58054f788dcef8d3b6669fb47d172e9ca0b7a12d0241d9cf7835a53b97'],
+    }),
+    ('XML::LibXML', local_XML_LibXML_version, {
+        # https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/XML-LibXML-2.0204.tar.gz
+        'source_tmpl': 'XML-LibXML-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/'],
+        'checksums':   ['bd48b539ad4b3d419658db7e69811f3b5fe88c6fa3dd25b30bc83f7f203d2f36'],
+    }),
+    ('BioPerl', local_BioPerl_version, {
+        # https://cpan.metacpan.org/authors/id/C/CJ/CJFIELDS/BioPerl-1.7.7.tar.gz
+        'source_tmpl': 'BioPerl-%(version)s.tar.gz',
+        'source_urls': ['https://cpan.metacpan.org/authors/id/C/CJ/CJFIELDS/'],
+        'checksums':   ['730e2bd38b7550bf6bbd5bca50d019a70cca514559702c1389d770ff69cff1bb'],
+    }),
+]
+
+modextrapaths = {
+    'PERL5LIB': 'lib/perl5/site_perl/%(perlver)s/',
+}
+
+moduleclass = 'bio'
