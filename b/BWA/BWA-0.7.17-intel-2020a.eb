@@ -81,9 +81,4 @@ builddependencies = [
 buildopts = 'CC="$CC" CFLAGS="$CFLAGS"'  # The BWA Makefile has CC and CFLAGS hard-code so would
                                          # not use the EasyBuild-provided values.
 
-sanity_check_paths = {
-    'files': ['bin/bwa', 'bin/qualfa2fq.pl', 'bin/xa2multi.pl', 'man/man1/bwa.1'],
-    'dirs':  [],    
-}
-
 moduleclass = 'bio'

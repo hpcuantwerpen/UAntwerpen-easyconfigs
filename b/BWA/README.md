@@ -1,5 +1,11 @@
 # BWA EasyBuild recipe
 
+EasyBuild has an EasyBlock for BWA. That derives from ConfigureMake, but
+* with an empty configure step as there is no configure script
+* The install step is replaced by a manual copy of the files to the correct
+  location.
+* A suitable sanity check is defined in the EasyBlock.
+
 We started from the EasyBuilders recipes for BWA. At the time when we installed
 BWA, those recipes didn't work as intended though as they did not pick up the
 compiler and compiler options as specified by EasyBuild. The Makefile of BWA
