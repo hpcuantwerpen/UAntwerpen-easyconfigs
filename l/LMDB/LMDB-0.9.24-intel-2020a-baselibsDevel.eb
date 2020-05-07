@@ -48,11 +48,6 @@ runtest = 'test'
 
 installopts = 'prefix="%(installdir)s"'
 
-#files_to_copy = [
-#    (['liblmdb.a', 'liblmdb.%s' % SHLIB_EXT], 'lib'),
-#    (['lmdb.h'], 'include')
-#]
-
 sanity_check_paths = {
     'files': ['bin/mdb_copy', 'bin/mdb_dump', 'bin/mdb_load', 'bin/mdb_stat', 'include/lmdb.h',
               'lib/liblmdb.a', 'lib/liblmdb.%s' % SHLIB_EXT],
