@@ -1,0 +1,53 @@
+easyblock = 'PythonPackage'
+
+local_SCons_version =            '3.1.2'         # SCons      20101217 - https://github.com/SCons/scons/releases, https://scons.org/pages/download.html
+
+name =          'SCons'
+version =       local_SCons_version
+versionsuffix = '-buildtoolsDevel'
+
+homepage = 'https://www.scons.org/'
+
+whatis = [
+    "Description: SCons is a software construction tool."
+]
+
+description = """
+SCons is an Open Source software construction tool—that is, a next-generation 
+build tool. Think of SCons as an improved, cross-platform substitute for the 
+classic Make utility with integrated functionality similar to autoconf/automake 
+and compiler caches such as ccache. In short, SCons is an easier, more reliable 
+and faster way to build software.
+"""
+
+toolchain = SYSTEM
+
+source_urls = [SOURCEFORGE_SOURCE]
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['7801f3f62f654528e272df780be10c0e9337e897650b62ddcee9f39fde13f8fb']
+
+osdependencies = [ 
+    ('python3') 
+]
+
+# We'll make sure Python 3 is used since we already have Meson which requires it.
+req_py_majver = 3
+req_py_minver = 5
+download_dep_fail = True
+use_pip = False
+sanity_pip_check = False
+
+postinstallcmds = [
+    '/bin/rm %(installdir)s/bin/scon*.bat',
+    'cd %(installdir)s/bin; sed -e "s/env python/env python3/" -i scons*'    
+]
+
+sanity_check_paths = {
+    'files': ['bin/scons', 'bin/scons-time', 'bin/sconsign'],
+    'dirs':  [],
+}
+
+# no Python module to import during sanity check
+options = {'modulename': False}
+
+moduleclass = 'devel'
