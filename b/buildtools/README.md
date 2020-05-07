@@ -59,10 +59,12 @@ The contents of the module evolved over time. It does contain a subset of:
 * We did add EBROOT and EBVERSION variables for all components for increased compatibility
   with standard EasysBuild-generated modules (in case those variables would, e.g., 
   be used in EasyBlocks for certain software packages).
+* Added re2c to the bundle.
 
 Versions used:
 * Byacc 20191125
 * Flex 2.6.4
+* re2c 1.3
 * git 2.26.0 
 * GNU Autoconf 2.69
 * GNU Automake 1.16.2

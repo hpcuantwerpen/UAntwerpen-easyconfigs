@@ -42,19 +42,22 @@ local_patchelf_version =         '0.10'       # patchelf   20190328 - Check on h
 local_bison_version =            '3.5.3'      # Bison      20200308 - Check on http://ftp.gnu.org/gnu/bison/
 local_flex_version =             '2.6.4'      # flex       20170506 - Check on https://github.com/westes/flex/releases
 local_byacc_version =            '20191125'   # byacc      20191125 - Check on ftp://ftp.invisible-island.net/byacc
+local_re2c_version =             '1.3'        # re2c       20191214 - https://github.com/skvadrik/re2c/releases
 local_git_version =              '2.26.0'     # git        20200323 - Check on https://github.com/git/git/releases
 # Not yet included due to build problems:
 # SCons      3.0.0     20170918
 homepage = 'http://www.gnu.org'
 
 whatis = [
-    "Description: A bundle of often used build tools, GNU and others: autoconf, automake, libtool, M4, make, git, sed, CMake, NASM, Yasm, patchelf, pkg-config, gperf, help2man and Doxygen"
+    "Description: A bundle of often used build tools, GNU and others"
+    "Contains: autoconf, autoconf_archive, automake, libtool, M4, make, git, sed, Bison, flex, Berkeley Yacc (byacc), " + 
+    "CMake, Ninja, Meson, NASM, Yasm, patchelf, pkg-config, gperf, re2c, help2man and Doxygen"
 ]
 
 description = """
-A bundle of often used build tools, GNU and others: autoconf, automake, libtool, 
-M4, make, git, sed, Bison, flex, Berkeley Yacc (byacc), CMake, Ninja, Meson,
-NASM, Yasm, patchelf, pkg-config, gperf, help2man and Doxygen.
+A bundle of often used build tools, GNU and others: autoconf, autoconf_archive, 
+automake, libtool, M4, make, git, sed, Bison, flex, Berkeley Yacc (byacc), CMake, 
+Ninja, Meson, NASM, Yasm, patchelf, pkg-config, gperf, help2man and Doxygen.
 """
 
 usage = """
@@ -79,6 +82,7 @@ building software. Many of them are GNU tools.
 + patchelf %(patchelf)s                   - Modify the dynamic linker and RPATH of ELF executables,
                                     http://nixos.org/patchelf.html
 + pkg-config %(pkgconfig)s               - https://www.freedesktop.org/wiki/Software/pkg-config/
++ re2c %(re2c)s                       - http://re2c.org/
 + GNU gperf %(gperf)s                   - https://www.gnu.org/software/gperf/
 + GNU help2man %(help2man)s            - https://www.gnu.org/software/help2man/
 + Doxygen %(doxygen)s                  - http://www.doxygen.org/
@@ -103,6 +107,7 @@ build several of the %(ver)s packages.
     'yasm'            : local_yasm_version,
     'patchelf'        : local_patchelf_version,
     'pkgconfig'       : local_pkgconfig_version,
+    're2c'            : local_re2c_version,
     'gperf'           : local_gperf_version,
     'help2man'        : local_help2man_version,
     'doxygen'         : local_doxygen_version,
@@ -285,6 +290,12 @@ components = [
         'checksums':     ['b3cb6bdedcef5607ce34a350cf0b182eb979f8f7bc31eae55a93a70a3f020d13'],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'sh bootstrap.sh && '
+        }),
+    ('re2c', local_re2c_version, {
+        'sources':     [SOURCE_TAR_XZ],
+        'source_urls': ['https://github.com/skvadrik/re2c/releases/download/%(version)s'],
+        'checksums':   ['f37f25ff760e90088e7d03d1232002c2c2672646d5844fdf8e0d51a5cd75a503'],
+        'start_dir':   '%(name)s-%(version)s',
         }),
     ('Doxygen', local_doxygen_version, {  # Note that the build process already requires CMake, flex and Bison
         'easyblock':     'EB_Doxygen',
