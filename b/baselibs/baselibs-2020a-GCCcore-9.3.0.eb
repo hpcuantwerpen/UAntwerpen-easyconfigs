@@ -10,12 +10,13 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, brotli, bzip2, Szip, XZ utils, zlib, gzip, lzip, lz4, zstd, libb2, libdeflate, libarchive, " + 
+    "Contains: ncurses/ncursesw, readline, brotli, "+ 
+    "bzip2, Szip, XZ utils, zlib, gzip, lzip, lz4, zstd, libb2, LZO(2), snappy, libdeflate, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
     "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, libidn, libidn2, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
-    "file, gc, libevent, libffi, libyaml, PCRE, PCRE2, UDUNITS, D-Bus, util-linux, wget.",
+    "double-conversion, file, gc, libevent, libffi, libyaml, LMDB, PCRE, PCRE2, UDUNITS, D-Bus, util-linux, wget.",
 ]
 
 local_binutils_version = '2.34'     # A build dependency, as GCCcore with the system binutils might fail.
@@ -36,6 +37,7 @@ local_zstd_version =         '1.4.4'         # https://github.com/facebook/zstd/
 local_libb2_version =        '0.98.1'        # https://github.com/BLAKE2/libb2/releases
 local_LZO_version =          '2.10'          # http://www.oberhumer.com/opensource/lzo/#download
 local_blosc_version =        '1.18.1'        # https://github.com/Blosc/c-blosc/releases
+local_snappy_version =       '1.1.8'         # https://github.com/google/snappy/releases
 local_libarchive_version =   '3.4.0'         # https://github.com/libarchive/libarchive/releases
 local_libdeflate_version =   '1.5'           # https://github.com/ebiggers/libdeflate/releases
 local_giflib_version =       '5.2.1'         # https://sourceforge.net/projects/giflib/files/
@@ -65,11 +67,13 @@ local_libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libic
 local_libunistring_version = '0.9.10'        # https://ftp.gnu.org/gnu/libunistring/
 local_libidn_version =       '1.35'          # https://ftp.gnu.org/gnu/libidn/
 local_libidn2_version =      '2.3.0'         # https://ftp.gnu.org/gnu/libidn/
+local_double_conv_version =  '3.1.5'         # https://github.com/google/double-conversion/releases
 local_file_version =         '5.37'          # ftp://ftp.astron.com/pub/file/
 local_gc_version =           '8.0.4'         # http://hboehm.info/gc/gc_source/
 local_GDBM_version =         '1.18.1'        # https://ftp.gnu.org/gnu/gdbm/
 local_libffi_version =       '3.3'           # ftp://sourceware.org/pub/libffi/
 local_libyaml_version =      '0.2.2'         # https://github.com/yaml/libyaml/releases
+local_LMDB_version =         '0.9.24'        # https://github.com/LMDB/lmdb/releases
 local_PCRE_version =         '8.44'          # https://ftp.pcre.org/pub/pcre/
 local_PCRE2_version =        '10.33'         # https://ftp.pcre.org/pub/pcre/
 local_UDUNITS_version =      '2.2.26'        # ftp://ftp.unidata.ucar.edu/pub/udunits
@@ -144,6 +148,9 @@ Overview of included libraries:
     compression ratio while still decompressing at this very high speed.
     It is faster than zlip or BZIP2, but doesn't compress as well as those
     packages do.
+  + snappy (version %(snappy)s): a compression/decompression library. It does not aim
+    for maximum compression, or compatibility with any other compression library;
+    instead, it aims for very high speeds and reasonable compression.
   + Blosc (version %(blosc)s): a high performance compressor optimized for binary data. It has been 
     designed to transmit data to the processor cache faster than the traditional, 
     non-compressed, direct memory fetch approach via a memcpy() OS call. Blosc is 
@@ -352,6 +359,11 @@ Overview of included libraries:
   + libunistring (version %(unistring)s): provides functions for manipulating Unicode
     strings and for manipulating C strings according to the Unicode standard.
 * Miscellaneous
+  + double-conversion (version %(DoubleConv)s): provides binary-decimal and decimal-binary 
+    routines for IEEE doubles.
+    The library consists of efficient conversion routines that have been 
+    extracted from the V8 JavaScript engine. The code has been refactored and 
+    improved so that it can be used more easily in other projects.
   + file (version %(filev)s): The file command is "a file type guesser", that
     is, a command-line tool that tells you in words what kind of data a file
     contains. Unlike most GUI systems, command-line UNIX systems - with this
@@ -387,6 +399,10 @@ Overview of included libraries:
     calling conventions. This allows a programmer to call any function specified
     by a call interface description at run-time.
   + libyaml (version %(yaml)s): a YAML 1.1 parser and emitter written in C.
+  + LMDB (version %(LMDB)s): is an extraordinarily fast, memory-efficient database developed 
+    for the OpenLDAP Project. With memory-mapped files, it has the read performance 
+    of a pure in-memory database while retaining the persistence of standard 
+    disk-based databases.
   + PCRE (version %(PCRE)s): The PCRE library is a set of functions that implement
     regular expression pattern matching using the same syntax and semantics as
     Perl 5. PCRE has its own native API, as well as a set of wrapper functions
@@ -423,6 +439,7 @@ Overview of included libraries:
     'zstd': local_zstd_version,
     'libb2': local_libb2_version,
     'LZO': local_LZO_version,
+    'snappy': local_snappy_version,
     'blosc': local_blosc_version,
     'libdeflate': local_libdeflate_version,
     'libarchive': local_libarchive_version,
@@ -455,12 +472,14 @@ Overview of included libraries:
     'ICU': local_ICU_version,
     'iconv': local_libiconv_version,
     'unistring': local_libunistring_version,
+    'DoubleConv': local_double_conv_version,
     'filev': local_file_version,
     'gc': local_gc_version,
     'GDBM': local_GDBM_version,
     'event': local_libevent_version,
     'ffi': local_libffi_version,
     'yaml': local_libyaml_version,
+    'LMDB': local_LMDB_version,
     'PCRE': local_PCRE_version,
     'PCRE2': local_PCRE2_version,
     'UDUNITS': local_UDUNITS_version,
@@ -485,6 +504,7 @@ docurls = [
     'zstd: Web-based documentation via the home page: http://www.zstd.net/',
     'libb2: Home page: https://github.com/BLAKE2/libb2',
     'LZO: Home page http://www.oberhumer.com/opensource/lzo/', 
+    'snappy: Web-based information on https://github.com/google/snappy',
     'Blosc: Home page https://blosc.org/',
     'libdeflate: Home page: https://github.com/ebiggers/libdeflate',
     'libarchive: Some web-based documentation on https://www.libarchive.org/',
@@ -511,6 +531,7 @@ docurls = [
     'libxml2: man pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
     'libxslt: web-based documentation on the home page: http://xmlsoft.org/libxslt/',
     'libxslt: man pages for xsltproc, libxslt and libexslt',
+    'double-conversion: web-based documentation on https://github.com/google/double-conversion',
     'file: home page is https://www.darwinsys.com/file/', 
     'FriBidi: home page is https://github.com/fribidi/fribidi',
     'gc: web-based documentation on the home page http://hboehm.info/gc/',
@@ -528,6 +549,7 @@ docurls = [
     'libiconv: manual pages for the iconv command and iconv_open, iconv_close, iconvctl, iconv_open_into',
     'libunistring: web-based manual: https://www.gnu.org/software/libunistring/manual/libunistring.html',
     'libunistring: supports the info command, start with info libunistring',
+    'LMDB: Man pages in section 1 for mdb_copy, mdb_dump, mdb_load and mdb_stat',
     'PCRE: web-based documentation: http://www.pcre.org/original/doc/html/',
     'PCRE2: web-based documentation: http://www.pcre.org/current/doc/html/',
     'PCRE2: Manual pages in section 1 (pcre2grep, pcre2test) and 3 (API, start with pcre2)',
@@ -552,7 +574,13 @@ osdependencies = [
 #    ('gnutls-devel', 'gnutls-dev', 'libgnutls-devel'),   # Alternative for wget, but then configopts needs to be removed.
 ]
 
-
+import os as local_os
+local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
+if local_UAarch == "ivybridge":
+    local_snappy_opts = ' -DSNAPPY_REQUIRE_AVX=ON'
+else:
+    local_snappy_opts = ' -DSNAPPY_REQUIRE_AVX2=ON'
+    
 default_easyblock = 'ConfigureMake'
 
 components = [
@@ -754,6 +782,32 @@ components = [
         'source_urls': ['https://www.oberhumer.com/opensource/lzo//download'],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--enable-shared --enable-static',
+    }),
+    ('snappy', local_snappy_version, { # Needs zlib and LZO - static build
+        'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
+        'sources':     [ {
+                          'download_filename': '%(version)s.tar.gz',
+                          'filename':          SOURCELOWER_TAR_GZ,
+                          'source_urls':       ['https://github.com/google/snappy/archive/'],
+                          'extract_cmd':       "mkdir %(namelower)s-%(version)s-static ; tar -x --strip-components=1 -C %(namelower)s-%(version)s-static -f %s"
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s-static',
+        'build_type':  'Release',
+        'configopts':  '-DBUILD_SHARED_LIBS=OFF' + local_snappy_opts,
+    }),
+    ('snappy', local_snappy_version, { # NEeds zlib and LZO - shared build
+        'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
+        'sources':     [ {
+                          'download_filename': '%(version)s.tar.gz',
+                          'filename':          SOURCELOWER_TAR_GZ,
+                          'source_urls':       ['https://github.com/google/snappy/archive/'],
+                          'extract_cmd':       "mkdir %(namelower)s-%(version)s-shared ; tar -x --strip-components=1 -C %(namelower)s-%(version)s-shared -f %s"
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s-shared',
+        'build_type':  'Release',
+        'configopts':  '-DBUILD_SHARED_LIBS=ON'  + local_snappy_opts 
     }),
     ('Blosc', local_blosc_version, {
         'easyblock': 'CMakeMake',
@@ -1029,6 +1083,45 @@ components = [
 #
 # Miscellaneous
 #
+    ('double-conversion', local_double_conv_version, {
+        'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
+        'sources':     [ {
+                          'download_filename': 'v%(version)s.tar.gz',
+                          'filename':          SOURCELOWER_TAR_GZ,
+                          'source_urls':       ['https://github.com/google/%(name)s/archive'],
+                          'extract_cmd':       "mkdir %(namelower)s-%(version)s-static ; tar -x --strip-components=1 -C %(namelower)s-%(version)s-static -f %s"
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s-static',
+        'build_type':  'Release',
+        'configopts':  '',
+    }),
+    ('double-conversion', local_double_conv_version, {
+        'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
+        'sources':     [ {
+                          'download_filename': 'v%(version)s.tar.gz',
+                          'filename':          SOURCELOWER_TAR_GZ,
+                          'source_urls':       ['https://github.com/google/%(name)s/archive'],
+                          'extract_cmd':       "mkdir %(namelower)s-%(version)s-static-pic ; tar -x --strip-components=1 -C %(namelower)s-%(version)s-static-pic -f %s"
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s-static-pic',
+        'build_type':  'Release',
+        'configopts':  '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_STATIC_LIBRARY_SUFFIX_CXX=_pic.a',
+    }),
+    ('double-conversion', local_double_conv_version, {
+        'easyblock':   'CMakeMake',
+        'separate_build_dir': False,
+        'sources':     [ {
+                          'download_filename': 'v%(version)s.tar.gz',
+                          'filename':          SOURCELOWER_TAR_GZ,
+                          'source_urls':       ['https://github.com/google/%(name)s/archive'],
+                          'extract_cmd':       "mkdir %(namelower)s-%(version)s-shared ; tar -x --strip-components=1 -C %(namelower)s-%(version)s-shared -f %s"
+                       } ],
+        'start_dir':   '%(namelower)s-%(version)s-shared',
+        'build_type':  'Release',
+        'configopts':  '-DBUILD_SHARED_LIBS=ON' 
+    }),
     ('file', local_file_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
@@ -1080,6 +1173,17 @@ components = [
 #        In that case, the bootstrap script can be used to generate it.
 #        'preconfigopts': './bootstrap && ',
         'start_dir':     'yaml-%(version)s'
+    }),
+    ('LMDB', local_LMDB_version, {
+        'sources':     [ {
+                          'filename':    '%(name)s_%(version)s.tar.gz',
+                          'source_urls': ['https://github.com/LMDB/lmdb/archive/']
+                       } ],
+        'start_dir':   '%(namelower)s-%(name)s_%(version)s/libraries/liblmdb',
+        'skipsteps':   ['configure'],
+        'buildopts':   'CC="$CC" OPT="$CFLAGS"',
+        'runtest':     'test',
+        'installopts': 'prefix="%(installdir)s"',
     }),
     ('PCRE', local_PCRE_version, {
         'sources':     [ {

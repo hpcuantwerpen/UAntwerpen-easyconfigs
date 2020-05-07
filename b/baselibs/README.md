@@ -26,5 +26,15 @@
 * Added LZO and Blosc to the bundle. These libraries are used by PyTables (tables
   on PyPi) which is used by pandas, a package popular with our big data users.
 * Added GDBM, usefull for the dbm package in the Python standard library.
+* Added LMDB, used by BLAST+
+* Added double-conversion, needed for Qt5.
+    * We perform 3 build passes for double-conversion: static, static with 
+      position-independent code and shared. Note however that due to our choice
+      of toolchainopts, the pure static in fact already contains position-independent
+      code. We decided to still perform the three passes two have all library names
+      generated (rather than solving it with symbolic links).
+* Added snappy, needed for Qt5
+    * We perform 2 build passes to have both static and shared libraries.
+    * Note that it also needs some care to set AVX-specific options.
 
 
