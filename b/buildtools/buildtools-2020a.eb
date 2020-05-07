@@ -44,20 +44,21 @@ local_flex_version =             '2.6.4'      # flex       20170506 - Check on h
 local_byacc_version =            '20191125'   # byacc      20191125 - Check on ftp://ftp.invisible-island.net/byacc
 local_re2c_version =             '1.3'        # re2c       20191214 - https://github.com/skvadrik/re2c/releases
 local_git_version =              '2.26.0'     # git        20200323 - Check on https://github.com/git/git/releases
-# Not yet included due to build problems:
-# SCons      3.0.0     20170918
+local_SCons_version =            '3.1.2'         # SCons      20101217 - https://github.com/SCons/scons/releases, https://scons.org/pages/download.html
+
 homepage = 'http://www.gnu.org'
 
 whatis = [
     "Description: A bundle of often used build tools, GNU and others"
     "Contains: autoconf, autoconf_archive, automake, libtool, M4, make, git, sed, Bison, flex, Berkeley Yacc (byacc), " + 
-    "CMake, Ninja, Meson, NASM, Yasm, patchelf, pkg-config, gperf, re2c, help2man and Doxygen"
+    "CMake, Ninja, Meson, SCons, NASM, Yasm, patchelf, pkg-config, gperf, re2c, help2man and Doxygen"
 ]
 
 description = """
 A bundle of often used build tools, GNU and others: autoconf, autoconf_archive, 
 automake, libtool, M4, make, git, sed, Bison, flex, Berkeley Yacc (byacc), CMake, 
-Ninja, Meson, NASM, Yasm, patchelf, pkg-config, gperf, help2man and Doxygen.
+Ninja, Meson, SCons, NASM, Yasm, patchelf, pkg-config, gperf, re2c, help2man 
+and Doxygen.
 """
 
 usage = """
@@ -68,21 +69,22 @@ building software. Many of them are GNU tools.
 + GNU Automake %(automake)s             - https://www.gnu.org/software/automake/
 + GNU libtool %(libtool)s               - https://www.gnu.org/software/libtool/
 + GNU M4 %(m4)s                   - https://www.gnu.org/software/m4/
-+ GNU make %(make)s                  - https://www.gnu.org/software/make/
++ GNU make %(make)s                    - https://www.gnu.org/software/make/
 + GNU sed %(sed)s                     - https://www.gnu.org/software/sed/
 + GNU Bison %(bison)s                 - https://www.gnu.org/software/bison
 + GNU flex %(flex)s                  - https://www.gnu.org/software/flex/
 + git %(git)s                      - https://git-scm.com/
 + byacc %(byacc)s                  - http://invisible-island.net/byacc/byacc.html
 + CMake %(cmake)s                    - http://www.cmake.org/
-+ Ninja %(ninja)s                     - https://ninja-build.org/
++ Ninja %(ninja)s                    - https://ninja-build.org/
 + Meson %(meson)s                    - https://mesonbuild.com/Manual.html
++ SCons %(SCons)s                     - https://www.scons.org/
 + NASM %(nasm)s                    - http://www.nasm.us/
 + Yasm %(yasm)s                      - http://yasm.tortall.net/
 + patchelf %(patchelf)s                   - Modify the dynamic linker and RPATH of ELF executables,
                                     http://nixos.org/patchelf.html
 + pkg-config %(pkgconfig)s               - https://www.freedesktop.org/wiki/Software/pkg-config/
-+ re2c %(re2c)s                       - http://re2c.org/
++ re2c %(re2c)s                        - http://re2c.org/
 + GNU gperf %(gperf)s                   - https://www.gnu.org/software/gperf/
 + GNU help2man %(help2man)s            - https://www.gnu.org/software/help2man/
 + Doxygen %(doxygen)s                  - http://www.doxygen.org/
@@ -103,6 +105,7 @@ build several of the %(ver)s packages.
     'cmake'           : local_cmake_version,
     'ninja'           : local_ninja_version,
     'meson'           : local_meson_version,
+    'SCons'           : local_SCons_version,
     'nasm'            : local_nasm_version,
     'yasm'            : local_yasm_version,
     'patchelf'        : local_patchelf_version,
@@ -115,8 +118,6 @@ build several of the %(ver)s packages.
 }
 
 toolchain = SYSTEM
-
-# source_urls = [GNU_SOURCE]
 
 dependencies = [ ]
 
@@ -133,20 +134,13 @@ osdependencies = [
     ('gettext-devel'),                                   # For git
     ('pcre-devel'),                                      # For git
     ('perl'),                                            # For git
-    ('python'),                                          # For git
-#    ('python'),                                          # Voor SCons
+    ('python3'),                                          # For git, Meson, SCons
 ]
 
 
 default_easyblock = 'ConfigureMake'
 
 components = [
-#    ('SCons', '3.0.0', {  # This does not yet work.
-#        'easyblock':   'PythonPackage',
-#        'sources':     [SOURCELOWER_TAR_GZ],
-#        'source_urls': ['http://prdownloads.sourceforge.net/%(namelower)s'],
-#        'start_dir':   '%(namelower)s-%(version)s',
-#        }),
     ('pkg-config', local_pkgconfig_version, {
         'sources':     [SOURCELOWER_TAR_GZ],
         'source_urls': ['https://pkg-config.freedesktop.org/releases/'],
@@ -263,6 +257,19 @@ components = [
         'req_py_minver': 5, # Used to let EasyBuild select the right system Python executable.
         'options':       {'modulename': 'mesonbuild'}
     }),
+    ('SCons', local_SCons_version, {
+        'easyblock':   'PythonPackage',
+        'sources':          [SOURCELOWER_TAR_GZ],
+        'source_urls':      [SOURCEFORGE_SOURCE],
+        'checksums':        ['7801f3f62f654528e272df780be10c0e9337e897650b62ddcee9f39fde13f8fb'],
+        'start_dir':        '%(namelower)s-%(version)s',
+        'req_py_majver':     3, # Used to let EasyBuild select the right system Python executable.
+        'req_py_minver':     5, # Used to let EasyBuild select the right system Python executable.
+        'download_dep_fail': True,
+        'use_pip':           False,
+        'sanity_pip_check':  False,
+        'options':           {'modulename': False}
+        }),
     ('gperf', local_gperf_version, {
         'sources':     [SOURCELOWER_TAR_GZ],
         'source_urls': [GNU_SOURCE],
@@ -315,7 +322,11 @@ components = [
 #parallel = 1
 
 postinstallcmds = [
+    # For make
     'cd %(installdir)s/bin ; ln -s make gmake', # Some programs check for gmake first and fail if that version is too old.
+    # For SCons
+    '/bin/rm %(installdir)s/bin/scon*.bat',
+    'cd %(installdir)s/bin; sed -e "s/env python/env python3/" -i scons*'    
 ]
 
 modextrapaths = {
@@ -351,6 +362,8 @@ modextravars = {
     'EBVERSIONNINJA':              local_ninja_version,
     'EBROOTMESON':                 '%(installdir)s',
     'EBVERSIONMESON':              local_meson_version, 
+    'EBROOTSCONS':                 '%(installdir)s',
+    'EBVERSIONSCONS':              local_SCons_version, 
     'EBROOTNASM':                  '%(installdir)s',
     'EBVERSIONNASM':               local_nasm_version,
     'EBROOTYASM':                  '%(installdir)s',
@@ -361,6 +374,8 @@ modextravars = {
     'EBVERSIONPKGMINCONFIG':       local_pkgconfig_version,
     'EBROOTGPERF':                 '%(installdir)s',
     'EBVERSIONGPERF':              local_gperf_version,
+    'EBROOTRE2C':                  '%(installdir)s',
+    'EBVERSIONRE2C':               local_re2c_version,
     'EBROOTHELP2MAN':              '%(installdir)s',
     'EBVERSIONHELP2MAN':           local_help2man_version,
     'EBROOTDOXYGEN':               '%(installdir)s',

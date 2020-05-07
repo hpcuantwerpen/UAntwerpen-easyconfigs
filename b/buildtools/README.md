@@ -59,7 +59,7 @@ The contents of the module evolved over time. It does contain a subset of:
 * We did add EBROOT and EBVERSION variables for all components for increased compatibility
   with standard EasysBuild-generated modules (in case those variables would, e.g., 
   be used in EasyBlocks for certain software packages).
-* Added re2c to the bundle.
+* Added re2c and SCons to the bundle.
 
 Versions used:
 * Byacc 20191125
@@ -76,6 +76,7 @@ Versions used:
 * CMake 3.17.0
 * Ninja 1.10.0
 * Meson 0.53.2
+* SCons 3.1.2
 * NASM 2.13.03
 * Yasm 1.3
 * patchelf 0.10
