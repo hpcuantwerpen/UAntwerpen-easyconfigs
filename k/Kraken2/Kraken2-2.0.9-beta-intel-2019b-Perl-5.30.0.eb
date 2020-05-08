@@ -1,0 +1,66 @@
+easyblock = 'PackedBinary'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_BLASTplus_version =   '2.10.0'              # https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/
+local_Kraken2_version =     '2.0.9-beta'          # https://github.com/DerrickWood/kraken2/releases
+local_Perl_version =        '5.30.2'              # https://www.perl.org/get.html
+
+name =          'Kraken2'
+version =       local_Kraken2_version
+versionsuffix = '-Perl-%(perlver)s'
+
+homepage = 'http://www.ccb.jhu.edu/software/%(namelower)s/'
+
+whatis = [
+    "Description: Kraken2 - Kraken is a system for assigning taxonomic labels to short DNA sequences, usually obtained through metagenomic studies. "
+]
+
+description = """
+Kraken is a system for assigning taxonomic labels to short DNA sequences,
+usually obtained through metagenomic studies. Previous attempts by other
+bioinformatics software to accomplish this task have often used sequence
+alignment or machine learning techniques that were quite slow, leading to
+the development of less sensitive but much faster abundance estimation
+programs. Kraken aims to achieve high sensitivity and high speed by
+utilizing exact alignments of k-mers and a novel classification algorithm.
+"""
+
+# part is compiled with $CXX, the rest is in Perl
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'openmp': True, 'cstd': 'c++11'}
+
+# https://github.com/DerrickWood/kraken2/archive/v2.0.9-beta.zip
+github_account = 'DerrickWood'
+sources = [{
+    'download_filename': 'v%(version)s.zip',
+    'filename':          SOURCELOWER_ZIP,
+    'source_urls':       [GITHUB_LOWER_SOURCE]
+}]
+checksums =      ['19f7ac0c4d2e225bc8db73dfc88f5a018e8657b09dd2669604bd7a34950ba0c5']
+
+dependencies = [
+    ('baselibs', local_buildset,          '', ('GCCcore', local_gcc_version)), # for wget
+    ('Perl',     local_Perl_version),
+    ('BLAST+',   local_BLASTplus_version),
+]
+
+install_cmd  = 'cd %(builddir)s/%(namelower)s-%(version)s && '
+install_cmd += 'sed -e "s/CXX =/CXX ?=/" -e "s/CXXFLAGS =/CXXFLAGS ?=/" -i src/Makefile && '
+install_cmd += './install_kraken2.sh %(installdir)s'
+
+sanity_check_paths = {
+    'files': [
+        '16S_gg_installation.sh', '16S_rdp_installation.sh', '16S_silva_installation.sh', 'add_to_library.sh',
+        'build_db', 'build_gg_taxonomy.pl', 'build_kraken2_db.sh', 'build_rdp_taxonomy.pl', 'build_silva_taxonomy.pl',
+        'classify', 'clean_db.sh', 'cp_into_tempfile.pl', 'download_genomic_library.sh', 'download_taxonomy.sh',
+        'dump_table', 'estimate_capacity', 'kraken2', 'kraken2-build', 'kraken2-inspect', 'kraken2lib.pm',
+        'lookup_accession_numbers.pl', 'make_seqid2taxid_map.pl', 'mask_low_complexity.sh', 'rsync_from_ncbi.pl',
+        'scan_fasta_file.pl'],
+    'dirs': [],
+}
+
+modextrapaths = {'PATH': ''}
+
+moduleclass = 'bio'
