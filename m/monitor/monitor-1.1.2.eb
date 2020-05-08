@@ -1,7 +1,9 @@
 easyblock = 'ConfigureMake'
 
+local_monitor_version =          '1.1.2'         # https://github.com/gjbex/monitor, check tags
+
 name =    'monitor'
-version = '1.1.2'
+version = local_monitor_version
 
 homepage = 'https://github.com/gjbex/monitor'
 
