@@ -1,20 +1,49 @@
 easyblock = 'ConfigureMake'
 
-name = 'monitor'
+name =    'monitor'
 version = '1.1.2'
 
-homepage = 'https://www.vscentrum.be/cluster-doc/running-jobs/monitoring-memory-and-cpu-usage-of-programs'
-description = """monitor logs cpu and memory usage of a running application"""
+homepage = 'https://github.com/gjbex/monitor'
 
-sources = [SOURCE_TAR_GZ]
+whatis = [
+    "Description: monitor logs cpu and memory usage of a running application"
+]
 
-toolchain = {'name': 'dummy', 'version': 'dummy'}
+description = """
+Estimating the amount of memory an application will use during execution is 
+often non trivial, especially when one uses third-party software. However, 
+this information is valuable, since it helps to determine the characteristics 
+of the compute nodes a job using this application should run on.
 
-osdependencies = [('perl')]
+Although the tool presented here can also be used to support the software 
+development process, better tools are almost certainly available.
+
+Note that currently only single node jobs are supported, MPI support may 
+be added in a future release.
+"""
+
+docurls = [
+    'monitor -h',
+]
+
+sources = [{
+    'filename':   SOURCE_TAR_GZ,
+    'git_config': {
+        'url':       'https://github.com/gjbex',
+        'repo_name': '%(name)s',
+        'tag':       'release/%(version)s',    
+    }    
+}]
+
+toolchain = SYSTEM
+
+osdependencies = [
+    ('perl')
+]
 
 sanity_check_paths = {
-    'dirs': ['bin'],
     'files': ['bin/monitor'],
+    'dirs':  [],
 }
 
 moduleclass = 'tools'

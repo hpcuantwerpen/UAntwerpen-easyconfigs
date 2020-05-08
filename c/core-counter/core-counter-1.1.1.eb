@@ -1,0 +1,45 @@
+# Built with EasyBuild version 3.1.2 on 2017-04-10_12-44-36
+easyblock = 'ConfigureMake'
+
+local_core_counter_version =     '1.1.1'         # https://github.com/gjbex/core-counter/releases
+
+local_use_buildtools = '2020a'
+
+name =    'core-counter'
+version = local_core_counter_version
+
+homepage = 'https://github.com/gjbex/core-counter'
+
+whatis = [
+    "Description: core-counter checs available cores and OpenMP threads"
+]
+
+description = """
+core-counter checks the number of cores (or hyperthreads) available to 
+application, and optionally displays the default number of OpenMP threads.
+"""
+
+toolchain = SYSTEM
+
+source_urls = ['https://github.com/gjbex/core-counter/archive/']
+sources =     ['%(version)s.tar.gz']
+
+builddependencies = [ 
+   ('buildtools', local_use_buildtools, '', True),
+]
+
+osdependencies = [
+    ('glibc-static')
+]
+
+# aclocal is needed when the included aclocal.m4 was build for an older
+# version of automake.
+preconfigopts = "aclocal && automake --add-missing && "
+
+sanity_check_paths = {
+    'files': ['bin/core-counter'],
+    'dirs':  [],
+}
+
+moduleclass = 'tools'
+

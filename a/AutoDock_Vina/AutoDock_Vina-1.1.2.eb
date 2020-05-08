@@ -5,21 +5,29 @@
 
 easyblock = "Tarball"
 
-name = 'AutoDock_Vina'
+name =    'AutoDock_Vina'
 version = '1.1.2'
-#versionsuffix = '_linux_x86'
 
 homepage = 'http://vina.scripps.edu/index.html'
-description = """ AutoDock Vina is an open-source program for doing molecular docking. """
 
-toolchain = {'name': 'dummy', 'version': 'dummy'}
+whatis = [
+    "Description: AutoDock Vina is an open-source program for doing molecular docking."
+]
+
+description = """
+AutoDock Vina is an open-source program for doing molecular docking. It was 
+designed and implemented by Dr. Oleg Trott in the Molecular Graphics Lab at 
+The Scripps Research Institute.
+"""
+
+toolchain = SYSTEM
 
 source_urls = ['http://vina.scripps.edu/download/']
-sources = ['%s_%s%s.tgz' % (name.lower(), version.replace('.', '_'), '_linux_x86')]
+sources =     ['%s_%s%s.tgz' % (name.lower(), version.replace('.', '_'), '_linux_x86')]
 
 sanity_check_paths = {
     'files': ["bin/vina_split", "bin/vina"],
-    'dirs': []
+    'dirs':  []
 }
 
 moduleclass = 'bio'
