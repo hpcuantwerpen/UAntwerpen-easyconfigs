@@ -1,11 +1,11 @@
 easyblock = 'PackedBinary'
 
-local_buildset =         '2020a'
-local_gcc_version =      '9.3.0'
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
 
 local_BLASTplus_version =   '2.10.0'              # https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/
 local_Kraken2_version =     '2.0.9-beta'          # https://github.com/DerrickWood/kraken2/releases
-local_Perl_version =        '5.30.2'              # https://www.perl.org/get.html
+local_Perl_version =        '5.30.0'              # https://www.perl.org/get.html
 
 name =          'Kraken2'
 version =       local_Kraken2_version
