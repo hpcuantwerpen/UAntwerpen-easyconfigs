@@ -59,8 +59,8 @@ local_mpi_noomp_configopts     = 'LIBS="$EBVARLIBSCALAPACK" '
 # Set processor-specific optimization options.
 # We do a minimal build as we now which CPUs we will be running on on
 # which cluster.
-import os
-local_UAarch = os.environ['VSC_ARCH_LOCAL']
+import os as local_os
+local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
 if local_UAarch == "ivybridge":
     local_common_configopts += '--disable-generic --disable-sse --enable-avx  --disable-avx2 --disable-avx512 --disable-gpu '
 elif local_UAarch == "broadwell":
