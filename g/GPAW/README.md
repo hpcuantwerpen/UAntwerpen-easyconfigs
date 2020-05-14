@@ -62,11 +62,36 @@ rather than in the library search path. Hence a customize.py file pointing to th
 library locations is needed on any system that uses modules or the script may pick 
 up default Linux libraries rather than the intended ones.
 
+### Determining version numbers of dependencies
+
+* Python versions: [On PyPi](https://pypi.org/project/gpaw/) or towards the bottom 
+  of the file ``setup.py``
+* ASE version: 
+     * [In the release notes](https://wiki.fysik.dtu.dk/gpaw/releasenotes.html):
+       preferred version, though other versions may also work.
+     * Line ``install_requires`` towards the bottom of the file ``setup.py`` may give 
+       a different restriction from the release notes.
+     * In the file ``doc/install.rst``
+* NumPy and SciPy:
+     * In the file ``doc/install.rst``
+
+<table cellpadding="3">
+<tr><th>GPAW</th>   <th>Python</th>       <th>ASE</th>                 <th>NumPy</th>    <th>SciPy</th>     <th>LibXC</td></tr>
+<tr><td>19.8.1</td> <td>3.4-3.7</td>      <td>3.18.0, &geq;3.18.0</td> <td>&geq;1.9</td> <td>&geq;0.14</td> <td>3.x or 4.x</td></tr>
+<tr><td>20.1.0</td> <td>3.5-3.8</td>      <td>3.19.0, &geq;3.18.0</td> <td>&geq;1.9</td> <td>&geq;0.14</td> <td>3.x or 4.x</td></tr>
+</table>
+
+
+
+
 ## Internal organization of the compilation process of GPAW
 
 GPAW is compiled through Python scripts to integrate in the standard Python package
-setup process. The scripts are fairly outdated though as they still rely on 
-[`distutils`](https://docs.python.org/3/distutils/index.html) rather than `setuptools`.
+setup process. 
+* Up to and including version 19.8.1: The scripts are fairly outdated though as they still rely on 
+  [`distutils`](https://docs.python.org/3/distutils/index.html) rather than `setuptools`.
+* From version 20.1.0 on, `setuptools` is used instead of `distutils` easing
+  installation with ``pip``.
 
 Besides pure Python files, the installation process generates two binary files:
 * The shared library `_gpaw.cpython-<python version>-<architecture>.so` in the 
@@ -193,7 +218,7 @@ Problems encountered:
 * In version 19.8.1, the installation manual advises to set `OMP_NUM_THREADS` to 1.
   To avoid user errors, we do this in the module file.
 
-### 2019b toolchain
+### 2019b toolchain - GPAW 19.8.1
 
 The `-easybuilders` EasyConfig isn't actually deployed at UAntwerp but is an effort
 to stay as close as possible to the EasyBuilders EasyConfig. It can be used as the 
@@ -203,6 +228,27 @@ GPAW was compiled with both a EasyBuild Python 3.7.4 module and the Intel Python
 distribution, and in both cases both without libvdwxc using the Intel FFTW wrappers 
 for MKL, and with libvdwxc but then using FFTW3 itself (as libvdwxc requires that 
 library anyway). The versions without libvdwxc have the `-MKLFFTW` suffix.
+
+### 2020a toolchains - GPAW 20.1.0
+
+* We checked our way of working with the EasyConfig files in the EasyBuilders
+  repository as these are developed by people from the institute that also 
+  develops GPAW.
+* There has been a change in the setup procedure. Instead of specifying 
+  `--customize` one now needs to set the environment variable
+  `GPAW_CONFIG`.
+* There are also big changes in the installed files. In the `bin` directory, 
+  the `gpaw-python` binary does no longer exist (the one that had Python embedded
+  as a library and also linked to the MPI libraries). And GPAW is now also 
+  completely packages as an egg, so `lib/python3.8/site-packages/gpaw' does no
+  longer exist. We took the sanity check tests from the EasyBuilders recipes for
+  GPAW 20.1.0.
+* Note that we did try building with pip as in the EasyBuilders recipe but this did
+  not work as GPAW tried to linke to blas by adding `-lblas` to the link command
+  line which is the wrong BLAS library.
+* It is not clear why the patch file `GPAW-20.1.0-Wrap-pragma-omp-simd-in-ifdef-_OPENMP-blocks.patch`
+  is needed (taken from the EasyBuilders recipes) as the compilation goes fine
+  without the patch.
 
 
 ## Checking the build result

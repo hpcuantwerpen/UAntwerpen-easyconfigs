@@ -1,10 +1,13 @@
 easyblock = 'ConfigureMake'
 
-name =          'libvdwxc'
-version =       '0.4.0'
-versionsuffix = '-MPI'
+local_buildset = '2020a'
 
-local_buildset = '2019b'
+local_FFTW_version =        '3.3.8'               # http://www.fftw.org/
+local_libvdwxc_version =    '0.4.0'               # https://libvdwxc.org/ (Download link, or on Gitlab: tags)
+
+name =          'libvdwxc'
+version =       local_libvdwxc_version
+versionsuffix = '-MPI'
 
 homepage = 'http://libvdwxc.org'
 
@@ -46,7 +49,7 @@ sources =     [SOURCE_TAR_BZ2]
 checksums =   ['5fcd37253489931b94ce865bb4e6942250665e269057a50bd532c8697ac19dc7']
 
 dependencies = [
-    ('FFTW', '3.3.8'),
+    ('FFTW', local_FFTW_version),
 ]
 
 builddependencies = [

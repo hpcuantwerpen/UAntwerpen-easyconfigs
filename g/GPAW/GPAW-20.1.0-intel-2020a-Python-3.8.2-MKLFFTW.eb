@@ -1,0 +1,150 @@
+easyblock = 'Bundle'
+
+local_buildset = '2020a'
+
+local_ASE_version =         '3.19.1'              # https://pypi.org/project/ase/
+local_GPAW_version =        '20.1.0'              # https://pypi.org/project/gpaw/
+local_GPAWsetup_version =   '0.9.20000'           # Check version on https://wiki.fysik.dtu.dk/gpaw/setups/setups.html
+local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+local_libvdwxc_version =    '0.4.0'               # https://libvdwxc.org/ (Download link, or on Gitlab: tags)
+local_libxc_version =       '4.3.4'               # https://www.tddft.org/programs/libxc/download/
+
+name =               'GPAW'
+version =            local_GPAW_version
+versionsuffix =      '-Python-%(pyver)s-MKLFFTW'
+
+homepage = 'http://wiki.fysik.dtu.dk/gpaw'
+
+whatis = [
+    "Description: GPAW: DFT and beyond within the projector-augmented wave method.",
+    'This module also includes the compatible ASE version ' + local_ASE_version,
+]
+
+description = """
+GPAW is a density-functional theory (DFT) Python code based on the
+projector-augmented wave (PAW) method and the atomic simulation environment
+(ASE). It uses plane-waves, atom-centered basis-functions or real-space
+uniform grids combined with multigrid methods.
+
+This module also includes a matching version of ASE (version %(ASE_version)s),
+the Atomic Simulation Environment, which is used internally by GPAW.
+
+The module also contains the Atomic PAW setup files (version %(GPAWsetup_version)s)
+in the directory $GPAW_SETUP_FILES.
+
+The GPAW manual advises the OMP_NUM_THREADS should be set to 1 so we do this
+in the module.
+
+The version in this module is compiled using the Intel MKL libraries for FFT.
+The optional libvdwxc support is NOT included in this module.
+The optional ELPA support is included in this module.
+""" % {
+    'ASE_version':       local_ASE_version,  
+    'GPAWsetup_version': local_GPAWsetup_version,  
+}
+
+docurls = [
+    'GPAW web-based documentation: https://wiki.fysik.dtu.dk/gpaw/',
+    'ASE web-based documentation:https://wiki.fysik.dtu.dk/ase/',
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True}
+
+dependencies = [
+    ('Python',   local_Python3_version),
+    ('libxc',    local_libxc_version),
+    ('ELPA',     '2019.05.002'),
+]
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ( 'GPAW-setups', local_GPAWsetup_version, { 
+        # Check version on https://wiki.fysik.dtu.dk/gpaw/setups/setups.html
+        'easyblock': 'Tarball',
+        'sources':   [{
+                        'filename':    SOURCELOWER_TAR_GZ,
+                        'source_urls': ['https://wiki.fysik.dtu.dk/gpaw-files/'], 
+                        'extract_cmd': 'mkdir -p share/gpaw-setups ; cd share/gpaw-setups ; tar -xf %s --strip-components=1',
+                     }]  
+    }),
+    ( 'dummy', 'dummy', {
+        'sources':   [{
+                       'filename':    'GPAW-' + local_GPAW_version + '-eb_customize_intel.py',
+                       'extract_cmd': 'cp %s ./GPAW_eb_customize.py'  
+                     }],
+        'skipsteps': ['configure', 'build', 'install'],
+    })
+]
+
+# This is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  True,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+exts_list = [
+    # ASE and its dependencies
+    ('Werkzeug', '1.0.1', {
+        'modulename':     'werkzeug',
+    }),
+    ('MarkupSafe', '1.1.1', {
+        'modulename':  'markupsafe',
+    }),
+    ('Jinja2', '2.11.2', { # Contains only .py files so probably safe as zipped egg?
+        'modulename':  'jinja2',
+    }),
+    ('itsdangerous', '1.1.0', { # Installs as a zipped egg by itself.
+    }),
+#    ('Click', '7.0', { # Included in the Python 3.7.4 extension list.
+#        'modulename':  'click',
+#    }),
+    ('Flask', '1.1.2', {
+        'modulename':  'flask',
+    }),
+    ('ase', local_ASE_version, {
+    }),
+    # GPAW and its dependencies
+    ('gpaw', version, {
+        'use_pip':        False,
+#        'patches':        [ ('GPAW-20.1.0-Wrap-pragma-omp-simd-in-ifdef-_OPENMP-blocks.patch', 1) ],
+        'prebuildopts':   'GPAW_CONFIG=../../GPAW_eb_customize.py ',
+        'buildcmd':       'build --remove-default-flags',
+        'buildopts':      ' && echo -e "\\nGPAW configuration log:\\n" && cat configuration.log && cp configuration.log ../../GPAW_configuration.log',
+        'preinstallopts': 'GPAW_CONFIG=../../GPAW_eb_customize.py ',
+        'install_target': 'install --remove-default-flags',
+    }),
+]
+
+postinstallcmds = [ # It turns out this runs in the build dir of the last extension.
+    'mkdir -p %(installdir)s/easybuild', # The directory is not yet created by EasyBuild when this executes.
+    'cp ../../GPAW_eb_customize.py   %(installdir)s/easybuild/GPAW-' + local_GPAW_version +'-eb_customize_intel_MKLFFTW.py',
+    'cp ../../GPAW_configuration.log %(installdir)s/easybuild',
+]
+
+# Sanity check changed compared to version 19.9.1!
+sanity_check_paths = {
+    'files': ['bin/gpaw%s' % x for x in ['', '-analyse-basis', '-basis', '-mpisim', '-plot-parallel-timings',
+                                         '-runscript', '-setup', '-upfplot']],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages']
+}
+
+# make sure Tkinter is available, otherwise 'ase gui' will not work
+sanity_check_commands = ["python -c 'import tkinter' "]
+
+# As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
+modextrapaths = {
+    'PYTHONPATH':      ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextravars = {
+    'GPAW_SETUP_PATH': '%(installdir)s/share/gpaw-setups', # We don't use modextrapaths as the path should be  
+                                                           # comma-separated rather than colon-separated anyway.
+    'OMP_NUM_THREADS': '1',
+}
+
+moduleclass = 'chem'
