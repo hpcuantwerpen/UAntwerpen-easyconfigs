@@ -13,7 +13,7 @@ local_python_version =   '3.6.9'
 local_gcc_version =      '8.3.0'
 local_binutils_version = '2.32'
 
-local_pyshortversion = '.'.join(local_python_version.split('.')[:-1])
+local_IntelPython3_major_minor = '3.6'
 
 homepage = 'http://wiki.fysik.dtu.dk/gpaw'
 
@@ -57,12 +57,11 @@ toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
 dependencies = [
-    ('Python',   '3.7.4'),
-    ('FFTW',     '3.3.8'),
-    ('libxc',    '4.3.4'),
-    ('libvdwxc', '0.4.0',           '-MPI'),
-    ('ELPA',     '2019.05.002'),
-    ('ASE',      local_ASE_version, '-Python-%(pyver)s'),
+    ('IntelPython3-Packages', local_buildset, '',    ('GCCcore', local_gcc_version)),
+    ('FFTW',                  '3.3.8'),
+    ('libxc',                 '4.3.4'),
+    ('libvdwxc',              '0.4.0',        '-MPI'),
+    ('ELPA',                  '2019.05.002'),
 ]
 
 default_easyblock = 'ConfigureMake'
@@ -79,7 +78,7 @@ components = [
     }),
     ( 'dummy', 'dummy', {
         'sources':   [{
-                       'filename':    'GPAW-' + local_GPAW_version + '-eb_customize_intel_FFTW.py',
+                       'filename':    'GPAW-' + local_GPAW_version + '-eb_customize_IntelPython3_2019_FFTW.py',
                        'extract_cmd': 'cp %s ./GPAW_eb_customize.py'  
                      }],
         'skipsteps': ['configure', 'build', 'install'],
@@ -88,26 +87,26 @@ components = [
 
 # This is a bundle of Python packages
 exts_defaultclass = 'PythonPackage'
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  False,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
 
 exts_list = [
     # ASE and its dependencies
     ('Werkzeug', '0.16.0', {
         'modulename':     'werkzeug',
-        'source_urls':    ['https://pypi.python.org/packages/source/W/Werkzeug'],
-#        'install_target': 'easy_install',
-#        'zipped_egg':     True,
     }),
     ('MarkupSafe', '1.1.1', { # Includes binaries!
         'modulename':  'markupsafe',
-        'source_urls': ['https://pypi.python.org/packages/source/M/MarkupSafe'],
         'check_ldshared': True, # Needed for a GCC-based Python with Intel-based extensions.
     }),
     ('Jinja2', '2.10.3', { # Contains only .py files so probably safe as zipped egg?
         'modulename':  'jinja2',
-        'source_urls': ['https://pypi.python.org/packages/source/J/Jinja2'],
     }),
     ('itsdangerous', '1.1.0', { # Installs as a zipped egg by itself.
-        'source_urls': ['https://pypi.python.org/packages/source/i/itsdangerous'],
     }),
 #    ('Click', '7.0', { # Included in the Python 3.7.4 extension list.
 #        'modulename':  'click',
@@ -115,15 +114,11 @@ exts_list = [
 #    }),
     ('Flask', '1.1.1', {
         'modulename':  'flask',
-        'source_urls': ['https://pypi.python.org/packages/source/F/Flask'],
     }),
     ('ase', local_ASE_version, {
-        'source_urls': ['https://pypi.python.org/packages/source/a/ase'],
     }),
     # GPAW and its dependencies
     ('gpaw', version, { # Includes binaries!
-#        'source_urls':    PYPI_LOWER_SOURCE, # Doesn't always work but don't understand why
-        'source_urls':    ['https://pypi.python.org/packages/source/g/gpaw'],
         'use_pip':        False,
         'check_ldshared': True, # Needed for a GCC-based Python with Intel-based extensions.
         'buildcmd':       'build   --customize=../../GPAW_eb_customize.py --remove-default-flags',
@@ -144,7 +139,7 @@ full_sanity_check = True
 sanity_check_paths = {
     'files': ['bin/gpaw%s' % x for x in ['', '-analyse-basis', '-basis', '-mpisim', '-plot-parallel-timings',
                                          '-python', '-runscript', '-setup', '-upfplot']],
-    'dirs':  ['lib/python%(pyshortver)s/site-packages/%(namelower)s']
+    'dirs':  ['lib/python' + local_IntelPython3_major_minor + '/site-packages/%(namelower)s']
 }
 
 # make sure Tkinter is available, otherwise 'ase gui' will not work
@@ -152,7 +147,7 @@ sanity_check_commands = ["python -c 'import tkinter' "]
 
 # As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
 modextrapaths = {
-    'PYTHONPATH':      ['lib/python%(pyshortver)s/site-packages'],
+    'PYTHONPATH':      ['lib/python' + local_IntelPython3_major_minor + '/site-packages'],
 }
 
 modextravars = {
