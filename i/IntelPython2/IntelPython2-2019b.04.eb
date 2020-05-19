@@ -52,6 +52,7 @@ modextrapaths = {
 modextravars = {
     'EBROOTPYTHON':      local_intel_root + '/intelpython%s'     % local_py_major,
     'EBVERSIONPYTHON':   local_python_version,
+    'PYTHONHOME':        local_intel_root + '/intelpython%s'     % local_py_major,
     'CONDA_DEFAULT_ENV': 'root',
 }
 
