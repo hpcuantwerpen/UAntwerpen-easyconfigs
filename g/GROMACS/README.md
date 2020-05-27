@@ -35,6 +35,10 @@ better play with those options and work around problems.
 We use a Bundle setup to generate multiple executables with and without MPI and in 
 single or double precision.
 
+### Installation hints
+
+* Search for "Test project" to locate the tests in the EasyBuild log file.
+
 ### GROMACS 2018.2, Intel 2018b toolchain
 
 * GROMACS recognizes the Intel compilers and choses options that it deems appropriate. 
@@ -60,8 +64,12 @@ single or double precision.
 
 #### PLUMED 2.6.0 integration
 
-* PLUMED 2.6.0 contains a patch to integrate with GROMACS 2019b. This can be installed
+* PLUMED 2.6.0 contains a patch to integrate with GROMACS 2019.4. This can be installed
   through the ``plumed patch -p -e gromacs-2019.4`` command, before configuration with 
   CMake according to the GROMACS and PLUMED manuals.
 * Single precision executables fail with segmentation violations during a number of 
   tests when using the Intel 2019 update 4 compilers for PLUMED and GROMACS.
+
+### GROMACS 2020.2, Intel toolchain
+
+* Did a straightforwared port from the 2019.4 EasyConfig.
