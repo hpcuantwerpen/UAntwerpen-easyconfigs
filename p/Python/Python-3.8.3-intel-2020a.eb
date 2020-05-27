@@ -1,5 +1,5 @@
 name =    'Python'
-version = '3.8.2'
+version = '3.8.3'
 
 local_mkl_random_version = '1.1.1' # Check on https://github.com/IntelPython/mkl_random/releases
 local_mkl_fft_version    = '1.1.0' # Check on https://github.com/IntelPython/mkl_fft/releases
@@ -109,7 +109,7 @@ ulimit_unlimited = False
 
 exts_default_options = {
     'download_dep_fail': True,
-    'sanity_pip_check':  True,
+    'sanity_pip_check':  False, # Otherwise requires all optional dependencies to also be installed.
     'source_urls':       [PYPI_SOURCE],
     'use_pip':           True,
 }
@@ -148,14 +148,13 @@ exts_list = [
         'checksums': ['232755284f942cbb3b43a06cd85974ef3c970a021aef19b5243c03ee2b08fa05'],
     }),
     ('numpy', '1.18.3', {
-        'source_urls': ['https://pypi.python.org/packages/source/n/numpy/'],
+        'patches': ['numpy-1.18.2-mkl.patch'],
         'source_tmpl': '%(name)s-%(version)s.zip',
-        'patches':     ['numpy-1.12.0-mkl.patch'],
         'checksums': [
-            'e46e2384209c91996d5ec16744234d1c906ab79a701ce1a26155c9ec890b8dc8',
-            'f212296ed289eb1b4e3f703997499dee8a2cdd0af78b55e017477487b6377ca4',  # numpy-1.12.0-mkl.patch
+            'e46e2384209c91996d5ec16744234d1c906ab79a701ce1a26155c9ec890b8dc8',  # numpy-1.18.2.zip
+            'ea25ad5c0148c1398d282f0424e642fb9815a1a80f4512659b018e2adc378bcf',  # numpy-1.18.2-mkl.patch
         ],
-    }),
+     }),
     ('mkl_random', local_mkl_random_version, { # Does require NumPy
         'sources':   [{
                        'download_filename': 'v' + local_mkl_random_version + '.tar.gz',
@@ -175,8 +174,11 @@ exts_list = [
         'skipsteps': ['install'],
     }),   
     ('scipy', '1.4.1', {
-        'source_tmpl': '%(name)s-%(version)s.tar.gz',
-        'checksums':   ['dee1bbf3a6c8f73b6b218cb28eed8dd13347ea2f87d572ce19b289d6fd3fbc59'],
+        'patches': ['scipy-1.4.1-fix-pthread.patch'],
+        'checksums': [
+            'dee1bbf3a6c8f73b6b218cb28eed8dd13347ea2f87d572ce19b289d6fd3fbc59',  # scipy-1.4.1.tar.gz
+            '4e2162a93caddce63a1aa2dfb6c181774a4f6615950e1d60c54bb4308fee3bb3',  # scipy-1.4.1-fix-pthread.patch
+        ],
     }),
     ('mpi4py', '3.0.3', {
         'source_urls': ['https://bitbucket.org/mpi4py/mpi4py/downloads/'],

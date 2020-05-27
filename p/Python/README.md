@@ -65,7 +65,7 @@ This documentation was started with the 2020a toolchain.
 
 ### Non-standard library packages that interface to external libaries
 
-* NumPy: Link to MKL
+* NumPy: Link to MKL and can use SuiteSparse
 * mkl_random: Link to certain MKL random number generators
 * mkl_fft: Interface to the MKL FFT routines
 * SciPy: Interfaces to various MKL components
@@ -129,7 +129,7 @@ This documentation was started with the 2020a toolchain.
   standard libraries
 
 
-## EasyBuild
+## EasyBuild generics
 
 ### Python EasyBlock
 
@@ -160,6 +160,42 @@ Python config options defined by the EasyBlock:
       libary and is pure Python. It relies on the GMP library interface in the 
       standard Python libary.
 
+### NumPy
+
+NumPy in EasyBuild is installed through an EasyBlock derived from FortranPythonPackage.
+
+* Configure phase: 
+    * Builds a `site.cfg` file
+    * Does the regular discovery for a Python package
+    * Runs `python setup configure`
+* Build phase: Runs `python setup build`, adding `buildopts` and appropriate 
+  `--compiler` and `--fcompiler` options. Note that this is done through the 
+  FortranPythonPackage generic EasyBlock.
+* Test phase: The NumPy EasyBlock does perform a number of texts. Search in the log 
+  for `INFO Time for .* matrix dot product`.
+* Install phase: Uses the regular install procedure for Python packages so will honour 
+  all regular Python package installation options (such as use_pip et.)
+
+Notes:
+* NumPy can use SuiteSparse which is recognized by the EasyBlock and the 
+  appropriate lines for AMD and UMFPACK are added to the site.cfg file.
+
+### SciPy
+
+SciPy in EasyBuild is installed through an EasyBlock derived from FortranPythonPackage.
+
+* Configure phase: Just the regular discovery for a Python package. Note however that
+  from version 0.13 onwards, `preinstallopts` is modified so be careful if you use
+  that parameter.
+* Build phase: The normal build phase for a Fortran Python package, i.e., running
+  `python setup build`, adding `buildopts` and appropriate 
+  `--compiler` and `--fcompiler` options.
+* Install phase: The regular install phase as for every Python package, but note 
+  that this will run with a modified `preinstallopts` from SciPy 0.13 onwards.
+
+
+## EasyBuild packages in this directory
+
 ### Python 2.7.18 on 2020a
 
 * Likely the last Python 2 module ever on our cluster. In fact, we plan to only install 
@@ -176,7 +212,7 @@ Python config options defined by the EasyBlock:
 * Added ``-fwrapv`` to the compiler flags, see remarks for 3.8 where it was essential.
 * Packages are just a copy of the 3.8.2 ones.
 
-### Python 3.8(.2) effort on 2020a.
+### Python 3.8(.3) effort on 2020a.
 
 * Builds with the Intel compiler need an additional option added to CFLAGS: ``-fwrapv``.
   This option doesn't seem to be documented in the Intel manuals. However, the GCC manual
