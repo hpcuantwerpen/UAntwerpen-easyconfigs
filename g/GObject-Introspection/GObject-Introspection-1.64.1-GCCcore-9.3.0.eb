@@ -10,7 +10,7 @@ local_binutils_version = '2.34'
 local_cairo_version =      '1.17.2'              # https://www.cairographics.org
 local_GLib_version =       '2.64.1'              # https://github.com/GNOME/glib/releases
 local_GObject_version =    '1.64.1'              # https://github.com/GNOME/gobject-introspection/releases
-local_Python3_version =    '3.8.2'               # https://www.python.org/downloads/
+local_Python3_version =    '3.8.3'               # https://www.python.org/downloads/
 
 name =    'GObject-Introspection'
 version = local_GObject_version
