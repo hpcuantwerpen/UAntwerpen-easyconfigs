@@ -14,7 +14,7 @@ local_buildset =         '2020a'
 local_gcc_version =      '9.3.0'
 
 local_Boost_version =       '1.73.0'              # https://www.boost.org/users/download/
-local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
 local_SPAdes_version =      '3.14.1'              # http://cab.spbu.ru/software/spades/
 
 name =          'SPAdes'

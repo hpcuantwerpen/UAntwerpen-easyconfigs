@@ -5,7 +5,7 @@ easyblock = "PythonPackage"
 
 local_buildset =         '2020a'
 
-local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
 
 local_Pysam_version =     '0.15.4' # https://pypi.org/project/pysam/
 local_HTSeq_version =     '0.12.4' #https://pypi.org/project/HTSeq/

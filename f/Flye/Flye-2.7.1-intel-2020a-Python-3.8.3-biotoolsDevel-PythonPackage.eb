@@ -1,8 +1,8 @@
-easyblock = 'Bundle'
+easyblock = 'PythonPackage'
 
 local_buildset = '2020a'
 
-local_Python3_version = '3.8.2'                  # https://www.python.org/downloads/
+local_Python3_version = '3.8.3'                  # https://www.python.org/downloads/
 
 local_Flye_version =     '2.7.1'  # https://github.com/fenderglass/Flye/releases
 
@@ -30,43 +30,19 @@ docurls = [
 
 toolchain = {'name': 'intel', 'version': local_buildset}
 
+sources = [{
+    'download_filename': '%(version)s.zip',
+    'filename':          SOURCELOWER_ZIP,
+    'source_urls':       ['https://github.com/fenderglass/Flye/archive/'],
+}]
+checksums =   ['073dc6ab6861553bee1bf1c7a97432f645e503c9bb70e225b080304940bf7f7c']
+
 dependencies = [
     ('Python', local_Python3_version)
 ]
 
-default_easyblock = "Tarball"
-exts_defaultclass = 'PythonPackage'
-
-default_component_specs = {
-    'skipsteps': ['install'],
-}
-
-exts_default_options = {
-    'download_dep_fail': True,
-    'sanity_pip_check':  True,
-    'source_urls':       [PYPI_SOURCE],
-    'use_pip':           True,
-}
-
-# The component block really only serves to download the files and give them a
-# proper name to avoid naming conflicts.
-components = [    
-    ('Flye', local_Flye_version, {
-        'sources' :  [{
-                       'download_filename': '%(version)s.zip', 
-                       'filename': '%(namelower)s-%(version)s.zip', 
-                       'source_urls': ['https://github.com/fenderglass/Flye/archive/'] 
-                     }],
-        'checksums': ['073dc6ab6861553bee1bf1c7a97432f645e503c9bb70e225b080304940bf7f7c'],
-        'start_dir': '%(name)s-%(version)s',
-    }),   
-]
-
-exts_list = [
-    ('flye', local_Flye_version, {
-        'source_tmpl': 'flye-%(version)s.zip',
-    }),   
-]
+download_dep_fail = True
+use_pip = True
 
 sanity_check_paths = {
     'files': ['bin/flye'],
@@ -75,8 +51,6 @@ sanity_check_paths = {
 
 sanity_check_commands = ['%(namelower)s --help']
 
-modextrapaths = {
-    'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages',   
-}
+sanity_pip_check = True
 
 moduleclass = 'bio'

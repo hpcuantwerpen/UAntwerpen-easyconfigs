@@ -1,10 +1,13 @@
 easyblock = 'ConfigureMake'
 
-name =    'VSEARCH'
-version = '2.14.2'
-
 local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
+
+local_VSEARCH_version =  '2.14.2' # https://github.com/torognes/vsearch/releases
+
+name =          'VSEARCH'
+version =       local_VSEARCH_version
+versionsuffix = '-biotoolsDevel'
 
 homepage = 'https://github.com/torognes/vsearch'
 
@@ -34,8 +37,8 @@ instructions at all.
 """
  
 docurls = [
-    "Manual page vsearch in section 1",
-    "Manual downloadable from https://github.com/torognes/vsearch/releases/download/v%(version)s/vsearch_manual.pdf"
+    'Manual page vsearch in section 1',
+    'Manual downloadable from https://github.com/torognes/vsearch/releases/download/v%(version)s/vsearch_manual.pdf',
 ] 
 
 toolchain = {'name': 'intel', 'version': local_buildset}

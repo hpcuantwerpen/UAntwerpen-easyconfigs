@@ -16,7 +16,7 @@ local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
 
 local_Pysam_version =   '0.15.4' # https://pypi.org/project/pysam/
-local_Python3_version = '3.8.2'
+local_Python3_version = '3.8.3'
 
 name =          'Pysam'
 version =       local_Pysam_version

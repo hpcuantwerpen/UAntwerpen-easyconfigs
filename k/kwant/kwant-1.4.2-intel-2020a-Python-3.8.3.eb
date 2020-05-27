@@ -18,7 +18,7 @@ local_buildset =         '2020a'
 
 local_kwant_version =       '1.4.2'               # https://pypi.org/project/kwant/
 local_MUMPS_version =       '5.3.1'               # http://mumps.enseeiht.fr/
-local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
 local_sk_umfpack_version =  '0.3.2'               # https://pypi.org/project/scikit-umfpack/
 
 name =          'kwant'

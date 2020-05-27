@@ -2,7 +2,7 @@ easyblock = 'PythonPackage'
 
 local_buildset =         '2020a'
 
-local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
 local_SWIG_version =        '4.0.1'               # http://www.swig.org/download.html
 local_sk_umfpack_version =  '0.3.2'               # https://pypi.org/project/scikit-umfpack/
 

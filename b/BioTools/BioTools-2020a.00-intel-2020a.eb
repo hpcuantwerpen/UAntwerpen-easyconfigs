@@ -13,7 +13,7 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of bioinformatics tools, installed together as a bundle",
-    "Contains: BEDTools, HTSlib/BCFtools/SAMtools, fastp, MCL, MUSCLE, VSEARCH"
+    "Contains: BEDTools, HTSlib/BCFtools/SAMtools, fastp, MCL, MEGAHIT, MUSCLE, VSEARCH"
 ]
 
 local_BCFtools_version = '1.10.2' # https://github.com/samtools/bcftools/releases
