@@ -4,7 +4,7 @@ local_buildset = '2020a'
 
 local_DFTBplus_version = '19.1'                  # https://github.com/dftbplus/dftbplus/releases
 local_arpackng_version = '3.6.3'                 # 
-local_Python3_version =  '3.8.2'                 # https://www.python.org/downloads/
+local_Python3_version =  '3.8.3'                 # https://www.python.org/downloads/
 
 name =          'DFTB+'
 version =       local_DFTBplus_version

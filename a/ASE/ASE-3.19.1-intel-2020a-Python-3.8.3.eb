@@ -3,7 +3,7 @@ easyblock = 'PythonBundle'
 local_buildset = '2020a'
 
 local_ASE_version =         '3.19.1'              # https://pypi.org/project/ase/
-local_Python3_version =     '3.8.2'               # https://www.python.org/downloads/
+local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
 
 name =          'ASE'
 version =       local_ASE_version
