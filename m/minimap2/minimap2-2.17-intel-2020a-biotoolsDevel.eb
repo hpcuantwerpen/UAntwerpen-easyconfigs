@@ -1,0 +1,70 @@
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+# Adam Huffman
+# Big Data Institute, University of Oxford
+
+easyblock = 'MakeCp'
+
+local_buildset =         '2020a'
+
+local_minimap2_version = '2.17'   # https://github.com/lh3/minimap2/releases
+
+name =    'minimap2'
+version = local_minimap2_version
+
+homepage = 'https://github.com/lh3/minimap2'
+
+whatis = [
+    "Description: Minimap2 is a fast sequence mapping and alignment program that can find overlaps between long noisy reads, or map long reads or their assemblies to a reference genome optionally with detailed alignment (i.e. CIGAR)."    
+]
+
+description = """
+Minimap2 is a fast sequence mapping and alignment
+program that can find overlaps between long noisy reads, or map long
+reads or their assemblies to a reference genome optionally with detailed
+alignment (i.e. CIGAR). At present, it works efficiently with query
+sequences from a few kilobases to ~100 megabases in length at an error
+rate ~15%. Minimap2 outputs in the PAF or the SAM format. On limited
+test data sets, minimap2 is over 20 times faster than most other
+long-read aligners. It will replace BWA-MEM for long reads and contig
+alignment.
+
+The module also includes the optional minimap2-lite and sdust commands.
+
+Specific processor support in Minimap2 is ancient. It only supports
+vectorization at the level of early 00's CPUs but no recent CPUs, and the
+code doesn't have much parallelism either, so consider switching to a more
+modern code.
+"""
+
+docurls = [
+    'man page for the minimap2 command,'    
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['https://github.com/lh3/%(name)s/releases/download/v%(version)s/']
+sources =     ['%(name)s-%(version)s.tar.bz2']
+checksums =   ['b68ac8882d33cc63e9e3246775062aeb159b6990ff7f38099172c3fe6f8a2742']
+
+# Edit the Makefile. Some options may actually force optimization for older processors
+# then we have and code generation for those intrinsics is included in our compiler
+# options anyway.
+prebuildopts  = 'sed -e "s/-msse2 //" -e "s/-msse4.1 //" -e "s/-mno-sse4.1 //" -i Makefile ; ' 
+# extra: Also build some extra programs
+# We need to overwrite the CFLAGS encoded in the Makefile.
+buildopts = 'extra CFLAGS="$CFLAGS" '
+
+files_to_copy = [
+    (['minimap2', 'minimap2-lite', 'sdust'], 'bin'),
+    (['lib%(name)s.a'], 'lib'),
+    (['*.h'], 'include'),
+    'LICENSE.txt', 'NEWS.md', 'README.md',
+    (['%(name)s.1'], 'share/man/man1')
+]
+
+sanity_check_paths = {
+    'files': ['bin/%(name)s', 'bin/minimap2-lite', 'bin/sdust', 'lib/lib%(name)s.a'],
+    'dirs':  ['include']
+}
+
+moduleclass = 'bio'
