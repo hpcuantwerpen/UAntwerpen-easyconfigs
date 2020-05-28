@@ -12,8 +12,8 @@ homepage = '(none)'
 # Contrary to what the LMOD documentation makes you believe, it seems that help is
 # not searched when using module keyword.
 whatis = [
-    "Description: A number of bioinformatics tools, installed together as a bundle",
-    "Contains: BEDTools, HTSlib/BCFtools/SAMtools, fastp, MCL, MEGAHIT, MUSCLE, VSEARCH"
+    'Description: A number of bioinformatics tools, installed together as a bundle',
+    'Contains: BEDTools, HTSlib/BCFtools/SAMtools, fastp, MCL, minimap2, MUSCLE, VSEARCH'
 ]
 
 local_BCFtools_version = '1.10.2' # https://github.com/samtools/bcftools/releases
@@ -21,7 +21,7 @@ local_BEDTools_version = '2.29.2' # https://github.com/arq5x/bedtools2/releases
 local_fastp_version =    '0.20.1' # https://github.com/OpenGene/fastp/releases
 local_HTSlib_version =   '1.10.2' # https://github.com/samtools/htslib/releases
 local_MCL_version =      '14.137' # https://micans.org/mcl/
-local_MEGAHIT_version =  '1.2.9' # https://github.com/voutcn/megahit/releases
+local_minimap2_version = '2.17'   # https://github.com/lh3/minimap2/releases
 local_MUSCLE_version =   '3.8.31' # http://drive5.com/muscle/downloads.htm
 local_SAMtools_version = '1.10'   # https://github.com/samtools/samtools/releases
 local_VSEARCH_version =  '2.14.2' # https://github.com/torognes/vsearch/releases
@@ -80,6 +80,20 @@ Overview of the included tools and libraries:
   software, see https://micans.org/mcl/index.html?sec_license.
   The package consists of executables only, no libraries. Documentation is
   provided through man pages and the package homepage.
+* minimap2 (version %(minimap2)s): a fast sequence mapping and alignment
+  program that can find overlaps between long noisy reads, or map long
+  reads or their assemblies to a reference genome optionally with detailed
+  alignment (i.e. CIGAR). At present, it works efficiently with query
+  sequences from a few kilobases to ~100 megabases in length at an error
+  rate ~15%%. Minimap2 outputs in the PAF or the SAM format. On limited
+  test data sets, minimap2 is over 20 times faster than most other
+  long-read aligners. It will replace BWA-MEM for long reads and contig
+  alignment.
+  The module also includes the optional minimap2-lite and sdust commands.
+  Specific processor support in Minimap2 is ancient. It only supports
+  vectorization at the level of early 00's CPUs but no recent CPUs, and the
+  code doesn't have much parallelism either, so consider switching to a more
+  modern code.
 * MUSCLE (version %(MUSCLE)s): MUSCLE is one of the best-performing multiple 
   alignment programs according to published benchmark tests, with accuracy and 
   speed that are consistently better than CLUSTALW. MUSCLE can align hundreds 
@@ -110,6 +124,7 @@ Overview of the included tools and libraries:
     'BCFtools': local_BCFtools_version,
     'SAMtools': local_SAMtools_version,
     'MCL':      local_MCL_version,
+    'minimap2': local_minimap2_version,
     'MUSCLE':   local_MUSCLE_version,
     'VSEARCH':  local_VSEARCH_version,
 }
@@ -122,6 +137,8 @@ docurls = [
     'BCFtools: Man page bcftools in section 1',
     'SAMtools: Man page for the samtools and wgsim commands (section 1)',
     'MCL:      Man pages (sections 1, 5 and 7) - try \man mcl\ as a starting point',
+    'minimap2: Web-based documentation on https://github.com/lh3/minimap2/blob/master/README.md',
+    'minimap2: Man page for the minimap2 command', 
     'MUSCLE:   Web-based documentation on http://drive5.com/muscle/manual/',
     'VSEARCH:  Man page vsearch in section 1',
     'VSEARCH:  Manual downloadable from https://github.com/torognes/vsearch/releases/download/v%(version)s/vsearch_manual.pdf',
@@ -183,6 +200,22 @@ components = [
         'installopts':  ' && cp %(builddir)s/mcl-%(version_major)s-%(version_minor)s/src/alien/oxygen/src/mclblastline %(installdir)s/bin ' + 
                         ' && cp %(builddir)s/mcl-%(version_major)s-%(version_minor)s/src/alien/oxygen/src/mcxdeblast   %(installdir)s/bin',
     }),
+    ('minimap2', local_minimap2_version, {
+        'easyblock':     'MakeCp',
+        'sources':       [ { # https://github.com/lh3/minimap2/releases/download/v2.17/minimap2-2.17.tar.bz2
+                            'filename':    '%(name)s-%(version)s.tar.bz2',
+                            'source_urls': ['https://github.com/lh3/%(name)s/releases/download/v%(version)s/']
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'prebuildopts':  'sed -e "s/-msse2 //" -e "s/-msse4.1 //" -e "s/-mno-sse4.1 //" -i Makefile ; ' ,
+        'buildopts':     'extra CFLAGS="$CFLAGS" ',
+        'files_to_copy': [
+                            (['minimap2', 'minimap2-lite', 'sdust'], 'bin'),
+                            (['lib%(name)s.a'], 'lib'),
+                            (['*.h'], 'include'),
+                            (['%(name)s.1'], 'share/man/man1')
+                         ],
+    }),
     ('VSEARCH', local_VSEARCH_version, {
         'sources':       [ {
                             'download_filename': 'v%(version)s.tar.gz',
@@ -218,6 +251,10 @@ components = [
         'start_dir':    '%(namelower)s-%(version)s',
         'configopts':   '--with-ncurses --with-htslib=%(installdir)s',
     }),
+]
+
+postinstallcmds = [
+    'cp %(builddir)s/minimap2-' + local_minimap2_version + '/LICENSE.txt %(installdir)s/LICENSE-minimap2.txt',
 ]
 
 sanity_check_paths = {

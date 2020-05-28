@@ -20,6 +20,9 @@ It was developed to reduce module clutter on our systems.
       compiler and optimizations right.
 * [MCL](http://micans.org/mcl/)
     * ConfigureMake, but there are two files that are not copied by the make install.
+* [Minimap2](https://github.com/lh3/minimap2)
+    * MakeCp, and needs some tricks
+    * Ancient: no multicore parallelism, SIMD support only up to SSE 4.1.
 * [MUSCLE](http://drive5.com/muscle/)
     * MakeCp, but does need a patch as the compiler name is hard-coded in the Makefile
       and not even in a variable that we can overwrite
@@ -37,6 +40,7 @@ It was developed to reduce module clutter on our systems.
 * bedtools 2.29.2
 * fastp 0.20.1
 * MCL 14.137
+* minimap 2.17
 * MUSCLE 3.8.31
 * VSEARCH 2.14.2
 
