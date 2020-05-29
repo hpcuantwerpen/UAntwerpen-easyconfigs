@@ -1,0 +1,117 @@
+easyblock = 'Bundle'
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+
+local_libtool_version =          '2.4.6'         # libtool    20150215 - https://ftp.gnu.org/gnu/libtool/
+
+local_NEST_version =           '2.20.0'          # https://github.com/nest/nest-simulator/releases
+local_Python3_version =        '3.7.4'           # https://www.python.org/downloads/
+
+name =          'NEST'
+version =       local_NEST_version
+versionsuffix = '-Python-%(pyver)s-OpenMP'
+
+homepage = 'https://www.nest-simulator.org/'
+
+whatis = [
+    "Name:        NEST, also known as nest-simulator",
+    "Version:     %s" % (version),
+    "Category:    binary, library and Python package",
+    "Description: NEST is a simulator for spiking neural network models",
+    "Notes:       This module is compiled with support for OpenMP and without MPI support. GSL is included.",
+    "URL:         https://www.nest-simulator.org/",
+]
+
+description = """
+NEST is a simulator for spiking neural network models, ideal for networks of 
+any size, for example:
+1. Models of information processing e.g. in the visual or auditory cortex of 
+   mammals,
+2. Models of network activity dynamics, e.g. laminar cortical networks or 
+   balanced random networks,
+3. Models of learning and plasticity.
+
+The module is compiled with support for OpenMP and the GNU Scientific
+Library (GSL), but without support for MPI.
+"""
+
+usage = """
+Check the NEST documentation, chapter "Guide to parallel computing", to
+know how to set the right number of threads to use for a simulation
+as multithreading has to be turned on explicitly and should be turned
+on in most cases to make proper use of the HPC facilities.
+
+The nest_vars.sh script in $EBROOTNEST/bin should not be run if you
+load the module as the variables are already set by the module.
+"""
+
+docurls = [
+    'Web-based documentation on https://nest-simulator.readthedocs.io/en/stable/',
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True, 'strict': True, 'openmp': False, 'usempi': False} # See README.md
+
+dependencies = [
+    ('baselibs', local_buildset,        '', ('GCCcore', local_gcc_version)), # libreadline, ncurses, GSL, zlib, buildtools
+    ('Python',   local_Python3_version),
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),  # CMake, pkg-config, doxygen?
+]
+
+NEST_preconfigopts  = 'CMAKE_LIBRARY_PATH="%(installdir)s/lib:$CMAKE_LIBRARY_PATH" '
+
+NEST_configopts  = '-DCMAKE_INSTALL_LIBDIR=lib -Dwith-mpi=OFF -Dwith-openmp=ON '
+NEST_configopts += '-Dwith-optimize=OFF -Dwith-intel-compiler-flags=" " ' # As flags are passed by EasyBuild already and picked up.
+NEST_configopts += '-Dwith-python=3 '
+NEST_configopts += '-Dwith-readline=$EBROOTBASELIBS '
+NEST_configopts += '-Dwith-gsl=$EBROOTBASELIBS '
+NEST_configopts += '-Dwith-ltdl=%(installdir)s '
+NEST_configopts += '-DCMAKE_C_FLAGS_RELEASE="-DNDEBUG" '
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ('libtool', local_libtool_version, { # Needs M4 from buildtools.
+        'easyblock':   'ConfigureMake',
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'configopts':  '--disable-static --enable-shared',
+        }),
+    ('NEST', local_NEST_version, { # Needs M4 from buildtools.
+        'easyblock':     'CMakeMake',
+        'sources':       [ { 
+                             'download_filename': 'v%(version)s.zip',
+                             'filename':          'nest-simulator-%(version)s.zip',
+                             'source_urls':       ['https://github.com/nest/nest-simulator/archive']
+                         } ],
+        'checksums':     ['e458f9f30883369964b60931cb767f145fb5c5504652e6cdaabedf14b188aa03'],
+        'start_dir':     'nest-simulator-%(version)s',
+        'preconfigopts': NEST_preconfigopts,
+        'configopts':    NEST_configopts,
+        }),
+]
+
+modextravars = {
+    'NEST_INSTALL_DIR':   '%(installdir)s',
+    'NEST_DATA_DIR':      '%(installdir)s/share/nest',
+    'NEST_DOC_DIR':       '%(installdir)s/share/doc/nest',
+    'NEST_MODULE_PATH':   '%(installdir)s/lib/nest',
+    'NEST_PYTHON_PREFIX': '%(installdir)s/lib/python%(pyshortver)s/site-packages',
+}
+
+modextrapaths = {
+    'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+sanity_check_paths = {
+    'files': ['bin/nest', 'lib/libnest.%s' % SHLIB_EXT, 'lib/libmodels.%s' % SHLIB_EXT],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'bio'

@@ -1,0 +1,96 @@
+easyblock = 'CMakeMake'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_NEST_version =           '2.20.0'          # https://github.com/nest/nest-simulator/releases
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+
+name =          'NEST'
+version =       local_NEST_version
+versionsuffix = '-Python-%(pyver)s-Hybrid'
+
+homepage = 'https://www.nest-simulator.org/'
+
+whatis = [
+    "Name:        NEST, also known as nest-simulator",
+    "Version:     %s" % (version),
+    "Category:    binary, library and Python package",
+    "Description: NEST is a simulator for spiking neural network models",
+    "Notes:       This module is compiled with support for MPI and OpenMP. GSL is included.",
+    "URL:         https://www.nest-simulator.org/",
+]
+
+description = """
+NEST is a simulator for spiking neural network models, ideal for networks of 
+any size, for example:
+1. Models of information processing e.g. in the visual or auditory cortex of 
+   mammals,
+2. Models of network activity dynamics, e.g. laminar cortical networks or 
+   balanced random networks,
+3. Models of learning and plasticity.
+
+The module is compiled with support for OpenMP and MPI (a so-called hybrid 
+MPI/OpenMP program) and support for the GNU Scientific Library (GSL).
+"""
+
+usage = """
+Check the NEST documentation, chapter "Guide to parallel computing", to
+know how to set the right number of threads per task and to start 
+NEST with MPI. The default for threading is a single thread per
+MPI rank.
+
+The nest_vars.sh script in $EBROOTNEST/bin should not be run if you
+load the module as the variables are already set by the module.
+"""
+
+docurls = [
+    'Web-based documentation on https://nest-simulator.readthedocs.io/en/stable/',
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True, 'strict': True, 'openmp': False, 'usempi': False} # See README.md
+
+# https://github.com/nest/nest-simulator/archive/v2.20.0.zip
+sources = [ { 
+    'download_filename': 'v%(version)s.zip',
+    'filename':          'nest-simulator-%(version)s.zip',
+    'source_urls':       ['https://github.com/nest/nest-simulator/archive']
+} ]
+checksums =   ['e458f9f30883369964b60931cb767f145fb5c5504652e6cdaabedf14b188aa03']
+
+dependencies = [
+    ('baselibs', local_buildset,        '', ('GCCcore', local_gcc_version)), # libreadline, ncurses, GSL, zlib, buildtools
+    ('Python',   local_Python3_version),
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),  # CMake, pkg-config, doxygen?
+]
+
+configopts  = '-DCMAKE_INSTALL_LIBDIR=lib -Dwith-mpi=ON -Dwith-openmp=ON '
+configopts += '-Dwith-optimize=OFF -Dwith-intel-compiler-flags=" " ' # As flags are passed by EasyBuild already and picked up.
+configopts += '-Dwith-python=3 '
+configopts += '-Dwith-readline=$EBROOTBASELIBS '
+configopts += '-Dwith-gsl=$EBROOTBASELIBS '
+configopts += '-Dwith-ltdl=$EBROOTBASELIBS '
+configopts += '-DCMAKE_C_FLAGS_RELEASE="-DNDEBUG" '
+
+modextravars = {
+    'NEST_INSTALL_DIR':   '%(installdir)s',
+    'NEST_DATA_DIR':      '%(installdir)s/share/nest',
+    'NEST_DOC_DIR':       '%(installdir)s/share/doc/nest',
+    'NEST_MODULE_PATH':   '%(installdir)s/lib/nest',
+    'NEST_PYTHON_PREFIX': '%(installdir)s/lib/python%(pyshortver)s/site-packages',
+}
+
+modextrapaths = {
+    'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+sanity_check_paths = {
+    'files': ['bin/nest', 'lib/libnest.%s' % SHLIB_EXT, 'lib/libmodels.%s' % SHLIB_EXT],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'bio'
