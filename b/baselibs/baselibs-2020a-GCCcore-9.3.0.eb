@@ -10,17 +10,20 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, brotli, "+ 
+    "Contains: ncurses/ncursesw, readline, brotli, " + 
     "bzip2, Szip, XZ utils, zlib, gzip, lzip, lz4, zstd, libb2, LZO(2), snappy, libdeflate, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
     "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, libidn, libidn2, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
-    "double-conversion, file, gc, libevent, libffi, libyaml, LMDB, PCRE, PCRE2, UDUNITS, D-Bus, util-linux, wget.",
+    "double-conversion, file, gc, libevent, libffi, libyaml, libtool, " + 
+    "LMDB, PCRE, PCRE2, UDUNITS, D-Bus, util-linux, wget.",
 ]
 
 local_binutils_version = '2.34'     # A build dependency, as GCCcore with the system binutils might fail.
 local_gcc_version      = '9.3.0'
+
+local_libtool_version =          '2.4.6'         # libtool    20150215 - https://ftp.gnu.org/gnu/libtool/
 
 local_ncurses_version =      '6.2'           # https://ftp.gnu.org/pub/gnu/ncurses/
 local_libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
@@ -425,6 +428,8 @@ Overview of included libraries:
     utility.
   + util-linux (version %(utillinux)s): A random collection of Linux utilities
     from the Linux kernel developers.
+  + libtool (version %(libtool)s): Normally more a build tool, but included for those
+    programs that actually link to it.
 """ % { 
     'ncurses': local_ncurses_version,
     'libreadline': local_libreadline_version,
@@ -484,6 +489,7 @@ Overview of included libraries:
     'PCRE2': local_PCRE2_version,
     'UDUNITS': local_UDUNITS_version,
     'utillinux': local_util_version,
+    'libtool': local_libtool_version,
 }
 
 docurls = [
@@ -584,6 +590,15 @@ else:
 default_easyblock = 'ConfigureMake'
 
 components = [
+#
+# Duplicate from buildtools, needed for the libraries.
+#
+    ('libtool', local_libtool_version, { # Needs M4 from buildtools.
+        'sources':     [SOURCELOWER_TAR_XZ],
+        'source_urls': [GNU_SOURCE],
+        'checksums':   ['7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f'],
+        'start_dir':   '%(namelower)s-%(version)s'
+        }),
 #
 # Terminal libraries
 #

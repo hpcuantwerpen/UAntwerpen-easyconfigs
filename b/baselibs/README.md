@@ -36,5 +36,8 @@
 * Added snappy, needed for Qt5
     * We perform 2 build passes to have both static and shared libraries.
     * Note that it also needs some care to set AVX-specific options.
-
+* Added libtool also to baselibs even though it is in buildtools already. It turns
+  out that there is software that links to the libtools libraries (in particular
+  NEST does so), and we want to keep buildtools build dependency only as we compile
+  it with the system compilers.
 
