@@ -1,0 +1,33 @@
+Patch written by Kurt Lust, UAntwerp.
+Removes OpenMP simd directives in some files in c/bmgs as we have found that
+they may cause segmentation violations when using the Intel 2-020 compilers.
+diff -ru gpaw-19.8.1/c/bmgs/fd.c.orig    gpaw-19.8.1/c/bmgs/fd.c
+diff -ru gpaw-19.8.1/c/bmgs/relax.c.orig gpaw-19.8.1/c/bmgs/relax.c
+--- gpaw-19.8.1/c/bmgs/fd.c.orig	2020-06-02 11:21:10.000000000 +0200
++++ gpaw-19.8.1/c/bmgs/fd.c	2020-06-02 11:25:15.000000000 +0200
+@@ -36,7 +36,6 @@
+ 
+     for (int i1 = 0; i1 < s->n[1]; i1++)
+       {
+-#pragma omp simd
+         for (int i2 = 0; i2 < s->n[2]; i2++)
+           {
+             T x = 0.0;
+--- gpaw-19.8.1/c/bmgs/relax.c.orig	2020-06-02 11:25:29.000000000 +0200
++++ gpaw-19.8.1/c/bmgs/relax.c	2020-06-02 11:26:54.000000000 +0200
+@@ -25,7 +25,6 @@
+     {
+       for (int i1 = 0; i1 < nstep[1]; i1++)
+         {
+-#pragma omp simd
+           for (int i2 = 0; i2 < nstep[2]; i2++)
+             {
+               double x = 0.0;
+@@ -53,7 +52,6 @@
+     {
+       for (int i1 = 0; i1 < s->n[1]; i1++)
+         {
+-#pragma omp simd
+           for (int i2 = 0; i2 < s->n[2]; i2++)
+             {
+               double x = 0.0;

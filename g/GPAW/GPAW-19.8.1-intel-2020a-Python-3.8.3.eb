@@ -1,0 +1,160 @@
+easyblock = 'Bundle'
+
+local_buildset = '2020a'
+
+local_ASE_version =         '3.19.1'              # https://pypi.org/project/ase/
+local_FFTW_version =        '3.3.8'               # http://www.fftw.org/
+local_GPAW_version =        '19.8.1'              # https://pypi.org/project/gpaw/
+local_GPAWsetup_version =   '0.9.20000'           # Check version on https://wiki.fysik.dtu.dk/gpaw/setups/setups.html
+local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
+local_libvdwxc_version =    '0.4.0'               # https://libvdwxc.org/ (Download link, or on Gitlab: tags)
+local_libxc_version =       '4.3.4'               # https://www.tddft.org/programs/libxc/download/
+
+local_custom_script = 'GPAW-19.8.1-intel-' + local_buildset + '-Python-' + local_Python3_version + '-customize.py'
+
+name =               'GPAW'
+version =            local_GPAW_version
+versionsuffix =      '-Python-%(pyver)s'
+
+homepage = 'http://wiki.fysik.dtu.dk/gpaw'
+
+whatis = [
+    "Description: GPAW: DFT and beyond within the projector-augmented wave method.",
+    'This module also includes the compatible ASE version ' + local_ASE_version,
+]
+
+description = """
+GPAW is a density-functional theory (DFT) Python code based on the
+projector-augmented wave (PAW) method and the atomic simulation environment
+(ASE). It uses plane-waves, atom-centered basis-functions or real-space
+uniform grids combined with multigrid methods.
+
+This module also includes a matching version of ASE (version %(ASE_version)s),
+the Atomic Simulation Environment, which is used internally by GPAW.
+
+The module also contains the Atomic PAW setup files (version %(GPAWsetup_version)s)
+in the directory $GPAW_SETUP_FILES.
+
+The GPAW manual advises the OMP_NUM_THREADS should be set to 1 so we do this
+in the module.
+
+The version in this module is compiled using the regular FFTW libraries.
+The optional libvdwxc support is included in this module.
+The optional ELPA support is included in this module.
+""" % {
+    'ASE_version':       local_ASE_version,  
+    'GPAWsetup_version': local_GPAWsetup_version,  
+}
+
+docurls = [
+    'GPAW web-based documentation: https://wiki.fysik.dtu.dk/gpaw/',
+    'ASE web-based documentation:https://wiki.fysik.dtu.dk/ase/',
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': True}
+
+dependencies = [
+    ('Python',   local_Python3_version),
+    ('FFTW',     local_FFTW_version),
+    ('libxc',    local_libxc_version),
+    ('libvdwxc', local_libvdwxc_version, '-MPI'),
+    ('ELPA',     '2019.05.002'),
+#    ('ASE',      local_ASE_version, '-Python-%(pyver)s'),  # Only used during development, the extensions are included further down.
+]
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ( 'GPAW-setups', local_GPAWsetup_version, { 
+        # Check version on https://wiki.fysik.dtu.dk/gpaw/setups/setups.html
+        'easyblock': 'Tarball',
+        'sources':   [{
+                        'filename':    SOURCELOWER_TAR_GZ,
+                        'source_urls': ['https://wiki.fysik.dtu.dk/gpaw-files/'], 
+                        'extract_cmd': 'mkdir -p share/gpaw-setups ; cd share/gpaw-setups ; tar -xf %s --strip-components=1',
+                     }]  
+    }),
+    ( 'dummy', 'dummy', {
+        'sources':   [{
+                       'filename':    local_custom_script,
+                       'extract_cmd': 'cp %s .'  
+                     }],
+        'skipsteps': ['configure', 'build', 'install'],
+    })
+]
+
+# This is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  True,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+exts_list = [
+    # ASE and its dependencies
+    ('Werkzeug', '1.0.1', {
+        'modulename':     'werkzeug',
+    }),
+    ('MarkupSafe', '1.1.1', {
+        'modulename':  'markupsafe',
+    }),
+    ('Jinja2', '2.11.2', { # Contains only .py files so probably safe as zipped egg?
+        'modulename':  'jinja2',
+    }),
+    ('itsdangerous', '1.1.0', { # Installs as a zipped egg by itself.
+    }),
+#    ('Click', '7.0', { # Included in the Python 3.7.4 extension list.
+#        'modulename':  'click',
+#        'source_urls': ['https://pypi.python.org/packages/source/c/click'],
+#    }),
+    ('Flask', '1.1.2', {
+        'modulename':  'flask',
+    }),
+    ('ase', local_ASE_version, {
+    }),
+    # GPAW and its dependencies
+    ('gpaw', version, {
+        'patches':        ['GPAW-19.8.1_remove_OMPsimd.patch'],
+        'use_pip':        False,
+        'buildcmd':       'build   --customize=../../' + local_custom_script + ' --remove-default-flags',
+        'buildopts':      ' && echo -e "\\nGPAW configuration log:\\n" && cat configuration.log && cp configuration.log ../../GPAW_configuration.log',
+        'install_target': 'install --customize=../../' + local_custom_script + ' --remove-default-flags',
+#        'use_pip':        False,
+#        'prebuildopts':   'GPAW_CONFIG=../../GPAW_eb_customize.py ',
+#        'buildcmd':       'build --remove-default-flags',
+#        'buildopts':      ' && echo -e "\\nGPAW configuration log:\\n" && cat configuration.log && cp configuration.log ../../GPAW_configuration.log',
+#        'preinstallopts': 'GPAW_CONFIG=../../GPAW_eb_customize.py ',
+#        'install_target': 'install --remove-default-flags',
+    }),
+]
+
+postinstallcmds = [ # It turns out this runs in the build dir of the last extension.
+    'mkdir -p %(installdir)s/easybuild', # The directory is not yet created by EasyBuild when this executes.
+    'cp ../../' + local_custom_script + ' %(installdir)s/easybuild',
+    'cp ../../GPAW_configuration.log %(installdir)s/easybuild',
+]
+
+sanity_check_paths = {
+    'files': ['bin/gpaw%s' % x for x in ['', '-analyse-basis', '-basis', '-mpisim', '-plot-parallel-timings',
+                                         '-python', '-runscript', '-setup', '-upfplot']],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages/%(namelower)s']
+}
+
+# make sure Tkinter is available, otherwise 'ase gui' will not work
+sanity_check_commands = ["python -c 'import tkinter' "]
+
+# As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
+modextrapaths = {
+    'PYTHONPATH':      ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextravars = {
+    'GPAW_SETUP_PATH': '%(installdir)s/share/gpaw-setups', # We don't use modextrapaths as the path should be  
+                                                           # comma-separated rather than colon-separated anyway.
+    'OMP_NUM_THREADS': '1',
+}
+
+moduleclass = 'chem'
