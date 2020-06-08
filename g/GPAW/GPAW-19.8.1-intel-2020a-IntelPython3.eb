@@ -13,8 +13,6 @@ local_libxc_version =       '4.3.4'               # https://www.tddft.org/progra
 
 local_IntelPython3_major_minor = '3.7'
 
-local_custom_script = 'GPAW-19.8.1-intel-2020a-IntelPython3-customize.py'
-
 name =          'GPAW'
 version =       local_GPAW_version
 versionsuffix = '-IntelPython3'
@@ -68,25 +66,108 @@ dependencies = [
     ('ELPA',                  '2019.05.002'),
 ]
 
-default_easyblock = 'ConfigureMake'
+local_gpaw_customize = """
+print( 'GPAW EasyBuild INFO: Starting execution of the customization script' )
+print( 'GPAW EasyBuild INFO: Variables at the start of the customization script' )
+print( 'GPAW EasyBuild INFO: libraries =               ', libraries )
+print( 'GPAW EasyBuild INFO: mpi_libaries =            ', mpi_libraries )
+print( 'GPAW EasyBuild INFO: library_dirs =            ', library_dirs )
+print( 'GPAW EasyBuild INFO: mpi_libary_dirs =         ', mpi_library_dirs )
+print( 'GPAW EasyBuild INFO: runtime_library_dirs =    ', runtime_library_dirs )
+print( 'GPAW EasyBuild INFO: mpi_runtime_libary_dirs = ', mpi_runtime_library_dirs )
+print( 'GPAW EasyBuild INFO: include_dirs =            ', include_dirs )
+print( 'GPAW EasyBuild INFO: mpi_include_dirs =        ', mpi_include_dirs )
+print( 'GPAW EasyBuild INFO: compiler =                ', compiler )
+print( 'GPAW EasyBuild INFO: mpicompiler =             ', mpicompiler )
+print( 'GPAW EasyBuild INFO: mpilinker =               ', mpilinker )
+print( 'GPAW EasyBuild INFO: extra_compile_args =      ', extra_compile_args )
+print( 'GPAW EasyBuild INFO: extra_link_args =         ', extra_link_args )
+print( 'GPAW EasyBuild INFO: define_macros =           ', define_macros )
+print( 'GPAW EasyBuild INFO: mpi_define_macros =       ', mpi_define_macros )
+print( 'GPAW EasyBuild INFO: undef_macros =            ', undef_macros )
+print( 'GPAW EasyBuild INFO: fftw =                    ', fftw )
+print( 'GPAW EasyBuild INFO: scalapack =               ', scalapack )
+print( 'GPAW EasyBuild INFO: libvdwxc =                ', libvdwxc )
+print( 'GPAW EasyBuild INFO: elpa =                    ', elpa )
+
+libraries = []
+mpi_libraries = []
+
+# LibXC via EasyBuild
+include_dirs.append(os.path.join(os.getenv('EBROOTLIBXC'), 'include'))
+libraries.append('xc')
+
+# libvdwxc
+libvdwxc = True
+include_dirs.append(os.path.join(os.getenv('EBROOTLIBVDWXC'), 'include'))
+libraries.append('vdwxc')
+
+# ELPA
+elpa = True
+include_dirs.append(os.path.join(os.getenv('EBROOTELPA'), 'include/elpa'))
+libraries.append('elpa')
+
+# Use regular FFTW libraries
+fftw = True
+libraries += ['fftw3']
+
+# ScaLAPACK
+scalapack = True
+mpi_libraries += ['mkl_scalapack_lp64', 'mkl_blacs_intelmpi_lp64']
+mpi_define_macros += [('GPAW_NO_UNDERSCORE_CBLACS', '1')]
+mpi_define_macros += [('GPAW_NO_UNDERSCORE_CSCALAPACK', '1')]
+
+# Add EasyBuild LAPACK/BLAS libs
+libraries += ['mkl_intel_lp64', 'mkl_sequential', 'mkl_core']
+
+# Add other EasyBuild library directories.
+library_dirs = os.getenv('LIBRARY_PATH').split(':')
+
+# Set the compilers
+compiler =    'icc'
+mpicompiler = 'mpiicc'
+mpilinker =   'mpiicc'
+
+# We need extra_compile_args to have the right compiler options when re-compiling
+# files for gpaw-python. It does imply double compiler options for the other
+# compiles though.
+extra_compile_args = os.getenv('CFLAGS').split(' ')
+
+print( 'GPAW EasyBuild INFO: Variables at the end of the customization script' )
+print( 'GPAW EasyBuild INFO: libraries =               ', libraries )
+print( 'GPAW EasyBuild INFO: mpi_libaries =            ', mpi_libraries )
+print( 'GPAW EasyBuild INFO: library_dirs =            ', library_dirs )
+print( 'GPAW EasyBuild INFO: mpi_libary_dirs =         ', mpi_library_dirs )
+print( 'GPAW EasyBuild INFO: runtime_library_dirs =    ', runtime_library_dirs )
+print( 'GPAW EasyBuild INFO: mpi_runtime_libary_dirs = ', mpi_runtime_library_dirs )
+print( 'GPAW EasyBuild INFO: include_dirs =            ', include_dirs )
+print( 'GPAW EasyBuild INFO: mpi_include_dirs =        ', mpi_include_dirs )
+print( 'GPAW EasyBuild INFO: compiler =                ', compiler )
+print( 'GPAW EasyBuild INFO: mpicompiler =             ', mpicompiler )
+print( 'GPAW EasyBuild INFO: mpilinker =               ', mpilinker )
+print( 'GPAW EasyBuild INFO: extra_compile_args =      ', extra_compile_args )
+print( 'GPAW EasyBuild INFO: extra_link_args =         ', extra_link_args )
+print( 'GPAW EasyBuild INFO: define_macros =           ', define_macros )
+print( 'GPAW EasyBuild INFO: mpi_define_macros =       ', mpi_define_macros )
+print( 'GPAW EasyBuild INFO: undef_macros =            ', undef_macros )
+print( 'GPAW EasyBuild INFO: fftw =                    ', fftw )
+print( 'GPAW EasyBuild INFO: scalapack =               ', scalapack )
+print( 'GPAW EasyBuild INFO: libvdwxc =                ', libvdwxc )
+print( 'GPAW EasyBuild INFO: elpa =                    ', elpa )
+print( 'GPAW EasyBuild INFO: Ending execution of the customization script' )
+"""
+
+default_easyblock = 'Tarball'
 
 components = [
     ( 'GPAW-setups', local_GPAWsetup_version, { 
         # Check version on https://wiki.fysik.dtu.dk/gpaw/setups/setups.html
-        'easyblock': 'Tarball',
         'sources':   [{
                         'filename':    SOURCELOWER_TAR_GZ,
                         'source_urls': ['https://wiki.fysik.dtu.dk/gpaw-files/'], 
                         'extract_cmd': 'mkdir -p share/gpaw-setups ; cd share/gpaw-setups ; tar -xf %s --strip-components=1',
                      }]  
     }),
-    ( 'dummy', 'dummy', {
-        'sources':   [{
-                       'filename':    local_custom_script,
-                       'extract_cmd': 'cp %s .'  
-                     }],
-        'skipsteps': ['configure', 'build', 'install'],
-    })
 ]
 
 # This is a bundle of Python packages
@@ -122,19 +203,13 @@ exts_list = [
     }),
     # GPAW and its dependencies
     ('gpaw', version, { # Includes binaries!
-        'patches':        ['GPAW-19.8.1_remove_OMPsimd.patch'],
         'use_pip':        False,
         'check_ldshared': True, # Needed for a GCC-based Python with Intel-based extensions.
-        'buildcmd':       'build   --customize=../../' + local_custom_script + ' --remove-default-flags',
-        'buildopts':      ' && echo -e "\\nGPAW configuration log:\\n" && cat configuration.log && cp configuration.log ../../GPAW_configuration.log',
-        'install_target': 'install --customize=../../' + local_custom_script + ' --remove-default-flags',
+        'prebuildopts':   'cat >customize.py <<EOF\n' + local_gpaw_customize + 'EOF\n' + 
+                          'unset CC && unset LDSHARED && CFLAGS="$CFLAGS -qno-openmp-simd" ', 
+        'buildopts':      ' && echo -e "\\nGPAW EasyBuild INFO: configuration log:\\n" && cat configuration.log && echo -e "\\nEnd of GPAW configuration log\\n"',
+        'preinstallopts': 'unset CC && unset LDSHARED && CFLAGS="$CFLAGS -qno-openmp-simd" ',
     }),
-]
-
-postinstallcmds = [ # It turns out this runs in the build dir of the last extension.
-    'mkdir -p %(installdir)s/easybuild', # The directory is not yet created by EasyBuild when this executes.
-    'cp ../../' + local_custom_script + ' %(installdir)s/easybuild',
-    'cp ../../GPAW_configuration.log %(installdir)s/easybuild',
 ]
 
 sanity_check_paths = {

@@ -1,18 +1,18 @@
 easyblock = 'Bundle'
 
-local_buildset = '2020a'
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
 
-local_ASE_version =         '3.19.1'              # https://pypi.org/project/ase/
-local_FFTW_version =        '3.3.8'               # http://www.fftw.org/
-local_GPAW_version =        '19.8.1'              # https://pypi.org/project/gpaw/
-local_GPAWsetup_version =   '0.9.20000'           # Check version on https://wiki.fysik.dtu.dk/gpaw/setups/setups.html
-local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
-local_libvdwxc_version =    '0.4.0'               # https://libvdwxc.org/ (Download link, or on Gitlab: tags)
-local_libxc_version =       '4.3.4'               # https://www.tddft.org/programs/libxc/download/
+local_ASE_version =       '3.19.1'
+local_GPAW_version =      '20.1.0'
+local_GPAWsetup_version = '0.9.20000' # Check version on https://wiki.fysik.dtu.dk/gpaw/setups/setups.html
+local_libxc_version =     '4.3.4'               # https://www.tddft.org/programs/libxc/download/
 
-name =               'GPAW'
-version =            local_GPAW_version
-versionsuffix =      '-Python-%(pyver)s'
+local_IntelPython3_major_minor = '3.6'
+
+name =          'GPAW'
+version =       local_GPAW_version
+versionsuffix = '-IntelPython3-MKLFFTW'
 
 homepage = 'http://wiki.fysik.dtu.dk/gpaw'
 
@@ -36,8 +36,11 @@ in the directory $GPAW_SETUP_FILES.
 The GPAW manual advises the OMP_NUM_THREADS should be set to 1 so we do this
 in the module.
 
-The version in this module is compiled using the regular FFTW libraries.
-The optional libvdwxc support is included in this module.
+This version uses the Intel Python distribution which uses a different version
+of NumPy with better alignment of data structures and therefore better 
+NumPy performance in some applications.
+The version in this module is compiled using the Intel MKL libraries for FFT.
+The optional libvdwxc support is NOT included in this module.
 The optional ELPA support is included in this module.
 """ % {
     'ASE_version':       local_ASE_version,  
@@ -53,12 +56,9 @@ toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
 dependencies = [
-    ('Python',   local_Python3_version),
-    ('FFTW',     local_FFTW_version),
-    ('libxc',    local_libxc_version),
-    ('libvdwxc', local_libvdwxc_version, '-MPI'),
-    ('ELPA',     '2019.05.002'),
-#    ('ASE',      local_ASE_version, '-Python-%(pyver)s'),  # Only used during development, the extensions are included further down.
+    ('IntelPython3-Packages', local_buildset,       '', ('GCCcore', local_gcc_version)),
+    ('libxc',                 local_libxc_version                                     ),
+    ('ELPA',                  '2019.05.002'                                           ),
 ]
 
 local_gpaw_customize = """
@@ -84,49 +84,39 @@ print( 'GPAW EasyBuild INFO: fftw =                    ', fftw )
 print( 'GPAW EasyBuild INFO: scalapack =               ', scalapack )
 print( 'GPAW EasyBuild INFO: libvdwxc =                ', libvdwxc )
 print( 'GPAW EasyBuild INFO: elpa =                    ', elpa )
-
-libraries = []
-mpi_libraries = []
+print( 'GPAW EasyBuild INFO: noblas =                      ', noblas )
+print( 'GPAW EasyBuild INFO: parallel_python_interpreter = ', parallel_python_interpreter )
 
 # LibXC via EasyBuild
 include_dirs.append(os.path.join(os.getenv('EBROOTLIBXC'), 'include'))
-libraries.append('xc')
+#libraries.append('xc')
 
 # libvdwxc
-libvdwxc = True
-include_dirs.append(os.path.join(os.getenv('EBROOTLIBVDWXC'), 'include'))
-libraries.append('vdwxc')
+libvdwxc = False
 
 # ELPA
 elpa = True
 include_dirs.append(os.path.join(os.getenv('EBROOTELPA'), 'include/elpa'))
 libraries.append('elpa')
 
-# Use regular FFTW libraries
+# Use Intel MKL FFTW
 fftw = True
-libraries += ['fftw3']
+libraries += ['fftw3xc_intel_pic'] # MKL BLAS libs are added further down and these contain the other MKL libraries also needed for the FFT.
 
 # ScaLAPACK
 scalapack = True
-mpi_libraries += ['mkl_scalapack_lp64', 'mkl_blacs_intelmpi_lp64']
-mpi_define_macros += [('GPAW_NO_UNDERSCORE_CBLACS', '1')]
-mpi_define_macros += [('GPAW_NO_UNDERSCORE_CSCALAPACK', '1')]
+libraries += ['mkl_scalapack_lp64', 'mkl_blacs_intelmpi_lp64']
 
-# Add EasyBuild LAPACK/BLAS libs
-libraries += ['mkl_intel_lp64', 'mkl_sequential', 'mkl_core']
+# MKL BLAS
+libraries += ['mkl_sequential','mkl_core', 'mkl_rt', ]
 
-# Add other EasyBuild library directories.
+# Add other EasyBuild library directoryes.
 library_dirs = os.getenv('LIBRARY_PATH').split(':')
 
 # Set the compilers
 compiler =    'icc'
 mpicompiler = 'mpiicc'
 mpilinker =   'mpiicc'
-
-# We need extra_compile_args to have the right compiler options when re-compiling
-# files for gpaw-python. It does imply double compiler options for the other
-# compiles though.
-extra_compile_args = os.getenv('CFLAGS').split(' ')
 
 print( 'GPAW EasyBuild INFO: Variables at the end of the customization script' )
 print( 'GPAW EasyBuild INFO: libraries =               ', libraries )
@@ -149,6 +139,8 @@ print( 'GPAW EasyBuild INFO: fftw =                    ', fftw )
 print( 'GPAW EasyBuild INFO: scalapack =               ', scalapack )
 print( 'GPAW EasyBuild INFO: libvdwxc =                ', libvdwxc )
 print( 'GPAW EasyBuild INFO: elpa =                    ', elpa )
+print( 'GPAW EasyBuild INFO: noblas =                      ', noblas )
+print( 'GPAW EasyBuild INFO: parallel_python_interpreter = ', parallel_python_interpreter )
 print( 'GPAW EasyBuild INFO: Ending execution of the customization script' )
 """
 
@@ -169,20 +161,21 @@ components = [
 exts_defaultclass = 'PythonPackage'
 exts_default_options = {
     'download_dep_fail': True,
-    'sanity_pip_check':  True,
+    'sanity_pip_check':  False,
     'source_urls':       [PYPI_SOURCE],
     'use_pip':           True,
 }
 
 exts_list = [
     # ASE and its dependencies
-    ('Werkzeug', '1.0.1', {
+    ('Werkzeug', '0.16.0', {
         'modulename':     'werkzeug',
     }),
-    ('MarkupSafe', '1.1.1', {
+    ('MarkupSafe', '1.1.1', { # Includes binaries!
         'modulename':  'markupsafe',
+        'check_ldshared': True, # Needed for a GCC-based Python with Intel-based extensions.
     }),
-    ('Jinja2', '2.11.2', { # Contains only .py files so probably safe as zipped egg?
+    ('Jinja2', '2.10.3', { # Contains only .py files so probably safe as zipped egg?
         'modulename':  'jinja2',
     }),
     ('itsdangerous', '1.1.0', { # Installs as a zipped egg by itself.
@@ -191,25 +184,27 @@ exts_list = [
 #        'modulename':  'click',
 #        'source_urls': ['https://pypi.python.org/packages/source/c/click'],
 #    }),
-    ('Flask', '1.1.2', {
+    ('Flask', '1.1.1', {
         'modulename':  'flask',
     }),
     ('ase', local_ASE_version, {
     }),
     # GPAW and its dependencies
-    ('gpaw', version, {
+    ('gpaw', version, { # Includes binaries!
         'use_pip':        False,
-        'prebuildopts':   'cat >customize.py <<EOF\n' + local_gpaw_customize + 'EOF\n' + 
-                          'unset CC && unset LDSHARED && CFLAGS="$CFLAGS -qno-openmp-simd" ', 
+        'check_ldshared': True, # Needed for a GCC-based Python with Intel-based extensions.
+        'prebuildopts':   'cat >siteconfig.py <<EOF\n' + local_gpaw_customize + 'EOF\n' + 
+                          'unset CC && unset LDSHARED && CFLAGS="$CFLAGS -qno-openmp-simd" ',
         'buildopts':      ' && echo -e "\\nGPAW EasyBuild INFO: configuration log:\\n" && cat configuration.log && echo -e "\\nEnd of GPAW configuration log\\n"',
         'preinstallopts': 'unset CC && unset LDSHARED && CFLAGS="$CFLAGS -qno-openmp-simd" ',
-}),
+    }),
 ]
 
+# Sanity check changed compared to version 19.9.1!
 sanity_check_paths = {
     'files': ['bin/gpaw%s' % x for x in ['', '-analyse-basis', '-basis', '-mpisim', '-plot-parallel-timings',
-                                         '-python', '-runscript', '-setup', '-upfplot']],
-    'dirs':  ['lib/python%(pyshortver)s/site-packages/%(namelower)s']
+                                         '-runscript', '-setup', '-upfplot']],
+    'dirs':  ['lib/python' + local_IntelPython3_major_minor + '/site-packages']
 }
 
 # make sure Tkinter is available, otherwise 'ase gui' will not work
@@ -217,7 +212,7 @@ sanity_check_commands = ["python -c 'import tkinter' "]
 
 # As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
 modextrapaths = {
-    'PYTHONPATH':      ['lib/python%(pyshortver)s/site-packages'],
+    'PYTHONPATH':      ['lib/python' + local_IntelPython3_major_minor + '/site-packages'],
 }
 
 modextravars = {
