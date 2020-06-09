@@ -13,7 +13,8 @@ whatis = [
     "Contains: ncurses/ncursesw, readline, brotli, " + 
     "bzip2, Szip, XZ utils, zlib, gzip, lzip, lz4, zstd, libb2, LZO(2), snappy, libdeflate, libarchive, " + 
     "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
-    "x264, x265, LAME, libopus, cURL, expat, libxml2, libxslt, libidn, libidn2, " + 
+    "LAME, libopus, libogg (Ogg), libvorbis (OggVorbis), FLAC, libsndfile, x264, x265, libtheora, " +
+    "cURL, expat, libxml2, libxslt, libidn, libidn2, " + 
     "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
     "double-conversion, file, gc, libevent, libffi, libyaml, libtool, " + 
@@ -53,6 +54,11 @@ local_x264_version =         '20191217-2245' # https://download.videolan.org/pub
 local_x265_version =         '3.2.1'         # http://download.videolan.org/pub/videolan/x265/
 local_LAME_version =         '3.100'         # http://lame.sourceforge.net/
 local_libopus_version =      '1.3.1'         # http://opus-codec.org/downloads/
+local_libogg_version =       '1.3.4'         # https://www.xiph.org/downloads/ or https://github.com/xiph/ogg/releases
+local_libvorbis_version =    '1.3.6'         # https://xiph.org/downloads/ or https://github.com/xiph/vorbis/releases
+local_FLAC_version =         '1.3.3'         # https://xiph.org/downloads/ or https://github.com/xiph/flac/releases
+local_libsndfile_version =   '1.0.28'        # https://github.com/erikd/libsndfile/releases
+local_libtheora_version =    '1.1.1'         # https://www.theora.org/downloads/ or https://github.com/xiph/theora/releases
 local_cURL_version =         '7.69.1'        # https://curl.haxx.se/download/
 local_expat_version =        '2.2.9'         # https://github.com/libexpat/libexpat/releases
 local_libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
@@ -231,16 +237,6 @@ Overview of included libraries:
     webmasters and web developers can create smaller, richer images that make 
     the web faster.
 * Audio and video
-  + x264 (version v%(x264)s): x264 is a free software library and
-    application for encoding video streams into the H.264/MPEG-4 AVC compression
-    format, and is released under the terms of the GNU GPL. It is developed by
-    the VideoLAN organization.
-  + x265 (version %(x265)s): x265 is a free software library and application for
-    encoding video streams into the H.265 AVC compression format, and is released
-    under the terms of the GNU GPL. It is developed by the VideoLAN organization.
-    Documentation for the x265 command line tool is available through the --help
-    command line option. Both the command line tool and API are also documented
-    on the web.
   + LAME (version %(LAME)s): LAME is a high quality MPEG Audio Layer III (MP3)
     encoder licensed under the LGPL.
     Run lame with the --help option to get some help on the command line options
@@ -252,6 +248,74 @@ Overview of included libraries:
     standardized by the Internet Engineering Task Force (IETF) as RFC 6716 
     which incorporated technology from Skype’s SILK codec and Xiph.Org’s 
     CELT codec.
+  + libogg (version %(ogg)s): Ogg is a multimedia container format, and the native file and 
+    stream format for the Xiph.org multimedia codecs. As with all Xiph.org 
+    technology is it an open format free for anyone to use.
+    As with most container formats it encapsulates raw compressed data and allows 
+    the interleaving of audio and video data inside a single convenient format. 
+    Other examples of container formats are Quicktime .mov, the MPEG program 
+    stream, and AVI.
+    In addition to encapsulation and interleave of multiple data streams, Ogg 
+    provides packet framing, error detection, and periodic timestamps for 
+    seeking, and in a small, bounded percentage bitrate overhead.
+    Ogg is a stream oriented container, meaning it can be written and read in 
+    one pass, making it a natural fit for internet streaming and use in 
+    processing pipelines. This stream orientation is the major design 
+    difference over other file-based container formats.
+  + libvorbis (version %(vorbis)s): Ogg Vorbis is a fully open, non-proprietary, 
+    patent-and-royalty-free, general-purpose compressed audio format for mid to high 
+    quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable 
+    bitrates from 16 to 128 kbps/channel. This places Vorbis in the same 
+    competitive class as audio representations such as MPEG-4 (AAC), and 
+    similar to, but higher performance than MPEG-1/2 audio layer 3, MPEG-4 
+    audio (TwinVQ), WMA and PAC.
+    The bitstream format for Vorbis I was frozen Monday, May 8th 2000. 
+    All bitstreams encoded since will remain compatible with all future 
+    releases of Vorbis.
+  + FLAC (version %(FLAC)s): FLAC stands for Free Lossless Audio Codec, an audio format 
+    similar to MP3, but lossless, meaning that audio is compressed in FLAC 
+    without any loss in quality. This is similar to how Zip works, except with FLAC you 
+    will get much better compression because it is designed specifically for audio, and 
+    you can play back compressed FLAC files in your favorite player (or your car or home 
+    stereo, see supported devices) just like you would an MP3 file.
+    FLAC stands out as the fastest and most widely supported lossless audio codec, 
+    and the only one that at once is non-proprietary, is unencumbered by patents, 
+    has an open-source reference implementation, has a well documented format 
+    and API, and has several other independent implementations.
+    FLAC is compiled with support for the Ogg container format but without
+    XMMS plugin.
+  + libsndfile (version %(sndfile)s): Libsndfile is a C library for reading and 
+    writing files containing sampled sound (such as MS Windows WAV and the Apple/SGI 
+    AIFF format) through one standard library interface. It is released in source 
+    code format under the Gnu Lesser General Public License.
+    The library was written to compile and run on a Linux system but should compile 
+    and run on just about any Unix (including MacOS X). There are also pre-compiled 
+    binaries available for 32 and 64 bit windows.
+    It was designed to handle both little-endian (such as WAV) and big-endian (such 
+    as AIFF) data, and to compile and run correctly on little-endian (such as Intel 
+    and DEC/Compaq Alpha) processor systems as well as big-endian processor systems 
+    such as Motorola 68k, Power PC, MIPS and Sparc. Hopefully the design of the 
+    library will also make it easy to extend for reading and writing new sound file 
+    formats.
+    This module includes support for the FLAC, Opus and OggVorbis codecs, but does
+    not include support for the obsoleet Speex codec. It also does not include support
+    for ALSA and SQLite.
+  + x264 (version v%(x264)s): x264 is a free software library and
+    application for encoding video streams into the H.264/MPEG-4 AVC compression
+    format, and is released under the terms of the GNU GPL. It is developed by
+    the VideoLAN organization.
+  + x265 (version %(x265)s): x265 is a free software library and application for
+    encoding video streams into the H.265 AVC compression format, and is released
+    under the terms of the GNU GPL. It is developed by the VideoLAN organization.
+    Documentation for the x265 command line tool is available through the --help
+    command line option. Both the command line tool and API are also documented
+    on the web.
+  + libtheora (version %(theora)s): Theora was Xiph.Org's first publicly released 
+    video codec, intended for use within the Foundation's Ogg multimedia streaming 
+    system. Theora is derived directly from On2's VP3 codec, adds new features while 
+    allowing it a longer useful lifetime.
+    This module includes the optional encoder but does not include the 
+    player.
 * Networking, security and XML
   + cURL (version %(cURL)s): libcurl is a free and easy-to-use client-side
     URL transfer library, supporting DICT, FILE, FTP, FTPS, Gopher, HTTP, HTTPS,
@@ -431,137 +495,149 @@ Overview of included libraries:
   + libtool (version %(libtool)s): Normally more a build tool, but included for those
     programs that actually link to it.
 """ % { 
-    'ncurses': local_ncurses_version,
-    'libreadline': local_libreadline_version,
-    'brotli': local_brotli_version,
-    'bzip2': local_bzip2_version,
-    'lz4': local_lz4_version,
-    'Szip': local_Szip_version,
-    'XZ': local_XZ_version,
-    'zlib': local_zlib_version,
-    'gzip': local_gzip_version,
-    'lzip': local_lzip_version,
-    'zstd': local_zstd_version,
-    'libb2': local_libb2_version,
-    'LZO': local_LZO_version,
-    'snappy': local_snappy_version,
-    'blosc': local_blosc_version,
-    'libdeflate': local_libdeflate_version,
-    'libarchive': local_libarchive_version,
-    'giflib': local_giflib_version,
-    'JasPer': local_JasPer_version,
+    'ncurses':      local_ncurses_version,
+    'libreadline':  local_libreadline_version,
+    'brotli':       local_brotli_version,
+    'bzip2':        local_bzip2_version,
+    'lz4':          local_lz4_version,
+    'Szip':         local_Szip_version,
+    'XZ':           local_XZ_version,
+    'zlib':         local_zlib_version,
+    'gzip':         local_gzip_version,
+    'lzip':         local_lzip_version,
+    'zstd':         local_zstd_version,
+    'libb2':        local_libb2_version,
+    'LZO':          local_LZO_version,
+    'snappy':       local_snappy_version,
+    'blosc':        local_blosc_version,
+    'libdeflate':   local_libdeflate_version,
+    'libarchive':   local_libarchive_version,
+    'giflib':       local_giflib_version,
+    'JasPer':       local_JasPer_version,
     'libjpegturbo': local_libjpegturbo_version,
-    'libpng': local_libpng_version,
-    'libtiff': local_libtiff_version,
-    'libwebp': local_libwebp_version,
-    'x264': local_x264_version,
-    'x265': local_x265_version,
-    'LAME': local_LAME_version,
-    'opus': local_libopus_version,
-    'cURL': local_cURL_version,
-    'wget': local_wget_version,
-    'expat': local_expat_version,
-    'xml2': local_libxml2_version,
-    'xslt': local_libxslt_version,
-    'GSL': local_GSL_version, 
-    'libcerf': local_libcerf_version,
-    'GMP': local_GMP_version,
-    'MPFR': local_MPFR_version,
-    'MPC': local_MPC_version,
-    'mpdecimal': local_mpdecimal_version,
-    'pixman': local_pixman_version,
-    'freetype': local_freetype_version,
-    'fontconfig': local_fontconfig_version,
-    'fribidiv': local_fribidi_version,
-    'gettext': local_gettext_version,
-    'ICU': local_ICU_version,
-    'iconv': local_libiconv_version,
-    'unistring': local_libunistring_version,
-    'DoubleConv': local_double_conv_version,
-    'filev': local_file_version,
-    'gc': local_gc_version,
-    'GDBM': local_GDBM_version,
-    'event': local_libevent_version,
-    'ffi': local_libffi_version,
-    'yaml': local_libyaml_version,
-    'LMDB': local_LMDB_version,
-    'PCRE': local_PCRE_version,
-    'PCRE2': local_PCRE2_version,
-    'UDUNITS': local_UDUNITS_version,
-    'utillinux': local_util_version,
-    'libtool': local_libtool_version,
+    'libpng':       local_libpng_version,
+    'libtiff':      local_libtiff_version,
+    'libwebp':      local_libwebp_version,
+    'LAME':         local_LAME_version,
+    'opus':         local_libopus_version,
+    'ogg':          local_libogg_version,
+    'vorbis':       local_libvorbis_version,
+    'FLAC':         local_FLAC_version,
+    'sndfile':      local_libsndfile_version,
+    'x264':         local_x264_version,
+    'x265':         local_x265_version,
+    'theora':       local_libtheora_version,
+    'cURL':         local_cURL_version,
+    'wget':         local_wget_version,
+    'expat':        local_expat_version,
+    'xml2':         local_libxml2_version,
+    'xslt':         local_libxslt_version,
+    'GSL':          local_GSL_version, 
+    'libcerf':      local_libcerf_version,
+    'GMP':          local_GMP_version,
+    'MPFR':         local_MPFR_version,
+    'MPC':          local_MPC_version,
+    'mpdecimal':    local_mpdecimal_version,
+    'pixman':       local_pixman_version,
+    'freetype':     local_freetype_version,
+    'fontconfig':   local_fontconfig_version,
+    'fribidiv':     local_fribidi_version,
+    'gettext':      local_gettext_version,
+    'ICU':          local_ICU_version,
+    'iconv':        local_libiconv_version,
+    'unistring':    local_libunistring_version,
+    'DoubleConv':   local_double_conv_version,
+    'filev':        local_file_version,
+    'gc':           local_gc_version,
+    'GDBM':         local_GDBM_version,
+    'event':        local_libevent_version,
+    'ffi':          local_libffi_version,
+    'yaml':         local_libyaml_version,
+    'LMDB':         local_LMDB_version,
+    'PCRE':         local_PCRE_version,
+    'PCRE2':        local_PCRE2_version,
+    'UDUNITS':      local_UDUNITS_version,
+    'utillinux':    local_util_version,
+    'libtool':      local_libtool_version,
 }
 
 docurls = [
-    'ncurses: web-based documentation on https://www.gnu.org/software/ncurses/',
-    'libreadline: web-based readline user interface documentation: https://tiswww.cwru.edu/php/chet/readline/rluserman.html',
-    'libreadline: web-based libreadline documentation: https://tiswww.cwru.edu/php/chet/readline/readline.html',
-    'libreadline: web-based libhistory documentation: https://tiswww.cwru.edu/php/chet/readline/history.html',
-    'brotli: Home page: https://github.com/google/brotli',
-    'bzip2: web-based documentation on http://www.bzip.org/docs.html',
-    'LZ4: web-based documentation on https://github.com/lz4/lz4',
-    'Szip: web pages on http://www.hdfgroup.org/doc_resource/SZIP/', 
-    'XZ Utils: man pages for the command line utilities',
-    'zlib: web-based manual on https://zlib.net/manual.html', 
-    'gzip: Web-based documentation on https://www.gnu.org/software/gzip/manual/',
-    'gzip: man pages for all commands (gzip, gunzip, gzexe, zcat, zcmp, zdiff, zforce, zgrep, zless, zmore, znew) in Section 1',
-    'lzip: Home page: https://www.nongnu.org/lzip/',
-    'lzip: Web-based manual on https://www.nongnu.org/lzip/manual/lzip_manual.html',
-    'zstd: Web-based documentation via the home page: http://www.zstd.net/',
-    'libb2: Home page: https://github.com/BLAKE2/libb2',
-    'LZO: Home page http://www.oberhumer.com/opensource/lzo/', 
-    'snappy: Web-based information on https://github.com/google/snappy',
-    'Blosc: Home page https://blosc.org/',
-    'libdeflate: Home page: https://github.com/ebiggers/libdeflate',
-    'libarchive: Some web-based documentation on https://www.libarchive.org/',
-    'giflib: home page with links to the documentation on http://giflib.sourceforge.net/',
-    'libjpeg-turbo web-based documentation: https://libjpeg-turbo.org/Documentation',
-    'libpng: web-based documentation on http://www.libpng.org/pub/png/libpng.html',
-    'libwebp: home page with documentation on https://developers.google.com/speed/webp/',
-    'libwebp: Manual pages for cwebp and dwebp in section 1',
-    'x264: Some information on http://www.videolan.org/developers/x264.html',
-    'x265: web-based documentation: http://x265.readthedocs.io/en/default/',
-    'libopus: web-based documentation on the home page: http://opus-codec.org/',
-    'GSL manual: https://www.gnu.org/software/gsl/doc/html/index.html',
-    'libcerf homepage: https://jugit.fz-juelich.de/mlz/libcerf',
-    'GMP web-based documentation: https://gmplib.org/manual/',
-    'mpdecimal web-based documentation: https://www.bytereef.org/mpdecimal/doc/libmpdec/index.html',
-    'cURL: web-based documentation: https://curl.haxx.se/docs/',
-    'cURL: man pages for the curl and curl-config commands (section 1) and the library functions (section 3)',
-    'wget: man page for the wget command (section 1)'
-    'expat: web-based documentation: https://libexpat.github.io/doc/',
-    'expat: man page for xmlwf',
-    'ICU: web-based documentation at http://site.icu-project.org/home',
-    'ICU: man pages for seveal of the commands in section 1 and section 8',
-    'libxml2: web-based documentation: http://xmlsoft.org/html/index.html',
-    'libxml2: man pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
-    'libxslt: web-based documentation on the home page: http://xmlsoft.org/libxslt/',
-    'libxslt: man pages for xsltproc, libxslt and libexslt',
-    'double-conversion: web-based documentation on https://github.com/google/double-conversion',
-    'file: home page is https://www.darwinsys.com/file/', 
-    'FriBidi: home page is https://github.com/fribidi/fribidi',
-    'gc: web-based documentation on the home page http://hboehm.info/gc/',
-    'GDBM: Web-based documentation: http://puszcza.gnu.org.ua/software/gdbm/manual/gdbm.html',
-    'GDBM: Support for the info command (info gdbm)',
-    'gettext: web-based documentation: https://www.gnu.org/software/gettext/manual/index.html',
-    'gettext: man pages for all command line tools (man section 1) and for the API (man section 3)',
-    'libevent: web-based documentation on the home page: https://libevent.org/',
-    'libffi: Man pages for the library (ffi) and the functions ffi_prep_cif, ffi_prep_cif_var and ffi_call',
-    'libidn: web-based manual pages on https://www.gnu.org/software/libidn/manual',
-    'libidn: man pages for the idn command (section 1) and the API (section 3)',
-    'libidn2: web-based manual pages on https://www.gnu.org/software/libidn2/manual',
-    'libidn2: man pages for the idn2 command (section 1) and the API (section 3)',
-    'libiconv: web-based documentation on https://www.gnu.org/software/libiconv/',
-    'libiconv: manual pages for the iconv command and iconv_open, iconv_close, iconvctl, iconv_open_into',
-    'libunistring: web-based manual: https://www.gnu.org/software/libunistring/manual/libunistring.html',
-    'libunistring: supports the info command, start with info libunistring',
-    'LMDB: Man pages in section 1 for mdb_copy, mdb_dump, mdb_load and mdb_stat',
-    'PCRE: web-based documentation: http://www.pcre.org/original/doc/html/',
-    'PCRE2: web-based documentation: http://www.pcre.org/current/doc/html/',
-    'PCRE2: Manual pages in section 1 (pcre2grep, pcre2test) and 3 (API, start with pcre2)',
-    'util-linux: documented through man pages',
-    'freetype: Web-based documentation on https://www.freetype.org/freetype2/docs/documentation.html',
-    'fontconfig: Web-based documentation on https://www.freedesktop.org/wiki/Software/fontconfig/',
+    'ncurses:       Web-based documentation on https://www.gnu.org/software/ncurses/',
+    'libreadline:   Web-based readline user interface documentation: https://tiswww.cwru.edu/php/chet/readline/rluserman.html',
+    'libreadline:   Web-based libreadline documentation: https://tiswww.cwru.edu/php/chet/readline/readline.html',
+    'libreadline:   Web-based libhistory documentation: https://tiswww.cwru.edu/php/chet/readline/history.html',
+    'brotli:        Home page: https://github.com/google/brotli',
+    'bzip2:         Web-based documentation on http://www.bzip.org/docs.html',
+    'LZ4:           Web-based documentation on https://github.com/lz4/lz4',
+    'Szip:          Web pages on http://www.hdfgroup.org/doc_resource/SZIP/', 
+    'XZ Utils:      Man pages for the command line utilities',
+    'zlib:          Web-based manual on https://zlib.net/manual.html', 
+    'gzip:          Web-based documentation on https://www.gnu.org/software/gzip/manual/',
+    'gzip:          Man pages for all commands (gzip, gunzip, gzexe, zcat, zcmp, zdiff, zforce, zgrep, zless, zmore, znew) in Section 1',
+    'lzip:          Home page: https://www.nongnu.org/lzip/',
+    'lzip:          Web-based manual on https://www.nongnu.org/lzip/manual/lzip_manual.html',
+    'zstd:          Web-based documentation via the home page: http://www.zstd.net/',
+    'libb2:         Home page: https://github.com/BLAKE2/libb2',
+    'LZO:           Home page http://www.oberhumer.com/opensource/lzo/', 
+    'snappy:        Web-based information on https://github.com/google/snappy',
+    'Blosc:         Home page https://blosc.org/',
+    'libdeflate:    Home page: https://github.com/ebiggers/libdeflate',
+    'libarchive:    Some web-based documentation on https://www.libarchive.org/',
+    'giflib:        Home page with links to the documentation on http://giflib.sourceforge.net/',
+    'libjpeg-turbo: Web-based documentation: https://libjpeg-turbo.org/Documentation',
+    'libpng:        Web-based documentation on http://www.libpng.org/pub/png/libpng.html',
+    'libwebp:       Home page with documentation on https://developers.google.com/speed/webp/',
+    'libwebp:       Manual pages for cwebp and dwebp in section 1',
+    'libopus:       Web-based documentation on the home page: http://opus-codec.org/',
+    'libogg:        Web-based documentation on https://xiph.org/ogg/doc/',
+    'libvorbis:     Web-based documentation on https://xiph.org/vorbis/doc/',
+    'FLAC:          Web-based documentation on https://xiph.org/flac/documentation.html',
+    'FLAC:          Man pages in section 1 for the flac and metaflac commands',
+    'libsndfile:    Web-based API documentation on http://www.mega-nerd.com/libsndfile/api.html',
+    'libsndfile:    Manual pages for the tools in section 1',   
+    'x264:          Some information on http://www.videolan.org/developers/x264.html',
+    'x265:          Web-based documentation: http://x265.readthedocs.io/en/default/',
+    'libtheora:     Web-based documentation on https://www.theora.org/doc/',
+    'GSL:           On-line manual: https://www.gnu.org/software/gsl/doc/html/index.html',
+    'libcerf:       Homepage: https://jugit.fz-juelich.de/mlz/libcerf',
+    'GMP:           Web-based documentation: https://gmplib.org/manual/',
+    'mpdecimal:     Web-based documentation: https://www.bytereef.org/mpdecimal/doc/libmpdec/index.html',
+    'cURL:          Web-based documentation: https://curl.haxx.se/docs/',
+    'cURL:          Man pages for the curl and curl-config commands (section 1) and the library functions (section 3)',
+    'wget:          Man page for the wget command (section 1)'
+    'expat:         Web-based documentation: https://libexpat.github.io/doc/',
+    'expat:         Man page for xmlwf',
+    'ICU:           Web-based documentation at http://site.icu-project.org/home',
+    'ICU:           Man pages for seveal of the commands in section 1 and section 8',
+    'libxml2:       Web-based documentation: http://xmlsoft.org/html/index.html',
+    'libxml2:       Man pages for the command line tools xmlcatalog, xmllint and xml-config and for libxml',
+    'libxslt:       Web-based documentation on the home page: http://xmlsoft.org/libxslt/',
+    'libxslt:       Man pages for xsltproc, libxslt and libexslt',
+    'double-conversion: Web-based documentation on https://github.com/google/double-conversion',
+    'file:          Home page is https://www.darwinsys.com/file/', 
+    'FriBidi:       Home page is https://github.com/fribidi/fribidi',
+    'gc:            Web-based documentation on the home page http://hboehm.info/gc/',
+    'GDBM:          Web-based documentation: http://puszcza.gnu.org.ua/software/gdbm/manual/gdbm.html',
+    'GDBM:          Support for the info command (info gdbm)',
+    'gettext:       Web-based documentation: https://www.gnu.org/software/gettext/manual/index.html',
+    'gettext:       Man pages for all command line tools (man section 1) and for the API (man section 3)',
+    'libevent:      Web-based documentation on the home page: https://libevent.org/',
+    'libffi:        Man pages for the library (ffi) and the functions ffi_prep_cif, ffi_prep_cif_var and ffi_call',
+    'libidn:        Web-based manual pages on https://www.gnu.org/software/libidn/manual',
+    'libidn:        Man pages for the idn command (section 1) and the API (section 3)',
+    'libidn2:       Web-based manual pages on https://www.gnu.org/software/libidn2/manual',
+    'libidn2:       Man pages for the idn2 command (section 1) and the API (section 3)',
+    'libiconv:      Web-based documentation on https://www.gnu.org/software/libiconv/',
+    'libiconv:      Manual pages for the iconv command and iconv_open, iconv_close, iconvctl, iconv_open_into',
+    'libunistring:  Web-based manual: https://www.gnu.org/software/libunistring/manual/libunistring.html',
+    'libunistring:  Supports the info command, start with info libunistring',
+    'LMDB:          Man pages in section 1 for mdb_copy, mdb_dump, mdb_load and mdb_stat',
+    'PCRE:          Web-based documentation: http://www.pcre.org/original/doc/html/',
+    'PCRE2:         Web-based documentation: http://www.pcre.org/current/doc/html/',
+    'PCRE2:         Manual pages in section 1 (pcre2grep, pcre2test) and 3 (API, start with pcre2)',
+    'util-linux:    Documented through man pages',
+    'freetype:      Web-based documentation on https://www.freetype.org/freetype2/docs/documentation.html',
+    'fontconfig:    Web-based documentation on https://www.freedesktop.org/wiki/Software/fontconfig/',
 ]
 
 local_util_major_minor = '.'.join(local_util_version.split('.')[:2])
@@ -928,37 +1004,79 @@ components = [
 # Audio and video file formats
 #
     ('x264', local_x264_version, {
-        'sources':     [ {
-                          'filename':    'x264-snapshot-%(version)s-stable.tar.bz2',
-                          'source_urls': ['https://download.videolan.org/pub/videolan/x264/snapshots/', 'ftp://ftp.videolan.org/pub/videolan/x264/snapshots/']
-                       } ],
-        'start_dir':   'x264-snapshot-%(version)s-stable',
-        'configopts': '--enable-shared --enable-static',
-        'installopts': ' && mkdir -p %(installdir)s/doc && cp -r doc/* %(installdir)s/doc'
+        'sources':       [ {
+                            'filename':    'x264-snapshot-%(version)s-stable.tar.bz2',
+                            'source_urls': ['https://download.videolan.org/pub/videolan/x264/snapshots/', 'ftp://ftp.videolan.org/pub/videolan/x264/snapshots/']
+                         } ],
+        'start_dir':     'x264-snapshot-%(version)s-stable',
+        'configopts':    '--enable-shared --enable-static',
+        'installopts':   ' && mkdir -p %(installdir)s/doc && cp -r doc/* %(installdir)s/doc'
     }),
     ('x265', local_x265_version, {
-        'easyblock':   'CMakeMake',
+        'easyblock':     'CMakeMake',
         'separate_build_dir': False,
-        'sources':     [ {
-                          'filename':    '%(name)s_%(version)s.tar.gz',
-                          'source_urls': ['http://ftp.videolan.org/pub/videolan/x265/', 'http://download.videolan.org/pub/videolan/x265/']
-                       }],
-        'start_dir':   '%(namelower)s_%(version)s/source',
+        'sources':       [ {
+                            'filename':    '%(name)s_%(version)s.tar.gz',
+                            'source_urls': ['http://ftp.videolan.org/pub/videolan/x265/', 'http://download.videolan.org/pub/videolan/x265/']
+                         }],
+        'start_dir':     '%(namelower)s_%(version)s/source',
     }),
     ('LAME', local_LAME_version, { # Needs ncurses!
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': ['https://sourceforge.net/projects/lame/files/lame/%(version_major_minor)s/']
-                       }],
+        'sources':       [ {
+                            'filename':    SOURCELOWER_TAR_GZ,
+                            'source_urls': ['https://sourceforge.net/projects/lame/files/lame/%(version_major_minor)s/']
+                         }],
         'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': 'CPATH=%(installdir)s/include:$CPATH LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS="-L%(installdir)s/lib $LDFLAGS" FRONTEND_LDADD="-L%(installdir)s/lib" ',
     }),
     ('libopus', local_libopus_version, {
-        'sources':     [ {
-                          'filename':    'opus-%(version)s.tar.gz',
-                          'source_urls': ['https://archive.mozilla.org/pub/opus']
-                       }],
-        'start_dir':   'opus-%(version)s',
+        'sources':       [ {
+                            'filename':    'opus-%(version)s.tar.gz',
+                            'source_urls': ['https://archive.mozilla.org/pub/opus']
+                         }],
+        'start_dir':     'opus-%(version)s',
+    }),
+    ('libogg', local_libogg_version, {
+        'sources':       [ {
+                             'filename':    SOURCELOWER_TAR_XZ,
+                             'source_urls': ['http://downloads.xiph.org/releases/ogg/']
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': "sed -e 's/-O20 //' -i configure && ",
+    }),
+    ('libvorbis', local_libvorbis_version, { # Requires libogg
+        'sources':       [ {
+                             'filename':    SOURCELOWER_TAR_XZ,
+                             'source_urls': ['http://downloads.xiph.org/releases/vorbis/']
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+    }),
+    ('FLAC', local_FLAC_version, { # Requires libogg
+        'sources':       [ {
+                             'filename':    SOURCELOWER_TAR_XZ,
+                             'source_urls': ['http://downloads.xiph.org/releases/flac/']
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'configopts':    '--disable-xmms-plugin',
+    }),
+    ('libsndfile', local_libsndfile_version, { # Requires libopus, libogg, libvorbis and FLAC
+        'sources':       [ {
+                             'download_filename': '%(version)s.zip',
+                             'filename':          'libsndfile-%(version)s.zip',
+                             'source_urls':       ['https://github.com/erikd/libsndfile/archive/']
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': './autogen.sh && PKG_CONFIG_PATH="%(installdir)s/lib/pkgconfig:$PKG_CONFIG_PATH" ',
+        'configopts':    '--disable-alsa --disable-sqlite '
+    }),
+    ('libtheora', local_libtheora_version, { # Requires libogg and libvorbis
+        'sources':       [ {
+                             'filename':    SOURCELOWER_ZIP,
+                             'source_urls': ['http://downloads.xiph.org/releases/theora/']
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': "sed -e 's/.srcdir.configure.*echo//' -i autogen.sh ;  ./autogen.sh && ",
+        'configopts':    '--disable-sdltest --disable-examples'
     }),
 #
 # Network, security and XML

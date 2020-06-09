@@ -40,4 +40,9 @@
   out that there is software that links to the libtools libraries (in particular
   NEST does so), and we want to keep buildtools build dependency only as we compile
   it with the system compilers.
-
+* Added various sound-related libraries
+    * libogg (Ogg container format)
+    * libvorbis: needs libogg, implements the OggVorbis codec.
+    * FLAC: can use libogg
+    * libsndfile: Encapsulates libopus, lib ogg/libvorbis, FLAC.
+* Also added libtheora to complete the line. It can be used in FFmpeg.
