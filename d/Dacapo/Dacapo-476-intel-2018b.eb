@@ -1,0 +1,58 @@
+easyblock = 'CmdCp'
+
+name = 'Dacapo'
+version = '476'
+
+homepage = 'https://wiki.fysik.dtu.dk/dacapo'
+
+description = """Dacapo is a total energy program based on density functional 
+theory. It uses a plane wave basis for the valence electronic states and 
+describes the core-electron interactions with Vanderbilt ultrasoft 
+pseudo-potentials."""
+
+whatis = ["Dacapo with "]
+
+usage = """The Dacapo documentation can be found on the Dacapo website
+https://wiki.fysik.dtu.dk/dacapo"""
+
+
+toolchain = {'name': 'intel', 'version': '2018b'}
+
+# Vasp is proprietary software, see http://www.vasp.at/index.php/faqs on how to get access to the code
+sources = ['dacapo-rev%(version)s.tar.bz2' 
+]
+
+dependencies = [
+    ('netCDF', '4.6.1', '-MPI'),
+]
+
+patches = ['dacapo-rev%(version)s.patch']
+
+with_configure = False
+
+build_str  = "cd src && "
+build_str += "make intellinux NETCDF=$EBROOTNETCDF && "
+build_str += "mv intellinux_serial/dacapo.run intellinux_serial/dacapo.serial && "
+build_str += "rm -rf blas/intellinux netcdf/intellinux &&  "
+build_str += "make intellinux NETCDF=$EBROOTNETCDF MP=mpi && "
+build_str += "mv intellinux_mpi/dacapo.run intellinux_mpi/dacapo.mpi "
+
+cmds_map = [
+    ('dacapo-rev%(version)s.tar.bz2', build_str),
+]
+
+files_to_copy = [
+    (['%(builddir)s/dacapo/src/intellinux_serial/dacapo.serial'], '%(installdir)s/bin'),
+    (['%(builddir)s/dacapo/src/intellinux_mpi/dacapo.mpi'], '%(installdir)s/bin'),
+    (['%(builddir)s/dacapo/psp'], '%(installdir)s'),
+]
+
+sanity_check_paths={
+    'files': ['bin/dacapo.serial', 'bin/dacapo.mpi'], 
+    'dirs':  ['bin', 'psp'],
+}
+
+modextravars = {'DACAPOPATH': '%(installdir)s/psp'}
+
+moduleclass = 'phys'
+

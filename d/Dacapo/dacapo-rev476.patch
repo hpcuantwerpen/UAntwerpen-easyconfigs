@@ -1,0 +1,73 @@
+Patch for the Makefile of DACAPO.
+* Changes the Intel block to compile with recent Intel compilers and use the
+  FFTW MKL interfaces.
+Generate: diff -ru dacapo/src/Makefile.orig dacapo/src/Makefile >dacapo.patch
+--- dacapo/src/Makefile.orig	2018-08-31 15:22:29.606373675 +0200
++++ dacapo/src/Makefile	2018-08-31 16:49:58.824383084 +0200
+@@ -181,18 +181,19 @@
+ # Intel support at http://www.intel.com/cd/ids/developer/asmo-na/eng/support/index.htm
+ 
+ INTELLINUX_DEFINES =  ${USEFFTW} ${QRAD_SWAP_OPT} -DINTELLINUX
+-# Use -xN for highest optimization on Pentium-4,
+-# for other Intel CPUs use a different -x? flag (see "man ifort").
++ifdef FFLAGS_OPT
+ INTELLINUX_OPT = $(FFLAGS_OPT)
+-ifndef FFLAGS_OPT
+-INTELLINUX_OPT = -O3
++else
++INTELLINUX_OPT = -O3 -xHost
+ endif
++ifdef DACAPO_FC
+ INTELLINUX_FC = $(DACAPO_FC)
+-ifndef DACAPO_FC
++else
+ INTELLINUX_FC = ifort
+ endif
++ifdef DACAPO_FC90
+ INTELLINUX_FC90 = $(DACAPO_FC90)
+-ifndef DACAPO_FC90
++else
+ INTELLINUX_FC90 = ifort
+ endif
+ # INTELLINUX_OPT = -fast
+@@ -208,16 +209,22 @@
+ # MKLPATH=/opt/intel/mkl/9.0/lib/em64t	# Use -lmkl_em64t
+ # The MKL-FFTW2 documentation is in http://www.intel.com/software/products/mkl/docs/fftw2xmkl_notes.htm
+ # LIBS_intellinux=-L${NETCDF}/lib -lnetcdf -L${MKLPATH} -lfftw2xf_intel -lmkl_lapack -lmkl_ia32 -lguide -lpthread
+-LIBS_intellinux= ${BLASLAPACK} ${NETCDF}/libnetcdf.a ${FFTW}/libfftw.a
++# LIBS_intellinux= ${BLASLAPACK} ${NETCDF}/libnetcdf.a ${FFTW}/libfftw.a
++LIBS_intellinux=-L${NETCDF}/lib -lnetcdff -lnetcdf -L${MKLROOT}/lib/intel64_lin -lfftw2xf_double_intel -mkl
+ LIBS_intellinux_mpi=
++ifdef MPI_LIBDIR
+ INTELLINUX_MPIDIR=${MPI_LIBDIR}
++else
++NTELLINUX_MPIDIR="${I_MPI_ROOT}/intel64/lib"
++endif
++ifdef MPI_INCLUDEDIR
+ INTELLINUX_MPI_INCLUDE="${MPI_INCLUDEDIR}"
+-ifndef MPI_INCLUDEDIR
+-INTELLINUX_MPI_INCLUDE="${MPI_LIBDIR}/../include"
++else
++INTELLINUX_MPI_INCLUDE="${I_MPI_ROOT}/intel64/include"
+ endif
+ INTELLINUX_MPI_BINDIR="${MPI_BINDIR}"
+ ifndef MPI_BINDIR
+-INTELLINUX_MPI_BINDIR="${MPI_LIBDIR}/../bin"
++INTELLINUX_MPI_BINDIR="${I_MPI_ROOT}/intel64/bin"
+ endif
+ 
+ intellinux:
+@@ -228,11 +235,11 @@
+ 	@ echo 'work.pc' > intellinux_${MP}/work.pcl
+ 	@ echo '../netcdf/intellinux/work.pc' >> intellinux_${MP}/work.pcl
+ 	@ ${MAKE} -f ${MAKEFILE} ${MP} ARCH=intellinux \
+-	FC=$(INTELLINUX_FC) FC90=$(INTELLINUX_FC90) F90FF='-FR' MPIFC='${INTELLINUX_MPI_BINDIR}/mpif90' MPI_LIBDIR=${INTELLINUX_MPIDIR} \
++	FC=$(INTELLINUX_FC) FC90=$(INTELLINUX_FC90) F90FF='-FR' MPIFC='${INTELLINUX_MPI_BINDIR}/mpiifort' MPI_LIBDIR=${INTELLINUX_MPIDIR} \
+ 	FFLAGS="${INTELLINUX_OPT} ${INTELLINUX_FFLAGS} ${INTELLINUX_DEFINES}" \
+ 	DEFINES="${INTELLINUX_DEFINES}" \
+ 	LIBS="${LIBS_intellinux}" \
+-	INCLUDES='-I${SRCDIR} -I${INTELLINUX_MPI_INCLUDE} -I../netcdf/intellinux -I../netcdf' \
++	INCLUDES='-I${SRCDIR} -I${INTELLINUX_MPI_INCLUDE} -I../netcdf/intellinux -I${NETCDF}/include' \
+ 	EXTRABINS='fargc.o'
+ 
+ #
