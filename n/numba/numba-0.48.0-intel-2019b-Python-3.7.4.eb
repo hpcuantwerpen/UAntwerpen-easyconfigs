@@ -1,0 +1,121 @@
+easyblock = 'CMakeMake'
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+local_binutils_version = '2.32'
+
+local_LLVM_numba_version =     '8.0.1'           # Depends on the version of llvmlite, see https://github.com/numba/llvmlite/blob/master/README.rst
+local_llvmlite_version =       '0.32.1'          # https://pypi.org/project/llvmlite/
+local_numba_version =          '0.48.0'          # https://pypi.org/project/numba/
+
+local_Python3_version =        '3.7.4'           # https://www.python.org/downloads/
+
+name =          'numba'
+version =       local_numba_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = "https://numba.pydata.org/"
+
+whatis = [
+    "Name:        numba",
+    "Version:     %s" % (version),
+    "Category:    Python packages",
+    "Description: Numba is an open source JIT compiler that translates a subset of Python and NumPy code into fast machine code",    
+    "URL:         %s" % (homepage),
+    "Keyword:     Python, JIT",
+]
+
+description = """
+Numba translates Python functions to optimized machine code at runtime using 
+the industry-standard LLVM compiler library. Numba-compiled numerical algorithms 
+in Python can approach the speeds of C or FORTRAN.
+
+You don't need to replace the Python interpreter, run a separate compilation 
+step, or even have a C/C++ compiler installed. Just apply one of the Numba 
+decorators to your Python function, and Numba does the rest.
+
+Numba is designed to be used with NumPy arrays and functions. Numba 
+generates specialized code for different array data types and layouts 
+to optimize performance. Special decorators can create universal functions 
+that broadcast over NumPy arrays just like NumPy functions do.
+
+This module also includes a suitable version of LLVM. It may conflict with
+other modules that also use a LLVM-based JIT (or LLVM itself). However, the
+module relies on a very specific version of LLVM so there was no other solution.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'cstd': 'gnu++11', 'pic': True}
+
+source_urls = ['https://github.com/llvm/llvm-project/releases/download/llvmorg-' + local_LLVM_numba_version + '/']
+sources =     ['llvm-' + local_LLVM_numba_version + '.src.tar.xz']
+checksums =   ['44787a6d02f7140f145e2250d56c9f849334e11f9ae379827510ed72f12b75e7']
+
+builddependencies = [
+    ('binutils',   local_binutils_version, '', ('GCCcore', local_gcc_version)),
+    ('buildtools', local_buildset,         '', True),  # For CMake
+]
+
+dependencies = [
+    ('baselibs', local_buildset,        '', ('GCCcore', local_gcc_version)),  # For ncurses and zlib
+    ('Python',   local_Python3_version, '', ('intel',   local_buildset)), # Try to use the system Python instead
+]
+
+#configopts  = '-DBUILD_SHARED_LIBS=ON '
+configopts  = ''
+configopts += '-DLLVM_ENABLE_ASSERTIONS:BOOL=ON '
+configopts += '-DLINK_POLLY_INTO_TOOLS:BOOL=ON '
+# Don't really require libxml2. Turn it off explicitly to avoid accidentally linking to system libs
+configopts += '-DLLVM_ENABLE_LIBXML2:BOOL=OFF '
+# Urgh, llvm *really* wants to link to ncurses / terminfo and we *really* do not want it to.
+configopts += '-DHAVE_TERMINFO_CURSES=OFF '
+configopts += '-DHAVE_TERMINFO_NCURSES=OFF '
+configopts += '-DHAVE_TERMINFO_NCURSESW=OFF '
+configopts += '-DHAVE_TERMINFO_TERMINFO=OFF '
+configopts += '-DHAVE_TERMINFO_TINFO=OFF '
+configopts += '-DHAVE_TERMIOS_H=OFF '
+configopts += '-DCLANG_ENABLE_LIBXML=OFF '
+configopts += '-DLIBOMP_INSTALL_ALIASES=OFF '
+configopts += '-DLLVM_ENABLE_RTTI=OFF '
+configopts += '-DLLVM_TARGETS_TO_BUILD=host '
+configopts += '-DLLVM_INCLUDE_UTILS=ON '
+configopts += '-DLLVM_INCLUDE_TESTS=OFF '
+configopts += '-DLLVM_INCLUDE_DOCS=OFF '
+configopts += '-DLLVM_INCLUDE_EXAMPLES=OFF '
+configopts += '-DLLVM_USE_INTEL_JITEVENTS=ON '
+# Options taken from the default EasyBuild configuration that we think do no harm:
+configopts += '-DLLVM_ENABLE_ZLIB=ON '
+# Enforcing gcc as the compiler even though we are using the Intel toolchain
+configopts += '-DCMAKE_C_COMPILER=\'gcc\' '
+configopts += '-DCMAKE_C_FLAGS=\'-O2 -ftree-vectorize -march=native -fno-math-errno -fPIC -std=gnu++11\' '
+configopts += '-DCMAKE_CXX_COMPILER=\'g++\' '
+configopts += '-DCMAKE_CXX_FLAGS=\'-O2 -ftree-vectorize -march=native -fno-math-errno -fPIC -std=gnu++11\' '
+
+build_type = 'Release'
+separate_build_dir = True
+
+exts_defaultclass = 'PythonPackage'
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  False,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+exts_filter = ("python -c 'import %(ext_name)s'", '')
+
+exts_list = [
+    ('llvmlite', local_llvmlite_version, {}),
+    ('numba',    local_numba_version,    {}),
+]
+
+sanity_check_paths = {
+    'files': ['bin/llvm-ar'],
+    'dirs':  ['include/llvm', 'include/llvm-c'],
+}
+
+# As the main EasyBlock is "CMakeMake" PYTHONPATH will not be set automatically
+modextrapaths = {
+    'PYTHONPATH':      ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'compiler'
