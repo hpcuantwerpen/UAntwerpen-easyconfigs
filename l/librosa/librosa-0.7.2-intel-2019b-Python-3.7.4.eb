@@ -1,0 +1,68 @@
+easyblock = 'PythonBundle'
+
+local_buildset =         '2019b'
+local_gcc_version =      '8.3.0'
+
+local_librosa_version =        '0.7.2'           # https://pypi.org/project/librosa/
+local_resampy_version =        '0.2.2'           # https://pypi.org/project/resampy/
+local_audioread_version =      '2.1.8'           # https://pypi.org/project/audioread/
+local_SoundFile_version =      '0.10.3.post1'    # https://pypi.org/project/SoundFile/
+
+local_FFmpeg_version =         '4.1.4'           # http://ffmpeg.org/releases/
+local_libsndfile_version =     '1.0.28'          # https://github.com/erikd/libsndfile/releases NOT NEEDED ANYMORE FOR 2020a!
+local_numba_version =          '0.48.0'          # https://pypi.org/project/numba/
+local_Python3_version =        '3.7.4'           # https://www.python.org/downloads/
+
+name =           'librosa'
+version =        local_librosa_version
+versionsuffix =  '-Python-%(pyver)s'
+
+homepage = 'https://github.com/librosa/librosa'
+
+whatis = [
+    "Name:        librosa",
+    "Version:     %s" % (version),
+    "Category:    Python packages",
+    "Description: librosa is a python package for music and audio analysis. The module also includes some dependencies.",    
+    "URL:         %s" % (homepage),
+    "Keyword:     Python, JIT",
+]
+
+description = """
+LibROSA is a python package for music and audio analysis. It provides the building 
+blocks necessary to create music information retrieval systems.
+"""
+
+docurls = [
+    "librosa: On-line reference manual on https://librosa.github.io/librosa/"
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+dependencies = [
+    ('Python',     local_Python3_version,    ''                 , ('intel',   local_buildset)),
+    ('numba',      local_numba_version,      '-Python-%(pyver)s', ('intel',   local_buildset)),
+    ('libsndfile', local_libsndfile_version, '',                  ('GCCcore', local_gcc_version)),
+    ('FFmpeg',     local_FFmpeg_version,     '-CPU',              ('intel',   local_buildset)),
+]
+
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  False,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+exts_list = [
+    ('resampy',   local_resampy_version,   {}),
+    ('audioread', local_audioread_version, {}),
+    ('SoundFile', local_SoundFile_version, {}),
+    ('librosa',   local_librosa_version,   {}),
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'lib'
