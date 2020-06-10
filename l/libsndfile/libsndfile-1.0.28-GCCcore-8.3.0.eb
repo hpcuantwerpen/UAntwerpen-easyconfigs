@@ -79,6 +79,7 @@ components = [
                              'source_urls': ['http://downloads.xiph.org/releases/vorbis/']
                          } ],
         'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'PKG_CONFIG_PATH="%(installdir)s/lib/pkgconfig:$PKG_CONFIG_PATH" ',
     }),
     ('FLAC', local_FLAC_version, {
         'sources':       [ {
