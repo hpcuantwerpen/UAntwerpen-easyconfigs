@@ -20,8 +20,8 @@ sources = [{
 }]
 
 patches = [
-    ('options.mk.patch',1),
-    ('options_mpi.mk.patch',1),
+    ('ITensor-2.1.1_options.mk.patch',1),
+    ('ITensor-2.1.1_options_mpi.mk.patch',1),
 ]
 
 # Don't use parallel make as we don't know the effect of starting
