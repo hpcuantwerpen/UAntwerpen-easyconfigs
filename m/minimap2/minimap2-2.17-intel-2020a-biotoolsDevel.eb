@@ -55,15 +55,15 @@ prebuildopts  = 'sed -e "s/-msse2 //" -e "s/-msse4.1 //" -e "s/-mno-sse4.1 //" -
 buildopts = 'extra CFLAGS="$CFLAGS" '
 
 files_to_copy = [
-    (['minimap2', 'minimap2-lite', 'sdust'], 'bin'),
-    (['lib%(name)s.a'], 'lib'),
-    (['*.h'], 'include'),
-    'LICENSE.txt', 'NEWS.md', 'README.md',
-    (['%(name)s.1'], 'share/man/man1')
+    (['minimap2', 'minimap2-lite', 'sdust'],  'bin'),
+    (['lib%(name)s.a'],                       'lib'),
+    (['*.h'],                                 'include'),
+    (['LICENSE.txt', 'NEWS.md', 'README.md'], 'share/doc/minimap2'),
+    (['%(name)s.1'],                          'share/man/man1')
 ]
 
 sanity_check_paths = {
-    'files': ['bin/%(name)s', 'bin/minimap2-lite', 'bin/sdust', 'lib/lib%(name)s.a'],
+    'files': ['bin/minimap2', 'bin/minimap2-lite', 'bin/sdust', 'lib/libminimap2.a'],
     'dirs':  ['include']
 }
 

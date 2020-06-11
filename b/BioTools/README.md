@@ -15,6 +15,12 @@ It was developed to reduce module clutter on our systems.
       of that old version that are not present in current versions anymore.
     * No configure or CMake, only a Makefile... It does have a ``make install prefix=...`
       though.
+* [CD-HIT](http://weizhongli-lab.org/cd-hit/)
+    * [Develpment on GitHub](https://github.com/weizhongli/cdhit)
+    * MakeCp build process to ensure that we also install some files that are not
+      done by `make install`.
+* [ClonalFrameML](https://github.com/xavierdidelot/ClonalFrameML)
+    * MakeCp build process
 * [fastp](https://github.com/OpenGene/fastp)
     * Just a make/make install build process, and several variables needed to get the
       compiler and optimizations right.
@@ -36,6 +42,8 @@ It was developed to reduce module clutter on our systems.
 
 * HTSlib 1.10.2
 * BCFtools 1.10.2
+* CD-HIT 4.8.1
+* ClonalFrameML 1.12
 * SAMtools 1.10
 * bedtools 2.29.2
 * fastp 0.20.1

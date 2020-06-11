@@ -3,6 +3,8 @@ easyblock = 'Bundle'
 local_buildset         = '2020a'
 local_gcc_version      = '9.3.0'
 
+local_Perl_version =           '5.30.2'          # https://www.perl.org/get.html
+
 name =          'BioTools'
 version =       '2020a.00'
 
@@ -13,18 +15,20 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     'Description: A number of bioinformatics tools, installed together as a bundle',
-    'Contains: BEDTools, HTSlib/BCFtools/SAMtools, fastp, MCL, minimap2, MUSCLE, VSEARCH'
+    'Contains: BEDTools, ClonalRangeML, CD-HIT, HTSlib/BCFtools/SAMtools, fastp, MCL, minimap2, MUSCLE, VSEARCH'
 ]
 
-local_BCFtools_version = '1.10.2' # https://github.com/samtools/bcftools/releases
-local_BEDTools_version = '2.29.2' # https://github.com/arq5x/bedtools2/releases
-local_fastp_version =    '0.20.1' # https://github.com/OpenGene/fastp/releases
-local_HTSlib_version =   '1.10.2' # https://github.com/samtools/htslib/releases
-local_MCL_version =      '14.137' # https://micans.org/mcl/
-local_minimap2_version = '2.17'   # https://github.com/lh3/minimap2/releases
-local_MUSCLE_version =   '3.8.31' # http://drive5.com/muscle/downloads.htm
-local_SAMtools_version = '1.10'   # https://github.com/samtools/samtools/releases
-local_VSEARCH_version =  '2.14.2' # https://github.com/torognes/vsearch/releases
+local_BCFtools_version =      '1.10.2' # https://github.com/samtools/bcftools/releases
+local_BEDTools_version =      '2.29.2' # https://github.com/arq5x/bedtools2/releases
+local_CDHIT_version =         '4.8.1'  # https://github.com/weizhongli/cdhit/releases
+local_ClonalFrameML_version = '1.12'   # https://github.com/xavierdidelot/ClonalFrameML/releases
+local_fastp_version =         '0.20.1' # https://github.com/OpenGene/fastp/releases
+local_HTSlib_version =        '1.10.2' # https://github.com/samtools/htslib/releases
+local_MCL_version =           '14.137' # https://micans.org/mcl/
+local_minimap2_version =      '2.17'   # https://github.com/lh3/minimap2/releases
+local_MUSCLE_version =        '3.8.31' # http://drive5.com/muscle/downloads.htm
+local_SAMtools_version =      '1.10'   # https://github.com/samtools/samtools/releases
+local_VSEARCH_version =       '2.14.2' # https://github.com/torognes/vsearch/releases
 
 description = """
 This module provides a number of useful bio-informatics tools.
@@ -42,6 +46,44 @@ Overview of the included tools and libraries:
   command line.
   bedtools is developed in the Quinlan laboratory at the University of Utah 
   and benefits from fantastic contributions made by scientists worldwide.
+* CD-HIT (version %(CDHIT)s) is very fast and can handle extremely large databases. CD-HIT helps 
+  to significantly reduce the computational and manual efforts in many sequence 
+   analysis tasks and aids in understanding the data structure and correct the 
+  bias within a dataset.
+  The CD-HIT package has CD-HIT, CD-HIT-2D, CD-HIT-EST, CD-HIT-EST-2D, 
+  CD-HIT-454, CD-HIT-PARA, PSI-CD-HIT, CD-HIT-OTU, CD-HIT-LAP, CD-HIT-DUP and 
+  over a dozen scripts.
+   * CD-HIT (CD-HIT-EST) clusters similar proteins (DNAs) into clusters that meet 
+     a user-defined similarity threshold.
+   * CD-HIT-2D (CD-HIT-EST-2D) compares 2 datasets and identifies the sequences in db2 
+     that are similar to db1 above a threshold.
+   * CD-HIT-454 identifies natural and artificial duplicates from pyrosequencing reads.
+   * CD-HIT-OTU clusters rRNA tags into OTUs
+   * CD-HIT-DUP identifies duplicates from single or paired Illumina reads
+   * CD-HIT-LAP identifies overlapping reads
+  The usage of other programs and scripts can be found in CD-HIT user's guide.
+  CD-HIT is currently maintained by the Dr. Li's group (http://weizhongli-lab.org/) at 
+  J Craig Venter Institute. We thank the support from National Center for Research Resources (
+  Grant # 1R01RR025030, 2008-2011). We thank all users that report bugs, give us suggestions 
+  and comments.
+* ClonalFrameML (version %(ClonalFrameML)s), a software package that performs efficient inference of 
+  recombination in bacterial genomes. ClonalFrameML was created by Xavier Didelot 
+  and Daniel Wilson. ClonalFrameML can be applied to any type of aligned sequence 
+  data, but is especially aimed at analysis of whole genome sequences. It is able 
+  to compare hundreds of whole genomes in a matter of hours on a standard Desktop 
+  computer. There are three main outputs from a run of ClonalFrameML: a phylogeny 
+  with branch lengths corrected to account for recombination, an estimation of the 
+  key parameters of the recombination process, and a genomic map of where 
+  recombination took place for each branch of the phylogeny.
+  ClonalFrameML is a maximum likelihood implementation of the Bayesian software 
+  ClonalFrame which was previously described by Didelot and Falush (2007). The 
+  recombination model underpinning ClonalFrameML is exactly the same as for 
+  ClonalFrame, but this new implementation is a lot faster, is able to deal with 
+  much larger genomic dataset, and does not suffer from MCMC convergence issues. 
+  A scientific paper describing ClonalFrameML in detail has been published, see 
+  Didelot X, Wilson DJ (2015) ClonalFrameML: Efficient Inference of Recombination 
+  in Whole Bacterial Genomes. PLoS Comput Biol 11(2): e1004041. 
+  doi:10.1371/journal.pcbi.1004041.
 * fastp (version %(fastp)s): a tool designed to provide fast all-in-one preprocessing 
   for FastQ files. This tool is developed in C++ with multithreading supported 
   to afford high performance.
@@ -118,37 +160,42 @@ Overview of the included tools and libraries:
   vectorized despite what it suggests and may not exploit more modern vector
   instructions at all.
 """ % {
-    'bedtools': local_BEDTools_version,
-    'fastp':    local_fastp_version,
-    'HTSlib':   local_HTSlib_version,
-    'BCFtools': local_BCFtools_version,
-    'SAMtools': local_SAMtools_version,
-    'MCL':      local_MCL_version,
-    'minimap2': local_minimap2_version,
-    'MUSCLE':   local_MUSCLE_version,
-    'VSEARCH':  local_VSEARCH_version,
+    'bedtools':      local_BEDTools_version,
+    'CDHIT':         local_CDHIT_version,
+    'ClonalFrameML': local_ClonalFrameML_version,
+    'fastp':         local_fastp_version,
+    'HTSlib':        local_HTSlib_version,
+    'BCFtools':      local_BCFtools_version,
+    'SAMtools':      local_SAMtools_version,
+    'MCL':           local_MCL_version,
+    'minimap2':      local_minimap2_version,
+    'MUSCLE':        local_MUSCLE_version,
+    'VSEARCH':       local_VSEARCH_version,
 }
 
 docurls = [
-    'bedtools: Web-based documentation on http://bedtools.readthedocs.io/',
-    'fastpp:   Web-based documentation on https://github.com/OpenGene/fastp/blob/master/README.md',
-    'HTSlib:   Man pages in sections 1, 5 and 7',
-    'BCFtools: Web-based documentation on http://samtools.github.io/bcftools/howtos/index.html',
-    'BCFtools: Man page bcftools in section 1',
-    'SAMtools: Man page for the samtools and wgsim commands (section 1)',
-    'MCL:      Man pages (sections 1, 5 and 7) - try \man mcl\ as a starting point',
-    'minimap2: Web-based documentation on https://github.com/lh3/minimap2/blob/master/README.md',
-    'minimap2: Man page for the minimap2 command', 
-    'MUSCLE:   Web-based documentation on http://drive5.com/muscle/manual/',
-    'VSEARCH:  Man page vsearch in section 1',
-    'VSEARCH:  Manual downloadable from https://github.com/torognes/vsearch/releases/download/v%(version)s/vsearch_manual.pdf',
+    'bedtools:      Web-based documentation on http://bedtools.readthedocs.io/',
+    'CD-HIT:        Web-based documentation on https://github.com/weizhongli/cdhit/wiki',
+    'ClonalFrameML: Web-based information on https://github.com/xavierdidelot/clonalframeml/wiki',    
+    'fastpp:        Web-based documentation on https://github.com/OpenGene/fastp/blob/master/README.md',
+    'HTSlib:        Man pages in sections 1, 5 and 7',
+    'BCFtools:      Web-based documentation on http://samtools.github.io/bcftools/howtos/index.html',
+    'BCFtools:      Man page bcftools in section 1',
+    'SAMtools:      Man page for the samtools and wgsim commands (section 1)',
+    'MCL:           Man pages (sections 1, 5 and 7) - try \man mcl\ as a starting point',
+    'minimap2:      Web-based documentation on https://github.com/lh3/minimap2/blob/master/README.md',
+    'minimap2:      Man page for the minimap2 command', 
+    'MUSCLE:        Web-based documentation on http://drive5.com/muscle/manual/',
+    'VSEARCH:       Man page vsearch in section 1',
+    'VSEARCH:       Manual downloadable from https://github.com/torognes/vsearch/releases/download/v%(version)s/vsearch_manual.pdf',
 ]
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True} # To ensure that we can link static libraries into shared ones.
 
 builddependencies = [
-    ('buildtools', local_buildset, '', True),
+    ('buildtools', local_buildset,     '', True),
+    ('Perl',       local_Perl_version),
 ]
 
 dependencies = [
@@ -178,6 +225,39 @@ components = [
         'prebuildopts': 'sed -e "s/-g -Wall -O2/-Wall/" -i Makefile && ',
         'buildopts':    'CXX="$CXX" CC="$CC" CFLAGS="$CFLAGS" VERBOSE=1',
         'installopts':  'prefix=%(installdir)s CXX="$CXX" VERBOSE=1',
+    }),
+    ('CD-HIT', local_CDHIT_version, {
+        'easyblock':     'MakeCp',
+        'sources':       [ {
+                            'download_filename': 'V%(version)s.tar.gz',
+                            'filename':          SOURCE_TAR_GZ,
+                            'source_urls':       ['https://github.com/weizhongli/cdhit/archive/']
+                         } ],
+        'start_dir':     'cdhit-%(version)s',
+        'prebuildopts':  'sed -i \'s@#!/usr/bin/perl.*@#!/usr/bin/env perl@\' *.pl && ',
+        'buildopts':     'CC="$CXX" CCFLAGS="$CPPFLAGS $CXXFLAGS -qopenmp"', 
+        'files_to_copy': [
+                            (['cd-hit', 'cd-hit-est', 'cd-hit-2d', 'cd-hit-est-2d', 'cd-hit-div', 'cd-hit-454'], 'bin'), 
+                            (['*.pl'],                  'bin'), 
+                            (['doc/*'],                 'share/doc/CD-HIT'), 
+                            (['README', 'license.txt'], 'share/doc/CD-HIT'),
+                         ],
+    }),
+    ('ClonalFrameML', local_ClonalFrameML_version, {
+        'easyblock':     'MakeCp',
+        'sources':       [ {
+                            'download_filename': 'v%(version)s.tar.gz',
+                            'filename':          SOURCE_TAR_GZ,
+                            'source_urls':       ['https://github.com/xavierdidelot/ClonalFrameML/archive/']
+                         } ],
+        'start_dir':     '%(name)s-%(version)s/src',
+        'prebuildopts':  'sed -e "s|CC = .*|CC = \$(CXX)|" -e "s|CFLAGS +=.*|CFLAGS = \$(CXXFLAGS)|" -i makefile && ',
+        'buildopts':     'all', 
+        'files_to_copy': [
+                            (['ClonalFrameML'],  'bin'), 
+                            (['cfml_results.R'], 'bin'), 
+                            (['../README.md'],   'share/doc/ClonalFrameML'),
+                         ],
     }),
     ('fastp', local_fastp_version, {
         'sources':        [ {
@@ -210,10 +290,11 @@ components = [
         'prebuildopts':  'sed -e "s/-msse2 //" -e "s/-msse4.1 //" -e "s/-mno-sse4.1 //" -i Makefile ; ' ,
         'buildopts':     'extra CFLAGS="$CFLAGS" ',
         'files_to_copy': [
-                            (['minimap2', 'minimap2-lite', 'sdust'], 'bin'),
-                            (['lib%(name)s.a'], 'lib'),
-                            (['*.h'], 'include'),
-                            (['%(name)s.1'], 'share/man/man1')
+                            (['minimap2', 'minimap2-lite', 'sdust'],  'bin'),
+                            (['lib%(name)s.a'],                       'lib'),
+                            (['*.h'],                                 'include'),
+                            (['%(name)s.1'],                          'share/man/man1'),
+                            (['LICENSE.txt', 'NEWS.md', 'README.md'], 'share/doc/minimap2'),
                          ],
     }),
     ('VSEARCH', local_VSEARCH_version, {
@@ -226,7 +307,7 @@ components = [
         'preconfigopts': 'sed -i "s/AM_CXXFLAGS=-Wall.*/AM_CXXFLAGS=$EBVARCXXFLAGS/" src/Makefile.am && ' +
                          './autogen.sh && ',
 
-        'configopts':    '--disable-pdfman ',
+        'configopts':    '--disable-pdfman',
     }),
     ('HTSlib', local_HTSlib_version, {
         'sources':      [ {
@@ -253,12 +334,13 @@ components = [
     }),
 ]
 
-postinstallcmds = [
-    'cp %(builddir)s/minimap2-' + local_minimap2_version + '/LICENSE.txt %(installdir)s/LICENSE-minimap2.txt',
-]
-
 sanity_check_paths = {
-    'files': [],
+    'files':    # minimap2
+                [ 'bin/minimap2', 'bin/minimap2-lite', 'bin/sdust', 'lib/libminimap2.a' ] + 
+                # CD-HIT
+                [ 'bin/%s' % x for x in ['cd-hit', 'cd-hit-est', 'cd-hit-2d', 'cd-hit-est-2d', 'cd-hit-div', 'cd-hit-454'] ] +
+                # ClonalFrameML
+                [ 'bin/ClonalFrameML', 'bin/cfml_results.R', 'share/doc/ClonalFrameML/README.md' ],
     'dirs':  ['bin']
 #    'dirs':  ['bin', 'lib', 'include', 'share/man']
 }

@@ -38,37 +38,37 @@
 <tr><td> bzip2                 </td><td> 1.0.6-intel-2018b                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> cairo                 </td><td> 1.17.2-GCCcore-8.3.0                         </td><td> 1.17.2-GCCcore-9.3.0                              </td><td> buildset </td></tr>
 <tr><td> canu                  </td><td> 1.9-intel-2019b                              </td><td> 2.0-intel-2020a                                   </td><td> buildset </td></tr>
-<tr><td> CD-HIT                </td><td> 4.6.8-intel-2018b                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> CD-HIT                </td><td> 4.6.8-intel-2018b                            </td><td> 4.8.1, moved into BioTools                        </td><td> buildset </td></tr>
 <tr><td> CellRanger            </td><td> 2.2.0-intel-2018b                            </td><td> Move to system toolchain, update by user needed   </td><td> x86_64   </td></tr>
 <tr><td> CellRanger-DNA        </td><td> 1.1.0                                        </td><td> SYSTEM toolchain TODO?                            </td><td> x86_64   </td></tr>
 <tr><td> CGAL                  </td><td> 4.10.2-intel-2019b-forOpenFOAM6              </td><td> Synchronize with OpenFOAM                         </td><td> buildset </td></tr>
-<tr><td> ClonalFrameML         </td><td> 1.11-intel-2018b                             </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> ClonalFrameML         </td><td> 1.11-intel-2018b                             </td><td> 1.12, moved into BioTools                         </td><td> buildset </td></tr>
 <tr><td> CMake                 </td><td> 3.9.1                                        </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
 <tr><td> COMSOL                </td><td> 5.3                                          </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> core-counter          </td><td> 1.1                                          </td><td> 1.1.1 (SYSTEM toolchain)                          </td><td> system   </td></tr>
 <tr><td> CP2K                  </td><td> 7.1 in various variants                      </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> CPMD                  </td><td> 4.3-intel-2019b                              </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> cppcheck              </td><td> 1.83-intel-2018a                             </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> Cube                  </td><td> 4.3.5-intel-2018a                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> cppcheck              </td><td> 1.83-intel-2018a                             </td><td> Installed on demand (and needs Qt5)               </td><td> buildset </td></tr>
+<tr><td> Cube                  </td><td> 4.3.5-intel-2018a                            </td><td> TODO - Awaiting Qt5                               </td><td> buildset </td></tr>
 <tr><td> CUDA                  </td><td> 10.2.89                                      </td><td> Toolchain-independent                             </td><td> system   </td></tr>
 <tr><td> cuDNN                 </td><td> 7.6.5.32-CUDA-10.1.243                       </td><td> Toolchain-independent                             </td><td> system   </td></tr>
 <tr><td> cURL                  </td><td> 7.61.0-intel-2018b                           </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
-<tr><td> Dacapo                </td><td> 476-intel-2018b                              </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Dacapo                </td><td> 476-intel-2018b                              </td><td> Installed on demand, web site outdated            </td><td> buildset </td></tr>
 <tr><td> Dalton                </td><td> 2018.2-intel-2018b-i8                        </td><td> Who requested this????                            </td><td> buildset </td></tr>
 <tr><td> Darknet               </td><td> 20180326-intel-2018a-*                       </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> darshan-runtime       </td><td> 3.1.7-intel-2018b                            </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> darshan-util          </td><td> 3.1.7-intel-2018b                            </td><td> Installed on demand                               </td><td> buildset </td></tr>
-<tr><td> DDSCAT                </td><td> 7.3.2_170125-intel-2018a                     </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> DDSCAT                </td><td> 7.3.2_170125-intel-2018a                     </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> Delft3D               </td><td> 7565-intel-2018b                             </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> DFTB+                 </td><td> 19.1-intel-2019b-Python-2.7.16(-MPI)         </td><td> 19.1-intel-2020a-Python-3.8.2(-MPI)               </td><td> buildset </td></tr>
 <tr><td> DIAMOND               </td><td> 0.9.22-intel-2018a                           </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> DLCpar                </td><td> 1.0-intel-2019b-Python-3.7.4                 </td><td> Moved into BioTools-Python/2020a.00-intel-2020a-* </td><td> /        </td></tr>
 <tr><td> DMTCP                 </td><td> 2.6.0                                        </td><td> Toolchain-independent?                            </td><td> x86_64   </td></tr>
 <tr><td> Doxygen               </td><td> 1.8.13                                       </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
-<tr><td> DSSP                  </td><td> 2.2.1-intel-2017a                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> DSSP                  </td><td> 2.2.1-intel-2017a                            </td><td> 2.3.0-intel-2020a, 3.1.4-intel-2020a              </td><td> buildset </td></tr>
 <tr><td> EasyBuild             </td><td> 4.2.0                                        </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> eclipse               </td><td> parallel-2018-12                             </td><td> Installed on demand                               </td><td> x86_64   </td></tr>
-<tr><td> Eigen                 </td><td> 3.3.7-intel-2019b                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Eigen                 </td><td> 3.3.7-intel-2019b                            </td><td> 3.3.7                                             </td><td> x86_64   </td></tr>
 <tr><td> Elk                   </td><td> 5.2.14-intel-2019b                           </td><td> 6.3.2-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> ELPA                  </td><td> 2019.11.001-intel-2019b                      </td><td> 2019.11.001-intel-2020a                           </td><td> buildset </td></tr>
 <tr><td> ELSI                  </td><td> 2.5.0-intel-2019b                            </td><td> 2.5.0-intel-2020a                                 </td><td> buildset </td></tr>

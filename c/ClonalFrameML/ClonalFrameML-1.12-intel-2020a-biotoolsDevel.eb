@@ -4,8 +4,9 @@ local_buildset =         '2020a'
 
 local_ClonalFrameML_version =    '1.12'          # https://github.com/xavierdidelot/ClonalFrameML/releases
 
-name =    'ClonalFrameML'
-version = local_ClonalFrameML_version
+name =          'ClonalFrameML'
+version =       local_ClonalFrameML_version
+versionsuffix = '-biotoolsDevel'
 
 homepage = 'https://github.com/xavierdidelot/ClonalFrameML'
 
@@ -36,14 +37,17 @@ in Whole Bacterial Genomes. PLoS Comput Biol 11(2): e1004041.
 doi:10.1371/journal.pcbi.1004041.
 """
 
+docurls = [
+    'Web-based information on https://github.com/xavierdidelot/clonalframeml/wiki',    
+]
+
 toolchain = {'name': 'intel', 'version': local_buildset}
 
 # https://github.com/xavierdidelot/ClonalFrameML/archive/v1.12.tar.gz
-github_account = 'xavierdidelot'
 sources = [ {
     'download_filename': 'v%(version)s.tar.gz',
     'filename':          SOURCE_TAR_GZ,
-    'source_urls':       [GITHUB_SOURCE],
+    'source_urls':       ['https://github.com/xavierdidelot/ClonalFrameML/archive/'],
 } ]
 
 parallel = 1
@@ -55,9 +59,9 @@ prebuildopts = 'sed -e "s|CC = .*|CC = \$(CXX)|" -e "s|CFLAGS +=.*|CFLAGS = \$(C
 buildopts = 'all'
 
 files_to_copy = [
-    (['ClonalFrameML'], 'bin'), 
-    'cfml_results.R', 
-    'README.md'
+    (['ClonalFrameML'],  'bin'), 
+    (['cfml_results.R'], 'bin'), 
+    (['../README.md'],   'share/doc/ClonalFrameML'),
 ]
 
 sanity_check_paths = {
