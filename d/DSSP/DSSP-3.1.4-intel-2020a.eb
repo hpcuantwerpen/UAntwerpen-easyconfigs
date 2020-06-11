@@ -1,0 +1,75 @@
+easyblock = 'ConfigureMake'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_Boost_version =          '1.73.0'          # https://www.boost.org/users/download/
+local_DSSP3_version =          '3.1.4'           # https://github.com/cmbi/dssp/releases
+
+name =    'DSSP'
+version = local_DSSP3_version
+
+homepage = 'http://swift.cmbi.ru.nl/gv/dssp/'
+
+whatis = [
+
+]
+
+description = """
+The DSSP program was designed by Wolfgang Kabsch and Chris Sander to standardize 
+secondary structure assignment. DSSP is a database of secondary structure 
+assignments (and much more) for all protein entries in the Protein Data Bank (PDB). 
+DSSP is also the program that calculates DSSP entries from PDB entries. DSSP does 
+not predict secondary structure.
+
+Please quote
+If you use DSSP, please quote these two articles:
+
+1) A series of PDB related databases for everyday needs.
+Wouter G Touw, Coos Baakman, Jon Black, Tim AH te Beek, E Krieger, Robbie P Joosten, Gert Vriend.
+Nucleic Acids Research 2015 January; 43(Database issue): D364-D368.
+(PDF).
+
+2) Dictionary of protein secondary structure: pattern recognition of hydrogen-bonded and geometrical features.
+Kabsch W, Sander C,
+Biopolymers. 1983 22 2577-2637.
+PMID: 6667333; UI: 84128824.
+"""
+
+docurls = [
+    'Man page for the mkdssp command in section 1',
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+github_account = 'cmbi'
+sources = [ {
+    'download_filename': '%(version)s.tar.gz',
+    'filename':          SOURCELOWER_TAR_GZ,
+    'source_urls':       [GITHUB_LOWER_SOURCE],
+} ]
+
+dependencies = [
+    ('baselibs', local_buildset,      '', ('GCCcore', local_gcc_version)), # For libz and libbz2
+    ('Boost',    local_Boost_version)
+]
+
+preconfigopts = './autogen.sh && '
+
+configopts = '--with-boost=$EBROOTBOOST'
+
+postinstallcmds = [
+    'mkdir -p %(installdir)s/man/man1 ;                cp doc/mkdssp.1    %(installdir)s/man/man1',
+    'mkdir -p %(installdir)s/share/doc/%(name)s/html ; cp doc/mkdssp.html %(installdir)s/share/doc/%(name)s/html',
+]
+
+sanity_check_paths = {
+    'files': ['bin/mkdssp', 'bin/test_readpdb'],
+    'dirs':  ['man/man1']
+}
+
+modextravars = {
+    'DSSP': '%(installdir)s/bin/mkdssp',
+}
+
+moduleclass = 'bio'
