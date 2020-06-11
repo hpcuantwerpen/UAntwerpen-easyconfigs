@@ -12,7 +12,12 @@ version = local_DSSP3_version
 homepage = 'http://swift.cmbi.ru.nl/gv/dssp/'
 
 whatis = [
-
+    "Name:        DSSP",
+    "Version:     %s" % (version),
+    "Category:    Executable, GROMACS add-on",
+    "Description: DSSP is a program to standardize secondary structure assignement",
+    "URL:         %s" % (homepage),
+    "Keyword:     bio-informatics",
 ]
 
 description = """
