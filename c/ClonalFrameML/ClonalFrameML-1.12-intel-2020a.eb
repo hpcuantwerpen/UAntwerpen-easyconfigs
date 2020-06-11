@@ -1,0 +1,68 @@
+easyblock = 'MakeCp'
+
+local_buildset =         '2020a'
+
+local_ClonalFrameML_version =    '1.12'          # https://github.com/xavierdidelot/ClonalFrameML/releases
+
+name =    'ClonalFrameML'
+version = local_ClonalFrameML_version
+
+homepage = 'https://github.com/xavierdidelot/ClonalFrameML'
+
+whatis = [
+    "Description: Efficient Inference of Recombination in Whole Bacterial Genomes"
+]
+description = "Efficient Inference of Recombination in Whole Bacterial Genomes"
+
+description = """
+ClonalFrameML, a software package that performs efficient inference of 
+recombination in bacterial genomes. ClonalFrameML was created by Xavier Didelot 
+and Daniel Wilson. ClonalFrameML can be applied to any type of aligned sequence 
+data, but is especially aimed at analysis of whole genome sequences. It is able 
+to compare hundreds of whole genomes in a matter of hours on a standard Desktop 
+computer. There are three main outputs from a run of ClonalFrameML: a phylogeny 
+with branch lengths corrected to account for recombination, an estimation of the 
+key parameters of the recombination process, and a genomic map of where 
+recombination took place for each branch of the phylogeny.
+
+ClonalFrameML is a maximum likelihood implementation of the Bayesian software 
+ClonalFrame which was previously described by Didelot and Falush (2007). The 
+recombination model underpinning ClonalFrameML is exactly the same as for 
+ClonalFrame, but this new implementation is a lot faster, is able to deal with 
+much larger genomic dataset, and does not suffer from MCMC convergence issues. 
+A scientific paper describing ClonalFrameML in detail has been published, see 
+Didelot X, Wilson DJ (2015) ClonalFrameML: Efficient Inference of Recombination 
+in Whole Bacterial Genomes. PLoS Comput Biol 11(2): e1004041. 
+doi:10.1371/journal.pcbi.1004041.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+# https://github.com/xavierdidelot/ClonalFrameML/archive/v1.12.tar.gz
+github_account = 'xavierdidelot'
+sources = [ {
+    'download_filename': 'v%(version)s.tar.gz',
+    'filename':          SOURCE_TAR_GZ,
+    'source_urls':       [GITHUB_SOURCE],
+} ]
+
+parallel = 1
+
+start_dir = 'src'
+
+prebuildopts = 'sed -e "s|CC = .*|CC = \$(CXX)|" -e "s|CFLAGS +=.*|CFLAGS = \$(CXXFLAGS)|" -i makefile && ' 
+
+buildopts = 'all'
+
+files_to_copy = [
+    (['ClonalFrameML'], 'bin'), 
+    'cfml_results.R', 
+    'README.md'
+]
+
+sanity_check_paths = {
+    'files': ['bin/ClonalFrameML'],
+    'dirs':  []
+}
+
+moduleclass = 'bio'
