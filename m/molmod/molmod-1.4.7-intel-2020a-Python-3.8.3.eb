@@ -1,0 +1,68 @@
+easyblock = 'PythonPackage'
+
+local_buildset =         '2020a'
+
+local_molmod_version =         '1.4.7'           # https://github.com/molmod/molmod/releases
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+
+name =          'molmod'
+version =       '1.4.7'
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://molmod.ugent.be/software/molmod'
+
+whatis = [
+    "Name:        molmod",
+    "Version:     %s" % (version),
+    "Category:    Python package",
+    "Description: MolMod is a Python library with many compoments that are useful to write molecular modeling programs.",
+    "URL:         %s" % (homepage),
+]
+
+description = """
+MolMod is a Python library with many compoments that are useful to write molecular 
+modeling programs. It is used by other projects at the CMM such as Zeobuilder, 
+TAMkin, HiPart and MD-Tracks. This documentation is under construction. Some things 
+are not in place yet. Hang on…
+
+If you have questions about the MolMod library, post your questions on the 
+MolMod mailing list
+
+If you use the MolMod library for your research or for the preparation of publications, 
+please cite MolMod as follows: “T. Verstraelen, Molmod Software Library, 
+http://molmod.ugent.be/software”
+"""
+
+docurls = [
+    'Web-based documentation on http://molmod.github.io/molmod/'
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+# https://github.com/molmod/molmod/releases/download/1.4.7/molmod-1.4.7.tar.gz
+source_urls = ['https://github.com/molmod/molmod/releases/download/%(version)s']
+sources =     [SOURCE_TAR_GZ]
+
+dependencies = [
+    ('Python', local_Python3_version),
+]
+
+download_dep_fail = True
+use_pip = True
+sanity_pip_check = True
+
+# required because we're building a Python package using Intel compilers on top of Python built with GCC
+# check_ldshared = True
+
+runtest  = "export MATPLOTLIBRC=$PWD; echo 'backend: agg' > $MATPLOTLIBRC/matplotlibrc;"
+runtest += "python setup.py build_ext -i; nosetests -v"
+
+# fix permissions issue on files in share/molmod subdir
+#postinstallcmds = ['chmod -R o+r %(installdir)s/share/molmod']
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages/molmod'],
+}
+
+moduleclass = 'math'
