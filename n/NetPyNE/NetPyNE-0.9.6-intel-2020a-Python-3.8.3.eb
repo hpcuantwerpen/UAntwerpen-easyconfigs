@@ -1,0 +1,74 @@
+easyblock = 'Bundle'
+
+local_buildset =         '2020a'
+
+local_NetPyNE_version =        '0.9.6'           # https://pypi.org/project/netpyne/
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+
+name =          'NetPyNE'
+version =       local_NetPyNE_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'http://www.netpyne.org/'
+
+whatis = [
+    "Name:        molmod",
+    "Version:     %s" % (version),
+    "Category:    Python package",
+    'Description: NetPyNE is a python package to facilitate the development, parallel simulation and analysis of biological neuronal networks using the NEURON simulator',
+    "URL:         %s" % (homepage),
+]
+
+description = """
+NetPyNE (Networks using Python and NEURON) is a python package to facilitate the
+development, parallel simulation and analysis of biological neuronal networks
+using the NEURON simulator. Although NEURON already enables multiscale
+simulation ranging from the molecular to the network level, NEURON for networks,
+often requiring parallel simulations, requires substantial programming. NetPyNE
+greatly facilitates the development and parallel simulation of biological
+neuronal networks in NEURON for students and experimentalists. NetPyNE is also
+intended for experienced modelers, providing powerful features to incorporate
+complex anatomical and physiological data into models.
+
+Though some functions of NetPyNE can be used without NEURON, it is actually
+mostly meant to be used in conjunction with a suitable NEURON module.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+dependencies = [
+    ('Python', local_Python3_version),
+]
+
+exts_defaultclass = 'PythonPackage'
+exts_filter = ("python -c 'import %(ext_name)s'", '')
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  False,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+exts_list = [
+    ('future', '0.18.2', {}),
+    ('matplotlib-scalebar', '0.6.2', {}),
+    ('NetPyNE', version, {
+        # PyPi only contains a wheel, let's see if we can download from the GitHub:
+        # https://github.com/Neurosim-lab/netpyne/archive/v0.9.1.3.tar.gz
+        #'source_urls': ['https://github.com/Neurosim-lab/netpyne/archive'],
+        #'source_tmpl': 'v%(version)s.tar.gz',
+        'source_tmpl':    'netpyne-%(version)s-py2.py3-none-any.whl', # %(namelower)s does not work at this location...
+        'unpack_sources': False,
+    })
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextrapaths = {
+    'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']
+}
+
+moduleclass = 'math'
