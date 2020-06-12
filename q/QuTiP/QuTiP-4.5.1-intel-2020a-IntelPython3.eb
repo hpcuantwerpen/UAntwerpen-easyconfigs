@@ -1,0 +1,57 @@
+easyblock = 'PythonPackage'
+
+local_buildset =         '2020a'
+
+local_QuTiP_version =          '4.5.1'           # https://pypi.org/project/qutip/
+
+local_IntelPython3_major_minor = '3.7'
+
+name =          'QuTiP'
+version =       local_QuTiP_version
+versionsuffix = '-IntelPython3'
+
+homepage = 'http://qutip.org/'
+
+whatis = [
+    "Name:        %s" % (name),
+    "Version:     %s" % (version),
+    "Category:    Python package",
+    "Description: QuTiP is open-source software for simulating the dynamics of closed and open quantum systems.",
+    "URL:         %s" % (homepage),
+]
+
+description = """
+QuTiP is open-source software for simulating the dynamics of closed and open quantum 
+systems. The QuTiP library depends on the excellent Numpy, Scipy, and Cython numerical 
+packages. In addition, graphical output is provided by Matplotlib. QuTiP aims to 
+provide user-friendly and efficient numerical simulations of a wide variety of quantum 
+mechanical problems, including those with Hamiltonians and/or collapse operators with 
+arbitrary time-dependence, commonly found in a wide range of physics applications. 
+QuTiP is freely available for use and/or modification on all common platforms. Being 
+free of any licensing fees, QuTiP is ideal for exploring quantum mechanics in research 
+as well as in the classroom.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = [PYPI_SOURCE]
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['687e216aaeafdbbc47b61d7b210c0f07206e73c28afd987473cf6b292a6101cb']
+
+dependencies = [
+    ('IntelPython3-Packages', local_buildset),
+]
+
+download_dep_fail = True
+use_pip = True
+sanity_pip_check = True
+
+# required because we're building a Python package using Intel compilers on top of Python built with GCC
+# check_ldshared = True
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python' + local_IntelPython3_major_minor + '/site-packages'],
+}
+
+moduleclass = 'lib'
