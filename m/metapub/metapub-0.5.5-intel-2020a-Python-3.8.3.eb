@@ -1,0 +1,68 @@
+easyblock = 'Bundle'
+
+local_buildset =         '2020a'
+
+local_metapub_version =        '0.5.5'           # https://pypi.org/project/metapub/
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+
+name =           'metapub'
+version =        local_metapub_version
+versionsuffix =  '-Python-%(pyver)s'
+
+homepage = 'https://github.com/metapub/metapub'
+
+whatis = [
+    "Name:        metapub",
+    "Version:     %s" % (version),
+    "Category:    Python package",
+    "Description: Metapub is a Python library that provides python objects fetched via eutils that represent papers and concepts found within the NLM.",
+    "URL:         %s" % (homepage),
+]
+
+description = """
+Metapub is a Python library that provides python objects fetched via eutils that 
+represent papers and concepts found within the NLM.
+
+These objects abstract some interactions with pubmed, and intends to encompass as 
+many types of database lookups and summaries as can be provided via Eutils / Entrez.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+dependencies = [
+    ('Python', local_Python3_version),
+]
+
+exts_defaultclass = 'PythonPackage'
+exts_filter = ("python -c 'import %(ext_name)s'", '')
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  False,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+exts_list = [
+    ('eutils',             '0.6.0',  {}),
+    ('tqdm',               '4.46.1', {}),
+    ('habanero',           '0.7.4',  {}),
+    ('cssselect',          '1.1.0',  {}),
+    ('Unidecode',          '1.1.1',  {}),
+    ('docopt',             '0.6.2',  {}),
+    ('tox',                '3.15.2', {}),
+    ('humanfriendly',      '8.2',    {}),
+    ('coloredlogs',        '14.0',   {}),
+    ('python-Levenshtein', '0.12.0', { 'modulename': 'Levenshtein'}),
+    ('metapub',            local_metapub_version, {}),
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextrapaths = {
+    'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']
+}
+
+moduleclass = 'lib'
