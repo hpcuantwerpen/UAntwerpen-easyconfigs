@@ -4,6 +4,12 @@
       * [Releases](https://github.com/xavierdidelot/ClonalFrameML)
 
 
+## General information
+
+  * ClonalFrameML consists of a single binary and a R script.
+  * No configure process for building the software. Some editing of the Makefile
+    needed instead.
+
 ## EasyBuild
 
 There is (likely disappearing) [support for ClonalFrameML in the EasyBuilders

@@ -38,6 +38,7 @@ patches = ['MUSCLE-%(version)s_easyconfig_vars.patch']
 files_to_copy = [
     (["muscle"], 'bin')]
 
+# Creates only an executable and nothing else.
 sanity_check_paths = {
     'files': ["bin/muscle"],
     'dirs':  [],

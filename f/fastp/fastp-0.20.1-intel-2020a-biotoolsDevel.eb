@@ -22,7 +22,7 @@ high performance.
 """
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
-toolchainopts = {'cstd': 'c++11'}
+#toolchainopts = {'cstd': 'c++11'} # We'll add this manually as we cannot specify toolchainopts for an individual bundle component.
 
 #source_urls = ['https://github.com/OpenGene/fastp/archive/']
 #sources =     ['v%(version)s.tar.gz']
@@ -39,7 +39,7 @@ dependencies = [
 
 skipsteps = ['configure']
 
-buildopts = 'CXXFLAGS="${CXXFLAGS} -I./inc"'
+buildopts = 'CXXFLAGS="${CXXFLAGS} -std=c++11 -I./inc"'
 
 preinstallopts = 'mkdir -p %(installdir)s/bin && '
 

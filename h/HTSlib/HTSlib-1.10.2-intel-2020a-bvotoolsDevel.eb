@@ -51,6 +51,8 @@ dependencies = [
     ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)),  # for zlib, bzip2, XZ, libdeflate, PCRE and cURL
 ]
 
+configopts = '--with-libdeflate --enable-libcurl --enable-s3'
+
 sanity_check_paths = {
     'files': ['bin/bgzip', 'bin/htsfile', 'bin/tabix', 'lib/libhts.%s' % SHLIB_EXT, 'lib/libhts.a'],
     'dirs':  ['share/man'],

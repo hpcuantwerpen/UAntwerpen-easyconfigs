@@ -6,6 +6,8 @@
 
 ## General information
 
+* The build process creates a single executable, `bin/bedtools`, and a lot
+  of shell scripts in the `bin` subdirectory, but no libraries or other files.
 * Bedtools (as of version 2.29) is not using a Autotools or CMake script to
   configure the code. It only contains a complicated Makefile.
   It does have a ``make install prefix=...` though.

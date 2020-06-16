@@ -6,6 +6,8 @@ local_gcc_version = '9.3.0'
 local_HTSlib_version =   '1.10.2' # https://github.com/samtools/htslib/releases
 local_BCFtools_version = '1.10.2' # https://github.com/samtools/bcftools/releases
 
+local_Perl_version =           '5.30.2'          # https://www.perl.org/get.html
+
 name =          'BCFtools'
 version =       local_BCFtools_version
 versionsuffix = '-biotoolsDevel'
@@ -37,19 +39,21 @@ docurls = [
 ]
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
-toolchainopts = {'pic': True}
+#toolchainopts = {'pic': True}
 
 source_urls = ['https://github.com/samtools/%(namelower)s/releases/download/%(version)s']
 sources =     [SOURCELOWER_TAR_BZ2]
 checksums =   ['f57301869d0055ce3b8e26d8ad880c0c1989bf25eaec8ea5db99b60e31354e2c']
 
 dependencies = [
-    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib, bzip2, XZ and GSL
+    ('baselibs', local_buildset,       '',            ('GCCcore', local_gcc_version)), # for zlib, bzip2, XZ and GSL
     ('HTSlib',   local_HTSlib_version, versionsuffix),
+    ('Perl',     local_Perl_version),
 ]
 
-configopts  = "--enable-libgsl "
+configopts  = '--enable-libgsl '
 configopts += '--with-htslib=$EBROOTHTSLIB '
+configopts += '--enable-perl-filters'
 
 sanity_check_paths = {
     'files': ['bin/%s' % x for x in ['bcftools', 'plot-vcfstats', 'vcfutils.pl']],

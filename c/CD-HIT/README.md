@@ -6,6 +6,15 @@
       * [Releases](https://github.com/weizhongli/cdhit/releases)
   
 
+## General information
+
+  * CD-HIT has no configure procedure. There is a `make install` in more recent versions, 
+    but that does not install the documentation.
+  * CD-HIT supports OpenMP parallelism but no distributed computing.
+  * CD-HIT consists of a number of binaries in the `bin` subdirectory and a lot of 
+    Perl scripts, but no libraries.
+
+
 ## EasyBuild
 
 There is [support for CD-HIT in the EasyBuilders 

@@ -41,7 +41,6 @@ docurls = [
 ]
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
-toolchainopts = {'pic': True}
 
 source_urls = ['https://github.com/samtools/%(namelower)s/releases/download/%(version)s']
 sources =     [SOURCELOWER_TAR_BZ2]
