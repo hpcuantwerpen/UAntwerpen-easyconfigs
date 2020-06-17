@@ -41,6 +41,9 @@ It was developed to reduce module clutter on our systems.
       * ConfigureMake, but there are two files that are not copied by the make install.
       * The build process generates several binaries, a bash and three Perl scripts, 
         but no libraries.
+  * [MEGAHIT](https://github.com/voutcn/megahit)
+      * CMakeMake
+      * The build process only produces executables.
   * [Minimap2](https://github.com/lh3/minimap2)
       * MakeCp, and needs some tricks.
       * The build process produces three binaries and a static library.
