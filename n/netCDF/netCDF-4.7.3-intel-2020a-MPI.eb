@@ -6,6 +6,13 @@ easyblock = 'Bundle'
 # libraries to be in the same directory.
 # 
 
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+local_HDF5_retro_version =     '1.10.6'          # https://support.hdfgroup.org/HDF5/
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+
 name =                  'netCDF'
 version =               '4.7.3'
 versionsuffix =         '-MPI'
@@ -19,9 +26,6 @@ local_version_cpp3 =    '4.2'
 # netCDF-4 C++:   4.3.1
 # netCDF-3 C++:   4.2 (legacy C++)
 # PnetCDF:        1.12.1
-
-local_buildset =    '2020a'
-local_gcc_version = '9.3.0'
 
 homepage = 'http://www.unidata.ucar.edu/software/netcdf/'
 
@@ -100,8 +104,8 @@ toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True, 'usempi': True}
 
 dependencies = [
-    ('baselibs', local_buildset, '',    ('GCCcore', local_gcc_version)), # for cURL, zlib and Szip
-    ('HDF5',     '1.10.6',       '-MPI'),
+    ('baselibs', local_buildset,           '',    ('GCCcore', local_gcc_version)), # for cURL, zlib and Szip
+    ('HDF5',     local_HDF5_retro_version, '-MPI'),
 ]
 
 builddependencies = [ 

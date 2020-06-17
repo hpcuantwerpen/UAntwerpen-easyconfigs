@@ -3,13 +3,15 @@
 #
 easyblock = 'ConfigureMake'
 
-name =          'FLTK'
-version =       '1.3.5'
-versionsuffix = '-viz'
-
 local_buildset =         '2020a'
 local_gcc_version =      '9.3.0'
 local_binutils_version = '2.34'
+
+local_FLTK_version =           '1.3.5'           # http://www.fltk.org
+
+name =          'FLTK'
+version =       local_FLTK_version
+versionsuffix = '-viz'
 
 homepage = 'http://www.fltk.org'
 

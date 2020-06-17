@@ -106,7 +106,7 @@
 <tr><td> Go                    </td><td> 1.10.1                                       </td><td> Updated on demand                                 </td><td> x86_64   </td></tr>
 <tr><td> GObject-Introspection </td><td> 1.61.1-GCCcore-8.3.0                         </td><td> 1.64.1-GCCcore-9.3.0                              </td><td> buildset </td></tr>
 <tr><td> gompi                 </td><td> 2018b                                        </td><td> Installed on demand                               </td><td> buildset </td></tr>
-<tr><td> GPAW                  </td><td> 19.8.1 (multiple configurations)             </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> GPAW                  </td><td> 19.8.1 (multiple configurations)             </td><td> 20.1.0 (multiple configurations)                  </td><td> buildset </td></tr>
 <tr><td> GROMACS               </td><td> 2019.4-intel-2019b                           </td><td> 2020.2-intel-2020a and 2019.4 with PLUMED         </td><td> buildset </td></tr>
 <tr><td> GSL                   </td><td> 2.5-intel-2018b                              </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> gtest                 </td><td> 1.8.1 (Intel, GCCcore)                       </td><td> 1.10.0-intel-2020a                                </td><td> buildset </td></tr>
@@ -115,7 +115,7 @@
 <tr><td> hanythingondemand     </td><td> 3.2.0-intel-2017a-Python-2.7.13              </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> HarfBuzz              </td><td> 2.5.3-GCCcore-8.3.0                          </td><td> 2.6.4-GCCcore-9.3.0                               </td><td> buildset </td></tr>
 <tr><td> HDF5                  </td><td> 1.10.5-intel-2019b-MPI (and 1.8.21)          </td><td> 1.12.0-intel-2020a-MPI (and 1.10.6)               </td><td> buildset </td></tr>
-<tr><td> HEEDS                 </td><td> 2018.10                                      </td><td> TODO                                              </td><td> x86_64   </td></tr>
+<tr><td> HEEDS                 </td><td> 2018.10                                      </td><td> Installed on demand (SimCenter option).           </td><td> x86_64   </td></tr>
 <tr><td> help2man              </td><td> 1.47.5                                       </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
 <tr><td> HISAT2                </td><td> 2.0.5-intel-2017a                            </td><td> Installed on demand.                              </td><td> buildset </td></tr>
 <tr><td> HTSeq                 </td><td> 0.7.2-intel-2017a-Python-2.7.13              </td><td> Moved into BioTools-Python/2020a.00-intel-2020a-* </td><td> /        </td></tr>
@@ -127,7 +127,7 @@
 <tr><td> IntelPython3          </td><td> 2019b (3.6 equivalent)                       </td><td> 2020a (3.7 equivalent)                            </td><td> x86_64, buildset </td></tr>
 <tr><td> intltool              </td><td> 0.51.0-intel-2018b-Perl-5.26.1               </td><td> 0.51.0-GCCcore-9.3.0-Perl-5.30.2                  </td><td> buildset </td></tr>
 <tr><td> IOzone                </td><td> 3.489                                        </td><td> System maintenance only                           </td><td> system   </td></tr>
-<tr><td> ITensor               </td><td> 2.1.1-intel-2018b                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> ITensor               </td><td> 2.1.1-intel-2018b                            </td><td> On demand, not meant for a central install        </td><td> buildset </td></tr>
 <tr><td> JAGS                  </td><td> 4.3.0-intel-2019b                            </td><td> 4.3.0-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> JasPer                </td><td> 2.0.14-intel-2018b                           </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> Java                  </td><td> 11                                           </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
@@ -137,7 +137,7 @@
 <tr><td> Keras                 </td><td> 2.2.2                                        </td><td> Keras is now part of TensorFlow                   </td><td> /        </td></tr>
 <tr><td> KHRplatform           </td><td> 1.0                                          </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> Kraken                </td><td> 1.0-intel-2018b-Perl-5.26.1                  </td><td> Installed on demand (there is now a Kraken 2)     </td><td> buildset </td></tr>
-<tr><td> Kraken2               </td><td> /                                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Kraken2               </td><td> /                                            </td><td> 2.0.9-beta-intel-2020a-Perl-5.30.2                </td><td> buildset </td></tr>
 <tr><td> kwant                 </td><td> 1.2.2-intel-2017a-Python-3.6.1               </td><td> 1.4.2-intel-2020a-Python-3.8.2                    </td><td> buildset </td></tr>
 <tr><td> kwant-bundle          </td><td> 1.3.2-intel-2018a-Python-3.6.6               </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> LAME                  </td><td> 3.100-intel-2018b                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> buildset </td></tr>
@@ -155,7 +155,7 @@
 <tr><td> LibTIFF               </td><td> 4.0.9-intel-2018b                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> libtool               </td><td> 2.4.6                                        </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
 <tr><td> libunistring          </td><td> 0.9.8-intel-2018a                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
-<tr><td> libvdwxc              </td><td> 0.4.0-intel-2019b-MPI                        </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> libvdwxc              </td><td> 0.4.0-intel-2019b-MPI                        </td><td> 0.4.0-intel-2020a-MPI                             </td><td> buildset </td></tr>
 <tr><td> libxc                 </td><td> 4.3.4-intel-2019b                            </td><td> 4.3.4-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> libxml2               </td><td> 2.9.8-intel-2018b                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> libxslt               </td><td> 1.1.32-intel-2018b                           </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
@@ -175,9 +175,11 @@
 <tr><td> mdust                 </td><td> 1.0-intel-2017a                              </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> MEGAHIT               </td><td> 1.2.9-intel-2019b                            </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> /        </td></tr>
 <tr><td> Mesa                  </td><td> CentOS7                                      </td><td> Dummy module needed for EasyBuild                 </td><td> system   </td></tr>
+<tr><td> metapub               </td><td> Was Python-bioinformatics                    </td><td> 0.5.50intel-2020a-...                             </td><td> buildset </td></tr>
 <tr><td> METIS                 </td><td> 5.1.0-intel-2019b-i32-fp64                   </td><td> 5.1.0-intel-2020a-i32-fp64                        </td><td> buildset </td></tr>
+<tr><td> miniasm               </td><td> /                                            </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> /        </td></tr>
 <tr><td> minimap2              </td><td> Not installed but requested                  </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> /        </td></tr>
-<tr><td> molmod                </td><td> 1.1-intel-2017a-Python-2.7.13                </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> molmod                </td><td> 1.1-intel-2017a-Python-2.7.13                </td><td> 1.4.7-intel-2020a-...                             </td><td> buildset </td></tr>
 <tr><td> monitor               </td><td> 1.1.2                                        </td><td> 1.1.2                                             </td><td> x86_64   </td></tr>
 <tr><td> Mono                  </td><td> 4.8.0.495-intel-2017a                        </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> MonolixSuite          </td><td> 2019R2                                       </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
@@ -191,7 +193,7 @@
 <tr><td> ncurses               </td><td> 6.1-intel-2018b                              </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> buildset </td></tr>
 <tr><td> netCDF                </td><td> 4.7.0-intel-2019b-(no)MPI                    </td><td> 4.7.3-intel-2020a-(no)MPI                         </td><td> buildset </td></tr>
 <tr><td> NEST                  </td><td> 2.20.1-intel-2019b-Python-3.7.4-*            </td><tr> 2.20.1-intel-2020a-Python-3.8.3-*                 </td><td> buildset </td></tr>
-<tr><td> NetPyNE               </td><td> 0.9.1.3-intel-2018b-Python-3.7.1             </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> NetPyNE               </td><td> 0.9.1.3-intel-2018b-Python-3.7.1             </td><td> 0.9.6-intel-2020a-...                             </td><td> buildset </td></tr>
 <tr><td> NEURON                </td><td> 7.7.2-intel-2019b-Python-3.7.4               </td><td> NEURON/7.7.2-intel-2020a-Python-3.8.2             </td><td> buildset </td></tr>
 <tr><td> NGS                   </td><td> 2.9.6-intel-2019b                            </td><td> 2.10.4-intel-2020a                                </td><td> buildset </td></tr>
 <tr><td> NSS-NSPR              </td><td> 3.45-4.22-GCCcore-8.3.0                      </td><td> 3.51.1-4.25-GCCcore-9.3.0                         </td><td> buildset </td></tr>
@@ -205,7 +207,7 @@
 <tr><td> OpenFOAM              </td><td> 6-intel-2019b                                </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> OpenMPI               </td><td> 3.1.1-GCC-7.3.0-2.30                         </td><td> Installed with foss                               </td><td> buildset </td></tr>
 <tr><td> OpenMX                </td><td> 3.8.5-intel-2018b                            </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> OrthoFinder           </td><td> 2.2.6-intel-2018a                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> OrthoFinder           </td><td> 2.2.6-intel-2018a                            </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> OTF2                  </td><td> 2.1.1-intel-2018a                            </td><td> Installed when needed                             </td><td> buildset </td></tr>
 <tr><td> p7zip                 </td><td> 16.02                                        </td><td> SYSTEM toolchain, unmaintained                    </td><td> system   </td></tr>
 <tr><td> Pango                 </td><td> 1.44.3-GCCcore-8.3.0                         </td><td> 1.44.7-GCCcore-9.3.0                              </td><td> buildset </td></tr>
@@ -217,7 +219,7 @@
 <tr><td> pbs_python            </td><td> 4.6.0-intel-2017a-Python-2.7.13              </td><td> Not for SLURM                                     </td><td> /        </td></tr>
 <tr><td> PCRE                  </td><td> 8.42-intel-2018b                             </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> Perl                  </td><td> 5.30.0-GCCcore-8.3.0                         </td><td> 5.30.2-intel-2020a                                </td><td> buildset </td></tr>
-<tr><td> phonopy               </td><td> 2.1.2-intel-2018b-Python-3.6.8               </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> phonopy               </td><td> 2.1.2-intel-2018b-Python-3.6.8               </td><td> 2.6.1-intel-2020a-...                             </td><td> buildset </td></tr>
 <tr><td> Pilon                 </td><td> 1.23-Java-11                                 </td><td> SYSTEM toolchain                                  </td><td> system   </td></tr>
 <tr><td> pixman                </td><td> 0.34.0-intel-2018b                           </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> pkg-config            </td><td> 0.29.1                                       </td><td> Moved into buildtools/2020a                       </td><td> /        </td></tr>
@@ -226,15 +228,15 @@
 <tr><td> PROJ                  </td><td> 6.1.1-intel-2019b                            </td><td> 7.0.0-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> protobuf              </td><td> 3.7.1-intel-2018b-Python-3.6.8               </td><td> Installed when needed by a package                </td><td> buildset </td></tr>
 <tr><td> Python                </td><td> 2.7.18, 3.7.4                                </td><td> 3.8.2-intel-2020a                                 </td><td> buildset </td></tr>
-<tr><td> Python-bioinformatics </td><td> 2019b.00-*                                   </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> Python-IDLab-networks </td><td> 2019b.00-*                                   </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> Python-IntelMods      </td><td> 2019b.00-intel-2019b-Python-3.7.4            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Python-bioinformatics </td><td> 2019b.00-*                                   </td><td> / now metapub                                     </td><td> buildset </td></tr>
+<tr><td> Python-IDLab-networks </td><td> 2019b.00-*                                   </td><td> Problems with gevent.                             </td><td> buildset </td></tr>
+<tr><td> Python-IntelMods      </td><td> 2019b.00-intel-2019b-Python-3.7.4            </td><td> Obsolete, or try IntelPython3                     </td><td> buildset </td></tr>
 <tr><td> Qt5                   </td><td> 5.13.0-GCCcore-8.3.0-noOpenGL                </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> QuantumESPRESSO       </td><td> 6.4.1-intel-2018b-*                          </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> QUIP                  </td><td> 180612-intel-2017a                           </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> qutip                 </td><td> 4.3.1-intel-2018b-Python-3.6.8               </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> QUIP                  </td><td> 180612-intel-2017a                           </td><td> Installed on demand due to past comp. problems    </td><td> buildset </td></tr>
+<tr><td> qutip                 </td><td> 4.3.1-intel-2018b-Python-3.6.8               </td><td> QuTiP/4.5.1-intel-2020a-...                       </td><td> buildset </td></tr>
 <tr><td> R                     </td><td> 3.5.1-intel-2018b                            </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> Racon                 </td><td> 1.3.3-intel-2018b                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Racon                 </td><td> 1.3.3-intel-2018b                            </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> buildset </td></tr>
 <tr><td> RAxML                 </td><td> 8.2.10-intel-2017a-hybrid                    </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> RAxML-NG              </td><td> 0.9.0-intel-2019b                            </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> Roary                 </td><td> 3.12.0-intel-2018b-Perl-5.26.1               </td><td> TODO                                              </td><td> buildset </td></tr>
@@ -265,17 +267,17 @@
 <tr><td> torque-tools          </td><td> 1.0.2                                        </td><td> Obsolete on SLURM                                 </td><td> /        </td></tr>
 <tr><td> Trimmomatic           </td><td> 0.39-Java-11                                 </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> UDUNITS               </td><td> 2.2.26-intel-2018b                           </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
-<tr><td> Unicycler             </td><td> 0.4.7-intel-2018b-Python-3.7.1               </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Unicycler             </td><td> 0.4.7-intel-2018b-Python-3.7.1               </td><td> 0.4.8-intel-2020a-Python-3.8.3                    </td><td> buildset </td></tr>
 <tr><td> USPEX                 </td><td> 10.3-intel-2018a                             </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> util-linux            </td><td> 2.32-intel-2018b                             </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> VASP                  </td><td> 5.4.4-intel-2018b-Wannier90-2.1.0            </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> VESTA                 </td><td> 3.4.6                                        </td><td> Installed on demand                               </td><td> x86_64   </td></tr>
-<tr><td> VMD                   </td><td> 1.9.3-intel-2019b-Python-2.7.16-viz          </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> VMD                   </td><td> 1.9.3-intel-2019b-Python-2.7.16-viz          </td><td> 1.9.3-intel-2020a-viz                             </td><td> buildset </td></tr>
 <tr><td> Voro++                </td><td> 0.4.6-intel-2019b                            </td><td> 0.4.6-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> vsc-base              </td><td> 2.5.1                                        </td><td> Obsolete                                          </td><td> /        </td></tr>
 <tr><td> vsc-install           </td><td> 0.12.7-intel-2019b-Python-3.7.4              </td><td> Obsolete                                          </td><td> /        </td></tr>
 <tr><td> vsc-mympirun          </td><td> 4.1.9-intel-2019b-Python-2.7.16              </td><td> 5.0.1 (SYSTEM toolchain)                          </td><td> system   </td></tr>
-<tr><td> vsc-tutorial          </td><td> 202003-intel-2019b                           </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> vsc-tutorial          </td><td> 202003-intel-2019b                           </td><td> Installed when the courses are prepared.          </td><td> buildset </td></tr>
 <tr><td> vsc-vnc               </td><td> 0.1                                          </td><td> SYSTEM toolchain                                  </td><td> system   </td></tr>
 <tr><td> VSEARCH               </td><td> 2.14.2-intel-2019b                           </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> /        </td></tr>
 <tr><td> Wannier90             </td><td> 2.1.0-intel-2018b                            </td><td> 3.1.0-intel-2020a                                 </td><td> buildset </td></tr>

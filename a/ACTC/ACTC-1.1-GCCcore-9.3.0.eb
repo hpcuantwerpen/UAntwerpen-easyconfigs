@@ -1,11 +1,13 @@
 easyblock = 'MakeCp'
 
-name =    'ACTC'
-version = '1.1'
-
 local_buildset =         '2020a'
 local_gcc_version =      '9.3.0'
 local_binutils_version = '2.34'
+
+local_ACTC_version =           '1.1'             # https://sourceforge.net/projects/actc/files/actc-source/
+
+name =    'ACTC'
+version = local_ACTC_version
 
 homepage = 'http://plunk.org/~grantham/public/actc/'
 
