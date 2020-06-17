@@ -1,0 +1,61 @@
+easyblock = 'MakeCp'
+
+local_buildset =         '2020a'
+
+local_miniasm_version =  '0.3'    # https://github.com/lh3/minimap2/releases
+
+name =          'miniasm'
+version =       local_miniasm_version
+versionsuffix = '-biotoolsDevel'
+
+homepage = 'https://github.com/lh3/miniasm'
+
+whatis = [
+    "Name:        %(name)s",
+    "Version:     %(version)s",
+    "Description: Ultrafast de novo assembly for long noisy reads (though having no consensus step)."    
+]
+
+description = """
+Miniasm is a very fast OLC-based de novo assembler for noisy long reads. It 
+takes all-vs-all read self-mappings (typically by minimap) as input and outputs 
+an assembly graph in the GFA format. Different from mainstream assemblers, 
+miniasm does not have a consensus step. It simply concatenates pieces of read 
+sequences to generate the final unitig sequences. Thus the per-base error 
+rate is similar to the raw input reads.
+
+So far miniasm is in early development stage. It has only been tested on a dozen 
+of PacBio and Oxford Nanopore (ONT) bacterial data sets.
+"""
+
+docurls = [
+    'Web-based documentation on https://github.com/lh3/miniasm/blob/master/README.md',
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+# https://github.com/lh3/miniasm/archive/v0.3.tar.gz
+sources = [ {
+    'download_filename': 'v%(version)s.tar.gz',
+    'filename':          SOURCELOWER_TAR_GZ,
+    'source_urls':       ['https://github.com/lh3/miniasm/archive']
+} ]
+checksums =   ['9b688454f30f99cf1a0b0b1316821ad92fbd44d83ff0b35b2403ee8692ba093d']
+
+# extra: Also build some extra programs
+# We need to overwrite CC and CFLAGS encoded in the Makefile.
+buildopts = 'CC="$CC" CFLAGS="$CFLAGS"'
+
+files_to_copy = [
+    (['miniasm', 'minidot'],       'bin'),
+    (['LICENSE.txt', 'README.md'], 'share/doc/miniasm'),
+]
+
+sanity_check_paths = {
+    'files': ['bin/miniasm', 'bin/minidot'],
+    'dirs':  []
+}
+
+moduleclass = 'bio'
+
+

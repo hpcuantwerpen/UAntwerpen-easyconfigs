@@ -8,8 +8,9 @@ local_buildset =         '2020a'
 
 local_minimap2_version = '2.17'   # https://github.com/lh3/minimap2/releases
 
-name =    'minimap2'
-version = local_minimap2_version
+name =          'minimap2'
+version =       local_minimap2_version
+versionsuffix = '-biotoolsDevel'
 
 homepage = 'https://github.com/lh3/minimap2'
 
@@ -37,7 +38,8 @@ modern code.
 """
 
 docurls = [
-    'man page for the minimap2 command,'    
+    'Web-based documentation on https://github.com/lh3/minimap2/blob/master/README.md','
+    'Man page for the minimap2 command', 
 ]
 
 toolchain = {'name': 'intel', 'version': local_buildset}

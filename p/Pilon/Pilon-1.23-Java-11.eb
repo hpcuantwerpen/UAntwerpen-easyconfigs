@@ -1,7 +1,9 @@
 easyblock = 'JAR'
 
-name = 'Pilon'
-version = '1.23'
+local_Pilon_version =          '1.23'            # https://github.com/broadinstitute/pilon
+
+name =          'Pilon'
+version =       local_Pilon_version
 versionsuffix = '-Java-%(javaver)s'
 
 homepage = 'https://github.com/broadinstitute/pilon'

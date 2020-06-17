@@ -44,6 +44,9 @@ It was developed to reduce module clutter on our systems.
   * [MEGAHIT](https://github.com/voutcn/megahit)
       * CMakeMake
       * The build process only produces executables.
+  * [miniasm](https://github.com/lh3/miniasm)
+      * MakeCp, and needs some tricks.
+      * The build process produces two executables
   * [Minimap2](https://github.com/lh3/minimap2)
       * MakeCp, and needs some tricks.
       * The build process produces three binaries and a static library.
@@ -51,7 +54,7 @@ It was developed to reduce module clutter on our systems.
   * [MUSCLE](http://drive5.com/muscle/)
       * MakeCp, but does need a patch as the compiler name is hard-coded in the Makefile
         and not even in a variable that we can overwrite
-      * Build process creates a single file, `bin/musle`
+      * Build process creates a single file, `bin/muscle`
   * [Racon](https://github.com/lbcb-sci/racon)
       * CMakeMake build process.
       * The build process only generates the executable `bin`racon`.

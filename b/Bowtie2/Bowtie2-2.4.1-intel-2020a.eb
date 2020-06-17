@@ -11,11 +11,13 @@
 
 easyblock = 'CMakeMake'
 
-name    = 'Bowtie2'
-version = '2.4.1'
-
 local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
+
+local_Bowtie2_version =        '2.4.1'           # http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+
+name    = 'Bowtie2'
+version = local_Bowtie2_version
 
 homepage = 'http://bowtie-bio.sourceforge.net/bowtie2/index.shtml'
 

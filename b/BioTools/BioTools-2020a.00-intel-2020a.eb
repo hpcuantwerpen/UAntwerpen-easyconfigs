@@ -5,19 +5,6 @@ local_gcc_version      = '9.3.0'
 
 local_Perl_version =           '5.30.2'          # https://www.perl.org/get.html
 
-name =          'BioTools'
-version =       '2020a.00'
-
-homepage = '(none)'
-
-# We list all libraries in a whatis line so that they can be found by module keyword.
-# Contrary to what the LMOD documentation makes you believe, it seems that help is
-# not searched when using module keyword.
-whatis = [
-    'Description: A number of bioinformatics tools, installed together as a bundle',
-    'Contains: BEDTools, ClonalRangeML, CD-HIT, HTSlib/BCFtools/SAMtools, fastp, MCL, MEGAHIT, minimap2, MUSCLE, Racon, VSEARCH'
-]
-
 local_BCFtools_version =      '1.10.2' # https://github.com/samtools/bcftools/releases
 local_BEDTools_version =      '2.29.2' # https://github.com/arq5x/bedtools2/releases
 local_CDHIT_version =         '4.8.1'  # https://github.com/weizhongli/cdhit/releases
@@ -26,11 +13,55 @@ local_fastp_version =         '0.20.1' # https://github.com/OpenGene/fastp/relea
 local_HTSlib_version =        '1.10.2' # https://github.com/samtools/htslib/releases
 local_MCL_version =           '14.137' # https://micans.org/mcl/
 local_MEGAHIT_version =       '1.2.9' # https://github.com/voutcn/megahit/releases
+local_miniasm_version =  '0.3'    # https://github.com/lh3/minimap2/releases
 local_minimap2_version =      '2.17'   # https://github.com/lh3/minimap2/releases
 local_MUSCLE_version =        '3.8.31' # http://drive5.com/muscle/downloads.htm
 local_Racon_version =         '1.4.13' # https://github.com/isovic/racon/releases
 local_SAMtools_version =      '1.10'   # https://github.com/samtools/samtools/releases
 local_VSEARCH_version =       '2.14.2' # https://github.com/torognes/vsearch/releases
+
+name =          'BioTools'
+version =       '2020a.00'
+
+local_version_subs = {
+    'bedtools':      local_BEDTools_version,
+    'CDHIT':         local_CDHIT_version,
+    'ClonalFrameML': local_ClonalFrameML_version,
+    'fastp':         local_fastp_version,
+    'HTSlib':        local_HTSlib_version,
+    'BCFtools':      local_BCFtools_version,
+    'SAMtools':      local_SAMtools_version,
+    'MCL':           local_MCL_version,
+    'MEGAHIT':       local_MEGAHIT_version,
+    'miniasm':       local_miniasm_version,
+    'minimap2':      local_minimap2_version,
+    'MUSCLE':        local_MUSCLE_version,
+    'Racon':         local_Racon_version,
+    'VSEARCH':       local_VSEARCH_version,
+}
+
+homepage = '(none)'
+
+# We list all libraries in a whatis line so that they can be found by module keyword.
+# Contrary to what the LMOD documentation makes you believe, it seems that help is
+# not searched when using module keyword.
+whatis = [
+    'Name:        %(name)s',
+    'Version:     %(version)s',
+    'Description: A number of bioinformatics tools, installed together as a bundle',
+    'Contains:    BEDTools %(bedtools)s, ' % local_version_subs + 
+                 'CD-HIT %(CDHIT)s, ' % local_version_subs + 
+                 'ClonalRangeML %(ClonalFrameML)s, ' % local_version_subs + 
+                 'HTSlib %(HTSlib)s / BCFtools %(BCFtools)s / SAMtools %(SAMtools)s, ' % local_version_subs + 
+                 'fastp %(fastp)s, ' % local_version_subs + 
+                 'MCL %(MCL)s, ' % local_version_subs +
+                 'MEGAHIT %(MEGAHIT)s, ' % local_version_subs +
+                 'miniasm %(miniasm)s, ' % local_version_subs +
+                 'minimap2 %(minimap2)s, ' % local_version_subs +
+                 'MUSCLE %(MUSCLE)s, ' % local_version_subs + 
+                 'Racon%(Racon)s, ' % local_version_subs +
+                 'VSEARCH %(VSEARCH)s' % local_version_subs
+]
 
 description = """
 This module provides a number of useful bio-informatics tools.
@@ -130,6 +161,14 @@ Overview of the included tools and libraries:
   The MEGAHIT executable is a Python script. It should run with the system
   Python on the UAntwerp systems. However, any of the other Python modules
   in the toolchain should also work.
+* miniasm (version %(miniasm)s): a very fast OLC-based de novo assembler for noisy long 
+  reads. It takes all-vs-all read self-mappings (typically by minimap) as input and 
+  outputs an assembly graph in the GFA format. Different from mainstream assemblers, 
+  miniasm does not have a consensus step. It simply concatenates pieces of read 
+  sequences to generate the final unitig sequences. Thus the per-base error 
+  rate is similar to the raw input reads.
+  So far miniasm is in early development stage. It has only been tested on a dozen 
+  of PacBio and Oxford Nanopore (ONT) bacterial data sets.
 * minimap2 (version %(minimap2)s): a fast sequence mapping and alignment
   program that can find overlaps between long noisy reads, or map long
   reads or their assemblies to a reference genome optionally with detailed
@@ -178,21 +217,7 @@ Overview of the included tools and libraries:
   essentially a 15-year old Pentium 4 processor, the code may not be that well
   vectorized despite what it suggests and may not exploit more modern vector
   instructions at all.
-""" % {
-    'bedtools':      local_BEDTools_version,
-    'CDHIT':         local_CDHIT_version,
-    'ClonalFrameML': local_ClonalFrameML_version,
-    'fastp':         local_fastp_version,
-    'HTSlib':        local_HTSlib_version,
-    'BCFtools':      local_BCFtools_version,
-    'SAMtools':      local_SAMtools_version,
-    'MCL':           local_MCL_version,
-    'MEGAHIT':       local_MEGAHIT_version,
-    'minimap2':      local_minimap2_version,
-    'MUSCLE':        local_MUSCLE_version,
-    'Racon':         local_Racon_version,
-    'VSEARCH':       local_VSEARCH_version,
-}
+""" % local_version_subs
 
 docurls = [
     'bedtools:      Web-based documentation on http://bedtools.readthedocs.io/',
@@ -206,6 +231,7 @@ docurls = [
     'MCL:           Man pages (sections 1, 5 and 7) - try \man mcl\ as a starting point',
     'MEGAHIT:       Web-based documentation on https://github.com/voutcn/megahit/blob/master/README.md',
     'MEGAHIT:       Command line help with `megahit -h`',
+    'miniasm:       Web-based documentation on https://github.com/lh3/miniasm/blob/master/README.md',
     'minimap2:      Web-based documentation on https://github.com/lh3/minimap2/blob/master/README.md',
     'minimap2:      Man page for the minimap2 command', 
     'MUSCLE:        Web-based documentation on http://drive5.com/muscle/manual/',
@@ -302,6 +328,20 @@ components = [
                              } ],
         'start_dir':         '%(namelower)s-%(version)s',
         'separate_build_dir': False,
+    }),
+    ('miniasm', local_miniasm_version, {
+        'easyblock':     'MakeCp',
+        'sources':       [ { # https://github.com/lh3/miniasm/archive/v0.3.tar.gz
+                             'download_filename': 'v%(version)s.tar.gz',
+                             'filename':          SOURCELOWER_TAR_GZ,
+                             'source_urls':       ['https://github.com/lh3/miniasm/archive']
+                         } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'buildopts':     'CC="$CC" CFLAGS="$CFLAGS"',
+        'files_to_copy': [
+                            (['miniasm', 'minidot'],       'bin'),
+                            (['LICENSE.txt', 'README.md'], 'share/doc/miniasm'),
+                         ],
     }),
     ('minimap2', local_minimap2_version, {
         'easyblock':     'MakeCp',
