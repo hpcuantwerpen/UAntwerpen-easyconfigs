@@ -3,7 +3,7 @@ easyblock = 'CMakeMake'
 local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
 
-local_MEGAHIT_version =  '1.2.9' # https://github.com/voutcn/megahit/releases
+local_MEGAHIT_version =       '1.2.9' # https://github.com/voutcn/megahit/releases
 
 name =          'MEGAHIT'
 version =       local_MEGAHIT_version
@@ -27,11 +27,19 @@ Python on the UAntwerp systems. However, any of the other Python modules
 in the toolchain should also work.
 """
 
+docurls = [
+    'Web-based documentation on https://github.com/voutcn/megahit/blob/master/README.md',
+    'Command line help with `megahit -h`',
+]
+
 toolchain = {'name': 'intel', 'version': local_buildset}
 
-source_urls = ['https://github.com/voutcn/%(namelower)s/archive/']
-sources =     ['v%(version)s.zip']
-checksums =   ['10a1e730e8e276132ae50312ce650db6359467f2f7bf78e1969f8dd2b4a81ef4']
+sources =   [ {
+                'download_filename': 'v%(version)s.zip',
+                'filename':          '%(namelower)s-%(version)s.zip',
+                'source_urls':       ['https://github.com/voutcn/%(namelower)s/archive/'],
+            } ]
+checksums = ['10a1e730e8e276132ae50312ce650db6359467f2f7bf78e1969f8dd2b4a81ef4']
 
 # Runs fine with the system Python.
 #multi_deps = {'Python': ['3.7.4', '2.7.16']}
@@ -47,12 +55,6 @@ dependencies = [
 separate_build_dir = False
 
 sanity_check_paths = {
-    'files': [
-        'bin/%(namelower)s',
-        'bin/%(namelower)s_core',
-        'bin/%(namelower)s_core_no_hw_accel',
-        'bin/%(namelower)s_core_popcnt',
-        'bin/%(namelower)s_toolkit',
-    ],
-    'dirs': [],
+    'files': [ 'bin/megahit', 'bin/megahit_core', 'bin/megahit_core_no_hw_accel', 'bin/megahit_core_popcnt', 'bin/megahit_toolkit' ],
+    'dirs':  [],
 }
