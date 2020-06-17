@@ -3,6 +3,7 @@ easyblock = 'Bundle'
 local_buildset         = '2020a'
 local_gcc_version      = '9.3.0'
 
+local_LuaJIT_version =         '2.0.5'           # https://luajit.org/download.html
 local_Perl_version =           '5.30.2'          # https://www.perl.org/get.html
 
 local_BCFtools_version =      '1.10.2' # https://github.com/samtools/bcftools/releases
@@ -248,7 +249,8 @@ builddependencies = [
 ]
 
 dependencies = [
-    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), 
+    ('baselibs', local_buildset,       '', ('GCCcore', local_gcc_version)), 
+    ('LuaJIT',   local_LuaJIT_version, '', ('GCCcore', local_gcc_version))
 ]
 
 default_easyblock = 'ConfigureMake'
