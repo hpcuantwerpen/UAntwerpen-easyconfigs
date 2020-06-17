@@ -1,0 +1,45 @@
+easyblock = 'ConfigureMake'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'
+
+local_LuaJIT_version =         '2.0.5'           # https://luajit.org/download.html
+
+name =    'LuaJIT'
+version = local_LuaJIT_version
+
+homepage = "http://luajit.org/"
+
+whatis = [
+    'Name:        %(name)s',
+    'Version:     %(version)s',
+    'Description: a Just-In-Time Compiler (JIT) for the Lua programming language.',
+]
+
+description = """
+LuaJIT is a Just-In-Time Compiler (JIT) for the Lua
+programming language. Lua is a powerful, dynamic and light-weight programming
+language. It may be embedded or used as a general-purpose, stand-alone
+language.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
+
+sources =     [SOURCE_TAR_GZ]
+source_urls = ['http://luajit.org/download/']
+
+dependencies = [
+    ('binutils', local_binutils_version),
+    ('baselibs', local_buildset),  # for ncurses
+]
+
+skipsteps = ['configure']
+installopts = 'PREFIX=%(installdir)s'
+
+sanity_check_paths = {
+    'files': ["bin/luajit"],
+    'dirs':  []
+}
+
+moduleclass = "lang"
