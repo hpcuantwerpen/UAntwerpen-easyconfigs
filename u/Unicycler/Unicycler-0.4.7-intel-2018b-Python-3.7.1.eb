@@ -17,6 +17,10 @@ also assembly long-read-only sets (PacBio or Nanopore) where it runs a
 miniasm+Racon pipeline.
 """
 
+docurls = [
+    'Web-based documentation on https://github.com/rrwick/Unicycler/blob/master/README.md',
+]
+
 toolchain = {'name': 'intel', 'version': '2018b'}
 
 source_urls = ['https://github.com/rrwick/Unicycler/archive/']

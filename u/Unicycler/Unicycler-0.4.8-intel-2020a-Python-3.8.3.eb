@@ -1,0 +1,64 @@
+easyblock = 'PythonPackage'
+
+local_buildset =         '2020a'
+
+local_BLASTplus_version =      '2.10.0'          # https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/
+local_Bowtie2_version =        '2.4.1'           # http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+local_SPAdes_version =         '3.14.1'          # http://cab.spbu.ru/software/spades/
+local_Pilon_version =          '1.23'            # https://github.com/broadinstitute/pilon
+local_Unicycler_version =      '0.4.8'           # https://github.com/rrwick/Unicycler/releases
+
+
+local_BioTools_version = local_buildset + '.00'
+
+name =          'Unicycler'
+version =       local_Unicycler_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/rrwick/Unicycler'
+
+whatis = [
+   'Description: Unicycler is Python software combining several other packages in an assembly pipeline for bacterial genomes' 
+]
+
+description = """
+Unicycler is an assembly pipeline for bacterial genomes. It can assemble 
+Illumina-only read sets where it functions as a SPAdes-optimiser. It can 
+also assembly long-read-only sets (PacBio or Nanopore) where it runs a 
+miniasm+Racon pipeline.
+"""
+
+docurls = [
+    'Web-based documentation on https://github.com/rrwick/Unicycler/blob/master/README.md',
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+sources = [ {
+    'download_filename': 'v%(version)s.tar.gz',
+    'filename':          SOURCELOWER_TAR_GZ,
+    'source_urls':       ['https://github.com/rrwick/Unicycler/archive/'],
+} ]
+checksums =   ['e948871e4de9db5964c9ca6f8f877c3cbe6a46f62052dfab52ffe0f45bbbd203']
+
+dependencies = [
+    ('Python',    local_Python3_version),
+    ('Java',      '11',                    '',                  True),
+    ('BLAST+',    local_BLASTplus_version),
+    ('Bowtie2',   local_Bowtie2_version),
+    ('SPAdes',    local_SPAdes_version,    versionsuffix),
+    ('Pilon',     local_Pilon_version,     '-Java-%(javaver)s', True),
+    ('BioTools',  local_BioTools_version),  # For SAMtools, Racon, miniasm
+]
+
+download_dep_fail = True
+use_pip =           True
+sanity_pip_check =  False  
+
+sanity_check_paths = {
+    'files':  [],
+    'dirs':   ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'bio'
