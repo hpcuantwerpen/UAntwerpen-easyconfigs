@@ -8,16 +8,18 @@
 ##
 easyblock = 'ConfigureMake'
 
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+local_PROJ_version =           '7.0.1'           # https://proj.org/download.html
+
 name =    'PROJ'
-version = '7.0.0'
+version = local_PROJ_version
 
 local_europe_version =        '1.6'
 local_north_america_version = '1.4'
 local_oceania_version =       '1.2'
 local_world_version =         '1.0'
-
-local_buildset =    '2020a'
-local_gcc_version = '9.3.0'
 
 homepage = 'https://proj.org/'
 
@@ -81,7 +83,7 @@ sources = [
     },    
 ]
 checksums = [
-    '1675cde27a2fc26eecc1024d2c2df418195314d9f10ed96c2c1fb858b10c0b46', # proj-7.0.0.zip
+    '9c22b638194f984ed530b81598552f4bffa2e4a584776ba51016410af8cf1e8a', # proj-7.0.1.zip
     'c596ad4cc995c19c407f24a9a76a714300240b7691bf86fd3393ab0f65ba15a0', # proj-datumgrid-europe-1.6.zip
     'eb8a1b6fa96580e88555fb1ce3e61aa6d02e07b7d6d0023aecf2cebfa575becf', # proj-datumgrid-north-america-1.4.zip
     '7da6829ed2067cc7f294e06b57c86fc258e7355230d88e6dbf830854e768d942', # proj-datumgrid-oceania-1.2.zip

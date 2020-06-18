@@ -5,10 +5,12 @@
 
 easyblock = 'ConfigureMake'
 
-name =    'JAGS'
-version = '4.3.0'
-
 local_buildset = '2020a'
+
+local_JAGS_version =           '4.3.0'           # http://mcmc-jags.sourceforge.net/
+
+name =    'JAGS'
+version = local_JAGS_version
 
 homepage = 'http://mcmc-jags.sourceforge.net/'
 

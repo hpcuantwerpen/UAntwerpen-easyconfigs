@@ -1,11 +1,14 @@
 easyblock = 'ConfigureMake'
 
+local_gcc_version = '9.3.0'
+local_buildset =    '2020a'
+
+local_GDAL_version =           '3.1.0'           # http://download.osgeo.org/gdal/
+local_PROJ_version =           '7.0.1'           # https://proj.org/download.html
+
 name =    'GDAL'
 version = '3.0.4'
 #versionsuffix = '-Python-%(pyver)s'
-
-local_gcc_version = '9.3.0'
-local_buildset =    '2020a'
 
 homepage = 'http://www.gdal.org/'
 
@@ -35,8 +38,8 @@ source_urls = ['http://download.osgeo.org/gdal/%(version)s/']
 sources =     [SOURCELOWER_TAR_XZ]
 
 dependencies = [
-    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib
-    ('PROJ',     '7.0.0'),                                            # Seems to be a mandatory dependency given the error messages if it is not present.
+    ('baselibs', local_buildset,     '', ('GCCcore', local_gcc_version)), # for zlib
+    ('PROJ',     local_PROJ_version),                                     # Seems to be a mandatory dependency given the error messages if it is not present.
 ]
 
 builddependencies = [
