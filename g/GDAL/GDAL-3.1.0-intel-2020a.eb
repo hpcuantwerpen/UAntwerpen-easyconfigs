@@ -4,10 +4,14 @@ local_gcc_version = '9.3.0'
 local_buildset =    '2020a'
 
 local_GDAL_version =           '3.1.0'           # http://download.osgeo.org/gdal/
+local_GEOS_version =           '3.8.1'           # http://trac.osgeo.org/geos
+local_HDF5_retro_version =     '1.10.6'          # https://support.hdfgroup.org/HDF5/
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
 local_PROJ_version =           '7.0.1'           # https://proj.org/download.html
+local_SQLite_version =         '3.31.1'          # https://www.sqlite.org/index.html
 
 name =    'GDAL'
-version = '3.0.4'
+version = local_GDAL_version
 #versionsuffix = '-Python-%(pyver)s'
 
 homepage = 'http://www.gdal.org/'
@@ -61,7 +65,8 @@ configopts += ' --with-expat=$EBROOTBASELIBS'
 
 # Support for libxml2
 # Also depends on zlib
-configopts += ' --with-xml2=$EBROOTBASELIBS'
+#configopts += ' --with-xml2=$EBROOTBASELIBS'
+configopts += ' --with-xml2=yes'
 
 # PNG support
 configopts += ' --with-png=$EBROOTBASELIBS'
@@ -79,12 +84,12 @@ configopts += ' --with-jasper=$EBROOTBASELIBS'
 # HDF5
 # This needs the path to the MPI include files to be included in the compiler options,
 # see below.
-dependencies.append( ('HDF5', '1.10.6', '-MPI') )
+dependencies.append( ('HDF5', local_HDF5_retro_version, '-MPI') )
 configopts += ' --with-hdf5=$EBROOTHDF5'
 
 # For GMT-compatible netCDF:
 # netCDF (Uses HDF5, so you might as well include support for HDF5 also)
-dependencies.append( ('netCDF', '4.7.3', '-MPI') )
+dependencies.append( ('netCDF', local_netCDF_version, '-MPI') )
 configopts += ' --with-netcdf=$EBROOTNETCDF'
 
 # For OGC Web Coverage service and some other OBC services: cURL needed
@@ -94,7 +99,7 @@ configopts += ' --with-curl=$EBROOTBASELIBS'
 # For GeoPackage support: SQLite 3, also component for Rasterlite2 support
 # Also used for some OGR vector formats
 # SQLite 3
-dependencies.append( ('SQLite', '3.31.1') )
+dependencies.append( ('SQLite', local_SQLite_version) )
 configopts += ' --with-sqlite3=$EBROOTSQLITE'
 # And add regexp support to SQLite:
 configopts += ' --with-pcre=$EBROOTBASELIBS'
@@ -103,7 +108,7 @@ configopts += ' --with-pcre=$EBROOTBASELIBS'
 # Note that the EasyBuild GEOS module contains Python support, so we may
 # include that as well right away.
 #dependencies.append( ('GEOS', '3.6.1', versionsuffix) )
-dependencies.append( ('GEOS', '3.8.1') )
+dependencies.append( ('GEOS', local_GEOS_version) )
 configopts += ' --with-geos=$EBROOTGEOS/bin/geos-config'
 
 #

@@ -1,9 +1,11 @@
 easyblock = 'ConfigureMake'
 
-name =    'GEOS'
-version = '3.8.1'
-
 local_buildset = '2020a'
+
+local_GEOS_version =           '3.8.1'           # http://trac.osgeo.org/geos
+
+name =    'GEOS'
+version = local_GEOS_version
 
 homepage = 'http://trac.osgeo.org/geos'
 
