@@ -7,10 +7,10 @@ module load intel/2020a.01
 # For old configure scripts that still expect libmpich.a rather than libmpi.a for Intel MPI,
 # e.g., the Rmpi R-package.
 cd $EBROOTIMPI/compilers_and_libraries_$EBVERSIONIMPI/linux/mpi/intel64/lib
-cd release ;         ln -s libmpi.a libmpich.a
-cd ../release_mt ;   ln -s libmpi.a libmpich.a
-cd ../debug ;        ln -s libmpi.a libmpich.a
-cd ../debug_mt ;     ln -s libmpi.a libmpich.a
+cd release ;         ln -s libmpi.a libmpich.a ; ln -s libmpi.a libmpigf.a ; ln -s libmpi.a libmpigi.a ; ln -s libmpi.so libmpich.so ; ln -s libmpi.so libmpigf.so ; ln -s libmpi.so libmpigi.so 
+cd ../release_mt ;   ln -s libmpi.a libmpich.a ; ln -s libmpi.a libmpigf.a ; ln -s libmpi.a libmpigi.a ; ln -s libmpi.so libmpich.so ; ln -s libmpi.so libmpigf.so ; ln -s libmpi.so libmpigi.so
+cd ../debug ;        ln -s libmpi.a libmpich.a ; ln -s libmpi.a libmpigf.a ; ln -s libmpi.a libmpigi.a ; ln -s libmpi.so libmpich.so ; ln -s libmpi.so libmpigf.so ; ln -s libmpi.so libmpigi.so
+cd ../debug_mt ;     ln -s libmpi.a libmpich.a ; ln -s libmpi.a libmpigf.a ; ln -s libmpi.a libmpigi.a ; ln -s libmpi.so libmpich.so ; ln -s libmpi.so libmpigf.so ; ln -s libmpi.so libmpigi.so
 
 # Create FFTW-compatible interfaces.
 cd $MKLROOT/interfaces/fftw2xc
