@@ -94,7 +94,7 @@
 <tr><td> gc                    </td><td> 7.6.4-intel-2018a                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> GCC                   </td><td> 8.3.0-2.32                                   </td><td> 9.3.0-2.34                                        </td><td> buildset </td></tr>
 <tr><td> GCCcore               </td><td> 8.3.0                                        </td><td> 9.3.0                                             </td><td> buildset </td></tr>
-<tr><td> GDAL                  </td><td> 3.0.1-intel-2019b                            </td><td> 3.0.4-intel-2020a                                 </td><td> buildset </td></tr>
+<tr><td> GDAL                  </td><td> 3.0.1-intel-2019b                            </td><td> 3.1.0-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> GEOS                  </td><td> 3.7.2-intel-2019b                            </td><td> 3.8.1-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> gettext               </td><td> 0.19.8.1-intel-2018b                         </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> Ghostscript           </td><td> 9.27-GCCcore-8.3.0                           </td><td> 9.52-GCCcore-9.3.0                                </td><td> buildset </td></tr>
@@ -225,7 +225,7 @@
 <tr><td> pkg-config            </td><td> 0.29.1                                       </td><td> Moved into buildtools/2020a                       </td><td> /        </td></tr>
 <tr><td> PLUMED                </td><td> 2.6.0-intel-2019b                            </td><td> 2.6.0-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> PRANK                 </td><td> 170427-intel-2018b                           </td><td> Installed on demand                               </td><td> buildset </td></tr>
-<tr><td> PROJ                  </td><td> 6.1.1-intel-2019b                            </td><td> 7.0.0-intel-2020a                                 </td><td> buildset </td></tr>
+<tr><td> PROJ                  </td><td> 6.1.1-intel-2019b                            </td><td> 7.0.1-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> protobuf              </td><td> 3.7.1-intel-2018b-Python-3.6.8               </td><td> Installed when needed by a package                </td><td> buildset </td></tr>
 <tr><td> Python                </td><td> 2.7.18, 3.7.4                                </td><td> 3.8.2-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> Python-bioinformatics </td><td> 2019b.00-*                                   </td><td> / now metapub                                     </td><td> buildset </td></tr>
@@ -235,7 +235,7 @@
 <tr><td> QuantumESPRESSO       </td><td> 6.4.1-intel-2018b-*                          </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> QUIP                  </td><td> 180612-intel-2017a                           </td><td> Installed on demand due to past comp. problems    </td><td> buildset </td></tr>
 <tr><td> qutip                 </td><td> 4.3.1-intel-2018b-Python-3.6.8               </td><td> QuTiP/4.5.1-intel-2020a-...                       </td><td> buildset </td></tr>
-<tr><td> R                     </td><td> 3.5.1-intel-2018b                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> R                     </td><td> 3.5.1-intel-2018b                            </td><td> 4.0.2-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> Racon                 </td><td> 1.3.3-intel-2018b                            </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> buildset </td></tr>
 <tr><td> RAxML                 </td><td> 8.2.10-intel-2017a-hybrid                    </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> RAxML-NG              </td><td> 0.9.0-intel-2019b                            </td><td> TODO                                              </td><td> buildset </td></tr>
