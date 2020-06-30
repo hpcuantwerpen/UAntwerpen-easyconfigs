@@ -1,0 +1,864 @@
+# NOTE: Needs to be compiled on a compute node via the scheduler because otherwise the 
+# tests for Rmpi hang.
+#
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'
+
+local_Java_version = '11'
+
+local_Boost_version =          '1.73.0'          # https://www.boost.org/users/download/
+local_cairo_version =          '1.17.2'          # https://www.cairographics.org
+local_GDAL_version =           '3.1.0'           # http://download.osgeo.org/gdal/
+local_GEOS_version =           '3.8.1'           # http://trac.osgeo.org/geos
+local_ImageMagick_version =    '7.0.10-10'       # https://github.com/ImageMagick/ImageMagick/releases
+local_JAGS_version =           '4.3.0'           # http://mcmc-jags.sourceforge.net/
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+local_PROJ_version =           '7.0.1'           # https://proj.org/download.html
+local_R_version =              '4.0.2'           # https://cran.r-project.org/
+local_SQLite_version =         '3.31.1'          # https://www.sqlite.org/index.html
+local_Tcl_version =            '8.6.10'          # http://www.tcl.tk/
+local_Tk_version =             '8.6.10'          # http://www.tcl.tk/
+
+local_Bioconductor_version =   '3.11'            # http://bioconductor.org/packages/release/BiocViews.html#___Software
+
+name =    'R'
+version = local_R_version
+#versionsuffix = '-UAntwerpen'
+
+homepage = 'http://www.r-project.org/'
+
+whatis = [
+    'Description: R, a free software environment for statistical computing and graphics'
+]
+
+description = """
+R is a free software environment for statistical computing and graphics.
+
+The module also contains a large number of pre-installed R packages, including
+packages from the Bioconductor project (version %(bioc)s).
+""" % {
+    'bioc': local_Bioconductor_version,
+}
+
+docurls = [
+   'R manuals: https://cran.r-project.org/manuals.html',
+   'R FAQs: https://cran.r-project.org/faqs.html',
+   'Bioconductor packages: http://www.bioconductor.org/',
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+sources =     [SOURCE_TAR_GZ]
+source_urls = ['http://cran.us.r-project.org/src/base/R-%(version_major)s']
+
+dependencies = [
+    ('baselibs',    local_buildset,             '',      ('GCCcore', local_gcc_version)), # For ncurses, libreadline, bzip2, XZ, zlib, PCRE, libpne, libjpeg-turbo, LibTIFF, cURL, libxml2, GMP, UDUNITS
+    ('SQLite',      local_SQLite_version),  # RSQLite has its own builtin engine, in version 2.0 this turns out to be SQLite 3.19.1,
+                                            # but the dependency enters again through GDAL...
+    ('cairo',       local_cairo_version,   '', ('GCCcore', local_gcc_version)),
+    ('Java',        local_Java_version,    '', True),  # Java bindings are built if Java is found, might as well provide it
+    ('Tcl',         local_Tcl_version),     # for tcltk
+    ('Tk',          local_Tk_version),      # for tcltk
+    ('Boost',       local_Boost_version),   # for mzR
+    ('ImageMagick', local_ImageMagick_version, '',       ('GCCcore', local_gcc_version)), # For Magick
+    ('GEOS',        local_GEOS_version),    # for rgeos 
+    ('PROJ',        local_PROJ_version),    # for rgdal
+    ('GDAL',        local_GDAL_version),    # for rgdal
+    ('JAGS',        local_JAGS_version),    # for R2jags
+    ('netCDF',      local_netCDF_version,      '-MPI') # for ncdf4, use this one as this is the one used to build GDAL. 
+    # OS dependency should be preferred if the os version is more recent then this version,
+    # it's nice to have an up to date openssl for security reasons
+    # ('OpenSSL', '1.0.2h'),
+]
+
+osdependencies = [
+    ('openssl-devel', 'libssl-dev', 'libopenssl-devel'),
+    ('libssh2-devel'),                                       # Useful for git2r
+    ('v8-devel'),                                            # for V8, used by CSFA
+]
+
+# specify that at least EasyBuild v3.5.0 is required,
+# since we rely on the updated easyblock for R to configure correctly w.r.t. BLAS/LAPACK
+easybuild_version = '4.2.0'
+preconfigopts = 'CXXFLAGS="$CXXFLAGS -diag-disable 308" '
+configopts  = "--with-pic --enable-threads --with-x=no --enable-R-shlib"
+# some recommended packages may fail in a parallel build (e.g. Matrix), and we're installing them anyway below
+configopts += " --with-recommended-packages=no --with-tcltk --with-tcl-config=$EBROOTTCL/lib/tclConfig.sh --with-tk-config=$EBROOTTK/lib/tkConfig.sh"
+
+
+local_biocver = local_Bioconductor_version # For easy_update
+exts_default_options = {
+    'source_urls': [
+        'https://bioconductor.org/packages/' + local_biocver + '/bioc/src/contrib/',
+        'https://bioconductor.org/packages/' + local_biocver + '/bioc/src/contrib/Archive/%(name)s',
+        'https://bioconductor.org/packages/' + local_biocver + '/data/annotation/src/contrib/',
+        'https://bioconductor.org/packages/' + local_biocver + '/data/experiment/src/contrib/',
+        'https://cran.r-project.org/src/contrib/Archive/%(name)s',  # package archive
+        'https://cran.r-project.org/src/contrib/',  # current version of packages
+        'https://cran.freestatistics.org/src/contrib',  # mirror alternative for current packages
+    ],
+    'source_tmpl': '%(name)s_%(version)s.tar.gz'
+}
+
+# !! order of packages is important !!
+# packages updated on July 8th 2016, with some random updates afterwards.
+exts_list = [
+    # default libraries, only here to sanity check their presence
+    'base',
+    'datasets',
+    'graphics',
+    'grDevices',
+    'grid',
+    'methods',
+    'splines',
+    'stats',
+    'stats4',
+    'tools',
+    'utils',
+    # non-standard libraries, should be specified with fixed versions!
+    #
+    # First packages that need patches and the packages they depend on.
+    # These are the packages were EasyBuild actually offers some added value.
+    #
+    ('Rcpp',          '1.0.4.6',     {}), # Needs only base packages, suggests tinytest, inline, rbenchmark, pkgKitten 
+    ('BiocVersion',   '3.11.1',      {}), # To initialize Bioconductor
+    ('BiocManager',   '1.30.10',     {}), # Basis of Bioconductor
+    # Note: For Rmpi, you need to remove the lines in the easyblock that set the path to the include
+    # files and the libraries as these are wrong. The configure script will find the libraries through
+    # the environment variables.
+    ('Rmpi',          '0.6-9',       {
+        'easyblock':   'RPackage', # This does not seem to work, so we use our own Rmpi empty EasyBlock.
+        'patches':     ['Rmpi-0.6-9_impi2019.patch'],
+        'installopts': '--configure-args="--with-Rmpi-type=INTELMPI --with-Rmpi-libpath=$I_MPI_ROOT/intel64/lib/release --with-Rmpi-include=$I_MPI_ROOT/intel64/include"' 
+    } ),
+    # git2r needs certain libraries that we did not have before 2020a or should be system-installed
+    ('git2r', '0.27.1', {}), # 
+    # XML doesn't compile with the EasyBlock but compiles fine without.
+    ('XML', '3.99-0.3', {
+        'easyblock': 'RPackage', # This doesn't seem to work, so simply remove the EasyBlock xml or overwrite with an empty one.
+    }), # 
+    # ModelMetrics supports OpenMP but we need to manually set the compiler option.
+    ('data.table',    '1.12.8',      {}), # 
+    ('ModelMetrics',  '1.2.2.2',     { # Package supports OpenMP
+        'preinstallopts': 'PKG_CXXFLAGS="-qopenmp" ',
+    }), # 
+    # tseries has trouble with the Intel Fortran compiler due to its unusal file names since 0.10-47
+    ('curl',          '4.3',         {}), # Needs external libcurl (baselibps module)
+    ('lattice',       '0.20-41',     {}), # No dependencies beyond standard packages
+    ('zoo',           '1.8-8',       {}), # Needs lattice
+    ('xts',           '0.12-0',      {}), # Needs zoo
+    ('TTR',           '0.23-6',      {}), # Needs curl, zoo, xts 
+    ('quadprog',      '1.5-8',       {}), # No dependencies
+    ('quantmod',      '0.4.17',      {}), # Needs zoo, xts, TTR
+    # tseries is a problematic one from 0.10-47 on as the extension .f95 is not recognized
+    # by the Intel compiler, see the README.md
+    # tseries needs quadprog, zoo, qantmod
+    # Solution 1: Unpack sources, rename the file and possibly adapt the file name in MD5: Does not work due to bugs in EasyBuild.
+    # Solution 2: Use a patch to force unpacking, then rename the file
+    # ('tseries',       '0.10-47',     {
+    #     'patches':        ['tseries-0.10-47_MD5.patch'],
+    #     'preinstallopts': 'pwd && mv src/cfuncs.f95 src/cfuncs.f90 && ',
+    # })
+    # Solution 3: Patch from Davide Vanzo that adds the directive !DIR$ FREEFORM at the top of cfuncs.f95
+    # to tell the Intel compiler what type of source file it is.
+    ('tseries',       '0.10-47',     {
+        'patches': ['tseries-0.10-47_ifort_explicit_free_form.patch'],
+    } ),
+    # sf had trouble in 2019b
+    ('units',         '0.6-7',       {}), # Needs Rcpp
+    ('magrittr',      '1.5',         {}), # No dependencies
+    ('MASS',          '7.3-51.6',    {}), # No dependencies
+    ('class',         '7.3-17',      {}), # Needs MASS
+    ('DBI',           '1.1.0',       {}), # No dependencies
+    ('e1071',         '1.7-3',       {}), # Needs class
+    ('KernSmooth',    '2.23-17',     {}), # Needs MASS
+    ('classInt',      '0.4-3',       {}), # Needs class, e1071, KernSmoot
+    ('sf',            '0.9-4',       {}), # Needs Rcpp, magrittr, DBI, classInt, units, external PROJ, GDAL, GEOS.
+    # penalized needs a preprocessor definition to compile optimally
+    ('Matrix',        '1.2-18',      {}), # Needs lattice
+    ('survival',      '3.2-3',       {}), # Needs Matrix
+    ('RcppArmadillo', '0.9.900.1.0', {}), # Needs Rcpp
+    ('penalized',     '0.9-51',      {'preinstallopts': 'PKG_CXXFLAGS="-DARMA_ALLOW_FAKE_GCC" '}), # 
+    # kohonen also failed in 2019b
+    ('kohonen',       '3.0.10',      {}), # Needs Rcpp. Failed in 2019b
+    # Interface to netCDF. Be careful to use the same netCDF module as for GDAL (used by the package sf)
+    ('ncdf4', '1.17', {}),
+    # Some packages need -diag-dsable 308 or even diag-disable 858
+    ('Rtsne',         '0.15',        {}), # Needs Rcpp. -diag-dsable 308 is important for Rtsne, doesn't work via PKG_CXX_FLAGS
+    ('multicool',     '0.1-11',      {
+        'preinstallopts': 'PKG_CXXFLAGS="-diag-disable 858" ',
+    } ),
+    ('BH',            '1.72.0-3',    {}), # Requires the Boost libraries
+    ('bigmemory.sri', '0.1.3',       {}), # Needs only standard R packages
+    ('bigmemory',     '4.5.36',      {
+        'preinstallopts': 'PKG_CXXFLAGS="-diag-disable 858" ',
+    } ),
+#
+# Regular packages without recent problems
+#
+    ('jpeg',          '0.1-8.1',     {}), # Requires external libjpeg (baselibs module)
+    ('png',           '0.1-7',       {}), # Requires external libpng (baselibs module)
+    ('Cairo',         '1.5-12',      {}), # Requires external cairo
+    ('sys',           '3.3',         {}), # No dependencies
+    ('askpass',       '1.1',         {}), # No dependencies
+    ('openssl',       '1.4.2',       {}), # Requires askpass and OpenSSL libraries
+    ('bitops',        '1.0-6',       {}), # No dependencies
+    ('RCurl',         '1.98-1.2',    {}), # Needs bitops, external libcurl (baselibps module)
+    ('sp',            '1.4-2',       {}), # Needs lattice
+    ('rgeos',         '0.5-3',       {}), # Needs sp, external GEOS
+
+    ('backports',     '1.1.8',       {}), # No dependencies
+    ('bit',           '1.1-15.2',    {}), # No dependencies
+    ('bit64',         '0.9-7',       {}), # No dependencies
+    ('assertthat',    '0.2.1',       {}), # No dependencies
+    ('prettyunits',   '1.1.1',       {}), # No dependencies
+    ('digest',        '0.6.25',      {}), # No dependencies
+    ('yaml',          '2.2.1',       {}), # No dependencies
+    ('plyr',          '1.8.6',       {}), # Needs Rcpp
+    ('mime',          '0.9',         {}), # No dependencies
+    ('R6',            '2.4.1',       {}), # No dependencies
+    ('jsonlite',      '1.7.0',       {}), # No dependencies
+    ('httr',          '1.4.1',       {}), # Needs curl, openssl, mimie, R6, jsonlite
+    ('rlang',         '0.4.6',       {}), # No dependencies
+    ('ellipsis',      '0.3.1',       {}), # Needs rlang
+    ('glue',          '1.4.1',       {}), # No dependencies
+    ('zeallot',       '0.1.0',       {}), # No dependencies
+    ('vctrs',         '0.3.1',       {}), # Needs digest, rlang, glue, ellipsis
+    ('blob',          '1.2.1',       {}), # Needs rlang, vctrs
+    ('plogr',         '0.2.0',       {}), # Needs Rcpp
+    ('memoise',       '1.1.0',       {}), # Needs digest
+    ('pkgconfig',     '2.0.3',       {}), # No dependencies
+    ('RSQLite',       '2.2.0',       {}), # Needs Rcpp, bit64, blob, DBI, memoise, pkgconfig
+    
+    ('rgdal',         '1.5-12',      {}), # Needs sp
+
+    ('abind',         '1.4-5',       {}), # No dependencies
+    ('glasso',        '1.11',        {}), # No dependencies, and 1.11 does not need a patch?
+    ('magic',         '1.5-9',       {}), # Needs abind
+    ('lpSolve',       '5.6.15',      {}), # Needs abind
+    ('linprog',       '0.9-2',       {}), # Needs abind
+    ('RcppProgress',  '0.4.2',       {}), # Needs only base packages, suggests tinytest, inline, rbenchmark, pkgKitten 
+    ('geometry',      '0.4.5',       {}), # Needs magic thus abind, RcppProgress, lpSolve, linprog
+    ('timeDate',      '3043.102',    {}), # No dependencies
+    ('fracdiff',      '1.5-1',       {}), # No dependencies
+    ('nnet',          '7.3-14',      {}), # No dependencies
+    ('colorspace',    '1.4-1',       {}), # No dependencies
+    ('gtable',        '0.3.0',       {}), # No dependencies
+    ('stringi',       '1.4.6',       {}), # No dependencies
+    ('stringr',       '1.4.0',       {}), # No dependencies
+    ('reshape2',      '1.4.4',       {}), # Needs Rcpp, plyr, stringr
+    ('RColorBrewer',  '1.1-2',       {}), # No dependencies
+    ('dichromat',     '2.0-0',       {}), # No dependencies
+    ('munsell',       '0.5.0',       {}), # Needs colorspace
+    ('labeling',      '0.3',         {}), # No dependencies
+    ('viridisLite',   '0.3.0',       {}), # No dependencies
+    ('lifecycle',     '0.2.0',       {}), # Needs glue, rlang
+    ('farver',        '2.0.3',       {}), # No dependencies
+    ('scales',        '1.1.1',       {}), # Needs farver, labeling, lifecycle, munell, R6, RColorBrewer, viridisLite
+    ('lazyeval',      '0.2.2',       {}), # No dependencies
+    ('utf8',          '1.1.4',       {}), # No dependencies
+    ('crayon',        '1.3.4',       {}), # No dependencies
+    ('fansi',         '0.4.1',       {}), # No dependencies
+    ('cli',           '2.0.2',       {}), # Needs assertthat, crayon, glue, fansi
+    ('pillar',        '1.4.4',       {}), # Needs cli, crayon, fansi, rlang, utf8, vctrs
+    ('tibble',        '3.0.1',       {}), # Needs cli, crayon, ellipsis, fansi, lifecycle, magrittr, pillar, pkgconfig, rlang, vctrs
+    ('nlme',          '3.1-148',     {}), # Needs lattice
+    ('mgcv',          '1.8-31',      {}), # Needs nlme
+    ('withr',         '2.2.0',       {}), # No dependencies
+    ('evaluate',      '0.14',        {}), # No dependencies
+    ('ps',            '1.3.3',       {}), # No dependencies
+    ('processx',      '3.4.2',       {}), # Needs ps and R6
+    ('callr',         '3.4.3',       {}), # Needs R6 and processx
+    ('rprojroot',     '1.3-2',       {}), # Needs backports
+    ('desc',          '1.2.0',       {}), # Needs assrtthat, R6, crayon, rprojroot
+    ('pkgbuild',      '1.0.8',       {}), # Needs callr, ccli, crayon, desc, prettyunits, R6, rprojroot, withr
+    ('rstudioapi',    '0.11',        {}), # No dependencies
+    ('pkgload',       '1.1.0',       {}), # Needs cli, crayon, desc, pkgbuild, rlang, rprojroot, rstudioapi, withr
+    ('praise',        '1.0.0',       {}), # No dependencies
+    ('testthat',      '2.3.2',       {}), # Needs cli, crayon, digest, ellipsis, evaluate, magrittr, pkgload, praise, R6, rlang, withr
+    ('isoband',       '0.2.2',       {}), # Needs testthat
+    ('ggplot2',       '3.3.2',       {}), # Needs digest, glue, gtable, isoband, MASS, mgcv, rlang, scales, tibble, withr
+    ('lmtest',        '0.9-37',      {}), # Needs zoo
+    ('urca',          '1.3-0',       {}), # Needs nlme
+    ('forecast',      '8.12',        {}), # Needs colorspace, fracdfiff, ggplot2, lmtest, magrittr, nnet, Rcpp, timeDate, tseries, urca, zoo. -diag-dsable 308
+
+    ('filehash',      '2.4-2',       {}), # No dependencies
+    ('ff',            '2.2-14.2',    {}), # Needs bit
+    ('bnlearn',       '4.5',         {}), # No dependencies
+    ('bootstrap',     '2019.6',      {}), # No dependencies
+    ('combinat',      '0.0-8',       {}), # No dependencies     
+    ('deal',          '1.2-39',      {}), # No dependencies
+    ('fdrtool',       '1.2.15',      {}), # No dependencies
+    ('formatR',       '1.7',         {}), # No dependencies
+    ('gtools',        '3.8.2',       {}), # No dependencies
+    ('gdata',         '2.18.0',      {}), # No dependencies
+    ('GSA',           '1.03.1',      {}), # No dependencies
+    ('highr',         '0.8',         {}), # No dependencies
+    ('infotheo',      '1.2.0',       {}), # No dependencies
+    ('kernlab',       '0.9-29',      {}), # No dependencies
+    ('lars',          '1.2',         {}), # No dependencies
+    ('lazy',          '1.2-16',      {}), # No dependencies
+    ('xfun',          '0.15',        {}), # No dependencies
+    ('markdown',      '1.1',         {}), # Needs mime, xfun
+    ('mlbench',       '2.1-1',       {}), # No dependencies
+    ('NLP',           '0.2-0',       {}), # No dependencies
+    ('mclust',        '5.4.6',       {}), # No dependencies
+    ('RANN',          '2.6.1',       {}), # No dependencies
+    ('rmeta',         '3.0',         {}), # No dependencies
+    ('segmented',     '1.2-0',       {}), # No dependencies
+    ('som',           '0.3-5.1',     {}), # No dependencies
+    ('SuppDists',     '1.1-9.5',     {}), # No dependencies
+    ('stabledist',    '0.7-1',       {}), # No dependencies
+    ('survivalROC',   '1.0.3',       {}), # No dependencies
+    ('pspline',       '1.0-18',      {}), # No dependencies
+    ('longmemo',      '1.1-2',       {}), # No dependencies
+    ('ADGofTest',     '0.3',         {}), # No dependencies
+    ('pixmap',        '0.4-11',      {}), # No dependencies
+    ('ade4',          '1.7-15',      {}), # Needs MASS, sp, pixmap
+    ('AlgDesign',     '1.2.0',       {}), # No dependencies
+    ('base64enc',     '0.1-3',       {}), # No dependencies
+    ('brew',          '1.0-6',       {}), # No dependencies
+    ('Brobdingnag',   '1.2-6',       {}), # No dependencies
+    ('corpcor',       '1.6.9',       {}), # No dependencies
+    ('longitudinal',  '1.1.12',      {}), # No dependencies
+    ('checkmate',     '2.0.0',       {}), # Needs backoports
+    ('cubature',      '2.0.4',       {}), # Needs Rcpp
+    ('DEoptimR',      '1.0-8',       {}), # No dependencies
+    ('fastmatch',     '1.1-0',       {}), # No dependencies
+    ('ffbase',        '0.12.8',      {}), # Needs fastmatch, bit, ff
+    ('iterators',     '1.0.12',      {}), # No dependencies
+    ('maps',          '3.3.0',       {}), # No dependencies
+    ('nnls',          '1.4',         {}), # No dependencies
+    ('sendmailR',     '1.2-1',       {}), # Needs base64enc
+    ('dotCall64',     '1.0-0',       {}), # No dependencies
+    ('spam', '2.5-1', {}), # dotCall64
+    ('subplex', '1.6', {}), # No depencencies
+    ('logspline', '2.1.16', {}), # No dependencies
+    ('ncbit', '2013.03.29', {}), # No dependencies
+    ('permute', '0.9-5', {}), # No dependencies
+    ('plotrix', '3.7-8', {}), # No dependencies
+    ('randomForest', '4.6-14', {}), # No dependencies
+    ('scatterplot3d', '0.3-41', {}), # No dependencies
+    ('SparseM', '1.78', {}), # No dependencies
+    ('tripack', '1.3-9.1', {}), # No dependencies
+    ('irace', '3.4.1', {}), # No dependencies
+    ('rJava', '0.9-12', {}), # No dependencies
+    ('latticeExtra', '0.6-29', {}), # Needs lattice
+    ('pROC', '1.16.2', {}), # Needs Rcpp, plyr
+    ('BB', '2019.10-1', {}), # Needs quadprog
+    ('BBmisc', '1.11', {}), # Needs checkmate
+    ('fail', '1.3', {}), # Needs BBmisc, checkmate
+    ('rlecuyer', '0.3-5', {}), # 
+    ('snow', '0.4-3', {}), # 
+    ('tree', '1.0-40', {}), # 
+    ('pls', '2.7-2', {}), # 
+    ('minqa', '1.2.4', {}), # Needs Rcpp
+    ('RcppEigen', '0.3.3.7.0', {}), # Needs Rcpp, Matrix
+    ('MatrixModels', '0.4-1', {}), # Needs Matrix
+    ('quantreg', '5.55', {}), # Needs SparseM
+    ('robustbase', '0.93-6', {}), # Needs DEoptimR
+    ('vcd', '1.4-7', {}), # Needs MASS, colorspace, lmtest
+    ('snowfall', '1.84-6.1', {}), # Needs snow, suggests Rmpi
+    ('rpart', '4.1-15', {}), # 
+    ('boot', '1.3-25', {}), # 
+    ('nloptr', '1.2.2.1', {}), # Needs testthat, knitr, markdown, inline
+    ('ucminf', '1.1-4', {}), # 
+    ('numDeriv', '2016.8-1.1', {}), # 
+    ('clipr', '0.7.0', {}), # 
+    ('statmod', '1.4.34', {}), # No dependencies
+    ('lme4', '1.1-23', {}), # Needs Matrix, statmod
+    ('ordinal', '2019.12-10', {}), # Needs ucminf, MASS, Matrix, numDeriv
+    ('forcats', '0.5.0', {}), # Needs ellipsis, magrittr, rlang, tibble
+    ('hms', '0.5.3', {}), # Needs pkgconfig, rlang, vctrs
+    ('readr', '1.3.1', {}), # Needs Rcpp, tibble, hms, R6, clipr, crayon
+    ('generics', '0.0.2', {}), # 
+    ('purrr', '0.3.4', {}), # Needs magrittr, rlang
+    ('tidyselect', '1.1.0', {}), # Needs ellipsis, glue, purrr, rlang, vctrs
+    ('dplyr', '1.0.0', {}), # Needs ellipsis, generics, glue, lifecycle, magrittr, R6, rlang, tibble, tidyselect, vctrs
+    ('tidyr', '1.1.0', {}), # Needs dplyr, ellipsis, glue, magrittrm purrr, Rcpp, stringi, tibble, tidyselect, vctrs, lifecycle
+    ('pan', '1.6', {}), # Needs mitools, lme4
+    ('jomo', '2.7-1', {}), # Needs lme4, survival, MASS, ordinal
+    ('haven', '2.3.1', {}), # Needs forcats, hms, Rcpp, readr, rlang, tibble, tidyselect, vctrs
+    ('broom', '0.5.6', {}), # Needs backports, dplyrm generics, nlme, purrr, reshape2, stringr, tibble, tidyr
+    ('mitml', '0.3-7', {}), # pan, jomo, haven
+    ('mice', '3.9.0', {}), # Needs broom, dplyr, lattice, tidyr
+    ('logistf', '1.23', {}), # Needs mice, mgcv
+    ('akima', '0.6-2.1', {}), # Needs sp
+    ('mixtools', '1.2.0', {}), # Needs kernlab, MASS, segmented, survival
+    ('cluster', '2.1.0', {}), # 
+    ('gclus', '1.3.2', {}), # Needs cluster
+    ('coda', '0.19-3', {}), # Needs lattice
+    ('codetools', '0.2-16', {}), # 
+    ('foreach', '1.5.0', {}), # Needs codetoolsm iterators
+    ('doMC', '1.3.6', {}), # Needs foreachm, iterators
+    ('foreign', '0.8-80', {}), # 
+    ('gam', '1.16.1', {}), # Needs foreach
+    ('gamlss.data', '5.1-4', {}), # 
+    ('gamlss.dist', '5.1-6', {}), # Needs MASS
+    ('hwriter', '1.3.2', {}), # Need tmvnsim
+    ('tmvnsim', '1.0-2', {}), # No dependencies
+    ('mnormt', '2.0.1', {}), # Needs tmvnsim
+    ('mvtnorm', '1.1-1', {}), # 
+    ('pcaPP', '1.9-73', {'preinstallopts': 'PKG_CXXFLAGS="-diag-disable 858" '} ), # Needs mvtnorm
+    ('SQUAREM', '2020.3', {}), # 
+    ('lava', '1.6.7', {}), # Needs numDeriv, survival, SQUAREM
+    ('prodlim', '2019.11.13', {}), # Needs Rcpp, survival, KernSmooth, lava
+    ('pscl', '1.5.5', {}), # Needs MASS
+    ('BatchJobs', '1.8', {}), # Needs BBmisc
+    ('sandwich', '2.5-1', {}), # Needs zoo
+    ('sfsmisc', '1.1-7', {}), # 
+    ('spatial', '7.3-12', {}), # 
+    ('VGAM', '1.1-3', {}), # 
+    ('waveslim', '1.8.2', {}), # 
+    ('xtable', '1.8-4', {}), # 
+    ('profileModel', '0.6.0', {}), # Needs MASS, gnm
+    ('brglm', '0.6.2', {}), # Needs profileModel
+    ('deSolve', '1.28', {}), # 
+    ('tseriesChaos', '0.1-13.1', {}), # Needs deSolve
+    ('fastICA', '1.2-2', {}), # Needs MASS
+    ('R.methodsS3', '1.8.0', {}), # 
+    ('R.oo', '1.23.0', {}), # Needs R.methodsS3
+    ('cgdsr', '1.3.0', {}), # Needs R.oo, R.methodsS3, httr
+    ('R.utils', '2.9.2', {}), # Needs R.oo, R.methodsS3
+    ('R.matlab', '3.6.2', {}), # Needs R.methodsS3, R.oo, R.utils
+    ('gridExtra', '2.3', {}), # Needs gtable
+    ('gbm', '2.1.5', {}), # Needs gridExtra, latticem survival
+    ('Formula', '1.2-3', {}), # 
+    ('acepack', '1.4.1', {}), # Needs testthat
+    ('proto', '1.0.0', {}), # Needs testthat, covr
+    ('chron', '2.3-55', {}), # 
+    ('knitr', '1.29', {}), # Needs evaluate, highr, markdown, stringr, yaml, xfun
+    ('htmltools', '0.5.0', {}), # Needs digest, base64enc, rlang 
+    ('htmlwidgets', '1.5.1', {}), # Needs htmltools, jsonlite, yaml
+    ('htmlTable', '2.0.0', {}), # Needs string, knitr, magrittr, checkmate, htmlwidgets, htmltools, rstudioapi
+    ('viridis', '0.5.1', {}), # Needs viridisLite
+    ('Hmisc', '4.4-0', {}), # Needs lattice, survival, Formula, ggplot2
+    ('fastcluster', '1.1.25', {}), # Needs flashClust
+    ('registry', '0.5-1', {}), # 
+    ('bibtex', '0.4.2.2', {}), # Needs stringr
+    ('pkgmaker', '0.31.1', {}), # Needs registry
+    ('rngtools', '1.5', {}),
+    ('doParallel', '1.0.15', {}),
+    ('gridBase', '0.4-7', {}), # 
+    ('BiocGenerics', '0.34.0', {}), # Bioconductor
+    ('Biobase', '2.48.0', {}), # Bioconductor
+    ('NMF', '0.22.0', {}), # Needs pkgmaker, registry, rngtools, cluster, BiocManager
+    ('irlba', '2.3.3', {}), # Needs Matrix
+    ('igraph', '1.2.5', {}), # Needs magrittr, Matrix, pkgconfig
+    ('GeneNet', '1.2.15', {}), # Needs corpcor, longitudinal, fdrtool
+    ('ape', '5.4', {}), # Needs nlme, lattice, Rcpp
+    ('RJSONIO', '1.3-1.4', {}), # 
+    ('caTools', '1.18.0', {}), # 
+    ('gplots', '3.0.3', {}), # Needs gtools, gdata, caTools, KernSmooth
+    ('ROCR', '1.0-11', {}), # Needs gplots
+    ('later', '1.1.0.1', {}), # Needs Rcpp, rlang
+    ('promises', '1.1.1', {}), # Needs R6, Rcpp, later, rlang, magrittr
+    ('httpuv', '1.5.4', {}), # Needs Rcpp, R6, promises, later
+    ('rjson', '0.2.20', {}), # 
+    ('sourcetools', '0.1.7', {}), # 
+    ('fastmap', '1.0.1', {}),
+    ('commonmark', '1.7', {}),
+    ('shiny', '1.5.0', {}), # Needs httpuv, mime, jsonlite, xtable, digest, htmltools, R6, sourcetools, later, promises, crayon, rlang, gastmap, withr, commonmark, glue
+    ('seqinr', '3.6-1', {}), # Needs ade4, segmented
+    ('LearnBayes', '2.15.1', {}), # 
+    ('deldir', '0.1-25', {}), # 
+    ('gmodels', '2.18.1', {}), # 
+    ('raster', '3.3-7', {}),
+    ('spData', '0.3.5', {}), # 
+    ('expm', '0.999-4', {}), # Needs Matrix
+    ('spdep', '1.1-5', {}), # Needs sp, spData, sf, deldir, boot, MAtrix, LearnBayes, MASS, coda, expm, gmodels, nlme
+    ('vegan', '2.5-6', {}), # Needs permute, lattice
+    ('adegenet', '2.1.3', {}), # Needs ade4
+    ('progress', '1.2.2', {}), # Needs hms, prettyunits, R6, crayon
+    ('rncl', '0.8.4', {}), # Needs Rcpp, progress
+    ('tinytex', '0.24', {}), # Needs xfun
+    ('rmarkdown', '2.3', {}), # Needs knitr, yaml, htmltools, evaluate, base64enc, jsonlite, mime, tinytex, xfun, stringr
+    ('reshape', '0.8.8', {}), # Needs plyr
+    ('xml2', '1.3.2', {}), # 
+    ('triebeard', '0.3.0', {}), # 
+    ('urltools', '1.7.3', {}), # Needs Rcpp, triebeard
+    ('httpcode', '0.3.0', {}), # Needs testthat
+    ('crul', '0.9.0', {}), # Needs curl, R6, urltools, httpcode, jsonlite, mime
+    ('bold', '1.1.0', {}), # Needs xml2, crul, stringr, jsonlite, reshape, plyr, data.table. tibble
+    ('rredlist', '0.6.0', {}), # Needs crul, jsonlite
+    ('rentrez', '1.2.2', {}), # Needs XML, httr, jsonlite
+    ('rotl', '3.0.10', {}), # 
+    ('WikipediR', '1.5.0', {}), # 
+    ('solrium', '1.1.4', {}), # 
+    ('WikidataR', '1.4.0', {}), # 
+    ('ritis', '0.9.0', {}), # 
+    ('worrms', '0.4.0', {}), # 
+    ('natserv', '1.0.0', {}), # 
+    ('wikitaxa', '0.4.0', {}), # 
+    ('phangorn', '2.5.5', {}), # 
+    ('uuid', '0.1-4', {}), # 
+    ('conditionz', '0.1.0', {}), # 
+    ('taxize', '0.9.97', {}), # 
+    ('RNeXML', '2.4.5', {}), # 
+    ('phylobase', '0.8.10', {}), # 
+    ('adephylo', '1.1-11', {}), # 
+    ('magick', '2.4.0', {}), # 
+    ('animation', '2.6', {}), # 
+    ('calibrate', '1.7.7', {}), # 
+    ('clusterGeneration', '1.3.4', {}), # 
+    ('dismo', '1.1-4', {}), # 
+    ('extrafontdb', '1.0', {}), # 
+    ('Rttf2pt1', '1.3.8', {}), # 
+    ('extrafont', '0.17', {}), # 
+    ('fields', '10.3', {}), # 
+    ('shapefiles', '0.7', {}), # 
+    ('fossil', '0.4.0', {}), # 
+    ('phytools', '0.7-47', {}), # 
+    ('geiger', '2.0.7', {}), # 
+    ('shape', '1.4.4', {}),
+    ('glmnet', '4.0-2', {}), # 
+    ('miniUI', '0.1.1.1', {}), # 
+    ('webshot', '0.5.2', {}), # 
+    ('crosstalk', '1.1.0.1', {}), # 
+    ('manipulateWidget', '0.10.1', {}), # 
+    ('labdsv', '2.0-1', {}), # 
+    ('stabs', '0.6-3', {}), # 
+    ('modeltools', '0.2-23', {}), # 
+    ('strucchange', '1.5-2', {}), # 
+    ('TH.data', '1.0-10', {}), # 
+    ('multcomp', '1.4-13', {}), # 
+    ('libcoin', '1.0-5', {}), # 
+    ('matrixStats', '0.56.0', {}), # 
+    ('coin', '1.3-1', {}), # 
+    ('party', '1.3-5', {}), # 
+    ('inum', '1.0-1', {}), # 
+    ('partykit', '1.2-8', {}), # 
+    ('mboost', '2.9-2', {}), # 
+    ('msm', '1.6.8', {}), # 
+    ('nor1mix', '1.3-0', {}), # 
+    ('np', '0.60-10', {}), # 
+    ('polynom', '1.4-0', {}), # 
+    ('polspline', '1.1.19', {}), # 
+    ('rms', '6.0-0', {}), # 
+    ('RWekajars', '3.9.3-2', {}), # 
+    ('RWeka', '0.4-42', {}), # 
+    ('slam', '0.1-47', {}), # 
+    ('tm', '0.7-7', {}), # 
+    ('TraMineR', '2.2-0.1', {}), # 
+    ('chemometrics', '1.4.2', {}), # 
+    ('FNN', '1.1.3', {}), # 
+    ('ipred', '0.9-9', {}), # 
+    ('miscTools', '0.6-26', {}), # 
+    ('maxLik', '1.3-8', {}), # 
+    ('gbRd', '0.4-11', {}), # 
+    ('Rdpack', '0.11-1', {}), # 
+    ('dfidx', '0.0-3', {}), # 
+    ('mlogit', '1.1-0', {}), # 
+    ('getopt', '1.20.3', {}), # 
+    ('gsalib', '2.1', {}), # 
+    ('optparse', '1.6.6', {}), # 
+    ('labelled', '2.5.0', {}), # 
+    ('R.cache', '0.14.0', {}), # 
+    ('rematch2', '2.1.2', {}), # 
+    ('styler', '1.3.2', {}), # 
+    ('questionr', '0.7.1', {}), # 
+    ('klaR', '0.6-15', {}), # 
+    ('neuRosim', '0.2-12', {}), # 
+    ('locfit', '1.5-9.4', {}), # 
+    ('GGally', '2.0.0', {}), # 
+    ('beanplot', '1.2', {}), # 
+    ('clValid', '0.6-8', {}), # 
+    ('DiscriMiner', '0.1-29', {}), # 
+    ('ellipse', '0.4.2', {}), # 
+    ('leaps', '3.1', {}), # 
+    ('pbkrtest', '0.4-8.6', {}), # 
+    ('rematch', '1.0.1', {}), # 
+    ('cellranger', '1.1.0', {}), # 
+    ('zip', '2.0.4', {}), # 
+    ('readxl', '1.3.1', {}), # 
+    ('openxlsx', '4.1.5', {}), # 
+    ('carData', '3.0-4', {}), # 
+    ('maptools', '1.0-1', {}), # 
+    ('rio', '0.5.16', {}), # 
+    ('car', '3.0-8', {}), # 
+    ('flashClust', '1.01-2', {}), #
+    ('ggrepel', '0.8.2', {}), 
+    ('FactoMineR', '2.3', {}), # 
+    ('flexclust', '1.4-0', {}), # 
+    ('flexmix', '2.3-15', {}), # 
+    ('prabclus', '2.3-2', {}), # 
+    ('diptest', '0.75-7', {}), # 
+    ('trimcluster', '0.1-5', {}), # 
+    ('fpc', '2.2-7', {}), # 
+    ('BiasedUrn', '1.07', {}), # 
+    ('TeachingDemos', '2.12', {}), # 
+    ('base64', '2.0', {}), # 
+    ('doRNG', '1.8.2', {}), # 
+    ('nleqslv', '3.3.2', {}), # 
+    ('Deriv', '4.0', {}), # 
+    ('RGCCA', '2.1.2', {}), # 
+    ('pheatmap', '1.0.12', {}), # 
+    ('pvclust', '2.2-0', {}), # 
+    ('RCircos', '1.2.1', {}), # 
+    ('lambda.r', '1.2.4', {}), # 
+    ('futile.options', '1.0.1', {}), # 
+    ('futile.logger', '1.4.3', {}), # 
+    ('VennDiagram', '1.6.20', {}), # 
+    ('xlsxjars', '0.6.1', {}), # 
+    ('xlsx', '0.6.3', {}), # 
+    ('fma', '2.4', {}), # 
+    ('expsmooth', '2.3', {}), # 
+    ('fpp', '0.5', {}), # 
+    ('tensor', '1.5', {}), # 
+    ('polyclip', '1.10-0', {}), # 
+    ('goftest', '1.2-2', {}), # 
+    ('spatstat.utils', '1.17-0', {}), # 
+    ('spatstat.data', '1.4-3', {}), # 
+    ('spatstat', '1.64-1', {}), # 
+    ('gdalUtils', '2.0.3.2', {}), # 
+    ('pracma', '2.2.9', {}), # 
+    ('bio3d', '2.4-1', {}), # 
+    ('AUC', '0.3.0', {}), # 
+    ('interpretR', '0.2.4', {}), # 
+    ('cvAUC', '1.1.0', {}), # 
+    ('SuperLearner', '2.0-26', {}), # 
+    ('mediation', '4.5.0', {}), # 
+    ('lubridate', '1.7.9', {}), # 
+    ('gower', '0.2.2', {}),
+    ('recipes', '0.1.13', {}), # 
+    ('caret', '6.0-86', {}), # 
+    ('adabag', '4.2', {}), # 
+    ('parallelMap', '1.5.0', {}), # 
+    ('ParamHelpers', '1.14', {}), # 
+    ('ggvis', '0.4.5', {}), # 
+    ('mlr', '2.17.1', {}), # 
+    ('unbalanced', '2.0', {}), # 
+    ('RSNNS', '0.4-12', {}), # 
+    ('abc.data', '1.0', {}), # 
+    ('abc', '2.1', {}), # 
+    ('lhs', '1.0.2', {}), # 
+    ('tensorA', '0.36.1', {}), # 
+    ('EasyABC', '1.5', {}), # 
+    ('whisker', '0.4', {}), # 
+    ('roxygen2', '7.1.1', {}), # 
+    ('rversions', '2.0.2', {}), # 
+    ('ini', '0.3.1', {}), # 
+    ('clisymbols', '1.2.0', {}), # 
+    ('fs', '1.4.1', {}), # 
+    ('gh', '1.1.0', {}), # 
+    ('xopen', '1.0.0', {}), # 
+    ('usethis', '1.6.1', {}), # 
+    ('sessioninfo', '1.1.1', {}), # 
+    ('rcmdcheck', '1.3.3', {}), # 
+    ('remotes', '2.1.1', {}), #
+    ('rex', '1.2.0', {}),
+    ('covr', '3.5.0', {}),
+    ('DT', '0.14', {}),
+    ('devtools', '2.3.0', {}), # 
+    ('Rook', '1.1-1', {}), # 
+    ('RMTstat', '0.3', {}), # 
+    ('Lmoments', '1.3-1', {}), # 
+    ('distillery', '1.0-7', {}), # 
+    ('extRemes', '2.0-12', {}), # 
+    ('tkrplot', '0.0-24', {}), # 
+    ('misc3d', '0.8-4', {}), # 
+    ('ks', '1.11.7', {}), # 
+    ('logcondens', '2.1.5', {}), # 
+    ('Iso', '0.0-18.1', {}), # 
+    ('clusterRepro', '0.9', {}), # 
+    ('randomForestSRC', '2.9.3', {}), # 
+    ('sm', '2.2-5.6', {}), # 
+    ('psych', '1.9.12.31', {}), # 
+    ('pbivnorm', '0.6.0', {}), # 
+    ('lavaan', '0.6-6', {}),
+    ('matrixcalc', '1.0-3', {}), # 
+    ('arm', '1.11-1', {}), # 
+    ('mi', '1.0', {}), # 
+    ('visNetwork', '2.0.9', {}), # 
+    ('downloader', '0.4', {}), # 
+    ('influenceR', '0.1.0', {}), # 
+    ('servr', '0.17', {}), 
+    ('rgexf', '0.16.0', {}), # 
+    ('DiagrammeR', '1.0.6.1', {}), # 
+    ('sem', '3.1-11', {}), # 
+    ('statnet.common', '4.3.0', {}), # 
+    ('network', '1.16.0', {}), # 
+    ('sna', '2.5', {}), # 
+    ('huge', '1.3.4.1', {}), # 
+    ('d3Network', '0.5.2.1', {}), # 
+    ('BDgraph', '2.62', {}), # 
+    ('tweenr', '1.0.1', {}),
+    ('ggforce', '0.3.2', {}),
+    ('graphlayouts', '0.7.0', {}),
+    ('pbapply', '1.4-2', {}),
+    ('tidygraph', '1.2.0', {}),
+    ('ggraph', '2.0.3', {}),
+    ('qgraph', '1.6.5', {}), # 
+    ('diveRsity', '1.9.90', {}), # 
+    ('doSNOW', '1.0.18', {}), # 
+    ('geepack', '1.3-1', {}), # 
+    ('pim', '2.0.2', {}), #  
+#
+# Bioconductor
+#
+    ('DynDoc', '1.66.0', {}),
+    ('limma', '3.44.3', {}),
+    ('edgeR', '3.30.3', {}),
+    ('gdsfmt', '1.24.1', {}),
+    ('illuminaio', '0.30.0', {}),
+    ('preprocessCore', '1.50.0', {}),
+    ('RNASeqPower', '1.28.0', {}),
+    ('Rsubread', '2.2.2', {}),
+    ('qvalue', '2.20.0', {}),
+    ('widgetTools', '1.66.0', {}),
+    ('zlibbioc', '1.34.0', {}),
+    ('impute', '1.62.0', {}),
+    ('shinyFiles', '0.8.0', {}),
+    ('samr', '3.0', {}), # 
+    ('tkWidgets', '1.66.0', {}),
+    ('Mfuzz', '2.48.0', {}),
+    ('pcaMethods', '1.80.0', {}),
+    ('S4Vectors', '0.26.1', {}),
+    ('IRanges', '2.22.2', {}),
+    ('GenomeInfoDbData', '1.2.3', {}),
+    ('GenomeInfoDb', '1.24.2', {}),
+    ('AnnotationDbi', '1.50.0', {}),
+    ('AnnotationForge', '1.30.1', {}),
+    ('GO.db', '3.11.4', {}),
+    ('org.Hs.eg.db', '3.11.4', {}),
+    ('KEGG.db', '3.2.4', {}),
+    ('PFAM.db', '3.11.4', {}),
+    ('hgu133plus2.db', '3.2.3', {}),
+    ('XVector', '0.28.0', {}),
+    ('DelayedArray', '0.14.0', {}),
+    ('BiocParallel', '1.22.0', {}),
+    ('Rhtslib', '1.20.0', {}),
+    ('GenomicRanges', '1.40.0', {}),
+    ('SummarizedExperiment', '1.18.1', {}),
+    ('dbplyr', '1.4.4', {}),
+    ('Biostrings', '2.56.0', {}),
+    ('Rsamtools', '2.4.0', {}),
+    ('GenomicAlignments', '1.24.0', {}),
+    ('rappdirs', '0.3.1', {}),
+    ('BiocFileCache', '1.12.0', {}),
+    ('rtracklayer', '1.48.0', {}),
+    ('biomaRt', '2.44.1', {}),
+    ('GenomicFeatures', '1.40.0', {}),
+    ('TxDb.Hsapiens.UCSC.hg19.knownGene', '3.2.2', {}),
+    ('ShortRead', '1.46.0', {}),
+    ('graph', '1.66.0', {}),
+    ('Rgraphviz', '2.32.0', {}),
+    ('affyio', '1.58.0', {}),
+    ('affy', '1.66.0', {}),
+    ('marray', '1.66.0', {}),
+    ('CGHbase', '1.48.0', {}),
+    ('RBGL', '1.64.0', {}),
+    ('annaffy', '1.60.0', {}),
+    ('gcrma', '2.60.0', {}),
+    ('oligoClasses', '1.50.0', {}),
+    ('baySeq', '2.22.0', {}),
+    ('DEGseq', '1.42.0', {}),
+    ('bumphunter', '1.30.0', {}),
+    ('multtest', '2.44.0', {}),
+    ('scrime', '1.3.5', {}),
+    ('siggenes', '1.62.0', {}),
+    ('genoset', '1.44.0', {}),
+    ('NOISeq', '2.31.0', {}),
+    ('annotate', '1.66.0', {}),
+    ('GSEABase', '1.50.1', {}),
+    ('genefilter', '1.70.0', {}),
+    ('Category', '2.54.0', {}),
+    ('GOstats', '2.54.0', {}),
+    ('BSgenome', '1.56.0', {}),
+    ('VariantAnnotation', '1.34.0', {}),
+    ('interactiveDisplayBase', '1.26.3', {}),
+    ('AnnotationHub', '2.20.0', {}),
+    ('AnnotationFilter', '1.12.0', {}),
+    ('ProtGenerics', '1.20.0', {}),
+    ('ensembldb', '2.12.1', {}),
+    ('biovizBase', '1.36.0', {}),
+    ('OrganismDbi', '1.30.0', {}),
+    ('ggbio', '1.36.0', {}),
+    ('geneplotter', '1.66.0', {}),
+    ('DESeq2', '1.28.1', {}),
+    ('ReportingTools', '2.28.0', {}),
+    ('Glimma', '1.16.0', {}),
+    ('affycoretools', '1.60.1', {}),
+    ('Homo.sapiens', '1.3.1', {}),
+    ('BSgenome.Hsapiens.UCSC.hg19', '1.4.3', {}),
+    ('AgiMicroRna', '2.38.0', {}),
+    ('geneLenDataBase', '1.24.0', {}),
+    ('goseq', '1.40.0', {}),
+    ('KEGGREST', '1.28.0', {}),
+    ('KEGGgraph', '1.48.0', {}),
+    ('KEGGprofile', '1.30.0', {}),
+    ('GEOquery', '2.56.0', {}),
+    ('Rhdf5lib', '1.10.0', {}),
+    ('rhdf5', '2.32.1', {}),
+    ('HDF5Array', '1.16.1', {}),
+    ('DelayedMatrixStats', '1.10.0', {}),
+    ('minfi', '1.34.0', {}),
+    ('FDb.InfiniumMethylation.hg19', '2.2.0', {}),
+    ('methylumi', '2.34.0', {}),
+    ('lumi', '2.40.0', {}),
+    ('admisc', '0.8', {}),
+    ('venn', '1.9', {}),
+    ('maSigPro', '1.60.0', {}),
+    ('SPIA', '2.40.0', {}),
+    ('Gviz', '1.32.0', {}),
+    ('cummeRbund', '2.30.0', {}),
+    ('GenomicFiles', '1.24.0', {}),
+    ('derfinderHelper', '1.22.0', {}),
+    ('derfinder', '1.22.0', {}),
+    ('polyester', '1.24.0', {}),
+    ('sigaR', '1.35.0', {}),
+    ('Wrench', '1.6.0', {}),
+    ('metagenomeSeq', '1.30.0', {}),
+#
+# Other requeste packages
+#
+# mzmatch.R and its dependencies, depends on Bioconductor
+    ('ptw', '1.9-15', {}), # 
+    ('tcltk2', '1.2-11', {}), # 
+    ('MALDIquant', '1.19.3', {}),
+    ('mzR', '2.22.0', {'preinstallopts': 'PKG_CXXFLAGS="-diag-disable 858" '}),
+    ('vsn', '3.56.0', {}),
+    ('mzID', '1.26.0', {}),
+    ('MSnbase', '2.14.2', {}),
+    ('MassSpecWavelet', '1.54.0', {}),
+    ('xcms', '3.10.1', {}),
+# Problem: mzmatch not available for R 3.4.3...
+#install.packages("mzmatch.R",           repos="http://R-Forge.R-project.org") 
+#
+# dclone and its dependencies
+    ('R2WinBUGS', '2.1-21', {}), # 
+    ('rjags', '4-10', {}), # 
+    ('R2jags', '0.6-1', {}), # 
+    ('RcppParallel', '5.0.2', {}),
+    ('inline', '0.3.15', {}),
+    ('loo', '2.2.0', {}),
+    ('StanHeaders', '2.21.0-5', {}),
+    ('rstan', '2.19.3', {}),
+    ('dclone', '2.3-0', {}), # 
+#
+# future and its dependencies.
+    ('listenv', '0.8.0', {}), # 
+    ('globals', '0.12.5', {}), # 
+    ('future', '1.17.0', {}), # 
+#
+# CSFA and its dependencies
+    ('fabia', '2.34.0', {}),
+    ('V8', '3.2.0', {}), # 
+    ('elasticnet', '1.3', {}), # 
+    ('snowFT', '1.6-0', {}), # 
+    ('randomcoloR', '1.1.0.1', {}), # 
+    ('CSFA', '1.2.0', {}), # 
+#
+# dada2 and its dependencies
+    ('dada2', '1.16.0', {}),
+#
+# phyloseq and dependencies
+    ('biomformat', '1.16.0', {}),
+    ('phyloseq', '1.32.0', {}),
+#
+# DECIPHER  
+    ('DECIPHER', '2.16.1', {}),
+]
+
+moduleclass = 'lang'

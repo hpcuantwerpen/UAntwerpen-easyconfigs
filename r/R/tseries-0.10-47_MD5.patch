@@ -1,0 +1,11 @@
+--- tseries/MD5.bak	2020-06-19 11:38:27.000000000 +0200
++++ tseries/MD5	2020-06-19 14:04:07.000000000 +0200
+@@ -61,7 +61,7 @@
+ 3b89f280404ab59ecff6d2e36d8e68a4 *src/arma.c
+ 64118f9c4af2373b23e2b9107dfce886 *src/bdstest.c
+ 8dbd6e977d226eac7f7e18ff39ef47d8 *src/boot.c
+-996e3e3f932209858e83681bdd14bfd9 *src/cfuncs.f95
++996e3e3f932209858e83681bdd14bfd9 *src/cfuncs.f90
+ dbf7913e4467d85ce26317408f973dbe *src/dsumsl.f
+ fcc7996d15fcd1b9c215fdbc3868444c *src/formats.c
+ c3604f9f02fd5ac834363d89b81475a6 *src/garch.c
