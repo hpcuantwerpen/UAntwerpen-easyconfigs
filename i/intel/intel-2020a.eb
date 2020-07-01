@@ -18,10 +18,7 @@ toolchain = SYSTEM
 dependencies = [
     ('GCCcore',  local_gcc_version),
     ('binutils', local_binutils_version, '-GCCcore-%s' % local_gcc_version),
-    ('iimpi',    'phony', '-eb4'),
-#    ('icc',      'phony'),
-#    ('ifort',    'phony'),
-#    ('impi',     'phony'),
+    ('iimpi',    version),
     ('imkl',     'phony', '-eb4'),
 ]
 

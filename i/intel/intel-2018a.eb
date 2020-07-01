@@ -1,24 +1,27 @@
 # Dummy intel-2018a.eb file to complete the configuration of the intel/2018a UAntwerp production toolchain.
 easyblock = 'Toolchain'
 
-name = 'intel'
+name =    'intel'
 version = '2018a'
+
+local_gcc_version =      '6.4.0'
+local_binutils_version = '2.29.1'
+
+local_phony_version = 'phony'
 
 homepage = 'http://software.intel.com/en-us/intel-cluster-toolkit-compiler/'
 description = """Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran compilers, Intel MPI & Intel MKL."""
 
 toolchain = {'name': 'dummy', 'version': 'dummy'}
 
-gccver = '6.4.0'
-binutilsver = '2.29.1'
-gccsuff = '-GCC-%s-%s' % (gccver, binutilsver)
 dependencies = [
-    ('GCCcore',  gccver),
-    ('binutils', binutilsver, '-GCCcore-%s' % gccver),
-    ('icc',      'phony'),
-    ('ifort',    'phony'),
-    ('impi',     'phony'),
-    ('imkl',     'phony'),
+    ('GCCcore',  local_gcc_version),
+    ('binutils', local_binutils_version, '-GCCcore-%s' % local_gcc_version),
+    ('icc',      local_phony_version),
+    ('ifort',    local_phony_version),
+    ('impi',     local_phony_version),
+    ('iimpi',    version),
+    ('imkl',     local_phony_version),
 ]
 
 moduleclass = 'toolchain'

@@ -1,8 +1,12 @@
 # This is an easyconfig file for EasyBuild, see http://hpcugent.github.io/easybuild
 easyblock = 'Toolchain'
 
-name    = 'iimpi'
-version = 'phony'
+name =          'iimpi'
+version =       '2020a'
+
+local_phonyversion = 'phony'
+local_phonysuffix =  '-eb4'
+#versionsuffix = '-eb4'
 
 #gccver = '8.3.0'
 #binutilsver = '2.32'
@@ -19,12 +23,12 @@ Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran
 compilers, Intel MPI & Intel MKL.
 """
 
-toolchain = {'name': 'dummy', 'version': 'dummy'}
+toolchain = SYSTEM
 
 dependencies = [
 #    ('GCCcore',  gccver),
 #    ('binutils', binutilsver, '-GCCcore-%s' % gccver),
-    ('iccifort', version),
-    ('impi',     version),
+    ('iccifort', local_phonyversion, local_phonysuffix),
+    ('impi',     local_phonyversion, local_phonysuffix),
 ]
 
