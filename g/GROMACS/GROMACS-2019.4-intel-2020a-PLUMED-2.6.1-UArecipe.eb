@@ -4,7 +4,7 @@ easyblock = 'Bundle'
 local_buildset =         '2020a'
 
 local_GROMACS_PLUMED_version = '2019.4'          # http://manual.gromacs.org/documentation/
-local_PLUMED_version =         '2.6.0'           # https://www.plumed.org//download.html
+local_PLUMED_version =         '2.6.1'           # https://www.plumed.org//download.html
 
 name =          'GROMACS'
 version =       local_GROMACS_PLUMED_version
