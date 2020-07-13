@@ -1,19 +1,23 @@
 easyblock = 'MakeCp'
 
 local_buildset = '2020a'
+local_gcc_version = '9.3.0'
 
 local_libint_version =  '2.6.0'
 local_libxc_version =   '4.3.4'
 local_libxsmm_version = '1.15'
 local_ELPA_version =    '2019.05.002'
+local_PLUMED_version =         '2.6.1'           # https://www.plumed.org//download.html
 
-name =    'CP2K'
-version = '7.1'
+name =          'CP2K'
+version =       '7.1'
+versionsuffix = '-PLUMED-' + local_PLUMED_version
 
 homepage = 'http://www.cp2k.org/'
+
 whatis = [
     "Description: CP2K is a scalable code for atomistic and molecular simulations of solid state, liquid, molecular and biological systems",
-    "This version includes libxc, libint, ELPA, libxsmm, Intel MKL; sopt, popt, ssmp and psmp executables."
+    "This version includes libxc, libint, PLUMED, ELPA, libxsmm, Intel MKL; popt and psmp executables."
 ]
 
 description = """
@@ -33,8 +37,6 @@ This version is built using a modified version of the included arch files in
 the CP2K distribution.
 
 Versions supported are:
- - sopt: single core version (single-threaded BLAS)
- - ssmp: shared memory version (OpenMP, multi-threaded BLAS)
  - popt: distributed memory version (MPI, single-threaded BLAS)
  - psmp: hybrid OpenMP/MPI version (MPI, OpenMP, multi-threaded BLAS)
  
@@ -43,11 +45,13 @@ The module includes the mandatory or additional packages:
  - libxc %(xc_version)s
  - libxsmm %(xsmm_version)s
  - ELPA %(elpa_version)s
+ - PLUMED %(plumed_version)s
 """ % {
-    'int_version':  local_libint_version,
-    'xc_version':   local_libxc_version,
-    'xsmm_version': local_libxsmm_version,
-    'elpa_version': local_ELPA_version
+    'int_version':    local_libint_version,
+    'xc_version':     local_libxc_version,
+    'xsmm_version':   local_libxsmm_version,
+    'elpa_version':   local_ELPA_version,
+    'plumed_version': local_PLUMED_version
 }
 
 docurls = [
@@ -78,24 +82,28 @@ source_urls = ['https://github.com/cp2k/cp2k/releases/download/v%(version)s.0/']
 #}]
 
 patches = [
-    'CP2K-7.1-archfiles.patch',
+    'CP2K-7.1-PLUMED-archfiles.patch',
 ]
 
-# Libint is statically linked.
+# Libint and PLUMED are statically linked.
 builddependencies = [
-    ('Libint', 'v'+ local_libint_version,'-cp2k-lmax-4')
+    ('PLUMED', local_PLUMED_version),
+    ('Libint', 'v'+ local_libint_version, '-cp2k-lmax-4')
 ]
 
 dependencies = [
-    ('libxc',   local_libxc_version),
-    ('libxsmm', local_libxsmm_version),
-    ('ELPA',    local_ELPA_version),
+    ('baselibs', local_buildset,        '', ('GCCcore', local_gcc_version)), # For zlib and GSL
+    ('libxc',    local_libxc_version),
+    ('libxsmm',  local_libxsmm_version),
+    ('ELPA',     local_ELPA_version),
 ]
 
-local_cp2k_versions = ['sopt', 'ssmp', 'popt', 'psmp']
+local_cp2k_versions = ['popt', 'psmp']
 
 buildopts  = 'ARCH=Linux-x86-64-intel VERSION="%s" '\
              'DATA_DIR=%s/data' % (' '.join(local_cp2k_versions), '%(installdir)s')
+
+#parallel = 1
 
 runtest = 'ARCH=Linux-x86-64-intel VERSION="%s" '\
           'TESTOPTS="-nobuild -mpiexec mpirun" '\
@@ -105,10 +113,10 @@ runtest = 'ARCH=Linux-x86-64-intel VERSION="%s" '\
 files_to_copy = [
     "COPYRIGHT",
     'data',
-    (['exe/Linux-x86-64-intel/%s.%s' % (local_x, local_y)
-      for local_x in ['cp2k', 'cp2k_shell', 'graph', 'libcp2k_unittest']
-      for local_y in local_cp2k_versions  ],
-     'bin')
+    (['exe/Linux-x86-64-intel/%s.%s' % (x,y)
+      for x in ['cp2k', 'cp2k_shell', 'graph', 'libcp2k_unittest']
+      for y in local_cp2k_versions  ],
+    'bin')
 ]
 
 sanity_check_paths = {

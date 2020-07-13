@@ -1,10 +1,12 @@
 easyblock = 'ConfigureMake'
 
-name =    'PLUMED'
-version = '2.6.0'
-
 local_buildset =    '2020a'
 local_gcc_version = '9.3.0'
+
+local_PLUMED_version =         '2.6.1'           # https://www.plumed.org//download.html
+
+name =    'PLUMED'
+version = '2.6.1'
 
 homepage = 'http://www.plumed.org'
 
