@@ -1,0 +1,96 @@
+easyblock = 'CMakeMake'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_gtest_version =          '1.10.0'          # https://github.com/google/googletest/releases
+local_RAxML_NG_version =       '0.9.0'           # https://github.com/amkozlov/raxml-ng/releases
+
+name =          'RAxML-NG'
+version =       local_RAxML_NG_version
+
+
+homepage = 'https://github.com/amkozlov/raxml-ng'
+
+whatis = [
+    "Description: RAxML-NG is a phylogenetic tree inference tool which uses maximum-likelihood (ML) optimality criterion.",
+]
+
+description = """
+RAxML-NG is a phylogenetic tree inference tool which uses maximum-likelihood (ML)
+optimality criterion. Its search heuristic is based on iteratively performing a
+series of Subtree Pruning and Regrafting (SPR) moves, which allows to quickly
+navigate to the best-known ML tree. RAxML-NG is a successor of RAxML (Stamatakis
+2014) and leverages the highly optimized likelihood computation implemented in
+libpll (Flouri et al. 2014).
+This version was compiled with support for multithreading and can use only one
+node.
+
+This module provides two executables. Both were compiled with support for
+Terraphase (including GMP support for the latter) and with all optimizations
+available on the platform for PLL-modules/libpll.
+* raxml-ng: Compiled with support for pthreads, but no MPI
+* raxml-ng-mpi: Compiled with support for MPI and pthreads.
+PThreads support was included in both the RAxML-NG main code and Terraphast
+library used by that code.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+# Optimization target is provided by the RAxML and PLL-modules configure scripts.
+#toolchainopts = {'optarch': False, 'cstd': 'c++11'}
+
+# The archives from GitHub are not complete as they do not contain the dependencies.
+# Hence we use the EasuBuild functionality to do a recursive clone of the repository
+# and create our own source tar file from there.
+sources = [{
+    'filename': SOURCE_TAR_GZ,
+    'git_config': {
+        'url':       'https://github.com/amkozlov',
+        'repo_name': 'raxml-ng',
+        'tag':       '%(version)s',
+        'recursive': True,
+    },
+}]
+patches=[
+    'RAxML-NG-%(version)s_CMakeLists.patch',
+    'RAxML-NG-%(version)s_terraphast_bugfix.patch'  # This one should not be needed in later versions as the bug has already been fixed in the upstream code.
+]
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # For GMP    
+]
+
+builddependencies = [
+    ( 'buildtools', local_buildset,      '', True ), # CMake, flex, Bison
+    ( 'gtest',      local_gtest_version),
+]
+
+separate_build_dir = True
+
+import os as local_os
+local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
+
+#configopts  = '-DENABLE_RAXML_SIMD=ON -DENABLE_PLLMOD_SIMD=ON '
+local_base_configopts  = '-DENABLE_PLLMOD_SIMD=ON -DSSE_FLAGS="" -DAVX_FLAGS="" -DAVX2_FLAGS="" '  # These are already enabled if needed through the EasyBuild flags.
+if local_UAarch == "ivybridge":
+    local_base_configopts += '-DENABLE_AVX2=OFF '
+local_base_configopts += '-DBUILD_AS_LIBRARY=OFF '
+local_base_configopts += '-DUSE_PTHREADS=ON '
+local_base_configopts += '-DUSE_TERRAPHAST=ON '
+local_base_configopts += '-DUSE_GMP=ON -DGMP_PREFIX=$EBROOTBASELIBS '
+local_base_configopts += '-DCMAKE_C_FLAGS_RELEASE="" '
+local_base_configopts += '-DCMAKE_CXX_FLAGS_RELEASE="" '
+local_base_configopts += '-DENFORCE_COMPILER_FLAGS=OFF '
+local_base_configopts += '-DGTEST_ROOT=$EBROOTGTEST '
+local_mpi_configopts   = '-DUSE_MPI=ON -DMPI_CXX_COMPILER="mpiicpc" '
+configopts = [
+    '-DUSE_MPI=OFF ' + local_base_configopts,    
+    local_mpi_configopts + local_base_configopts
+]
+
+sanity_check_paths = {
+    'files': ['bin/raxml-ng', 'bin/raxml-ng-mpi'],
+    'dirs':  [],
+}
+
+moduleclass = 'bio'
