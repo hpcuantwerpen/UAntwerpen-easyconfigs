@@ -1,0 +1,117 @@
+easyblock = "EB_OpenFOAM"
+easybuild_version = '4.2.2'
+
+name =    'OpenFOAM'
+version = '6'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'
+
+local_METIS_version =          '5.1.0'           # http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
+local_SCOTCH_version =         '6.0.7'           # https://gforge.inria.fr/projects/scotch/
+
+homepage = 'http://www.openfoam.com/'
+
+whatis = [
+    'Description: OpenFOAM is a free, open-source CFD package, from OpenFOAM.com',
+]
+
+description = """
+OpenFOAM is a free, open source CFD software package. OpenFOAM has an extensive
+range of features to solve anything from complex fluid flows involving chemical 
+reactions, turbulence and heat transfer, to solid dynamics and electromagnetics.
+
+This module contains version %(version)s as distributed by OpenFOAM.com.
+
+As the module has been compiled for the compute nodes, no 3D graphics features
+have been included.
+"""
+
+usage = """
+When loading the module, a minimum of FOAM_ and WM_ environment variables is
+set, enough to easily call the OpenFOAM script that sets the other variables.
+In Bash, you can simply execute
+  source $FOAM_BASH
+after loading the module. 
+
+Note though that some variables have values that do not make sense:
+  * The FOAM_JOBDIR and FOAM_SITE_* variables point to directories that do
+    not exist on our site as we have no site-specific customizations.
+  * WM_PROJECT_USER_DIR and therefore also FOAM_RUN and the FOAM_USER_*
+    variables may point to directories that do not exist. You can customize
+    those variables at will. (But remember that jobs should mainly run from
+    scratch and never from $VSC_HOME!)
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'cstd': 'c++11'}
+
+source_urls = ['https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive']
+sources =     ['version-%(version)s.tar.gz']
+patches =     ['OpenFOAM-%(version)s-cleanup.patch']
+checksums = [
+    '32a6af4120e691ca2df29c5b9bd7bc7a3e11208947f9bccf6087cfff5492f025',  # version-6.tar.gz
+    '5accbde6bde116691ea6a4666348f85487b5d5503a9761435c2cb1412b036c28',  # OpenFOAM-6-cleanup.patch
+]
+
+dependencies = [
+    ('baselibs', local_buildset,       '',         ('GCCcore', local_gcc_version)), # libreadline and ncurses
+    ('METIS',    local_METIS_version,  '-i32-fp64'),                                # OpenFOAM requires 64 bit METIS using 32 bit indexes (array indexes)
+    ('SCOTCH',   local_SCOTCH_version),
+    ('CGAL',     '4.10.2',             '-forOpenFOAM6'), # This works
+#    ('ParaView', '5.4.1', '-mpi'),
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True) # CMake, flex and Bison.
+]
+
+# Since we didn't install paraview, we need to remove a line from bashrc.
+# Also change all references from $HOME to $VSC_SCRATCH
+postinstallcmds = [
+    "cd %(installdir)s/OpenFOAM-%(version)s/etc ; sed -e 's/\(_foamSource.*paraview\)/#\\1/' -e 's/\$HOME/\$VSC_SCRATCH/' -i bashrc",
+    "cd %(installdir)s/OpenFOAM-%(version)s/etc ; sed -e 's/\(_foamSource.*paraview\)/#\\1/' -e 's/\$HOME/\$VSC_SCRATCH/' -i cshrc",
+]
+
+#local_install = 'linux64IccDPInt32'
+#
+#
+# Could try to set the variables that $FOAM_BASH sets by the module, but this
+# does not make much sense as sourcing $FOAM_BASH defines functions also.
+#
+#modextravars = {
+#    'FOAM_TUTORIALS':   '%(installdir)s/OpenFOAM-%(version)s/tutorials',
+#    'FOAM_SRC':         '%(installdir)s/OpenFOAM-%(version)s/src',
+#    'FOAM_ETC':         '%(installdir)s/OpenFOAM-%(version)s/etc',
+#    'FOAM_APP':         '%(installdir)s/OpenFOAM-%(version)s/applications',
+#    'FOAM_SOLVERS':     '%(installdir)s/OpenFOAM-%(version)s/applications/solvers',
+#    'FOAM_UTILITIES':   '%(installdir)s/OpenFOAM-%(version)s/applications/utilities',
+#    'FOAM_APPBIN':      '%(installdir)s/OpenFOAM-%(version)s/platforms' + local_install + '/bin',
+#    'FOAM_LIBBIN':      '%(installdir)s/OpenFOAM-%(version)s/platforms' + local_install + '/lib',
+#    'FOAM_EXT_LIBBIN':  '%(installdir)s/ThirdParty-%(version)s/platforms/' + local_install + '/lib',
+#    'FOAM_MPI':         'mpi',
+#    'FOAM_SETTINGS':    '',
+#    'FOAM_SIGFPE':      '',
+#    # Site-specific stuff, we don't have any so this will point to non-existing directories
+#    # at the moment.
+#    'FOAM_JOB_DIR':     '%(installdir)s/jobControl',
+#    'FOAM_SITE_APPBIN': '%(installdir)s/site/%(version)s/platforms' + local_install + '/bin',
+#    'FOAM_SITE_LIBBIN': '%(installdir)s/site/%(version)s/platforms' + local_install + '/lib',
+#    # WM_ variablees set by $FOAM_BASH
+#    'WM_PROJECT':          'OpenFOAM',
+#    'WM_ARCH_OPTION':      '64',
+#    'WM_PRECISION_OPTION': 'DP',
+#    'WM_COMPILE_OPTION':   'Opt',
+#    'WM_OSTYPE':           'POSIX',
+#    'WM_PROJECT_INST_DIR': '%(installdir)s',
+#    'WM_PROJECT_DIR':      '%(installdir)s/OpenFOAM-%(version)s',
+#    'WM_PROJECT_SITE':     '%(installdir)s/site'
+#    # The next ones are variables that should definitely be redifined by the user.
+#    'WM_PROJECT_USER_DIR': '', # ${VSC_DATA}/OpenFOAM/${USER}-${WM_PROJECT_VERSION}
+#    'FOAM_RUN':         '',    # ${VSC_DATA}/OpenFOAM/${USER}-${WM_PROJECT_VERSION}/run
+#    'FOAM_USER_APPBIN': '',    # ${VSC_DATA}/OpenFOAM/${USER}-${WM_PROJECT_VERSION}/platforms/${WM_OPTIONS}/bin
+#    'FOAM_USER_LIBBIN': '',    # ${VSC_DATA}/OpenFOAM/${USER}-${WM_PROJECT_VERSION}/platforms/${WM_OPTIONS}/lib
+#}
+
+moduleclass = 'cae'

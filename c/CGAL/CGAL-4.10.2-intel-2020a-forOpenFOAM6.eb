@@ -1,0 +1,54 @@
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+local_Boost_version =          '1.73.0'          # https://www.boost.org/users/download/
+local_Eigen_version =          '3.3.7'           # https://gitlab.com/libeigen/eigen/-/releases
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+
+name =          'CGAL'
+version =       '4.10.2'
+versionsuffix = '-forOpenFOAM6'
+
+homepage = 'http://www.cgal.org/'
+
+whatis = [
+    "Description: CGAL provides easy access to efficient and reliable geometric algorithms in the form of a C++ library",
+    "This module is compiled to the specific needs of our OpenFOAM installation and without GUI support"
+]
+
+description = """
+The goal of the CGAL Open Source Project is to provide easy access to efficient
+and reliable geometric algorithms in the form of a C++ library.
+
+This module is compiled to the specific needs of our OpenFOAM installation.
+It does not include GUI support as we want to run OpenFOAM in batch mode.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'strict': True}
+
+# https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-4.14.3/CGAL-4.14.3.tar.xz
+source_urls = ['https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-%(version)s']
+sources =     [SOURCE_TAR_XZ]
+
+dependencies = [
+    ('baselibs', local_buildset,        '',                 ('GCCcore', local_gcc_version)), # For zlib, MPFR and GMP
+    ('Python',   local_Python3_version),                                                           # or 2.7.16 as before?
+    ('Boost',    local_Boost_version,   '-Python-%(pyver)s'),
+#    ('libGLU',   '9.0.0'),
+#    ('Qt',       '4.8.7'),
+]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),  # for CMake
+    ('Eigen',      local_Eigen_version,     '', True),
+]
+
+configopts  = "-DWITH_ZLIB=ON -DWITH_MPFR=ON -DWITH_OpenGL=OFF -DWITH_Eigen3=ON "
+configopts += "-DWITH_GMPXX=ON -DWITH_LAPACK=ON -DWITH_BLAS=ON "
+configopts += "-DWITH_OpenGL=OFF -DWITH_CGAL_ImageIO=OFF -DWITH_CGAL_Qt5=OFF"
+#configopts += "-DOPENGL_INCLUDE_DIR=$EBROOTMESA/include\;$EBROOTLIBGLU/include "
+#configopts += "-DOPENGL_gl_LIBRARY=$EBROOTMESA/lib/libGL.%s " % SHLIB_EXT
+#configopts += "-DOPENGL_glu_LIBRARY=$EBROOTLIBGLU/lib/libGLU.%s " % SHLIB_EXT
+
+moduleclass = 'numlib'
