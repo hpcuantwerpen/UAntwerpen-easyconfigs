@@ -1,0 +1,37 @@
+easybuild_version = '4.2.2'
+
+local_buildset =         '2020a'
+
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+
+name =    'Siesta'
+version = '4.1-b4'
+
+homepage = 'https://launchpad.net/siesta'
+
+whatis = [
+    'Description: Siesta is a first-principles materials simulation code using DFT'
+]
+
+description = """
+Siesta (Spanish Initiative for Electronic Simulations with Thousands of Atoms) is 
+both a method and its computer program implementation, to perform electronic 
+structure calculations and ab initio molecular dynamics simulations of molecules 
+and solids.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+local_vl = version.split('-')
+sources =     [SOURCELOWER_TAR_GZ]
+source_urls = ['https://launchpad.net/siesta/%s/%%(version)s/+download' % local_vl[0]]
+checksums =   ['19fa19a23adefb9741a436c6b5dbbdc0f57fb66876883f8f9f6695dfe7574fe3']
+
+dependencies = [
+    ('netCDF', local_netCDF_version, '-noMPI')
+]
+
+runtest = 'check'
+
+moduleclass = 'phys'

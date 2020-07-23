@@ -1,0 +1,115 @@
+easyblock = 'MakeCp'
+easybuild_version = '4.2.2'
+
+local_buildset =         '2020a'
+
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+
+name =    'Siesta'
+version = '4.0.2'
+
+homepage = 'https://launchpad.net/siesta'
+
+whatis = [
+    'Description: Siesta is a first-principles materials simulation code using DFT'
+]
+
+description = """
+Siesta (Spanish Initiative for Electronic Simulations with Thousands of Atoms) is 
+both a method and its computer program implementation, to perform electronic 
+structure calculations and ab initio molecular dynamics simulations of molecules 
+and solids.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'pic': False, 'openmp': False, 'usempi': True}
+
+# https://launchpad.net/siesta/4.0/4.0.2/+download/siesta-4.0.2.tar.gz
+local_vl = '.'.join(version.split('.')[:2])
+sources =     [SOURCELOWER_TAR_GZ]
+source_urls = ['https://launchpad.net/siesta/%s/%%(version)s/+download' % local_vl]
+checksums =   ['bafbda19358f0c1dd39bb1253c92ee548791a1c0f648977051d2657216874f7e'] 
+
+patches = [ 
+    '%(name)s-' + local_vl + '_configure.patch',
+]
+
+dependencies = [
+    ( 'netCDF', local_netCDF_version, '-MPI'),
+]
+builddependencies = []
+osdependencies = []
+
+parallel = 1
+
+# Note that we use && rather then ; to separate commands so that the build fails
+# if one of the commands fails.
+# Go to the build directory
+prebuildopts  = 'cd Obj && '
+# Populate the build directory with the necessary makefile scaffolding.
+prebuildopts += '../Src/obj_setup.sh && '
+# Create arch.make
+prebuildopts += 'FC=${F90} ../Src/configure --prefix=%(installdir)s --enable-mpi --with-blas="-mkl=cluster" --with-blacs="-mkl=cluster" --with-netcdf="-L$EBROOTNETCDF/lib -lnetcdff -lnetcdf" && '
+prebuildopts += 'echo "FC_SERIAL=${F90_SEQ}" >>arch.make && '
+# Build transiesta
+prebuildopts += 'make transiesta NETCDF_INTERFACE="" && '
+# Clean-up for building siesta
+prebuildopts += 'mv transiesta transiesta.save && make clean && mv transiesta.save transiesta && '
+# Make siesta
+prebuildopts += 'make siesta NETCDF_INTERFACE="" && '
+# Make a selection of the utils.
+prebuildopts += 'cd ../Util && '
+prebuildopts += 'pushd Bands          && make gnubands eigfat2plot                && popd && '
+prebuildopts += 'pushd Contour        && ${F90_SEQ} -o grid2d grid2d.f ${FCFLAGS} && popd && '
+prebuildopts += 'pushd COOP           && make all FC_SERIAL=${F90_SEQ}            && popd && ' 
+prebuildopts += 'pushd DensityMatrix  && make FC=${F90_SEQ}                       && popd && '
+prebuildopts += 'pushd Grid           && make FC_SERIAL=${F90_SEQ}                && popd && '
+prebuildopts += 'pushd HSX            && make FC_SERIAL=${F90_SEQ}                && popd && '
+prebuildopts += 'pushd JobList/Src    && make FC_SERIAL=${F90_SEQ}                && popd && '
+prebuildopts += 'pushd Projections    && make FC_SERIAL=${F90_SEQ}                && popd && '
+prebuildopts += 'pushd STM/simple-stm && make FC_SERIAL=${F90_SEQ}                && popd && '
+prebuildopts += 'pushd TBTrans        && make                                     && popd && '
+prebuildopts += 'pushd WFS            && make FC_SERIAL=${F90_SEQ}                && popd && '
+# Reconfigure without MPI support since -U does not work with Intel for -D defined variables.
+prebuildopts += 'cd ../Obj && '
+prebuildopts += 'FC=${F90_SEQ} ../Src/configure --prefix=%(installdir)s --disable-mpi --with-blas="-mkl" --with-netcdf="-L$EBROOTNETCDF/lib -lnetcdff -lnetcdf" && '
+prebuildopts += 'cd ../Util && '
+prebuildopts += 'pushd Denchar/Src && make denchar FC_SERIAL=${F90_SEQ} && popd && '
+prebuildopts += 'pushd Eig2DOS     && make all FC_SERIAL=${F90_SEQ}     && popd && '
+prebuildopts += 'pushd Gen-basis   && make FC_SERIAL=${F90_SEQ}         && popd && '
+prebuildopts += 'pushd STM/ol-stm/Src && make FC_SERIAL=${F90_SEQ} FFTW_INCFLAGS="-I${MKLROOT}/include/fftw" FFTW_LIBS="-mkl" && popd && '
+prebuildopts += 'cd ../Obj && '
+buildopts  = 'what'
+
+#
+# Files to copy:
+#
+files_to_copy = [
+    "AUTHORS", "COPYING", "NOTICE.txt", "README", "README_TRANSIESTA", "version.info",
+    (["Obj/siesta", "Obj/transiesta"], "bin"),
+    (["Util/Bands/gnubands", "Util/Bands/eigfat2plot"], "bin"),
+    (["Util/CMLComp/ccViz"], "bin" ),
+    (["Util/Contour/grid2d"], "bin" ),
+    (["Util/COOP/dm_creator", "Util/COOP/fat", "Util/COOP/mprop"], "bin"),
+    (["Util/DensityMatrix/cdf2dm", "Util/DensityMatrix/dm2cdf"], "bin"), ([ "Util/DensityMatrix/read_dmhs.m", "Util/DensityMatrix/read_dm.m"], "MATLAB"),
+    (["Util/Grid/cdf2grid", "Util/Grid/cdf2xsf", "Util/Grid/cdf_laplacian", "Util/Grid/g2c_ng", "Util/Grid/grid2cdf", "Util/Grid/grid2cube", "Util/Grid/grid2val", "Util/Grid/grid_rotate"], "bin"),
+    (["Util/HSX/hs2hsx", "Util/HSX/hsx2hs"], "bin"),
+    (["Util/JobList/Src/countJobs", "Util/JobList/Src/getResults", "Util/JobList/Src/horizontal", "Util/JobList/Src/runJobs"], "bin"),
+    (["Util/Projections/orbmol_proj"], "bin"),
+    (["Util/STM/simple-stm/plstm"], "bin"),
+    (["Util/TBTrans/tbtrans"], "bin"),
+    (["Util/WFS/info_wfsx", "Util/WFS/readwf", "Util/WFS/readwfx", "Util/WFS/wfs2wfsx", "Util/WFS/wfsnc2wfsx", "Util/WFS/wfsx2wfs"], "bin"),
+#
+    (["Util/Denchar/Src/denchar"], "bin"),
+    (["Util/Eig2DOS/Eig2DOS"], "bin"),
+    (["Util/Gen-basis/gen-basis", "Util/Gen-basis/ioncat", "Util/Gen-basis/ionplot.sh"], "bin"),
+    (["Util/STM/ol-stm/Src/stm"], "bin")
+]
+
+sanity_check_paths = {
+    'files' : ["bin/siesta", "bin/transiesta"],
+    'dirs'  : []
+}
+
+moduleclass = 'math'
+
