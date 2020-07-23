@@ -11,6 +11,7 @@ local_BEDTools_version =      '2.29.2' # https://github.com/arq5x/bedtools2/rele
 local_CDHIT_version =         '4.8.1'  # https://github.com/weizhongli/cdhit/releases
 local_ClonalFrameML_version = '1.12'   # https://github.com/xavierdidelot/ClonalFrameML/releases
 local_fastp_version =         '0.20.1' # https://github.com/OpenGene/fastp/releases
+local_FastTree_version =      '2.1.11' # http://www.microbesonline.org/fasttree/
 local_HTSlib_version =        '1.10.2' # https://github.com/samtools/htslib/releases
 local_MCL_version =           '14.137' # https://micans.org/mcl/
 local_MEGAHIT_version =       '1.2.9' # https://github.com/voutcn/megahit/releases
@@ -29,6 +30,7 @@ local_version_subs = {
     'CDHIT':         local_CDHIT_version,
     'ClonalFrameML': local_ClonalFrameML_version,
     'fastp':         local_fastp_version,
+    'FastTree':      local_FastTree_version, 
     'HTSlib':        local_HTSlib_version,
     'BCFtools':      local_BCFtools_version,
     'SAMtools':      local_SAMtools_version,
@@ -55,6 +57,7 @@ whatis = [
                  'ClonalRangeML %(ClonalFrameML)s, ' % local_version_subs + 
                  'HTSlib %(HTSlib)s / BCFtools %(BCFtools)s / SAMtools %(SAMtools)s, ' % local_version_subs + 
                  'fastp %(fastp)s, ' % local_version_subs + 
+                 'FastTree %(FastTree)s' % local_version_subs + 
                  'MCL %(MCL)s, ' % local_version_subs +
                  'MEGAHIT %(MEGAHIT)s, ' % local_version_subs +
                  'miniasm %(miniasm)s, ' % local_version_subs +
@@ -121,6 +124,10 @@ Overview of the included tools and libraries:
 * fastp (version %(fastp)s): a tool designed to provide fast all-in-one preprocessing 
   for FastQ files. This tool is developed in C++ with multithreading supported 
   to afford high performance.
+* FastTree (version %(FastTree)s: FastTree infers approximately-maximum-likelihood 
+  phylogenetic trees from alignments of nucleotide  or protein sequences. 
+  FastTree can handle alignments with up to a million of sequences in a reasonable 
+  amount of time and memory.
 * HTSlib (version %(HTSlib)s): HTSlib is an implementation of a unified C library for 
   accessing common file formats, such as SAM, CRAM and VCF, used for high-throughput 
   sequencing data, and is the core library used by samtools and bcftools. 
@@ -225,6 +232,7 @@ docurls = [
     'CD-HIT:        Web-based documentation on https://github.com/weizhongli/cdhit/wiki',
     'ClonalFrameML: Web-based information on https://github.com/xavierdidelot/clonalframeml/wiki',    
     'fastpp:        Web-based documentation on https://github.com/OpenGene/fastp/blob/master/README.md',
+    'FastTree:      Web-based documentation on http://www.microbesonline.org/fasttree/',
     'HTSlib:        Man pages in sections 1, 5 and 7',
     'BCFtools:      Web-based documentation on http://samtools.github.io/bcftools/howtos/index.html',
     'BCFtools:      Man page bcftools in section 1',
@@ -311,6 +319,20 @@ components = [
         'buildopts':      'CXXFLAGS="${CXXFLAGS} -std=c++11 -I./inc"',
         'preinstallopts': 'mkdir -p %(installdir)s/bin && ',
         'installopts':    'PREFIX=%(installdir)s',
+    }),
+    ('FastTree', local_FastTree_version, {
+        'easyblock':     'CmdCp',
+        'sources':       [ {
+                            'filename':          '%(name)s-%(version)s.c',
+                            'source_urls':       ['http://www.microbesonline.org/fasttree/'],
+                            'extract_cmd':       'mkdir %(name)s-%(version)s ; cp %s %(name)s-%(version)s'
+                         } ],
+        'start_dir':     '%(name)s-%(version)s',
+        'skipsteps':     ['source'],
+        'cmds_map':      [('FastTree.*.c', '$CC -DOPENMP $CFLAGS $LIBS %%(source)s -o %(name)s')],
+        'files_to_copy': [
+                            ((['FastTree'], 'bin')), 
+                         ],
     }),
     ('MCL', local_MCL_version, {
         'sources':      [ {

@@ -1,0 +1,48 @@
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+# Author: Pablo Escobar Lopez
+# Swiss Institute of Bioinformatics
+# Biozentrum - University of Basel
+
+easyblock = 'MakeCp'
+
+local_buildset =         '2020a'
+
+local_PRANK_version =          '170427'          # http://wasabiapp.org/download/prank/
+local_MAFFT_version =          '7.471'           # https://mafft.cbrc.jp/alignment/software/
+
+name =    'PRANK'
+version = '170427'
+
+homepage = 'http://wasabiapp.org/software/prank/'
+
+whatis = [
+    'Description: PRANK is a probabilistic multiple alignment program for DNA, codon and amino-acid sequences',
+]
+
+description = """
+PRANK is a probabilistic multiple alignment program for DNA, 
+codon and amino-acid sequences. PRANK is based on a novel algorithm that treats 
+insertions correctly and avoids over-estimation of the number of deletion events.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['http://wasabiapp.org/download/prank/']
+sources =     ['%(namelower)s.source.%(version)s.tgz']
+checksums =   ['623eb5e9b5cb0be1f49c3bf715e5fabceb1059b21168437264bdcd5c587a8859']
+
+# PRANK uses MAFFT as external tool to contruct guide tree
+dependencies = [
+    ('MAFFT', local_MAFFT_version, '-with-extensions')
+]
+
+start_dir = 'src'
+
+files_to_copy = [(['prank'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/prank'],
+    'dirs':  [],
+}
+
+moduleclass = 'bio'
