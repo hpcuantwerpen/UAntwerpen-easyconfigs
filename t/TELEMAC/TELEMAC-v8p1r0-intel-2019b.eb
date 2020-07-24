@@ -1,0 +1,72 @@
+easyblock = 'MakeCp'
+
+name = 'TELEMAC'
+version = 'v8p1r0'
+
+homepage = 'http://www.opentelemac.org/'
+description = ("TELEMAC-MASCARET is an integrated suite of solvers for use in the field of\n"
+               "free-surface flow.")
+
+toolchain = {'name': 'intel', 'version': '2019b'}
+
+# Prepare a TAR-file in /apps/antwerpen/sources according to the guidelines in the OneNote.
+# Then run this EasyConfig.
+sources = ['TELEMAC-%(version)s-svn.tar.gz']
+
+patches = [
+    ('TELEMAC_easybuild_config.%(version)s.patch',1),
+    ('TELEMAC_declarations_telemac2d.%(version)s.patch',1),
+]
+
+dependencies = [
+    ('netCDF', '4.7.3', '-MPI'),
+    ('Python', '3.7.4'),
+]
+
+builddependencies = [
+    ('CMake', '3.11.1', '', True),
+]
+
+prebuildopts  = ''
+prebuildopts += 'echo "The builddir is: " && '
+prebuildopts += 'echo %(builddir)s && '
+prebuildopts += 'export HOMETEL=`pwd` && '
+# First build the included METIS library.
+prebuildopts += 'pushd optionals/metis-5.1.0/build && '
+prebuildopts += 'CC=icc CXX=icpc cmake ../CMakeLists.txt -DOPENMP:BOOL=ON && '
+prebuildopts += 'cd .. && '
+prebuildopts += 'make && '
+prebuildopts += 'popd && '
+# Next we'll start the compile of TELEMAC through the Makefile in the patch file.
+prebuildopts += 'PATH=$HOMETEL/scripts/python3:$PATH SYSTELCFG=$HOMETEL/configs/systel.easybuild.cfg '
+
+# Don't use parallel make as we don't know the effect of starting
+# the compile script multiple times simultaneously.
+parallel = 1
+
+buildopts = [ '-f Makefile' ]
+
+files_to_copy = [
+    'NEWS.txt',
+    'README.txt',
+    'builds',
+    'configs',
+    'documentation',
+    'examples',
+    'optionals',
+    'scripts',
+    'sources'
+]
+
+sanity_check_paths = {
+    'files' : ['README.txt'],
+    'dirs'  : ['builds']
+}
+
+modextrapaths = {
+    'PYTHONPATH': 'scripts/python3',
+    'PATH':  'scripts/python3'
+}
+
+moduleclass = 'math'
+

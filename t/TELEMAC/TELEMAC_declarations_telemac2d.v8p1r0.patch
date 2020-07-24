@@ -1,0 +1,11 @@
+--- v8p1r0/sources/telemac2d/declarations_telemac2d.f.orig	2020-07-19 14:51:00.680783698 +0200
++++ v8p1r0/sources/telemac2d/declarations_telemac2d.f	2020-07-19 15:17:12.589641290 +0200
+@@ -701,7 +701,7 @@
+ !
+ !     MAXIMUM NUMBER OF OUTPUT VARIABLES
+ !
+-      INTEGER, PARAMETER :: MAXVAR = 100
++      INTEGER, PARAMETER :: MAXVAR = 1000
+ !
+ !     MAXIMUM NUMBER OF TRACERS
+ !
