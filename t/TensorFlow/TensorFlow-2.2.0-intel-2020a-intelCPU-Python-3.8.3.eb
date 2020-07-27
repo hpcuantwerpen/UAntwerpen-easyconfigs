@@ -1,0 +1,114 @@
+easyblock = 'Bundle'
+easybuild_version = '4.2.2'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_protobuf_version =       '3.12.3'          # https://github.com/protocolbuffers/protobuf/releases/
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+
+local_TensorFlow_version  =          '2.2.0'
+local_tensorboard_version =          '2.2.2'
+local_tensorflow_estimator_version = '2.2.0'
+
+name          = 'TensorFlow'
+version       = local_TensorFlow_version
+
+versionsuffix = '-intelCPU-Python-' + local_Python3_version
+
+homepage = 'https://www.tensorflow.org/'
+
+whatis = [
+    "Description: Tensorflow is an open-source library for machine intelligence",
+    "This module provides Intel-optimized (MKLDNN) binaries build for execution on a CPU only, downloaded from PyPi (intel-tensorflow package)."
+]
+
+description = """
+An open-source software library for Machine Intelligence.
+
+This module contains binaries build for x86 CPUs with explicit Intel
+support (using the Intel MKLDNN libraries). This is likely the best
+version of TensorFlow to use on Intel and probably AMD CPUs, but
+please compare.
+
+The multiple-backend version of Keras is no longer included in this 
+module as it is no longer developed. We advise users to transfer to
+the Keras integrated in TensorFlow itself as this is the future.
+
+Tensorflow doesn't compile properly with our compilers. Blame Google for a
+lousy build process with tools that lack the transparancy needed to easily
+solve build problems. Hence we use precompiled binaries, but we cannot
+exclude compatibility problems with our OS version.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+local_pycpver    = ''.join(local_Python3_version.split('.')[:2])
+local_pyvermajor = ''.join(local_Python3_version.split('.')[:1])
+
+dependencies = [
+    ('Python',   local_Python3_version),
+    ('protobuf', local_protobuf_version, '', ('GCCcore', local_gcc_version)),
+]
+
+# this is a bundle of Python packages
+exts_defaultclass = 'PythonPackage'
+exts_filter = ("python -c 'import %(ext_name)s'", '')
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  True,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+exts_list = [
+    ('oauthlib',               '3.1.0',   {}),
+    ('requests-oauthlib',      '1.3.0',   {}),
+    ('cachetools',             '4.1.1',   {}),
+    ('rsa',                    '4.6',     {}),
+    ('pyasn1-modules',         '0.2.8',   {}),
+    ('Werkzeug',               '1.0.1',   {}), # Note that the modulename is werkzeug
+    ('Markdown',               '3.2.2',   {}), # Note that the modulename is markdown 
+    ('wrapt',                  '1.12.1',  {}),
+    ('grpcio',                 '1.30.0',  { 'modulename':  'grpc' }),
+    ('opt-einsum',             '3.3.0',   { 'source_tmpl': 'opt_einsum-%(version)s.tar.gz' }),
+    ('astunparse',             '1.6.3',   {}),
+    ('google-auth',            '1.19.2',  { 'modulename':  'google.auth' }),
+    ('google-auth-oauthlib',   '0.4.1',   {}),
+    ('google-pasta',           '0.2.0',   { 'modulename':  'pasta' }),
+    ('protobuf',               '3.12.2',  { 'modulename': 'google.protobuf' }),
+    ('Keras-Applications',     '1.0.8',   { 'source_tmpl': 'Keras_Applications-%(version)s.tar.gz' }),
+    ('Keras-Preprocessing',    '1.1.2',   { 'source_tmpl': 'Keras_Preprocessing-%(version)s.tar.gz' }),
+    ('tensorboard-plugin-wit', '1.7.0',   { 
+        'source_tmpl':    'tensorboard_plugin_wit-%(version)s-py3-none-any.whl',
+        'unpack_sources': False,
+    }),
+    ('tensorboard', local_tensorboard_version, {
+        'source_tmpl':    'tensorboard-%%(version)s-py%(local_pyvermajor)s-none-any.whl' % {'local_pyvermajor': local_pyvermajor},
+        'unpack_sources': False,
+    }),
+# The next two need to be done together: intel-tensorflow requires tensorflow-esitmator,
+# but the latter cannot be imported without the former... 
+# Or set sanity_pip_check to false for intel-tensorflow.
+    ('intel-tensorflow', version, {
+        # intel_tensorflow-2.2.0-cp38-cp38-manylinux2010_x86_64.whl
+        'source_tmpl':    'intel_tensorflow-%%(version)s-cp%(local_pycpver)s-cp%(local_pycpver)s-manylinux2010_x86_64.whl' % {'local_pycpver': local_pycpver},
+        'use_pip':        True,
+        'unpack_sources': False,
+        'modulename':     'tensorflow', 
+    }),
+    ('tensorflow-estimator', local_tensorflow_estimator_version, {
+        'source_tmpl':    'tensorflow_estimator-%(version)s-py2.py3-none-any.whl',
+        'unpack_sources': False,
+    }),
+]
+
+sanity_check_paths = {
+#    'files': ['bin/tensorboard'],
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'lib'
