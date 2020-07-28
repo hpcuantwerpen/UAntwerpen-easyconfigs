@@ -1,8 +1,8 @@
 <table>
 <tr><th> Package               </th><th> Last version                                 </th><th> 2020a version                                     </th><th> Where    </th></tr>
-<tr><td> ABINIT                </td><td> 8.8.4-intel-2018b                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> ABINIT                </td><td> 8.10.2-intel-2016b-hybrid-mkl                </td><td> 8.10.3-intel-2020a-hybrid-mkl                     </td><td> buildset </td></tr>
 <tr><td> ACTC                  </td><td> 1.1-GCCcore-8.3.0                            </td><td> 1.1-GCCcore-9.3.0                                 </td><td> buildset </td></tr>
-<tr><td> Amber                 </td><td> 18-intel-2019b-AmberTools-19-patchlevel-17-9 </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Amber                 </td><td> 18-intel-2019b-AmberTools-19-patchlevel-17-9 </td><td> 8-intel-2019b-AmberTools-19-patchlevel-17-12      </td><td> buildset </td></tr>
 <tr><td> ANSYS                 </td><td> 17.2                                         </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> ant                   </td><td> 1.10.1-Java-8                                </td><td> SYSTEM toolchain                                  </td><td> system   </td></tr>
 <tr><td> ANTs                  </td><td> 2.3.2-intel-2019b                            </td><td> 2.3.3-intel-2020a                                 </td><td> buildset </td></tr>
@@ -46,8 +46,8 @@
 <tr><td> CMake                 </td><td> 3.9.1                                        </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
 <tr><td> COMSOL                </td><td> 5.3                                          </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> core-counter          </td><td> 1.1                                          </td><td> 1.1.1 (SYSTEM toolchain)                          </td><td> system   </td></tr>
-<tr><td> CP2K                  </td><td> 7.1 in various variants                      </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> CPMD                  </td><td> 4.3-intel-2019b                              </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> CP2K                  </td><td> 7.1 in various variants                      </td><td> 7.1 in various variants                           </td><td> buildset </td></tr>
+<tr><td> CPMD                  </td><td> 4.3-intel-2019b                              </td><td> 4.3-intel-2020a-pl4624                            </td><td> buildset </td></tr>
 <tr><td> cppcheck              </td><td> 1.83-intel-2018a                             </td><td> Installed on demand (and needs Qt5)               </td><td> buildset </td></tr>
 <tr><td> Cube                  </td><td> 4.3.5-intel-2018a                            </td><td> TODO - Awaiting Qt5                               </td><td> buildset </td></tr>
 <tr><td> CUDA                  </td><td> 10.2.89                                      </td><td> Toolchain-independent                             </td><td> system   </td></tr>
@@ -77,7 +77,7 @@
 <tr><td> Faiss                 </td><td> 1.5.0-intel-2018b-Python-3.7.1-CPU           </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> FastME                </td><td> 2.1.6.1-intel-2018a                          </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> fastp                 </td><td> 0.20.0-intel-2019b                           </td><td> Moved to BioTools/2020a.00-intel-2020a            </td><td> /        </td></tr>
-<tr><td> FastTree              </td><td> 2.1.10-intel-2018b                           </td><td> Installed on demand                               </td><td> buildset </td></tr>
+<tr><td> FastTree              </td><td> 2.1.10-intel-2018b                           </td><td> Moved to BioTools/2020a.00-intel-2020a            </td><td> buildset </td></tr>
 <tr><td> FFmpeg                </td><td> 4.1.4 (Intel and GCCcore)                    </td><td> 4.2.2 (Intel and GCCcore)                         </td><td> buildset </td></tr>
 <tr><td> FFTW                  </td><td> 3.3.8-intel-2019b                            </td><td> 3.3.38 (Intel 2 versions)                         </td><td> buildset </td></tr>
 <tr><td> file                  </td><td> 5.30-intel-2017a                             </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
@@ -139,9 +139,9 @@
 <tr><td> Kraken                </td><td> 1.0-intel-2018b-Perl-5.26.1                  </td><td> Installed on demand (there is now a Kraken 2)     </td><td> buildset </td></tr>
 <tr><td> Kraken2               </td><td> /                                            </td><td> 2.0.9-beta-intel-2020a-Perl-5.30.2                </td><td> buildset </td></tr>
 <tr><td> kwant                 </td><td> 1.2.2-intel-2017a-Python-3.6.1               </td><td> 1.4.2-intel-2020a-Python-3.8.2                    </td><td> buildset </td></tr>
-<tr><td> kwant-bundle          </td><td> 1.3.2-intel-2018a-Python-3.6.6               </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> kwant-bundle          </td><td> 1.3.2-intel-2018a-Python-3.6.6               </td><td> TODO - awaiting kwant bugfix with UMFpack         </td><td> buildset </td></tr>
 <tr><td> LAME                  </td><td> 3.100-intel-2018b                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> buildset </td></tr>
-<tr><td> LAMMPS                </td><td> 16Mar2018-intel-2017a                        </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> LAMMPS                </td><td> 16Mar2018-intel-2017a                        </td><td> 17Aug2017-intel-2020a                             </td><td> buildset </td></tr>
 <tr><td> libcerf               </td><td> 1.5-intel-2018b                              </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> libffi                </td><td> 3.2.1-intel-2018b                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> libgd                 </td><td> 2.2.5-intel-2019b                            </td><td> 2.3.0-intel-2020a                                 </td><td> buildset </td></tr>
@@ -166,7 +166,7 @@
 <tr><td> LMDB                  </td><td> 0.9.22-intel-2018b                           </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> Lumen                 </td><td> 1.2-intel-2018a                              </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> M4                    </td><td> 1.4.18-GCCcore-7.3.0                         </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
-<tr><td> MAFFT                 </td><td> 7.407-intel-2018b-with-extensions            </td><td> Installed on demand                               </td><td> buildset </td></tr>
+<tr><td> MAFFT                 </td><td> 7.407-intel-2018b-with-extensions            </td><td> 7.471-intel-2020a-with-extensions                 </td><td> buildset </td></tr>
 <tr><td> make                  </td><td> 4.2.1                                        </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
 <tr><td> Maple                 </td><td> 2020.0                                       </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> Mathematica           </td><td> 12.0                                         </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
@@ -187,7 +187,7 @@
 <tr><td> MrBayes               </td><td> 3.2.7-intel-2019b-MPI                        </td><td> 3.2.7-intel-2020a-MPI                             </td><td> buildset </td></tr>
 <tr><td> MUMPS                 </td><td> 5.2.1-intel-2019b-noOpenMP-noMPI             </td><td> 5.3.1-intel-2020a-noOpenMP-noMPI                  </td><td> buildset </td></tr>
 <tr><td> MUSCLE                </td><td> 3.8.31-intel-2019b                           </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> buildset </td></tr>
-<tr><td> NAMD                  </td><td> 2.12-verbs-smp                               </td><td> TODO                                              </td><td> depends  </td></tr>
+<tr><td> NAMD                  </td><td> 2.12-verbs-smp                               </td><td> TODO, compile problems in our setup               </td><td> depends  </td></tr>
 <tr><td> NASM                  </td><td> 2.12.02                                      </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
 <tr><td> ncbi-vdb              </td><td> 2.8.2-intel-2017a                            </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> ncurses               </td><td> 6.1-intel-2018b                              </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> buildset </td></tr>
@@ -200,13 +200,13 @@
 <tr><td> NTPoly                </td><td> 2.4-intel-2019b                              </td><td> 2.4-intel-2020a                                   </td><td> buildset </td></tr>
 <tr><td> numactl               </td><td> 2.0.11-GCC-6.3.0-2.27                        </td><td> Installed with OpenMPI                            </td><td> buildset </td></tr>
 <tr><td> numba                 </td><td> 0.48.0-intel-2019b-Python-3.7.4              </td><td> 0.49.1-intel-2020a-Python-3.8.3                   </td><td> buildset </td></tr>
-<tr><td> NWChem                </td><td> 6.6.r27746-intel-2017a-Python-2.7.13         </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> NWChem                </td><td> 6.6.r27746-intel-2017a-Python-2.7.13         </td><td> 7.0.0-intel-2020a-Python-3.8.3                    </td><td> buildset </td></tr>
 <tr><td> OMNIS-LB              </td><td> 3.1-2                                        </td><td> Installed on demand                               </td><td> system   </td></tr>
 <tr><td> OpenBLAS              </td><td> 0.3.5-GCC-7.3.0-2.30                         </td><td> Installed with foss                               </td><td> buildset </td></tr>
 <tr><td> OpenCV                </td><td> 3.4.0-intel-2018a-CPU-noGUI                  </td><td> Installed on demand                               </td><td> buildset </td></tr>
-<tr><td> OpenFOAM              </td><td> 6-intel-2019b                                </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> OpenFOAM              </td><td> 6-intel-2019b                                </td><td> 6-intel-2020a                                     </td><td> buildset </td></tr>
 <tr><td> OpenMPI               </td><td> 3.1.1-GCC-7.3.0-2.30                         </td><td> Installed with foss                               </td><td> buildset </td></tr>
-<tr><td> OpenMX                </td><td> 3.8.5-intel-2018b                            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> OpenMX                </td><td> 3.8.5-intel-2018b                            </td><td> 3.8.5-intel-2020a, 3.9.2-intel-2020a              </td><td> buildset </td></tr>
 <tr><td> OrthoFinder           </td><td> 2.2.6-intel-2018a                            </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> OTF2                  </td><td> 2.1.1-intel-2018a                            </td><td> Installed when needed                             </td><td> buildset </td></tr>
 <tr><td> p7zip                 </td><td> 16.02                                        </td><td> SYSTEM toolchain, unmaintained                    </td><td> system   </td></tr>
@@ -223,7 +223,7 @@
 <tr><td> Pilon                 </td><td> 1.23-Java-11                                 </td><td> SYSTEM toolchain                                  </td><td> system   </td></tr>
 <tr><td> pixman                </td><td> 0.34.0-intel-2018b                           </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> pkg-config            </td><td> 0.29.1                                       </td><td> Moved into buildtools/2020a                       </td><td> /        </td></tr>
-<tr><td> PLUMED                </td><td> 2.6.0-intel-2019b                            </td><td> 2.6.0-intel-2020a                                 </td><td> buildset </td></tr>
+<tr><td> PLUMED                </td><td> 2.6.0-intel-2019b                            </td><td> 2.6.1-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> PRANK                 </td><td> 170427-intel-2018b                           </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> PROJ                  </td><td> 6.1.1-intel-2019b                            </td><td> 7.0.1-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> protobuf              </td><td> 3.7.1-intel-2018b-Python-3.6.8               </td><td> Installed when needed by a package                </td><td> buildset </td></tr>
@@ -231,15 +231,15 @@
 <tr><td> Python-bioinformatics </td><td> 2019b.00-*                                   </td><td> / now metapub                                     </td><td> buildset </td></tr>
 <tr><td> Python-IDLab-networks </td><td> 2019b.00-*                                   </td><td> Problems with gevent.                             </td><td> buildset </td></tr>
 <tr><td> Python-IntelMods      </td><td> 2019b.00-intel-2019b-Python-3.7.4            </td><td> Obsolete, or try IntelPython3                     </td><td> buildset </td></tr>
-<tr><td> Qt5                   </td><td> 5.13.0-GCCcore-8.3.0-noOpenGL                </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> QuantumESPRESSO       </td><td> 6.4.1-intel-2018b-*                          </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Qt5                   </td><td> 5.13.0-GCCcore-8.3.0-noOpenGL                </td><td> TODO - unsolved compilation failures              </td><td> buildset </td></tr>
+<tr><td> QuantumESPRESSO       </td><td> 6.4.1-intel-2018b-*                          </td><td> TODO - Unsolved compilatin problems               </td><td> buildset </td></tr>
 <tr><td> QUIP                  </td><td> 180612-intel-2017a                           </td><td> Installed on demand due to past comp. problems    </td><td> buildset </td></tr>
 <tr><td> qutip                 </td><td> 4.3.1-intel-2018b-Python-3.6.8               </td><td> QuTiP/4.5.1-intel-2020a-...                       </td><td> buildset </td></tr>
 <tr><td> R                     </td><td> 3.5.1-intel-2018b                            </td><td> 4.0.2-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> Racon                 </td><td> 1.3.3-intel-2018b                            </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> buildset </td></tr>
 <tr><td> RAxML                 </td><td> 8.2.10-intel-2017a-hybrid                    </td><td> Installed on demand                               </td><td> buildset </td></tr>
-<tr><td> RAxML-NG              </td><td> 0.9.0-intel-2019b                            </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> Roary                 </td><td> 3.12.0-intel-2018b-Perl-5.26.1               </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> RAxML-NG              </td><td> 0.9.0-intel-2019b                            </td><td> 0.9.0-intel-2020a                                 </td><td> buildset </td></tr>
+<tr><td> Roary                 </td><td> 3.12.0-intel-2018b-Perl-5.26.1               </td><td> Incompatible with other software in the toolchain </td><td> buildset </td></tr>
 <tr><td> Ruby                  </td><td> 2.4.0                                        </td><td> SYSTEM toolchain, updated on demand               </td><td> system   </td></tr>
 <tr><td> SAMtools              </td><td> 1.9-intel-2019b                              </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> buildset </td></tr>
 <tr><td> ScaLAPACK             </td><td> 2.0.2-gompi-7.3.0-OpenBLAS-0.2.20            </td><td> Installed with foss                               </td><td> buildset </td></tr>
@@ -248,7 +248,7 @@
 <tr><td> SCons                 </td><td> 3.0.0                                        </td><td> SYSTEM toolchain                                  </td><td> system   </td></tr>
 <tr><td> SCOTCH                </td><td> 6.0.7-intel-2019b                            </td><td> 6.0.7-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> SICER2                </td><td> Installed in user directory                  </td><td> Moved into BioTools-Python                        </td><td> buildset </td></tr>
-<tr><td> Siesta                </td><td> 4.0-intel-2017a                              </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> Siesta                </td><td> 4.0-intel-2017a                              </td><td> 4.0.2-intel-2020a, 4.1-b4-intel-2020a             </td><td> buildset </td></tr>
 <tr><td> Simcenter             </td><td> 12.02                                        </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> SIONlib               </td><td> 1.7.2-intel-2018a-tools                      </td><td> Installed when needed by a package                </td><td> buildset </td></tr>
 <tr><td> SMALT                 </td><td> 0.7.6-intel-2019b                            </td><td> 0.7.6-intel-2020a                                 </td><td> buildset </td></tr>
@@ -260,17 +260,17 @@
 <tr><td> SWIG                  </td><td> 4.0.0-*                                      </td><td> 4.0.1-*                                           </td><td> buildset </td></tr>
 <tr><td> Szip                  </td><td> 2.1.1-intel-2018b                            </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> Tcl                   </td><td> 8.6.9-intel-2019b                            </td><td> 8.6.10-intel-2020a                                </td><td> buildset </td></tr>
-<tr><td> TELEMAC               </td><td> v8p0r0-intel-2018a                           </td><td> TODO                                              </td><td> buildset </td></tr>
-<tr><td> TensorFlow            </td><td> 2.1.0-intel-2019b-*                          </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> TELEMAC               </td><td> v8p1r1-intel-2019b                           </td><td> v8p1r1-intel-2020a                                </td><td> buildset </td></tr>
+<tr><td> TensorFlow            </td><td> 2.1.0-intel-2019b-*                          </td><td> 2.2.0-intel-2020a-*                               </td><td> buildset </td></tr>
 <tr><td> TensorRT              </td><td> 6.0.1.5-CUDA-10.1.243-cuDNN-7.6.5.32         </td><td> Toolchain-independent                             </td><td> system   </td></tr>
 <tr><td> Tk                    </td><td> 8.6.9-intel-2019b                            </td><td> 8.6.10-intel-2020a                                </td><td> buildset </td></tr>
 <tr><td> torque-tools          </td><td> 1.0.2                                        </td><td> Obsolete on SLURM                                 </td><td> /        </td></tr>
 <tr><td> Trimmomatic           </td><td> 0.39-Java-11                                 </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> UDUNITS               </td><td> 2.2.26-intel-2018b                           </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> Unicycler             </td><td> 0.4.7-intel-2018b-Python-3.7.1               </td><td> 0.4.8-intel-2020a-Python-3.8.3                    </td><td> buildset </td></tr>
-<tr><td> USPEX                 </td><td> 10.3-intel-2018a                             </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> USPEX                 </td><td> 10.3-intel-2018a                             </td><td> TODO - Needs VASP first                           </td><td> buildset </td></tr>
 <tr><td> util-linux            </td><td> 2.32-intel-2018b                             </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
-<tr><td> VASP                  </td><td> 5.4.4-intel-2018b-Wannier90-2.1.0            </td><td> TODO                                              </td><td> buildset </td></tr>
+<tr><td> VASP                  </td><td> 5.4.4-intel-2018b-Wannier90-2.1.0            </td><td> TODO - Awaiting a license for VASP 6              </td><td> buildset </td></tr>
 <tr><td> VESTA                 </td><td> 3.4.6                                        </td><td> Installed on demand                               </td><td> x86_64   </td></tr>
 <tr><td> VMD                   </td><td> 1.9.3-intel-2019b-Python-2.7.16-viz          </td><td> 1.9.3-intel-2020a-viz                             </td><td> buildset </td></tr>
 <tr><td> Voro++                </td><td> 0.4.6-intel-2019b                            </td><td> 0.4.6-intel-2020a                                 </td><td> buildset </td></tr>
