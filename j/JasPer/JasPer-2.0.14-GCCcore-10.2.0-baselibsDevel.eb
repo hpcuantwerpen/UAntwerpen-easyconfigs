@@ -1,0 +1,79 @@
+# NOTE: Be careful when building this on a node that has OpenGL support. 
+# CMake configure process detects this so it may use those libraries in 
+# in that case.
+easyblock = 'CMakeMake'
+
+local_buildset =         '2020b'
+local_gcc_version =      '10.2.0'
+local_binutils_version = '2.35'
+
+local_libjpegturbo_version =     '2.0.5'         # https://sourceforge.net/projects/libjpeg-turbo/files/
+local_JasPer_version =           '2.0.14'        # http://www.ece.uvic.ca/~frodo/jasper/#download
+
+name =          'JasPer'
+version =       local_JasPer_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.ece.uvic.ca/~frodo/jasper/'
+
+whatis = [
+    'Description: Open-source software-based reference implementation of the codec specified in the JPEG-2000 Part-1 standard (i.e., ISO/IEC 15444-1)',
+    'The module contains both command line tools and shared libraries.',
+]
+
+description = """
+The JasPer Project is an open-source initiative to provide a free software-based
+reference implementation of the codec specified in the JPEG-2000 Part-1 standard
+(i.e., ISO/IEC 15444-1).
+
+The JasPer software is written in the C programming language.
+
+The JasPer software has been included in the JPEG-2000 Part-5 standard (i.e.,
+ISO/IEC 15444-5), as an official reference implementation of the JPEG-2000
+Part-1 codec. This software has also been incorporated into numerous other
+software projects (some commercial and some non-commercial).
+"""
+
+usage = """
+The following command line utilities support the --help option:
++ imgcmp: Image comparison utility
++ imginfo: Displays information about an image
++ jasper: File format converter specialized in JPEG-2000 encoding
+
+More information on the library is available in the Software Reference Manual.
+"""
+
+docurls = [
+    'JasPer Software Reference Manual: http://www.ece.uvic.ca/~frodo/jasper/jasper.pdf',
+    'Man pages and --help option for the command line tools imgcmp, imginfo and jasper',
+]
+
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
+toolchainopts = {'pic': True}
+
+sources = [SOURCELOWER_TAR_GZ]
+source_urls = ['http://www.ece.uvic.ca/~frodo/jasper/software/']
+
+separate_build_dir = True
+
+builddependencies = [
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
+]
+
+dependencies = [
+    ('libjpeg-turbo', local_libjpegturbo_version, versionsuffix),
+]
+
+configopts  = '-DJAS_ENABLE_DOC=0 '  # No PDFLaTeX on our systems.
+configopts += '-DJAS_ENABLE_OPENGL=0 '
+configopts += '-DJAS_ENABLE_LIBJPEG=1 '
+# Checked the other options, they were mostly for debugging.
+configopts += '-DCMAKE_INSTALL_LIBDIR="%(installdir)s/lib" '
+
+sanity_check_paths = {
+    'files': ["bin/jasper", "lib/libjasper.so"],
+    'dirs' : ["include"],
+}
+
+moduleclass = 'vis'
