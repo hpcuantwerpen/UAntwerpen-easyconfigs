@@ -1,0 +1,99 @@
+##
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+#
+# Authors::   Inge Gutheil <i.gutheil@fz-juelich.de>, Alan O'Cais <a.ocais@fz-juelich.de>
+# License::   MIT/GPL
+# $Id$
+#
+##
+
+easyblock = 'ConfigureMake'
+
+local_buildset =         '2020b'
+
+local_ELPA_version =           '2020.05.001'     # https://elpa.mpcdf.mpg.de/
+
+name =    'ELPA'
+version = local_ELPA_version
+
+homepage = 'http://elpa.mpcdf.mpg.de'
+
+whatis = [
+    "Description: ELPA - Eigenvalue SoLvers for Petaflop-Applications",
+]
+
+description = """
+The publicly available ELPA library provides highly efficient and highly 
+scalable direct eigensolvers for symmetric matrices. Though especially designed
+for use for PetaFlop/s applications solving large problem sizes on massively 
+parallel supercomputers, ELPA eigensolvers have proven to be also very efficient
+for smaller matrices. All major architectures are supported.
+
+ELPA provides static and shared libraries with and without OpenMP support
+and with and without MPI. GPU support is not included in this module.
+"""
+
+docurls = [
+    'Manual pages in section 1 and 3'    
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['http://elpa.mpcdf.mpg.de/html/Releases/%(version)s/']
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['66ff1cf332ce1c82075dc7b5587ae72511d2bcb3a45322c94af6b01996439ce5'] # elpa-2020.05.001.tar.gz
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),
+]
+
+preconfigopts = 'autoreconf && '
+
+# Configuration options are well documented on https://gitlab.mpcdf.mpg.de/elpa/elpa/blob/master/INSTALL.md
+local_common_configopts  = 'FCFLAGS="-I$EBROOTIMKL/mkl/include/intel64/lp64 $FCFLAGS" '
+local_common_configopts += '--enable-skew-symmetric-support --enable-single-precision '
+local_mpi_configopts     = 'FC="$MPIF90" CC="$MPICC" '
+local_onenode_omp_configopts   = 'LIBS="$EBVARLIBLAPACK_MT_ONLY" '
+local_onenode_noomp_configopts = 'LIBS="$EBVARLIBLAPACK_ONLY" '
+local_mpi_omp_configopts       = 'LIBS="$EBVARLIBSCALAPACK_MT" '
+local_mpi_noomp_configopts     = 'LIBS="$EBVARLIBSCALAPACK" '
+
+# Set processor-specific optimization options.
+# We do a minimal build as we now which CPUs we will be running on on
+# which cluster.
+import os as local_os
+local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
+if local_UAarch == "ivybridge":
+    local_common_configopts += '--disable-generic --disable-sse --enable-avx  --disable-avx2 --disable-avx512 --disable-gpu '
+elif local_UAarch == "broadwell":
+    local_common_configopts += '--disable-generic --disable-sse --disable-avx --enable-avx2  --disable-avx512 --disable-gpu '
+else:
+    local_common_configopts += '--disable-generic --disable-sse --disable-avx --disable-avx2 --enable-avx512  --disable-gpu '
+
+configopts = [
+    local_common_configopts + '--with-mpi=yes --disable-openmp ' + local_mpi_configopts + local_mpi_noomp_configopts,
+    local_common_configopts + '--with-mpi=yes --enable-openmp  ' + local_mpi_configopts + local_mpi_omp_configopts,
+    local_common_configopts + '--with-mpi=no  --disable-openmp ' + local_onenode_noomp_configopts,
+    local_common_configopts + '--with-mpi=no  --enable-openmp '  + local_onenode_omp_configopts,
+]
+
+# Distribution tarball contains Fortran module files, we need to clean
+# them up first:
+prebuildopts = 'make clean && '
+
+buildopts = 'V=1'
+
+postinstallcmds = [
+    # The include files and Fortran module files are identical with and
+    # without openmp.
+    'ln -s elpa-%(version)s/elpa %(installdir)s/include',
+    'ln -s elpa-%(version)s/modules %(installdir)s/include',
+]
+
+sanity_check_paths = {
+    'files': ['lib/libelpa.a',       'lib/libelpa.%s' % SHLIB_EXT, 
+              'lib/libelpa_openmp.a','lib/libelpa_openmp.%s' % SHLIB_EXT, ],
+    'dirs':  ['bin', 'include/elpa-%(version)s/elpa', 'include/elpa-%(version)s/modules', 'lib/pkgconfig'],
+}
+
+moduleclass = 'math'
