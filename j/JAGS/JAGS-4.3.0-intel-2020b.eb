@@ -1,0 +1,64 @@
+# This file is an EasyBuild reciPY as per https://github.com/easybuilders/easybuild
+# Author: Pablo Escobar Lopez
+# Swiss Institute of Bioinformatics
+# Biozentrum - University of Basel
+
+easyblock = 'ConfigureMake'
+
+local_buildset = '2020b'
+
+local_JAGS_version =           '4.3.0'           # http://mcmc-jags.sourceforge.net/
+
+name =    'JAGS'
+version = local_JAGS_version
+
+homepage = 'http://mcmc-jags.sourceforge.net/'
+
+whatis = [
+    "Description: JAGS is Just Another Gibbs Sampler",
+    "The module provides the jags executable and static and dynamic libraries",
+]
+
+description = """
+JAGS is Just Another Gibbs Sampler. It is a program for analysis of Bayesian
+hierarchical models using Markov Chain Monte Carlo (MCMC) simulation not wholly
+unlike BUGS. JAGS was written with three aims in mind:
+* To have a cross-platform engine for the BUGS language
+* To be extensible, allowing users to write their own functions, distributions and samplers.
+* To be a platform for experimentation with ideas in Bayesian modelling
+
+The functionality of JAGS is based on the BUGS program created by the
+MRC Biostatistics Unit (http://www.mrc-bsu.cam.ac.uk). There is a short
+manual that describes the differences between JAGS and BUGS.
+
+JAGS is licensed under the GNU General Public License version 2. You may freely
+modify and redistribute it under certain conditions (see the file COPYING for
+details).
+
+The module provides the jags executable and static and dynamic libraries.
+The jags command is documented through a man page.
+"""
+
+docurls = [
+    "Man page for the jags command (section 1)",
+    "Downloadable PDF manuals at https://sourceforge.net/projects/mcmc-jags/files/Manuals/%(version_major)s.x/",
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = [('http://sourceforge.net/projects/mcmc-jags/files/JAGS/%(version_major)s.x/Source/', 'download')]
+sources =     [SOURCE_TAR_GZ]
+
+configopts = ' --with-blas="-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl" '
+
+sanity_check_paths = {
+    'files': ["bin/jags", "libexec/jags-terminal", "lib/libjags.%s" % SHLIB_EXT],
+    'dirs':  []
+}
+
+modextrapaths = {
+    'JAGS_INCLUDE': 'include/JAGS',
+    'JAGS_LIB': 'lib',
+}
+
+moduleclass = 'math'
