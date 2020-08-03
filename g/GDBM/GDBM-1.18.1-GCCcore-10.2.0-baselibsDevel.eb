@@ -1,0 +1,85 @@
+easyblock = 'ConfigureMake'
+
+local_buildset =         '2020b'
+local_gcc_version =      '10.2.0'
+local_binutils_version = '2.35'
+
+local_ncurses_version =      '6.2'           # https://ftp.gnu.org/pub/gnu/ncurses/
+local_libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+local_libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
+local_gettext_version =      '0.20.2'        # https://ftp.gnu.org/pub/gnu/gettext/
+local_GDBM_version =         '1.18.1'        # https://ftp.gnu.org/gnu/gdbm/
+
+name =          'GDBM'
+version =       '1.18.1'
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://puszcza.gnu.org.ua/software/gdbm/'
+
+whatis = [
+    'Description: GNU dbm is a library of database functions that use extensible hashing and works similar to the standard UNIX dbm functions.',
+]
+
+description = """
+GNU dbm (or GDBM, for short) is a library of database functions that use 
+extensible hashing and work similar to the standard UNIX dbm. These routines 
+are provided to a programmer needing to create and manipulate a hashed 
+database.
+
+The basic use of GDBM is to store key/data pairs in a data file. Each key 
+must be unique and each key is paired with only one data item.
+
+The library provides primitives for storing key/data pairs, searching and 
+retrieving the data by its key and deleting a key along with its data. It 
+also support sequential iteration over all key/data pairs in a database.
+
+For compatibility with programs using old UNIX dbm function, the package 
+also provides traditional dbm and ndbm interfaces.
+
+This module provides static and shared liberaries.
+"""
+
+docurls = [
+    'Web-based documentation: http://puszcza.gnu.org.ua/software/gdbm/manual/gdbm.html',
+    'Support for the info command (info gdbm)'
+] 
+
+
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
+toolchainopts = {'pic': True}
+#toolchainopts = {'pic': True, 'precise': True}
+
+# ftp://ftp.gnu.org/gnu/gdbm/gdbm-1.18.1.tar.gz
+sources =     [SOURCELOWER_TAR_GZ]
+source_urls = [GNU_SOURCE]
+checksums =   ['86e613527e5dba544e73208f42b78b7c022d4fa5a6d5498bf18c8d6f745b91dc']
+
+builddependencies = [
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
+    ('libiconv',   local_libiconv_version, versionsuffix),
+    ('gettext',    local_gettext_version,  versionsuffix), # Really a build dependency? It doesn't seem to link to it.
+]
+
+dependencies = [
+    ('ncurses',     local_ncurses_version,     versionsuffix),
+    ('libreadline', local_libreadline_version, versionsuffix),
+]
+
+
+# Fixes a bug with GCC 10.1, see https://github.com/spack/spack/issues/16394
+preconfigopts = 'CFLAGS="$CFLAGS -fcommon" '
+# Note there is also libintl but that is part of the GNU C library so we son\'t use our own.
+configopts = '--enable-libgdbm-compat --with-libiconv-prefix=$EBROOTLIBICONV'
+
+sanity_check_paths = {
+    'files': ['lib/libgdbm.%s' % SHLIB_EXT, 'lib/libgdbm.a', 'include/gdbm.h',
+              'bin/gdbmtool', 'bin/gdbm_dump', 'bin/gdbm_load'],
+    'dirs':  [],
+}
+
+modextrapaths = {
+    'INFOPATH' : 'share/info',
+}
+
+moduleclass = 'devel'
