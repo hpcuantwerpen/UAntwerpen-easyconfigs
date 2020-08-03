@@ -1,0 +1,38 @@
+easyblock = 'Bundle'
+
+local_gcc_version =      '10.2.0'
+local_binutils_version = '2.35'
+
+name =    'GCC'
+version = local_gcc_version
+versionsuffix = '-%s' % local_binutils_version
+
+homepage = 'http://gcc.gnu.org/'
+
+whatis = [
+    'Description: The GNU Compiler Collection includes front ends for C, C++ and Fortran, as well as libraries for these languages (libstdc++, ...).',
+    'This module is prefered over GCCcore as it will make sure you have a compatible binutils version',
+]
+
+description = """
+The GNU Compiler Collection includes front ends for C, C++ and Fortran, as well
+as libraries for these languages (libstdc++, ...).
+
+The GCC module loads the GCC toolchain. It takes care of not only loading
+the GCC Compiler Collection, but also a compatible binutils module. Hence it
+is prefered over using the GCCcore module.
+""" 
+
+toolchain = SYSTEM
+
+dependencies = [
+    ('GCCcore',  local_gcc_version),
+    # binutils built on top of GCCcore, which was built on top of (dummy-built) binutils
+    ('binutils', local_binutils_version, '', ('GCCcore', local_gcc_version)),
+]
+
+altroot =    'GCCcore'
+altversion = 'GCCcore'
+
+# this bundle serves as a compiler-only toolchain, so it should be marked as compiler (important for HMNS)
+moduleclass = 'compiler'

@@ -1,0 +1,73 @@
+easyblock = 'EB_GCC'
+easybuild_version = '4.2.2'
+
+local_buildset =         '2020b'
+local_gcc_version =      '10.2.0'
+local_binutils_version = '2.35'
+
+local_GMP_version =      '6.2.0'
+local_MPFR_version =     '4.0.2'
+local_MPC_version =      '1.1.0'
+local_isl_version =      '0.22.1'
+
+name =    'GCCcore'
+version = local_gcc_version
+
+homepage = 'http://gcc.gnu.org/'
+
+whatis = [
+    "Description: The GNU Compiler Collection includes front ends for C, C++ and Fortran, as well as libraries for these languages (libstdc++, ...).",
+]
+
+description = """
+The GNU Compiler Collection includes front ends for C, C++ and Fortran, as well
+as libraries for these languages (libstdc++, ...).
+
+The GCCcore modules use the system binutils etc. Therefore they may produce
+error messages when compiling code for very recent targets. Hence we advise
+to use the corresponding GCC modules, or to load a recent toolchain-neutral
+binutils module by hand, e.g., binutils/%(binutils)s.
+""" % { 'binutils': local_binutils_version }
+
+toolchain = SYSTEM
+
+source_urls = [
+    'https://ftpmirror.gnu.org/gnu/gcc/gcc-%(version)s',  # GCC auto-resolving HTTP mirror
+    'https://ftpmirror.gnu.org/gnu/gmp',  # idem for GMP
+    'https://ftpmirror.gnu.org/gnu/mpfr',  # idem for MPFR
+    'https://ftpmirror.gnu.org/gnu/mpc',  # idem for MPC
+    'ftp://gcc.gnu.org/pub/gcc/infrastructure/',  # GCC dependencies
+    'http://gcc.cybermirror.org/infrastructure/',  # HTTP mirror for GCC dependencies
+    'http://isl.gforge.inria.fr/',  # original HTTP source for ISL
+]
+sources = [
+    'gcc-%(version)s.tar.xz',
+    'gmp-%s.tar.xz'  % local_GMP_version,
+    'mpfr-%s.tar.xz' % local_MPFR_version,
+    'mpc-%s.tar.gz'  % local_MPC_version,
+    'isl-%s.tar.xz'  % local_isl_version,
+]
+patches = [
+    'GCCcore-6.2.0-fix-find-isl.patch',
+    'GCCcore-9.3.0_gmp-c99.patch',
+]
+checksums = [
+    'b8dd4368bb9c7f0b98188317ee0254dd8cc99d1e3a18d0ff146c855fe16c1d8c',  # gcc-10.2.0.tar.gz
+    '258e6cd51b3fbdfc185c716d55f82c08aff57df0c6fbd143cf6ed561267a1526',  # gmp-6.2.0.tar.xz
+    '1d3be708604eae0e42d578ba93b390c2a145f17743a744d8f3f8c2ad5855a38a',  # mpfr-4.0.2.tar.xz
+    '6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e',  # mpc-1.1.0.tar.gz
+    '28658ce0f0bdb95b51fd2eb15df24211c53284f6ca2ac5e897acc3169e55b60f',  # isl-0.22.1.tar.xz
+    '5ad909606d17d851c6ad629b4fddb6c1621844218b8d139fed18c502a7696c68',  # GCCcore-6.2.0-fix-find-isl.patch
+    '0e135e1cc7cec701beea9d7d17a61bab34cfd496b4b555930016b98db99f922e',  # GCCcore-9.3.0_gmp-c99.patch
+]
+
+builddependencies = [
+    ('buildtools', local_buildset), # For M4
+    ('binutils',   local_binutils_version),
+]
+
+languages = ['c', 'c++', 'fortran']
+
+withisl = True
+
+moduleclass = 'compiler'
