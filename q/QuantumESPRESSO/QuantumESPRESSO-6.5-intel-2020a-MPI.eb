@@ -1,0 +1,103 @@
+# NOTE: This was tested with the QuantumESPRESSO EasyBlock of EasyBuild 4.2.1, not our own
+# local EasyBlock which we used before.
+#
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_QuantumESPRESSO_version = '6.5' # https://gitlab.com/QEF/q-e/-/tags
+local_wannier90_version = '3.0.0'
+local_d3q_version = '1.1.7'
+
+local_FFTW_version =           '3.3.8'           # http://www.fftw.org/
+local_HDF5_version =           '1.12.0'          # https://support.hdfgroup.org/HDF5/
+local_HDF5_retro_version =     '1.10.6'          # https://support.hdfgroup.org/HDF5/
+# Probably needs a non-standard ELPA!
+local_ELPA_version =           '2019.11.001'     #
+local_libxc_version =          '4.3.4'           # https://www.tddft.org/programs/libxc/download/
+
+name =          'QuantumESPRESSO'
+version =       local_QuantumESPRESSO_version
+versionsuffix = '-MPI'
+
+homepage = 'https://www.quantum-espresso.org/'
+whatis = [
+    "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
+    "This module contains the regular MPI executables.",
+]
+
+description = """
+Quantum ESPRESSO  is an integrated suite of computer codes for
+electronic-structure calculations and materials modeling at the nanoscale.  It
+is based on density-functional theory, plane waves, and pseudopotentials (both
+norm-conserving and ultrasoft).
+
+This module provides regular MPI executables, so it is not suitable to run
+in hybrid mode. See chapter 3 of the user guide for information on parallelism
+in QuantumESPRESSO.
+
+Installed plugins:
+* QE-GIPAW %(version)s
+* wannier90 %(wv)s
+
+Other plugins supported in some of the other QuantumESPRESSO modules are 
+supported by this module:
+* d3q %(d3qv)s (included with QuantumESPRESSO) has not been installed since it
+  does not compile on our system
+* WANT, West, Yambo and PLUMED do not compile 
+""" % { 'version': version, 'wv': local_wannier90_version, 'd3qv': local_d3q_version }
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+# major part of this list was determined from espresso/install/plugins_list
+sources = [
+    # QE itself
+    {   # https://github.com/QEF/q-e/releases/download/qe-6.5/qe-6.5-ReleasePack.tgz
+        'filename':    'qe-%(version)s-ReleasePack.tgz',
+        'source_urls': ['https://github.com/QEF/q-e/releases/download/qe-%(version)s/'] 
+    },
+    
+    # QE-GIPAW
+    {  
+        'filename':          'qe-gipaw-%(version)s.tar.gz',
+        'download_filename': '%(version)s.tar.gz',
+        'source_urls':       ['https://github.com/dceresoli/qe-gipaw/archive/'] 
+    },
+
+    # Wannier
+    { 'filename':          'wannier90-%(wv)s.tar.gz' % {'wv': local_wannier90_version}, 
+      'download_filename': 'v%(wv)s.tar.gz'          % {'wv': local_wannier90_version},
+      'source_urls':       ['https://github.com/wannier-developers/wannier90/archive/'] 
+    },
+]
+source_urls = [ ]
+
+checksums = [
+    'b4a3a150d67f0f5f86df86c48e3d42f93daaee13a4b2509bb45f45c7fe84c573',  # qe-6.5-ReleasePack.tgz
+    '8c55e893d0222e58952cf456028e884364e946f9a0536fe49ccfbe51bf1a8e9c',  # qe-gipaw-6.5.tar.gz
+    'f196e441dcd7b67159a1d09d2d7de2893b011a9f03aab6b30c4703ecbf20fe5b',  # wannier90-3.0.0.tar.gz
+]
+
+dependencies = [
+#    ('FFTW',  local_FFTW_version),               # The Intel FFTW interface lacks .f03 header files that are needed.
+    ('HDF5',  local_HDF5_retro_version, '-MPI'), # Not sure if 1.12 would do it, this is closer to the EasyBuilders configuration
+    ('ELPA',  local_ELPA_version),               # Taken from recent UGhent EasyConfigs
+    ('libxc', local_libxc_version),              # Taken from recent UGhent EasyConfigs
+]
+
+# add plumed and uncomment the lines in sources and checksums if the package is downloaded manually
+#buildopts = 'all w90 epw gipaw want west yambo xspectra'  # plumed
+#buildopts = 'all gwl xspectra couple epw gipaw w90 d3q'
+# d3q does not compile anymore with recent Intel compilers.
+buildopts = 'all gwl xspectra couple epw gipaw w90'
+
+# parallel build tends to fail
+parallel = 1
+
+# Save the make.inc file for future reference.
+postinstallcmds = [
+    'mkdir -p %(installdir)s/easybuild',
+    'cp %(builddir)s/qe-%(version)s/make.inc %(installdir)s/easybuild',
+]
+
+moduleclass = 'chem'
