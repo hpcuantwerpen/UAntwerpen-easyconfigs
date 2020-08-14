@@ -1,0 +1,80 @@
+easyblock = 'Tarball'
+
+name =          'NAMD'
+version =       '2.14'
+versionsuffix = '-verbs'
+
+homepage = 'http://www.ks.uiuc.edu/Research/namd/'
+whatis = [
+    'Description: NAMD is a scalable parallel molecular dynamics code designed for high-performance simulation of large biomolecular systems.',
+    'This module contains the verbs binary as distributed by the developers of the software (verbs = multi-copy algorithms on InfiniBand, no multithreading).'
+]
+
+
+description = """
+NAMD, recipient of a 2002 Gordon Bell Award and a 2012 Sidney Fernbach Award,
+is a parallel molecular dynamics code designed for high-performance simulation
+of large biomolecular systems. Based on Charm++ parallel objects, NAMD scales
+to hundreds of cores for typical simulations and beyond 500,000 cores for the
+largest simulations. NAMD uses the popular molecular graphics program VMD for
+simulation setup and trajectory analysis, but is also file-compatible with
+AMBER, CHARMM, and X-PLOR. 
+
+This module contains the verbs binary as distributed by the developers.
+This is a distributed memory executable, using multi-copy algorithms on
+InfiniBand but just a single computational thread per process.
+
+NAMD is free for non-commercial use but the the developers request that you
+electronically sign a license when you donwload the software. We have 
+agreed with the developer that we can centrally install the software on the
+condition that every user signs that agreement, basically because it is 
+important for their funding. So you only get access to the software once
+you show that you have signed that license (contact UAntwerp hpc support).
+"""
+
+examples = """
+Running the apoa1 benchmark can be done in multiple ways (after downloading
+the necessary files).
+
+For Leibniz with Torque/PBS:
+
+One option is to use mpiexec which will automatically detect the Torque host
+list and use it, but you'll need to load a module containing a mpiexec,
+e.g., the intel/2017a module. On 2 nodes with 28 cores per node, you'd then
+start NAMD using:
+    charmrun +p$PBS_NP ++mpiexec `which namd2` apoa1.namd
+
+An alternative is to provide charmrun with a suitable host file, which
+unfortunately has a different format as the Torque host file. Then you don't
+need a mpiexec, so no intel module. The next two lines would do the job:
+    for node in `cat $PBS_NODEFILE`; do echo host $node >>nodelist.$PBS_JOBID; done
+    charmrun +p$PBS_NP ++nodelist nodelist.$PBS_JOBID $EBROOTNAMD/namd2 apoa1.namd
+"""
+
+docurls = [
+    'NAMD %(version)s User Guide: http://www.ks.uiuc.edu/Research/namd/%(version)s/ug/',
+    'NAMD Wiki: http://www.ks.uiuc.edu/Research/namd/wiki/',
+    'NAMD license: $EBROOTNAMD/license.txt'
+]
+
+upstream_contacts = [
+    'NAMD Mailing List/forum: http://www.ks.uiuc.edu/Research/namd/mailing_list/',
+    'NAMD bug report instructions: http://www.ks.uiuc.edu/Research/namd/bugreport.html',
+]
+
+docpaths = [ 'notes.txt' ]
+
+toolchain = SYSTEM
+
+# NAMD registration required.
+# Download the sources from the NAMD web site and put in /apps/antwerpen/sources
+sources = ['%(name)s_%(version)s_Linux-x86_64%(versionsuffix)s.tar.gz']
+
+sanity_check_paths = {
+    'files': ['namd2'],
+    'dirs':  ['lib'],
+}
+
+modextrapaths = { 'PATH': '.' }
+
+moduleclass = 'chem'
