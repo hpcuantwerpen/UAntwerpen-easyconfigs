@@ -41,7 +41,7 @@
 <tr><td> CD-HIT                </td><td> 4.6.8-intel-2018b                            </td><td> 4.8.1, moved into BioTools                        </td><td> buildset </td></tr>
 <tr><td> CellRanger            </td><td> 2.2.0-intel-2018b                            </td><td> Move to system toolchain, update by user needed   </td><td> x86_64   </td></tr>
 <tr><td> CellRanger-DNA        </td><td> 1.1.0                                        </td><td> SYSTEM toolchain TODO?                            </td><td> x86_64   </td></tr>
-<tr><td> CGAL                  </td><td> 4.10.2-intel-2019b-forOpenFOAM6              </td><td> Synchronize with OpenFOAM                         </td><td> buildset </td></tr>
+<tr><td> CGAL                  </td><td> 4.10.2-intel-2019b-forOpenFOAM6              </td><td> 4.10.2-intel-2020a-forOpenFOAM6                   </td><td> buildset </td></tr>
 <tr><td> ClonalFrameML         </td><td> 1.11-intel-2018b                             </td><td> 1.12, moved into BioTools                         </td><td> buildset </td></tr>
 <tr><td> CMake                 </td><td> 3.9.1                                        </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
 <tr><td> COMSOL                </td><td> 5.3                                          </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
@@ -187,7 +187,7 @@
 <tr><td> MrBayes               </td><td> 3.2.7-intel-2019b-MPI                        </td><td> 3.2.7-intel-2020a-MPI                             </td><td> buildset </td></tr>
 <tr><td> MUMPS                 </td><td> 5.2.1-intel-2019b-noOpenMP-noMPI             </td><td> 5.3.1-intel-2020a-noOpenMP-noMPI                  </td><td> buildset </td></tr>
 <tr><td> MUSCLE                </td><td> 3.8.31-intel-2019b                           </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> buildset </td></tr>
-<tr><td> NAMD                  </td><td> 2.12-verbs-smp                               </td><td> TODO, compile problems in our setup               </td><td> depends  </td></tr>
+<tr><td> NAMD                  </td><td> 2.12-verbs, 2.12-verbs-smp                   </td><td> 2.14-verbs, 2.14-verbs-smp                        </td><td> depends  </td></tr>
 <tr><td> NASM                  </td><td> 2.12.02                                      </td><td> Moved to buildtools/2020a                         </td><td> /        </td></tr>
 <tr><td> ncbi-vdb              </td><td> 2.8.2-intel-2017a                            </td><td> Installed on demand                               </td><td> buildset </td></tr>
 <tr><td> ncurses               </td><td> 6.1-intel-2018b                              </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> buildset </td></tr>
