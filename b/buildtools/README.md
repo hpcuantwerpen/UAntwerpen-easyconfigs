@@ -105,7 +105,7 @@ Versions used:
   * GNU M4 1.4.18
   * GNU make 4.3. Switched back to .tar.gz as there was no .tar.bz2 file anymore
   * GNU sed 4.8
-  * CMake 3.17.3
+  * CMake 3.18.1
   * Meson 0.54.3
   * Ninja 1.10.0
   * pkg-config 0.29.2
@@ -117,6 +117,6 @@ Versions used:
   * Yasm 1.3
   * Doxygen 1.8.16 (1.8.17 and 1.8.18 fail to compile with the system compiler of CentOS 
     7)
-  * git 2.27.0 
+  * git 2.28.0 
   * patchelf 0.11
 
