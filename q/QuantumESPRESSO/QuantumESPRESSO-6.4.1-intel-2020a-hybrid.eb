@@ -7,9 +7,9 @@ easyblock = 'EB_QuantumESPRESSO_UA_EB42'
 local_buildset =         '2020a'
 local_gcc_version =      '9.3.0'
 
-local_QuantumESPRESSO_version = '6.5' # https://gitlab.com/QEF/q-e/-/tags
+local_QuantumESPRESSO_version = '6.4.1' # https://gitlab.com/QEF/q-e/-/tags
 local_wannier90_version = '3.0.0'
-local_d3q_version = '1.1.7'
+local_d3q_version = '1.1.5' # See https://sourceforge.net/projects/d3q/
 
 local_FFTW_version =           '3.3.8'           # http://www.fftw.org/
 local_HDF5_version =           '1.12.0'          # https://support.hdfgroup.org/HDF5/
@@ -20,12 +20,12 @@ local_libxc_version =          '4.3.4'           # https://www.tddft.org/program
 
 name =          'QuantumESPRESSO'
 version =       local_QuantumESPRESSO_version
-versionsuffix = '-MPI'
+versionsuffix = '-hybrid'
 
 homepage = 'https://www.quantum-espresso.org/'
 whatis = [
-    'Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials',
-    'Version:     %(version)s regular MPI executables',
+    "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
+    'Version:     %(version)s hybrid MPI/OpenMP executables',
 ]
 
 description = """
@@ -34,9 +34,9 @@ electronic-structure calculations and materials modeling at the nanoscale.  It
 is based on density-functional theory, plane waves, and pseudopotentials (both
 norm-conserving and ultrasoft).
 
-This module provides regular MPI executables, so it is not suitable to run
-in hybrid mode. See chapter 3 of the user guide for information on parallelism
-in QuantumESPRESSO.
+This module contains hybrid OpenMP/MPI executables, so you'll need to set
+OPENMP_NUM_THREADS to the appropriate value. See chapter 3 of the user guide
+for information on parallelism in QuantumESPRESSO.
 
 Installed plugins:
 * QE-GIPAW %(version)s
@@ -49,16 +49,15 @@ supported by this module:
 """ % { 'version': version, 'wv': local_wannier90_version, 'd3qv': local_d3q_version }
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
-toolchainopts = {'usempi': True}
+toolchainopts = {'usempi': True, 'openmp': True}
 
 local_QE_release = '.'.join(local_QuantumESPRESSO_version.split('.')[:2])
 
 # major part of this list was determined from espresso/install/plugins_list
 sources = [
-    # QE itself
-    {   # https://github.com/QEF/q-e/releases/download/qe-6.5/qe-6.5-ReleasePack.tgz
-        'filename':    'qe-%(version)s-ReleasePack.tgz',
-        'source_urls': ['https://github.com/QEF/q-e/releases/download/qe-%(version)s/'] 
+    { 
+      'filename':    'qe-%(version)s_release_pack.tgz',
+      'source_urls': ['https://github.com/QEF/q-e/releases/download/qe-%(version)s/'] 
     },
     
     # d3q: https://sourceforge.net/projects/d3q/files/QE_6.4/d3q-1.1.5-qe6.4.tgz/download
@@ -68,35 +67,46 @@ sources = [
     },
 
     # QE-GIPAW
-    {  
-        'filename':          'qe-gipaw-%(version)s.tar.gz',
-        'download_filename': '%(version)s.tar.gz',
-        'source_urls':       ['https://github.com/dceresoli/qe-gipaw/archive/'] 
+    { 
+      'filename':          'qe-gipaw-%(version)s.tar.gz',
+      'download_filename': '%(version)s.tar.gz',
+      'source_urls':       ['https://github.com/dceresoli/qe-gipaw/archive/'] 
     },
 
     # Wannier
-    { 'filename':          'wannier90-%(wv)s.tar.gz' % {'wv': local_wannier90_version}, 
+    { 
+      'filename':          'wannier90-%(wv)s.tar.gz' % {'wv': local_wannier90_version}, 
       'download_filename': 'v%(wv)s.tar.gz'          % {'wv': local_wannier90_version},
       'source_urls':       ['https://github.com/wannier-developers/wannier90/archive/'] 
     },
 ]
 source_urls = [ ]
 
+# patchfile backports downloaded from QE's github site; manually replace a/ and b/ by real path
+#patches = [
+##    '%(name)s-%(version)s_drop_LIBS_before_configure_of_fox.patch',
+#    'backports-%(version)s.git-diff',
+##    'QuantumESPRESSO-5.4.0_yambo-fixes.patch',
+#]
+patches = [('backports-%(version)s.git-diff', 'qe-%(version)s')]
 checksums = [
-    'b4a3a150d67f0f5f86df86c48e3d42f93daaee13a4b2509bb45f45c7fe84c573',  # qe-6.5-ReleasePack.tgz
-    'a2a33f9d7d14328bc15b17cb2984326d33b52b8a231106e675a7dcb3919c1fca',  # d3q-1.1.7-qe6.5.tgz
-    '8c55e893d0222e58952cf456028e884364e946f9a0536fe49ccfbe51bf1a8e9c',  # qe-gipaw-6.5.tar.gz
+    'a9b19cf620656d89a83c1abdf87fbfd66a7d011e6153fa6db2dc207bf25f138a',  # qe-6.4.1_release_pack.tgz
+    'eb2d2eccc1b25d25817d5083e08ee0f8211cb0a4c1e2a0ffcab7b155c6d0b1a7',  # d3q-1.1.5-qe6.4.tgz
+    'e8aae92b4b300a6e5ecbe1ade14a95d623c8ed00947aec482dd1b32893342fe0',  # qe-gipaw-6.4.1.tar.gz
     'f196e441dcd7b67159a1d09d2d7de2893b011a9f03aab6b30c4703ecbf20fe5b',  # wannier90-3.0.0.tar.gz
+    'c2bf4abdf3c1744652290cd176bc23feb5084cc9acc0eb2d07e11f43cc2c205b',  # backports-6.4.1.git-diff
 ]
 
 dependencies = [
-    ('HDF5',  local_HDF5_retro_version, '-MPI'), # Not sure if 1.12 would do it, this is closer to the EasyBuilders configuration
+    ('FFTW',  local_FFTW_version),               # The Intel FFTW interface lacks .f03 header files that are needed.
+    ('HDF5',  local_HDF5_retro_version, '-MPI'), # 1.8 which we have in this toolchain did not work.
     ('ELPA',  local_ELPA_version),               # Taken from recent UGhent EasyConfigs
     ('libxc', local_libxc_version),              # Taken from recent UGhent EasyConfigs
 ]
 
+hybrid = True
+
 # add plumed and uncomment the lines in sources and checksums if the package is downloaded manually
-#buildopts = 'all w90 epw gipaw want west yambo xspectra'  # plumed
 buildopts = 'all gwl xspectra couple epw gipaw w90 d3q'
 
 # parallel build tends to fail

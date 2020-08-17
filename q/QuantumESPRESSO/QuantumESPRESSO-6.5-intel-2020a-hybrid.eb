@@ -1,6 +1,9 @@
-# NOTE: This was tested with the QuantumESPRESSO EasyBlock of EasyBuild 4.2.1, not our own
-# local EasyBlock which we used before.
+# NOTE: The QuantumESPRESSO EasyBlock of EasyBuild 4.2.2 contains a bug in the sanity check
+# for the d3q plugin. The list of binaries is not correct. Our own EasyBlock corrects this
+# and is directly derived from the EasyBuild 4.2.2. one.
 #
+easyblock = 'EB_QuantumESPRESSO_UA_EB42'
+
 local_buildset =         '2020a'
 local_gcc_version =      '9.3.0'
 
@@ -21,8 +24,8 @@ versionsuffix = '-hybrid'
 
 homepage = 'https://www.quantum-espresso.org/'
 whatis = [
-    "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
-    "This module contains hybrid OpenMP/MPI executables.",
+    'Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials',
+    'Version:     %(version)s hybrid MPI/OpenMP executables',
 ]
 
 description = """
@@ -38,16 +41,17 @@ for information on parallelism in QuantumESPRESSO.
 Installed plugins:
 * QE-GIPAW %(version)s
 * wannier90 %(wv)s
+* d3q %(d3qv)s (included with QuantumESPRESSO)
 
 Other plugins supported in some of the other QuantumESPRESSO modules are 
 supported by this module:
-* d3q %(d3qv)s (included with QuantumESPRESSO) has not been installed since it
-  does not compile on our system
 * WANT, West, Yambo and PLUMED do not compile 
 """ % { 'version': version, 'wv': local_wannier90_version, 'd3qv': local_d3q_version }
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'usempi': True, 'openmp': True}
+
+local_QE_release = '.'.join(local_QuantumESPRESSO_version.split('.')[:2])
 
 # major part of this list was determined from espresso/install/plugins_list
 sources = [
@@ -57,6 +61,12 @@ sources = [
         'source_urls': ['https://github.com/QEF/q-e/releases/download/qe-%(version)s/'] 
     },
     
+    # d3q: https://sourceforge.net/projects/d3q/files/QE_6.4/d3q-1.1.5-qe6.4.tgz/download
+    {
+      'filename':    'd3q-' + local_d3q_version + '-qe' + local_QE_release + '.tgz',
+      'source_urls': [('https://sourceforge.net/projects/d3q/files/QE_' + local_QE_release, '/download')]
+    },
+
     # QE-GIPAW
     { 'filename':          'qe-gipaw-%(version)s.tar.gz',
       'download_filename': '%(version)s.tar.gz',
@@ -73,12 +83,12 @@ source_urls = [ ]
 
 checksums = [
     'b4a3a150d67f0f5f86df86c48e3d42f93daaee13a4b2509bb45f45c7fe84c573',  # qe-6.5-ReleasePack.tgz
+    'a2a33f9d7d14328bc15b17cb2984326d33b52b8a231106e675a7dcb3919c1fca',  # d3q-1.1.7-qe6.5.tgz
     '8c55e893d0222e58952cf456028e884364e946f9a0536fe49ccfbe51bf1a8e9c',  # qe-gipaw-6.5.tar.gz
     'f196e441dcd7b67159a1d09d2d7de2893b011a9f03aab6b30c4703ecbf20fe5b',  # wannier90-3.0.0.tar.gz
 ]
 
 dependencies = [
-#    ('FFTW',  local_FFTW_version),               # The Intel FFTW interface lacks .f03 header files that are needed.
     ('HDF5',  local_HDF5_retro_version, '-MPI'), # Not sure if 1.12 would do it, this is closer to the EasyBuilders configuration
     ('ELPA',  local_ELPA_version),               # Taken from recent UGhent EasyConfigs
     ('libxc', local_libxc_version),              # Taken from recent UGhent EasyConfigs
@@ -88,8 +98,7 @@ hybrid = True
 
 # add plumed and uncomment the lines in sources and checksums if the package is downloaded manually
 #buildopts = 'all w90 epw gipaw want west yambo xspectra'  # plumed
-#buildopts = 'all gwl xspectra couple epw gipaw w90 d3q'
-buildopts = 'all gwl xspectra couple epw gipaw w90'
+buildopts = 'all gwl xspectra couple epw gipaw w90 d3q'
 
 # parallel build tends to fail
 parallel = 1
