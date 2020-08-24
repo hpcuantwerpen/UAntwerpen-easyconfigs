@@ -1,0 +1,39 @@
+easyblock = 'CmdCp'
+
+local_ninja_version =            '1.10.0'     # Ninja      20200128 - Check on https://ninja-build.org/
+local_re2c_version =             '1.3'        # re2c       20191214 - https://github.com/skvadrik/re2c/releases
+
+name =          'Ninja'
+version =       local_ninja_version
+versionsuffix = '-buildtoolsDevel'
+
+homepage =    'https://ninja-build.org/'
+
+whatis = [
+    'Description: Ninja is a small build system with a focus on speed.'
+]
+
+description = """
+Ninja is a small build system with a focus on speed.
+"""
+
+toolchain = SYSTEM
+
+source_urls = ['https://github.com/ninja-build/ninja/archive/']
+sources =     ['v%(version)s.tar.gz']
+checksums =   ['3810318b08489435f8efc19c05525e80a993af5a55baa0dfeae0465a9d45f99f']
+
+builddependencies = [
+    ('re2c', local_re2c_version, versionsuffix),
+]
+
+cmds_map = [('.*', "python3 configure.py --bootstrap")]
+
+files_to_copy = [(['ninja'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/ninja'],
+    'dirs':  [],
+}
+
+moduleclass = 'tools'

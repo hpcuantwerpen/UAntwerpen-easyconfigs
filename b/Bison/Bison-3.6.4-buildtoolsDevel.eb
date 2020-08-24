@@ -1,0 +1,45 @@
+easyblock = 'ConfigureMake'
+
+local_m4_version =               '1.4.18'     # M4         20161231 - Check on https://ftp.gnu.org/gnu/m4/
+local_bison_version =            '3.6.4'      # Bison      20200615 - http://ftp.gnu.org/gnu/bison/
+
+name =          'Bison'
+version =       local_bison_version
+versionsuffix = '-buildtoolsDevel'
+
+homepage = 'http://www.gnu.org/software/bison'
+
+whatis = [
+    "Description: Bison is a general-purpose parser generator that converts an annotated context-free grammar into a deterministic LR or generalized LR (GLR) parser employing LALR(1) parser tables.",
+    "This module contains both executables and libraries offered by Bison, compiled using only the system compiler."
+    "Keywords: Bison, Yacc",
+]
+
+description = """
+Bison is a general-purpose parser generator that converts an annotated
+context-free grammar into a deterministic LR or generalized LR (GLR) parser
+employing LALR(1) parser tables.
+
+This module both executables and libraries offered by Bison, compiled using
+only the system compiler.
+"""
+
+docurls = [
+    'Web-based documentation:https://www.gnu.org/software/bison/manual/',
+]
+
+toolchain = SYSTEM
+
+sources =     [SOURCELOWER_TAR_GZ]
+source_urls = [GNU_SOURCE]
+
+builddependencies = [
+     ('M4', local_m4_version, '-vaughan' + versionsuffix),
+]
+
+sanity_check_paths = {
+    'files': ["bin/%s" % x for x in ["bison", "yacc"]] + ["lib/liby.a"],
+    'dirs':  [],
+}
+
+moduleclass = 'lang'

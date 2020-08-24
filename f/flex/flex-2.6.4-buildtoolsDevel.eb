@@ -1,0 +1,41 @@
+easyblock = 'EB_flex'
+
+local_bison_version =            '3.6.4'
+local_flex_version =             '2.6.4'      # flex       20170506 - https://github.com/westes/flex/releases
+local_help2man_version =         '1.47.13'    # help2man   20200315 - Check on https://ftp.gnu.org/gnu/help2man/
+local_m4_version =               '1.4.18'     # M4         20161231 - Check on https://ftp.gnu.org/gnu/m4/
+
+name =          'flex'
+version =       local_flex_version
+versionsuffix = '-buildtoolsDevel'
+
+homepage = 'http://flex.sourceforge.net/'
+
+whatis = [
+    "Description: Flex stands for Fast LEXical analyzer"
+]
+
+description = """
+lex (Fast Lexical Analyzer) is a tool for generating scanners. A scanner,
+sometimes called a tokenizer, is a program which recognizes lexical patterns
+in text.
+"""
+
+toolchain = SYSTEM
+
+source_urls = ['https://github.com/westes/flex/releases/download/v%(version)s/']
+sources = [SOURCELOWER_TAR_GZ]
+checksums = ['e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995']
+
+preconfigopts = 'export CPPFLAGS="$CPPFLAGS -D_GNU_SOURCE" && '
+
+builddependencies = [
+    ('Bison',    local_bison_version,    versionsuffix),
+    ('help2man', local_help2man_version, versionsuffix),
+]
+
+dependencies = [
+     ('M4', local_m4_version, '-vaughan' + versionsuffix),
+]
+
+moduleclass = 'lang'
