@@ -9,10 +9,11 @@
 
 easyblock = 'ConfigureMake'
 
-name =    'ELPA'
-version = '2019.11.001'
-
 local_buildset = '2020a'
+local_ELPA_version =           '2019.11.001'     #
+
+name =    'ELPA'
+version = local_ELPA_version
 
 homepage = 'http://elpa.mpcdf.mpg.de'
 
@@ -45,11 +46,13 @@ builddependencies = [
     ('buildtools', local_buildset, '', True),
 ]
 
-preconfigopts = 'autoreconf && '
+preconfigopts  = 'autoreconf && '
+preconfigopts += 'sed -e \'s/\/usr\/bin\/python/\/usr\/bin\/env python2/\' -i manual_cpp && '
 
 # Configuration options are well documented on https://gitlab.mpcdf.mpg.de/elpa/elpa/blob/master/INSTALL.md
 local_common_configopts  = 'FCFLAGS="-I$EBROOTIMKL/mkl/include/intel64/lp64 $FCFLAGS" '
 local_common_configopts += '--enable-skew-symmetric-support --enable-single-precision '
+local_common_configopts += '--disable-python --disable-python-tests '
 local_mpi_configopts     = 'FC="$MPIF90" CC="$MPICC" '
 local_onenode_omp_configopts   = 'LIBS="$EBVARLIBLAPACK_MT_ONLY" '
 local_onenode_noomp_configopts = 'LIBS="$EBVARLIBLAPACK_ONLY" '
@@ -65,6 +68,8 @@ if local_UAarch == "ivybridge":
     local_common_configopts += '--disable-generic --disable-sse --enable-avx  --disable-avx2 --disable-avx512 --disable-gpu '
 elif local_UAarch == "broadwell":
     local_common_configopts += '--disable-generic --disable-sse --disable-avx --enable-avx2  --disable-avx512 --disable-gpu '
+elif local_UAarch == "rome":
+    local_common_configopts += '--disable-generic --disable-sse --disable-avx --enable-avx2  --disable-avx512 --disable-gpu '
 else:
     local_common_configopts += '--disable-generic --disable-sse --disable-avx --disable-avx2 --enable-avx512  --disable-gpu '
 
@@ -78,6 +83,8 @@ configopts = [
 # Distribution tarball contains Fortran module files, we need to clean
 # them up first:
 prebuildopts = 'make clean && '
+
+parallel = 1
 
 buildopts = 'V=1'
 

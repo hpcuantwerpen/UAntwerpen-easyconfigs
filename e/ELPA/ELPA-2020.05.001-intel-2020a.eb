@@ -9,16 +9,16 @@
 
 easyblock = 'ConfigureMake'
 
-name =    'ELPA'
-version = '2019.05.002'
-
 local_buildset = '2020a'
+local_ELPA_version =           '2020.05.001'     #
+
+name =    'ELPA'
+version = local_ELPA_version
 
 homepage = 'http://elpa.mpcdf.mpg.de'
 
 whatis = [
     "Description: ELPA - Eigenvalue SoLvers for Petaflop-Applications",
-    "This module was mostly compiled for use with CP2K 7.1, there are newer and more complete modules available."
 ]
 
 description = """
@@ -37,11 +37,10 @@ docurls = [
 ]
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
-toolchainopts = {'usempi': True}
 
 source_urls = ['http://elpa.mpcdf.mpg.de/html/Releases/%(version)s/']
 sources =     [SOURCELOWER_TAR_GZ]
-checksums =   ['d2eab5e5d74f53601220b00d18185670da8c00c13e1c1559ecfb0cd7cb2c4e8d']
+checksums =   ['66ff1cf332ce1c82075dc7b5587ae72511d2bcb3a45322c94af6b01996439ce5'] # elpa-2020.05.001.tar.gz
 
 builddependencies = [
     ('buildtools', local_buildset, '', True),
@@ -75,15 +74,17 @@ else:
     local_common_configopts += '--disable-generic --disable-sse --disable-avx --disable-avx2 --enable-avx512  --disable-gpu '
 
 configopts = [
+    local_common_configopts + '--with-mpi=yes --disable-openmp ' + local_mpi_configopts + local_mpi_noomp_configopts,
+    local_common_configopts + '--with-mpi=yes --enable-openmp  ' + local_mpi_configopts + local_mpi_omp_configopts,
     local_common_configopts + '--with-mpi=no  --disable-openmp ' + local_onenode_noomp_configopts,
     local_common_configopts + '--with-mpi=no  --enable-openmp '  + local_onenode_omp_configopts,
-    local_common_configopts + '--with-mpi=yes --disable-openmp ' + local_mpi_configopts + local_mpi_noomp_configopts, # Default last so we can get the normal config.h/config-f90.h installed afterwards.
-    local_common_configopts + '--with-mpi=yes --enable-openmp  ' + local_mpi_configopts + local_mpi_omp_configopts,
 ]
 
 # Distribution tarball contains Fortran module files, we need to clean
 # them up first:
 prebuildopts = 'make clean && '
+
+parallel = 1
 
 buildopts = 'V=1'
 
@@ -95,8 +96,8 @@ postinstallcmds = [
 ]
 
 sanity_check_paths = {
-    'files': ['lib/libelpa.a', 'lib/libelpa.%s' % SHLIB_EXT, 'lib/libelpa_openmp.a',
-              'lib/libelpa_openmp.%s' % SHLIB_EXT, ],
+    'files': ['lib/libelpa.a',       'lib/libelpa.%s' % SHLIB_EXT, 
+              'lib/libelpa_openmp.a','lib/libelpa_openmp.%s' % SHLIB_EXT, ],
     'dirs':  ['bin', 'include/elpa-%(version)s/elpa', 'include/elpa-%(version)s/modules', 'lib/pkgconfig'],
 }
 
