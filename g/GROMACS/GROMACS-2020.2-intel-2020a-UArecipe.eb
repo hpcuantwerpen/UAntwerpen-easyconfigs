@@ -82,6 +82,8 @@ if local_UAarch == "ivybridge":
     local_compflags = '-no-ftz'
 elif local_UAarch == "broadwell":
     local_compflags = ''
+elif local_UAarch == "rome":
+    local_compflags = ''
 else:
     local_compflags = ''
 
