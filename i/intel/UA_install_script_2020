@@ -1,8 +1,9 @@
 #!/bin/bash
 
-module load calcua/2020a-test
-MODULEPATH=/apps/antwerpen/modules/centos7/software-admin-x86_64:$MODULEPATH
-module load intel/2020a.01
+module purge
+module load calcua/2020a
+module use /apps/antwerpen/modules/centos8/software-admin-x86_64
+module load intel/2020a.02
 
 # For old configure scripts that still expect libmpich.a rather than libmpi.a for Intel MPI,
 # e.g., the Rmpi R-package.
