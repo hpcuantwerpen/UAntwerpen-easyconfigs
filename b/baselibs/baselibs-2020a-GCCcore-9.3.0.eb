@@ -1074,7 +1074,7 @@ components = [
                              'filename':    SOURCELOWER_ZIP,
                              'source_urls': ['http://downloads.xiph.org/releases/theora/']
                          } ],
-        'start_dir':     '%(namelower)s-%(version)s',
+        'start_dir':     'theora-%(version)s',
         'preconfigopts': "sed -e 's/.srcdir.configure.*echo//' -i autogen.sh ;  ./autogen.sh && ",
         'configopts':    '--disable-sdltest --disable-examples'
     }),
@@ -1177,6 +1177,7 @@ components = [
         #'source_urls': [ 'https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v' + local_libcerf_version ],
         'separate_build_dir': True,
         'start_dir':   '%(namelower)s-v%(version)s',
+        'configopts':  '-DLIB_MAN=OFF', # Otherwise pod2html is needed.
     }),
 #
 # Arbitrary precision math
