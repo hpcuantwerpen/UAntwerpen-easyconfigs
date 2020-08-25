@@ -1074,7 +1074,8 @@ components = [
                              'filename':    SOURCELOWER_ZIP,
                              'source_urls': ['http://downloads.xiph.org/releases/theora/']
                          } ],
-        'start_dir':     'theora-%(version)s',
+#        'start_dir':     'theora-%(version)s',
+        'start_dir':     '%(namelower)s-%(version)s',
         'preconfigopts': "sed -e 's/.srcdir.configure.*echo//' -i autogen.sh ;  ./autogen.sh && ",
         'configopts':    '--disable-sdltest --disable-examples'
     }),
