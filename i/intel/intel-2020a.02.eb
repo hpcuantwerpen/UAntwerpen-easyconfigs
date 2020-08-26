@@ -1,0 +1,25 @@
+# Dummy intel-2019b.eb file to complete the configuration of the intel/2019a UAntwerp production toolchain.
+easyblock = 'Toolchain'
+
+name =    'intel'
+version = '2020a.02'
+
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'
+
+homepage = 'http://software.intel.com/en-us/intel-cluster-toolkit-compiler/'
+
+description = """
+Intel Cluster Toolkit Compiler Edition provides Intel C/C++ and Fortran compilers, Intel MPI & Intel MKL.
+"""
+
+toolchain = SYSTEM
+
+dependencies = [
+    ('GCCcore',  local_gcc_version),
+    ('binutils', local_binutils_version, '-GCCcore-%s' % local_gcc_version),
+    ('iimpi',    version),
+    ('imkl',     'phony', '-eb4'),
+]
+
+moduleclass = 'toolchain'
