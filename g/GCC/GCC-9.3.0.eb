@@ -1,10 +1,11 @@
 easyblock = 'Bundle'
 
-name =    'GCC'
-version = '9.3.0'
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'
 
-local_binutilsver = '2.34'
-versionsuffix = '-%s' % local_binutilsver
+name =    'GCC'
+version = local_gcc_version
 
 homepage = 'http://gcc.gnu.org/'
 
@@ -25,9 +26,9 @@ is prefered over using the GCCcore module.
 toolchain = SYSTEM
 
 dependencies = [
-    ('GCCcore',  version),
+    ('GCCcore',  local_gcc_version),
     # binutils built on top of GCCcore, which was built on top of (dummy-built) binutils
-    ('binutils', local_binutilsver, '', ('GCCcore', version)),
+    ('binutils', local_binutils_version, '', ('GCCcore', version)),
 ]
 
 altroot = 'GCCcore'
