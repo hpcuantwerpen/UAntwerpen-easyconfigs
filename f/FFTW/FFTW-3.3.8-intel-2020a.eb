@@ -48,7 +48,11 @@ toolchainopts = {'optarch': False}
 
 source_urls = [homepage]
 sources =     ['fftw-%(version)s.tar.gz']
-checksums =   ['8aac833c943d8e90d51b697b27d4384d']
+patches = ['FFTW-%(version)s_fix-icc-no-gcc.patch']
+checksums = [
+    '6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303',  # fftw-3.3.8.tar.gz
+    '1b3319b98a2ca4ead68290b3229385c0573e22749a5a2ffb49486a0bbb37dc1e',  # FFTW-3.3.8_fix-icc-no-gcc.patch
+]
 
 # As all our clusters support at least AVX nowadays, we don't need to
 # build separate variants for SSE or SSE2.
@@ -59,7 +63,7 @@ use_avx =    True
 use_avx2 =   True
 use_avx512 = True
 
-# KL: This is for AMD cpus only anyway.
+# KL: This is for AMD cpus only anyway and does not work with the Intel compilers.
 use_fma4 =   False
 
 # PRECISION
@@ -74,6 +78,8 @@ with_mpi = True
 # The testing fails when not done on a compute node as the MPI tests can't find a
 # hostfile or so. But you can comment this out.
 #runtest = 'check'
+
+#parallel = 1
 
 modextrapaths = {
     'INFOPATH' : 'share/info',
