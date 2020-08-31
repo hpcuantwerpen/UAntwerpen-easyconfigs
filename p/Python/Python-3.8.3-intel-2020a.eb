@@ -114,6 +114,7 @@ exts_default_options = {
     'use_pip':           True,
 }
 
+
 # order is important!
 # package versions updated 20190730
 # skipsteps=['extensions'] # This doesn't work unfortunately.
@@ -148,12 +149,13 @@ exts_list = [
         'checksums': ['232755284f942cbb3b43a06cd85974ef3c970a021aef19b5243c03ee2b08fa05'],
     }),
     ('numpy', '1.18.3', {
-        'patches': ['numpy-1.18.2-mkl.patch'],
+        'easyblock':   'EB_numpy',  # Not needed as it is automatically selected, but stressing that it is used helps in debugging.
+        'patches':     ['numpy-1.18.2-mkl.patch'],
         'source_tmpl': '%(name)s-%(version)s.zip',
-        'checksums': [
-            'e46e2384209c91996d5ec16744234d1c906ab79a701ce1a26155c9ec890b8dc8',  # numpy-1.18.2.zip
-            'ea25ad5c0148c1398d282f0424e642fb9815a1a80f4512659b018e2adc378bcf',  # numpy-1.18.2-mkl.patch
-        ],
+        'checksums':   [
+                          'e46e2384209c91996d5ec16744234d1c906ab79a701ce1a26155c9ec890b8dc8',  # numpy-1.18.2.zip
+                          'ea25ad5c0148c1398d282f0424e642fb9815a1a80f4512659b018e2adc378bcf',  # numpy-1.18.2-mkl.patch
+                        ],
      }),
     ('mkl_random', local_mkl_random_version, { # Does require NumPy
         'sources':   [{
@@ -165,20 +167,21 @@ exts_list = [
         'skipsteps': ['install'],
     }),   
     ('mkl_fft', local_mkl_fft_version, { # Does require NumPy
-        'sources': [{
-                     'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
-                     'filename':          'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
-                     'source_urls':       ['https://github.com/IntelPython/mkl_fft/archive']
-                    }], 
+        'sources':  [{
+                      'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
+                      'filename':          'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
+                      'source_urls':       ['https://github.com/IntelPython/mkl_fft/archive']
+                     }], 
         'checksums': ['bad1b957e457e9dc596b54047c741df5b6e78f677e2c8a67b62d8cbf2ce9ae83'],
         'skipsteps': ['install'],
     }),   
     ('scipy', '1.4.1', {
-        'patches': ['scipy-1.4.1-fix-pthread.patch'],
+        'easyblock': 'EB_scipy', # Not needed as it is automatically selected, but stressing that it is used helps in debugging.
+        'patches':   ['scipy-1.4.1-fix-pthread.patch'],
         'checksums': [
-            'dee1bbf3a6c8f73b6b218cb28eed8dd13347ea2f87d572ce19b289d6fd3fbc59',  # scipy-1.4.1.tar.gz
-            '4e2162a93caddce63a1aa2dfb6c181774a4f6615950e1d60c54bb4308fee3bb3',  # scipy-1.4.1-fix-pthread.patch
-        ],
+                       'dee1bbf3a6c8f73b6b218cb28eed8dd13347ea2f87d572ce19b289d6fd3fbc59',  # scipy-1.4.1.tar.gz
+                       '4e2162a93caddce63a1aa2dfb6c181774a4f6615950e1d60c54bb4308fee3bb3',  # scipy-1.4.1-fix-pthread.patch
+                     ],
     }),
     ('mpi4py', '3.0.3', {
         'source_urls': ['https://bitbucket.org/mpi4py/mpi4py/downloads/'],
@@ -227,6 +230,7 @@ exts_list = [
         'checksums':      ['84412798925dc870ffd7107f045d7659e60f5d46d1c70c700375248bf6bf512d'],
     }),
     ('numexpr', '2.7.1', {  # Requirement tables
+        'easyblock': 'EB_numexprUA',
         'checksums': ['b0d239d9827e1bcee08344fd05835823bc60aff97232e35a928214d03ff802b1'],
     }),
     ('pycrypto', '2.6.1', {
@@ -250,6 +254,7 @@ exts_list = [
         'checksums':   ['2dee9ffdd16292878336a58d04a20f0ffe95555465fee7c9bd23b3490ef2abf3'],
     }),
     ('pyzmq', '19.0.0', { # Interfaces to system libraries, but no other Python dependencies
+        'easyblock':   'EB_pyzmq', # Not needed as it is automatically selected, but stressing that it is used helps in debugging.
         'modulename':  'zmq',
         'checksums':   ['5e1f65e576ab07aed83f444e201d86deb01cd27dcf3f37c727bc8729246a60a8'],
     }),
