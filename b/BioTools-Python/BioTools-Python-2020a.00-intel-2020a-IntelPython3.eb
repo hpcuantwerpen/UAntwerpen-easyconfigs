@@ -7,7 +7,7 @@ local_IntelPython3_major_minor = '3.7'
 
 name =          'BioTools-Python'
 version =       '2020a.00'
-versionsuffix = 'IntelPython3'
+versionsuffix = '-IntelPython3'
 
 homepage = '(none)'
 
