@@ -130,11 +130,12 @@ osdependencies = [
     ('openssl-devel', 'libssl-dev', 'libopenssl-devel'), # For CMake
     ('ncurses-devel'),                                   # For CMake
     ('libcurl-devel'),                                   # For git
-    ('expat-devel'),                                     # For git
-    ('gettext-devel'),                                   # For git
-    ('pcre-devel'),                                      # For git
-    ('perl'),                                            # For git
-    ('python3'),                                          # For git, Meson, SCons
+#    ('expat-devel'),                                     # For git DOESN'T SEEM TO BE NEEDED? SOME TOOLS HAVE AN INTERNAL ONE.
+    ('gettext-devel'),                                   # For git, make, ... (Packages check for /usr/bin/xgettext)
+    ('pcre2-devel'),                                     # For git, sed
+    ('perl'),                                            # For git and the auto*-tools
+    ('python3'),                                         # For git, Meson, SCons
+    ('zlib-devel'),                                      # For CMake, git
 ]
 
 

@@ -84,8 +84,6 @@ configopts = [
 # them up first:
 prebuildopts = 'make clean && '
 
-parallel = 1
-
 buildopts = 'V=1'
 
 postinstallcmds = [

@@ -1,13 +1,13 @@
 easyblock = 'CMakeMake'
 
-buildset =             '2019b'
-gcc_version =          '8.3.0'
-binutils_version =     '2.32'
+local_buildset =             '2020a'
+local_gcc_version =          '9.3.0'
+local_binutils_version =     '2.34'
 
-libcerf_version =      '1.13'          # https://jugit.fz-juelich.de/mlz/libcerf/-/releases
+local_libcerf_version =      '1.13'          # https://jugit.fz-juelich.de/mlz/libcerf/-/releases
 
 name =          'libcerf'
-version =       libcerf_version
+version =       local_libcerf_version
 versionsuffix = '-baselibsDevel'
 
 homepage = 'http://apps.jcns.fz-juelich.de/doku/sc/libcerf'
@@ -35,23 +35,25 @@ docurls = [
     'Man pages in section 3'
 ]
 
-toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
 toolchainopts = {'pic': True}
 
 # https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v1.13/libcerf-v1.13.tar.bz2
-sources = [ '%(name)s-v%(version)s.tar.bz2' ]
+sources =     [ '%(name)s-v%(version)s.tar.bz2' ]
 source_urls = [ 'https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v%(version)s' ]
 
 builddependencies = [
-    ('binutils',   binutils_version),
-    ('buildtools', buildset,         '', True),
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
 ]
 
 separate_build_dir = True
 
+configopts = '-DLIB_MAN=OFF' # Otherwise pod2html is needed.
+
 sanity_check_paths = {
     'files': ['lib/libcerf.%s' % SHLIB_EXT],
-    'dirs': []
+    'dirs':  []
 }
 
 moduleclass = 'math'
