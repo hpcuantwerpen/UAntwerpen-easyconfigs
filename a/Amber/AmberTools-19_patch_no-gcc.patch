@@ -1,0 +1,14 @@
+Patch similar to the one for FFTW, to remove -no-gcc from the icc command line.
+diff -u AmberTools/src/fftw-3.3/configure.orig AmberTools/src/fftw-3.3/configure >AmberTools-19_patch_no-gcc.patch
+--- AmberTools/src/fftw-3.3/configure.orig	2020-09-01 13:38:12.000000000 +0200
++++ AmberTools/src/fftw-3.3/configure	2020-09-01 13:39:21.000000000 +0200
+@@ -12816,6 +12816,9 @@
+    intel) # Stop icc from defining __GNUC__, except on MacOS where this fails
+         case "${host_os}" in
+             *darwin*) ;; # icc -no-gcc fails to compile some system headers
++            # using -no-gcc with recent Intel compilers fails on CentOS 8,
++            # and was only needed as a workaround for old Intel compilers anyway
++            *linux*) ;;
+             *)
+ 	        { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -no-gcc" >&5
+ $as_echo_n "checking whether C compiler accepts -no-gcc... " >&6; }

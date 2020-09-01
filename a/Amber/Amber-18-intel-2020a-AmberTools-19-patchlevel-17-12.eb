@@ -74,7 +74,9 @@ for local_i in range(1, local_patchlevels[0]+1):
                       'source_urls':       ['https://ambermd.org/bugfixes/AmberTools/%s.0/' % (local_ambertools_ver)],
                       'extract_cmd':       'mkdir -p .patches/AmberTools'+ local_ambertools_ver + '_Unapplied_Patches ; ' + 
                                            'cp %s .patches/AmberTools'+ local_ambertools_ver + '_Unapplied_Patches'} )
-
+patches = [
+    'AmberTools-19_patch_no-gcc.patch',
+]
 #checksums = [
 #    '2060897c0b11576082d523fb63a51ba701bc7519ff7be3d299d5ec56e8e6e277',  # Amber18.tar.bz2
 #    '0c86937904854b64e4831e047851f504ec45b42e593db4ded92c1bee5973e699',  # AmberTools19.tar.bz2
