@@ -6,6 +6,9 @@
 
 ## General information
 
+
+### 2017 versions
+
   * LAMMPS is configured by first doing make with a number of yes-<package> and/or no-<package> commands.
       * There are also a number of generics that enable/disable all packages simultaneously. So the order is important!
   * The LAMMPS sources consist of two big parts:
@@ -21,7 +24,13 @@
           the LAMMPS sources. We did notice that the PLUMED integration doesn't always 
           work and my require pairing certain specific version of PLUMED with specific 
           versions of LAMMPS. So not all of our modules include PLUMED support.
-  
+
+### 2020 and later versions
+
+  * LAMMPS is configured through CMake
+
+
+
 
 ## EasyBuild
 
@@ -33,6 +42,9 @@ repository](https://github.com/easybuilders/easybuild-easyconfigs/tree/master/ea
 It uses a specific [EasyBlock for LAMMPS](https://github.com/easybuilders/easybuild-easyblocks/blob/master/easybuild/easyblocks/l/lammps.py).
 We did not always rely on that EasyBlock and instead often did a more manual install 
 directly steering the build process from the EasyConfig file.
+
+Using the EasyBlock does assume that a number of EBROOT variables are set that are
+not set by all of the baselibs modules.
 
 ### Version 11Aug2017 for 2020a
 
@@ -46,3 +58,9 @@ directly steering the build process from the EasyConfig file.
       * Build a sequential version
       * Build a number of extra tools.
   * We do rely on the OS-provided Python for this build.
+
+### Version 3Mar2020 for 2020b
+
+  * The build was done using the default EasyBlock. This required a number of EBROOT variables 
+    that could not be set in earlier toolchains due to conflicts with other EasyBlocks and the
+    way EasyBuild handles the search for libraries.
