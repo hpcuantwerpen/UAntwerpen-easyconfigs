@@ -1,6 +1,6 @@
 # Developed by Kurt Lust, UAntwerpen
 #
-# Implicit requirements: 
+# Implicit requirements:
 # - NumPy >= 1.14.1
 # - SciPy >=0.14
 # - Tinyarray >= 1.2
@@ -14,11 +14,11 @@
 
 easyblock = 'PythonPackage'
 
-local_buildset =         '2020a'
+local_buildset =         '2019b'
 
 local_kwant_version =       '1.4.2'               # https://pypi.org/project/kwant/
-local_MUMPS_version =       '5.3.1'               # http://mumps.enseeiht.fr/
-local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
+local_MUMPS_version =       '5.2.1'               # http://mumps.enseeiht.fr/
+local_Python3_version =     '3.7.4'               # https://www.python.org/downloads/
 local_sk_umfpack_version =  '0.3.2'               # https://pypi.org/project/scikit-umfpack/
 
 name =          'kwant'
@@ -50,7 +50,7 @@ molecular electronics, any combination of the above, and many other things.
 Kwant does not use the traditional input files often found in scientific
 software packages. Instead, one writes short programs in the powerful yet
 easy-to-learn Python language. These programs define a system and calculate its
-quantum properties (conductance, density of states, etc). 
+quantum properties (conductance, density of states, etc).
 
 Note that the package relies on purely sequential, single-core libraries...
 """
@@ -77,6 +77,8 @@ prebuildopts  = 'echo "[mumps]"  >build.conf && '
 prebuildopts += 'echo "libraries = zmumps mumps_common pord metis esmumps scotch scotcherr mpiseq ifcore mkl_intel_lp64 mkl_sequential mkl_core mkl_def" >>build.conf && '
 prebuildopts += 'echo "library_dirs = $EBROOTMUMPS/lib $EBROOTSCOTCH/lib $EBROOTMETIS/lib $MKLROOT/../compiler/lib/intel64_lin" >>build.conf && '
 prebuildopts += 'echo "build.conf is:" && cat build.conf && '
+
+sanity_check_commands = ["python3 -c 'import kwant; kwant.test()'"]
 
 sanity_check_paths = {
      'files': ['bin/f2py'],
