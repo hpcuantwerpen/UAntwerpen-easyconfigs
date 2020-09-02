@@ -87,7 +87,36 @@
   * git2r optionally depends on LibSSH2 (libssh2-devel package on CentOS). It should
     find those libraries automatically if they are in a standard location where configure
     can find them.
+  * git2r also uses the openssl package and zlib.
 
+### openssl
+
+  * openssl provides an interface to libssl and libcrypto and hence depends on development 
+    packages for those libraries.
+      * On CentOS 8 the necessary headers are provided by `openssl-devel`, the libraries 
+        by `openssl-libs`. 
+
+### V8
+
+  * The V8 package needs v8-devel which was omitted in early (and later?) versions 
+    of CentOS 8, so one needs to look elsewhere.
+      * [Interesting issue thread (issue 84) on the V8 GitHub](https://github.com/jeroen/V8/issues/84).
+
+
+## Problems on CentOS 8 and some other linux versions with a recent glibc (2.27 or 
+later?)
+
+  * Compilation fails in `artihmetic.c`. A good source of information for the deeper 
+    roots of the cause is 
+    [the answer from rolandd to a question in the Intel community forum](https://community.intel.com/t5/Intel-C-Compiler/Error-when-compiling-R-from-source-code-ubuntu-18-04/td-p/1176401).
+      * The problem has to do with the removel of the SVID math library exception handling 
+        from `math.h` in glibc 2.27 and later (and the corresponding macro definitions, 
+        which is where the compilation fails). The test in configure fails with `gcc`
+        during the link phase but does not fail with the Intel compiler as it has a 
+        replacement function but the corresponding Intel header does not define the
+        excpetion structure for whatever reason.
+      * The workaround suggested in that forum post is to remove the `HAVE_MATHERR`
+        symbol from `src/include/config.h` between the configure and the build steps.
 
 ## Scripts to ease testing and writing EasyConfigs
 
@@ -180,6 +209,10 @@ We do also have a number of Bioconductor modules in our base R setup.
   * Package penalized: We define `ARMA_ALLOW_FAKE_GCC` (via `PKG_CXXFLAGS`) which according
     to the messages in the log when this symbol is not set, should give enable data 
     alignment.
+  * For CentOS 8 we need to remove `HAVE_MATHERR` from `src/include/config.h` between 
+    the configure and build steps. It turns out that the only solution to do this is 
+    via `prebuildopts` as the R EasyBlock adds further options after adding `configopts` 
+    to the `configure` command line.
 
 ### Future version
 
