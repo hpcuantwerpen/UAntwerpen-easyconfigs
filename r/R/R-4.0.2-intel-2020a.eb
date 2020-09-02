@@ -73,7 +73,7 @@ dependencies = [
 ]
 
 osdependencies = [
-    ('openssl-devel', 'libssl-dev', 'libopenssl-devel'),
+    ('openssl-devel', 'libssl-dev', 'libopenssl-devel'),     # For openssl and git2r
     ('libssh2-devel'),                                       # Useful for git2r
     ('v8-devel'),                                            # for V8, used by CSFA
 ]
@@ -86,6 +86,10 @@ configopts  = "--with-pic --enable-threads --with-x=no --enable-R-shlib"
 # some recommended packages may fail in a parallel build (e.g. Matrix), and we're installing them anyway below
 configopts += " --with-recommended-packages=no --with-tcltk --with-tcl-config=$EBROOTTCL/lib/tclConfig.sh --with-tk-config=$EBROOTTK/lib/tkConfig.sh"
 
+import os as local_os
+local_UAos = local_os.environ['VSC_OS_LOCAL'] 
+if local_UAos == "centos8":
+    prebuildopts = "sed -i -e 's/#define HAVE_MATHERR.*//' src/include/config.h && "
 
 local_biocver = local_Bioconductor_version # For easy_update
 exts_default_options = {
