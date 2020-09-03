@@ -1,0 +1,38 @@
+name = 'binutils'
+version = '2.32'
+#versionsuffix   = '-GCCcore-' + local_GCCcore_version # This is added automatically by the EasyBlock it seems.
+
+local_GCCcore_version = '8.3.0'
+local_buildset        = '2019b'
+
+homepage = 'http://directory.fsf.org/project/binutils/'
+
+whatis = [
+    "Description: GNU binutils compiled with the GCCcore toolchain.",
+]
+
+description = """
+The GNU binutils are a diverse collection of binary tools. It is complementary
+to the GNU Compiler Collection and contains a lot of tools to work with
+object files and executables.
+
+The binaries in this module were built with the GCCcore toolchain. The module
+is mostly meant to be used as a component of the GCC toolchain, so users
+preferably load the GCC toolchain instead of this module.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': local_GCCcore_version}
+
+source_urls = [GNU_SOURCE]
+sources =     [SOURCE_TAR_XZ]
+checksums =   ['0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04']
+
+builddependencies = [
+    ('buildtools', '2020a',  '', True), # For flex and Bison
+    # zlib required, but being linked in statically, so not a runtime dep
+    ('zlib',       '1.2.11', '', True),
+    # use same binutils version that was used when building GCC toolchain, to 'bootstrap' this binutils
+    ('binutils',   version,  '', True)
+]
+
+moduleclass = 'tools'
