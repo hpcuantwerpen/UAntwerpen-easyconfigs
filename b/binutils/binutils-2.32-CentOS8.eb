@@ -1,0 +1,35 @@
+name =    'binutils'
+version = '2.32'
+
+local_buildset = '2019b'
+
+homepage = 'http://directory.fsf.org/project/binutils/'
+
+whatis = [
+    "Description: GNU binutils compiled with the system compiler and system libraries.",
+    "This module is mostly meant to be build dependency for GCCcore",
+]
+
+description = """
+The GNU binutils are a diverse collection of binary tools. It is complementary
+to the GNU Compiler Collection and contains a lot of tools to work with
+object files and executables.
+
+The tools in this module were compiled with the system compiler and system
+libraries. The module is mostly used as a build dependency for newer GCC
+compilers than provided by the system.
+"""
+
+toolchain = SYSTEM
+
+source_urls = [GNU_SOURCE]
+sources =     [SOURCE_TAR_XZ]
+checksums =   ['0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04']
+
+builddependencies = [
+    ('buildtools', '2020a'), # For flex and Bison
+    # zlib required, but being linked in statically, so not a runtime dep
+    ('zlib',       '1.2.11'),
+]
+
+moduleclass = 'tools'
