@@ -1,0 +1,29 @@
+--- configure.orig	2020-05-17 05:55:10.000000000 +0200
++++ configure	2020-06-10 14:13:31.184683843 +0200
+@@ -15865,7 +15865,7 @@
+       abi_cc_vendor_hnt="intel"
+       abi_cc_version_hnt="default"
+       abi_sys_spec_hnt="default"
+-      CC_LDFLAGS_HINTS='-static-libgcc -static-intel'
++#      CC_LDFLAGS_HINTS='-static-libgcc -static-intel'
+       openmp='-qopenmp'
+       CFLAGS_PIC='-fPIC'
+       ;;
+@@ -15934,7 +15934,7 @@
+       abi_cxx_vendor_hnt="intel"
+       abi_cxx_version_hnt="default"
+       abi_sys_spec_hnt="default"
+-      CXX_LDFLAGS_HINTS='-static-libgcc -static-intel'
++#      CXX_LDFLAGS_HINTS='-static-libgcc -static-intel'
+       CXXFLAGS_PIC='-fPIC'
+       ;;
+   esac   # [case: abi_cxx_vendor, indent: 0, item: True]
+@@ -16081,7 +16081,7 @@
+       FCFLAGS_MODDIR='-module ../mods'
+       FCFLAGS_PIC='-fPIC'
+       FCFLAGS_HINTS='-extend-source -nofpscomp'
+-      FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
++#      FC_LDFLAGS_HINTS='-static-intel -static-libgcc'
+       FCFLAGS_OPENMP='-qopenmp'
+       ;;
+   esac   # [case: abi_fc_vendor, indent: 0, item: True]
