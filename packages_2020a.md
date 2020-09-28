@@ -265,6 +265,7 @@
 <tr><td> TensorRT              </td><td> 6.0.1.5-CUDA-10.1.243-cuDNN-7.6.5.32         </td><td> Toolchain-independent                             </td><td> system   </td></tr>
 <tr><td> Tk                    </td><td> 8.6.9-intel-2019b                            </td><td> 8.6.10-intel-2020a                                </td><td> buildset </td></tr>
 <tr><td> torque-tools          </td><td> 1.0.2                                        </td><td> Obsolete on SLURM                                 </td><td> /        </td></tr>
+<tr><td> Towhee                </td><td> /                                            </td><td> 8.2.0                                             </td><td> buildset </td></tr>
 <tr><td> Trimmomatic           </td><td> 0.39-Java-11                                 </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> UDUNITS               </td><td> 2.2.26-intel-2018b                           </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> Unicycler             </td><td> 0.4.7-intel-2018b-Python-3.7.1               </td><td> 0.4.8-intel-2020a-Python-3.8.3                    </td><td> buildset </td></tr>

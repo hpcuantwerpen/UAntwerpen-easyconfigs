@@ -1,0 +1,59 @@
+easyblock = 'ConfigureMake'
+
+local_buildset = '2020a'
+
+name =    'Towhee'
+version = '8.2.0'
+
+homepage = 'http://towhee.sourceforge.net/'
+
+whatis = [
+    "Name:        Towhee",
+    'Version:     %(version)s',
+    "Description: MCCCS Towhee is a Monte Carlo molecular simulation code originally designed for the prediction of fluid phase equilibria using atom-based force fields and the Gibbs ensemble"
+]
+
+description = """
+Towhee is a Monte Carlo molecular simulation code originally designed for the 
+prediction of fluid phase equilibria using atom-based force fields and the 
+Gibbs ensemble with particular attention paid to algorithms addressing 
+molecule conformation sampling. The code has subsequently been extended to 
+several ensembles, many different force fields, and solid (or at least porous) 
+phases.
+
+It is the hope of the developers that Towhee serves as a useful tool for 
+the molecular simulation community and allows science to move forward more 
+quickly by eliminating the need for individual research groups to rewrite 
+routines that already exist and instead allows them to focus on algorithm 
+advancement, force field development, and application to interesting 
+systems.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True, 'pic': True}
+
+source_urls = [('https://sourceforge.net/projects/towhee/files/%(namelower)s/', 'download')]
+sources =     ['%(namelower)s-%(version)s.tar.gz']
+
+preconfigopts = 'FFLAGS="$FFLAGS -extend-source" '
+configopts  = '--enable-interal '
+configopts += '--enable-mpi '
+
+parallel = 1
+
+local_towhee_binaries = [
+    "analyse_histogram", "car2towhee", "faux2towhee", "forcefield", "maftodensity",
+    "rdf2pmfpair", "unitcell", "xtl2towhee", "analyse_movie", "charmm2pdb", "fitcoex",
+    "jre_to_towhee", "pdb2towhee", "towhee", "xmd2towhee", "xyz2towhee",
+]
+
+postinstallcmds =  ['cp -r Examples ForceFields %(installdir)s && cp Utils/parse_vlcc_plots.script %(installdir)s/bin/']
+
+modextrapaths = {'PATH': 'ForceFields'}
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in local_towhee_binaries],
+    'dirs':  ['Examples', 'ForceFields'],
+}
+
+moduleclass = 'phys'
