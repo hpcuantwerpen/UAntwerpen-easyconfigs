@@ -1,7 +1,12 @@
 easyblock = 'ConfigureMake'
 
-name = 'ABINIT'
-version = '9.0.4'
+local_buildset =         '2020a'
+
+local_libxc_version =          '4.3.4'           # https://www.tddft.org/programs/libxc/download/
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+
+name =          'ABINIT'
+version =       '9.0.4'
 versionsuffix = '-hybrid-mkl'
 
 homepage = 'http://www.abinit.org/'
@@ -27,9 +32,13 @@ schools and workshops are organized each year.
 This module provides a hybrid OpenMP/MPI executable. It is build using 
 8-byte integers and flags for large system support, and includes support
 for netCDF, AtomPAW, LibXC functionals and Wannier90.
+
+Note: ABINIT 9.0.4 is officially labeled as a beta release. This implies that
+the software may contain bugs. If you cannot deal with this, use the latest
+8.10 versions!
 """
 
-toolchain = {'name': 'intel', 'version': '2020a'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'i8': True}
 
 # File: https://www.abinit.org/sites/default/files/packages/abinit-9.0.4.tar.gz
@@ -38,9 +47,9 @@ source_urls = [ 'https://www.abinit.org/sites/default/files/packages/' ]
 sources = [ SOURCELOWER_TAR_GZ ]
 
 dependencies = [
-    ('netCDF', '4.7.3', '-MPI'),
-    ('Wannier90', '2.0.1.1', '-ABINIT'),
-    ('libxc', '4.3.4'),
+    ('netCDF',    local_netCDF_version, '-MPI'),
+    ('Wannier90', '2.0.1.1',            '-ABINIT'),
+    ('libxc',     local_libxc_version),
 ]
 
 
