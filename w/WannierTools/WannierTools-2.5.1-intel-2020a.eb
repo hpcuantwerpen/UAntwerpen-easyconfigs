@@ -1,16 +1,49 @@
 easyblock = 'MakeCp'
 
-name = 'WannierTools'
-version = '2.5.1'
+local_buildset = '2020a'
 
-homepage = 'http://www.wanniertools.com/'
-description = "an open-source software package for novel topological materials"
+local_WannierTools_version =   '2.5.1'           # https://github.com/quanshengwu/wannier_tools/releases
 
-toolchain = {'name': 'intel', 'version': '2020a'}
+name =    'WannierTools'
+version = local_WannierTools_version
+
+homepage = 'http://www.wanniertools.org/'
+
+whatis = [
+    "Name:        %(name)s",
+    "Version:     %(version)s",
+    "Description: WannierTools is an open-source software package for novel topological materials"
+]
+
+description = """
+WannierTools is an open source software that studies the physical properties 
+of given tight-binding model. WannierTools is released under the GPL v3.
+
+Please cite this paper when using WannierTools for your researchs:
+
+@article{WU2017,
+title = "WannierTools : An open-source software package for novel topological materials",
+journal = "Computer Physics Communications",
+volume = "224",
+pages = "405 - 416",
+year = "2018",
+issn = "0010-4655",
+doi = "https://doi.org/10.1016/j.cpc.2017.09.033",
+url = "http://www.sciencedirect.com/science/article/pii/S0010465517303442",
+author = "QuanSheng Wu and ShengNan Zhang and Hai-Feng Song and Matthias Troyer and Alexey A. Soluyanov",
+keywords = "Novel topological materials, Topological number, Surface state, Tight-binding model"
+}
+"""
+
+docurls = [
+    'Web-based documentation on http://www.wanniertools.com/',
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
 
 source_urls = ['https://github.com/quanshengwu/wannier_tools/archive/']
-sources = ['V%(version)s.tar.gz']
-checksums = ['22aad8e95f2da07ac2dd892c2ca0438010779e6cc542e30f34ea5c3f580fd72c']
+sources =     ['V%(version)s.tar.gz']
+checksums =   ['22aad8e95f2da07ac2dd892c2ca0438010779e6cc542e30f34ea5c3f580fd72c']
 
 prebuildopts = "cd src && "
 buildopts = '-f Makefile.intel-mpi'
@@ -20,7 +53,7 @@ files_to_copy = [(['bin/wt.x'], 'bin')]
 
 sanity_check_paths = {
     'files': ['bin/wt.x'],
-    'dirs': [],
+    'dirs':  [],
 }
 
 moduleclass = 'phys'
