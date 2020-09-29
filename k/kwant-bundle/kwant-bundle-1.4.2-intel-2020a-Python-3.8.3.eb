@@ -1,0 +1,136 @@
+easyblock = 'PythonBundle'
+
+local_buildset =         '2020a'
+
+local_kwant_version =       '1.4.2'               # https://pypi.org/project/kwant/
+local_MUMPS_version =       '5.3.1'               # http://mumps.enseeiht.fr/
+local_pybinding_version =   '0.9.5'               # https://github.com/dean0x7d/pybinding/releases
+local_Python3_version =     '3.8.3'               # https://www.python.org/downloads/
+local_sk_umfpack_version =  '0.3.2'               # https://pypi.org/project/scikit-umfpack/
+local_SWIG_version =        '4.0.1'               # http://www.swig.org/download.html
+
+name = 'kwant-bundle'
+#pyver             = local_Python3_version # Version of Python
+version           = local_kwant_version
+versionsuffix     = '-Python-%(pyver)s'
+
+homepage = 'https://kwant-project.org/'
+
+whatis = [
+    'Category:    Python package collection',
+    'Description: Several Python packages used by the UAntwerp CMT group in their thight-binding calculations: pybinding, kwant, scikit-umfpack',
+    'URL:         https://github.com/dean0x7d/pybinding, https://kwant-project.org/, https://scikit-umfpack.github.io/scikit-umfpack/',
+    'Keywords:    kwant, pybinding, scikit-umfpack, UMFPACK', 
+    'Extensions:  kwant-' + local_kwant_version + ', pybinding-'+ local_pybinding_version + ', scikit-umfpack-' + local_sk_umfpack_version,
+]
+
+description = """
+This bundle contains various Python packages used bu the UAntwerp CMT group for
+thigh-binding calculations:
+* scikit-umfpack %(sk_umfpack)s to add UMFPACK sparse matrix solver support to SciPy. It also
+  enables using the UMFPACK solver via some of the scipy.sparse.linalg functions
+  (only if SciPy >= 0.14.0 which is the case for the Python module loaded by this
+  module).
+* Pybinding %(pybinding)s is a Python package for numerical tight-binding calculations in solid
+  state physics. The main features include:
+  + Declarative model construction - The user just needs to describe what the
+    model should be, but not how to build it. Pybinding will take care of the
+    numerical details of building the Hamiltonian matrix so users can concentrate
+    on the physics, i.e. the quantum properties of the model.
+  + Fast compute - Pybinding’s implementation of the kernel polynomial method
+    allows for very fast calculation of various physical properties of
+    tight-binding systems. Exact diagonalization is also available through the
+    use of scipy’s eigenvalue solvers. The framework is very flexible and allows
+    the addition of user-defined computation routines.
+  + Result analysis and visualization - The package contains utility functions
+    for post-processing the raw result data. The included plotting functions are
+    tailored for tight-binding problems to help visualize the model structure and
+    to make sense of the results.
+  The main interface is written in Python with the aim to be as user-friendly and
+  flexible as possible. Under the hood, C++11 is used to accelerate demanding
+  tasks to deliver high performance with low memory usage.
+* Kwant %(kwant)s is a free (open source) Python package for numerical calculations on
+  tight-binding models with a strong focus on quantum transport. It is designed to
+  be flexible and easy to use. Thanks to the use of innovative algorithms, Kwant
+  is often faster than other available codes, even those entirely written in the
+  low level FORTRAN and C/C++ languages.
+  Tight-binding models can describe a vast variety of systems and phenomena in
+  quantum physics. Therefore, Kwant can be used to simulate metals, graphene,
+  topological insulators, quantum Hall effect, superconductivity, spintronics,
+  molecular electronics, any combination of the above, and many other things.
+  Kwant does not use the traditional input files often found in scientific
+  software packages. Instead, one writes short programs in the powerful yet
+  easy-to-learn Python language. These programs define a system and calculate its
+  quantum properties (conductance, density of states, etc).
+  Note that kwant relies on purely sequential, single-core libraries...
+""" % {
+    'sk_umfpack': local_sk_umfpack_version,
+    'pybinding':  local_pybinding_version,
+    'kwant':      local_kwant_version,
+}
+  
+docurls = [ 
+    'scikit-umfpack web-based documentation: https://scikit-umfpack.github.io/scikit-umfpack/',
+    'pybinding web-based documentation: http://docs.pybinding.site/en/stable/',
+    'kwant web-based documentation: https://kwant-project.org/doc/',
+]
+  
+toolchain = {'name': 'intel', 'version': local_buildset}
+  
+dependencies = [
+    ('Python',  local_Python3_version),                     # We need a Python with UMFPACK support installed in NumPy.
+    ('MUMPS',   local_MUMPS_version,   '-noOpenMP-noMPI'),  # For kwant
+]
+  
+builddependencies = [
+    ('SWIG',       local_SWIG_version, versionsuffix),   # Used by the installation process of scikit-umfpack
+    ('buildtools', local_buildset,     '',            True),
+]
+
+# For Intel:
+# local_pybinding_prebuildopts =  'VERBOSE=1 '
+# local_pybinding_prebuildopts += 'CFLAGS+='-wdi1682" '
+# local_pybinding_prebuildopts += 'CXXFLAGS+='-wdi1682" '
+local_pybinding_prebuildopts =  'VERBOSE=1 '
+local_pybinding_prebuildopts += 'CC="gcc"  CFLAGS="-march=native" '    # Pybinding currently does not compile with icc/icpc, so enforce gcc/g++
+local_pybinding_prebuildopts += 'CXX="g++" CXXFLAGS="-march=native" '  # The pybinding cmake recipes automatically add -O3 -fPIC -stc=c++11
+# local_pybinding_prebuildopts += 'CMAKE_CXX_COMPILER="g++" CMAKE_CXX_FLAGS+="-O3 -march=native" '
+
+local_kwant_prebuildopts  = 'echo "[mumps]"  >build.conf && '
+local_kwant_prebuildopts += 'echo "libraries = zmumps mumps_common pord metis esmumps scotch scotcherr mpiseq ifcore mkl_intel_lp64 mkl_sequential mkl_core mkl_def" >>build.conf && '
+local_kwant_prebuildopts += 'echo "library_dirs = $EBROOTMUMPS/lib $EBROOTSCOTCH/lib $EBROOTMETIS/lib $MKLROOT/../compiler/lib/intel64_lin" >>build.conf && '
+local_kwant_prebuildopts += 'echo "build.conf is:" && cat build.conf && '
+
+# This is a bundle of Python packages
+# This does not work with components as that does not support the 'modulename' field.
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  True,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           False,
+}
+
+exts_list = [
+    ('scikit-umfpack', local_sk_umfpack_version, {
+        'modulename':  'scikits',
+    }),
+    ('pybinding', local_pybinding_version, {
+        'prebuildopts': local_pybinding_prebuildopts,
+    }),
+    ('kwant', version, {
+        'prebuildopts': local_kwant_prebuildopts,
+    }),
+]
+
+local_pyshortver = '.'.join(local_Python3_version.split('.')[:-1])
+local_python_dir = 'lib/python%s/site-packages' % local_pyshortver
+
+sanity_check_paths = {
+    'files': [ ],
+    'dirs':  [ '%s/scikit_umfpack-%s-py%s-linux-x86_64.egg/scikits/umfpack' % (local_python_dir, local_sk_umfpack_version, local_pyshortver), # scikit-umfpack
+               '%s/pybinding-%s-py%s-linux-x86_64.egg/pybinding'            % (local_python_dir, local_pybinding_version,  local_pyshortver), # pybinding
+               '%s/kwant-%s-py%s-linux-x86_64.egg/kwant'                    % (local_python_dir, version,                  local_pyshortver), # kwant
+             ],
+}
+
+moduleclass = 'phys'
