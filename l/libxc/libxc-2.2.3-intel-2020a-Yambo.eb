@@ -1,0 +1,50 @@
+easyblock = 'ConfigureMake'
+
+local_buildset = '2020a'
+
+local_libxc_Yambo_version = '2.2.3' # Search for version.*used in config/libxc.m4.
+
+name =          'libxc'
+version =       local_libxc_Yambo_version
+versionsuffix = '-Yambo'
+
+homepage = 'http://www.tddft.org/programs/octopus/wiki/index.php/Libxc'
+
+whatis = [
+    "Description: libxc is a library of exchange-correlation functionals for DFT packages",
+    "This module provides both static and shared libraries, solely meant for use with Yambo",
+]
+
+description = """
+Libxc is a library of exchange-correlation functionals for density-functional
+theory. The aim is to provide a portable, well tested and reliable set of
+exchange and correlation functionals.
+
+The module provides both static and shared libraries. It is a piece of antique
+that should not be used. It is solely meant to be used by Yambo.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+# https://gitlab.com/libxc/libxc/-/archive/4.3.4/libxc-4.3.4.tar.bz2
+sources =     [SOURCE_TAR_BZ2]
+source_urls = ['https://gitlab.com/libxc/libxc/-/archive/%(version)s']
+checksums =   ['21a26bde02e6899d5dcae43033772f65de9b1848b2abc9b711179420c514f218']
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),
+]
+
+preconfigopts = 'autoreconf -i && ' 
+configopts =    '--enable-static --enable-shared --enable-fortran'
+
+runtest = 'check'
+
+sanity_check_paths = {
+    'files': ['lib/libxc%s.%s' % (x, y) for x in ['', 'f90'] for y in ['a', SHLIB_EXT]],
+    'dirs':  ['include'],
+}
+
+parallel = 1
+
+moduleclass = 'chem'

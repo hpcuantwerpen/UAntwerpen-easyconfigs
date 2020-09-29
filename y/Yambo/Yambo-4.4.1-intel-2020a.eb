@@ -1,0 +1,117 @@
+easyblock = 'MakeCp'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+local_Yambo_version =          '4.4.1'           # https://github.com/yambo-code/yambo/releases
+local_libxc_Yambo_version =    '2.2.3'  # Search for version.*used in config/libxc.m4 or lib/archive/package.list.
+
+name =    'Yambo'
+version = local_Yambo_version
+
+homepage = 'http://www.yambo-code.org'
+
+whatis = [
+    'Description: Yambo is a FORTRAN/C code for Many-Body calculations in solid state and molecular physics.',    
+]
+ 
+description = """
+YAMBO is an open-source code released within the GPL licence. 
+
+YAMBO implements Many-Body Perturbation Theory (MBPT) methods (such as GW and 
+BSE) and Time-Dependent Density Functional Theory (TDDFT), which allows for 
+accurate prediction of fundamental properties as band gaps of semiconductors, 
+band alignments, defect quasi-particle energies, optics and out-of-equilibrium 
+properties of materials.
+
+The code resorts to previously computed electronic structure, usually at the 
+Density Functional Theory (DFT) level and for this reason it is interfaced 
+with two of the most used planewave DFT codes used in scientific community, 
+Quantum ESPRESSO and Abinit. 
+
+This version of Yambo is compiled without the optional IOTK and ETSF-IO 
+support. The module was compiled with the optional OpenMP support.
+"""
+
+docurls = [
+    'Web-based documentation: http://www.yambo-code.org/learn/',    
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+# https://github.com/yambo-code/yambo/archive/4.4.1.zip
+sources = [
+    { # Yambo itself
+        'download_filename': '%(version)s.zip',
+        'filename':          SOURCELOWER_ZIP,
+        'source_urls':       ['https://github.com/yambo-code/yambo/archive']
+    },
+#    { # Internal libxc: https://github.com/yambo-code/yambo/files/783150/libxc-2.2.3.tar.gz
+#      # This file seems to differ from the standard libxc download with the same file name.
+#         'filename':    'libxc-2.2.3.tar.gz',
+#         'source_urls': ['https://github.com/yambo-code/yambo/files/783150/'],
+#         'extract_cmd': 'cp %s yambo-%(version)s/lib/archive'
+#    },
+    { # We download iotk-y1.2.2.tar.gz from the IURL indicated in the YAmbo scripts.
+        'filename':    'iotk-y1.2.2.tar.gz',
+        'source_urls': ['https://github.com/yambo-code/yambo/files/962173/'],
+        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive',
+    },
+    { # etsf_io cannot be downloaded anymore from where the code tries to download it...
+        'filename':    'etsf_io-1.0.4.tar.gz',
+        'source_urls': ['https://launchpad.net/etsf-io/1.0/1.0.4/+download/'],
+        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive',
+    },
+]
+checksums =   ['f91d0fe168169ab0a6da894ff4764f17ac4236297337d02e2ad28997e857eda0']
+
+dependencies = [
+    ('libxc',  local_libxc_Yambo_version, '-Yambo'),
+    ('netCDF', local_netCDF_version,      '-MPI'), # Does need the Fortran interface included in this module.
+]
+
+builddependencies = [
+    ( 'buildtools', local_buildset, '', True),    
+]
+
+with_configure = True
+
+configopts  = 'CPPFLAGS="" FCFLAGS="-nofor_main" --with-blas-libs="$LIBBLAS" '
+configopts += '--prefix=%(builddir)s/%(namelower)s-%(version)s '
+#configopts += '--disable-keep-objects ' # enable-keep-objects only works for in-place builds.
+configopts += '--with-lapack-libs="$LIBLAPACK" --with-blacs-libs="$LIBBLACS" '
+configopts += '--with-scalapack-libs="$LIBSCALAPACK" --with-fft-libs="$LIBFFT" '
+configopts += '--disable-open-mp --enable-mpi '
+configopts += '--disable-dp ' # This is actually the default behaviour.
+#configopts += '--enable-dp '
+configopts += '--enable-iotk '
+#configopts += '--disable-iotk '   # iotk cannot be properly disabled in Yambo 4.4.1.
+configopts += '--enable-etsf-io '
+#configopts += '--disable-etsf-io '
+configopts += '--disable-int-linalg --disable-openmp-int-linalg --disable-internal-fftqe --disable-internal-fftsg '
+configopts += '--enable-netcdf-hdf5 --enable-hdf5-compression --enable-hdf5-par-io '
+configopts += '--with-netcdf-path=$EBROOTNETCDF --with-netcdff-path=$EBROOTNETCDF --with-hdf5-path=$EBROOTHDF5 '
+configopts += '--with-netcdf-libs="-lnetcdff -lnetcdf" '
+configopts += '--with-libxc-path=$EBROOTLIBXC '
+
+buildopts = 'all'
+
+parallel = 1
+
+files_to_copy = [
+    (['bin/*'],     'bin'),
+    (['lib/*'],     'lib'),
+    (['include/*'], 'include'),
+    (['driver/*'],  'driver'),
+]
+
+sanity_check_paths = {
+    'files': ['bin/' + x for x in ['a2y', 'e2y', 'p2y', 
+                                   'yambo', 'yambo_kerr', 'yambo_nl', 'yambo_ph', 'yambo_rt',
+                                   'ypp', 'ypp_nl', 'ypp_ph', 'ypp_rt']],
+    'dirs':  []
+}
+
+moduleclass = 'phys'
