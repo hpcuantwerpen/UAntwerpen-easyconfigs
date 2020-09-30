@@ -1,0 +1,44 @@
+easyblock = 'Bundle'
+
+name =    'MKL-overlay'
+version = '2018.04'
+
+local_root =                 "/apps/antwerpen/noarch/intel-psxe/2018_update4"
+local_compilerversion =      "2018.5.274"
+local_productversionstring = "2018 Update 4"
+
+local_compilerroot =         local_root + "/compilers_and_libraries_" + local_compilerversion + "/linux"
+
+homepage = 'https://software.intel.com/en-us/intel-parallel-studio-xe'
+
+whatis = [
+    'Description: Intel MKL from Intel Parallel Studio XE ' + local_productversionstring +  'Cluster Edition',
+    'URL:         https://software.intel.com/en-us/intel-parallel-studio-xe',
+]
+
+description = """
+Intel MKL libraries from Intel Parallel Studio XE %(PVERSION)s to overload
+those of a regular intel module.
+""" % { 'PVERSION': local_productversionstring }
+
+toolchain = SYSTEM
+
+allow_prepend_abs_path = True
+
+modextrapaths = {
+    'CPATH':                [local_compilerroot + '/mkl/include/fftw', local_compilerroot + '/mkl/include'],
+    'LD_LIBRARY_PATH':      local_compilerroot + '/mkl/lib/intel64_lin',
+    'SINK_LD_LIBRARY_PATH': local_compilerroot + '/mkl/lib/intel64_lin',
+    'LIBRARY_PATH':         local_compilerroot + '/mkl/lib/intel64_lin',
+    'NLSPATH':              local_compilerroot + '/mkl/lib/intel64_lin/locale/%l_%t/%N',
+    'PKG_CONFIG_PATH':      local_compilerroot + '/mkl/bin/pkgconfig',
+}
+
+modextravars = {
+    'MKLROOT':       local_compilerroot + 'MKL',
+    'EBROOTIMKL':    local_root,
+    'EBVERSIONIMKL': local_compilerversion,
+}
+
+moduleclass = 'numlib'
+
