@@ -55,7 +55,7 @@
 +       Finally, note that this configuration also works whether
 +       processor is 0 or 1.
 +#
-+par_cmdexec:   <config>/partel < PARTEL.PAR >> <partel.log>
++par_cmdexec:   <config>/partel < <partel.par> >> <partel.log>
 +#
 +mpi_cmdexec:   mpirun -wdir <wdir> -n <ncsize> <exename>
 +mpi_hosts:
