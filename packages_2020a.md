@@ -1,8 +1,8 @@
 <table>
 <tr><th> Package               </th><th> Last version                                 </th><th> 2020a version                                     </th><th> Where    </th></tr>
-<tr><td> ABINIT                </td><td> 8.10.2-intel-2016b-hybrid-mkl                </td><td> 8.10.3-intel-2020a-hybrid-mkl                     </td><td> buildset </td></tr>
+<tr><td> ABINIT                </td><td> 8.10.2-intel-2016b-hybrid-mkl                </td><td> 8.10.3-intel-2020a-hybrid-mkl, 9.0.4-*            </td><td> buildset </td></tr>
 <tr><td> ACTC                  </td><td> 1.1-GCCcore-8.3.0                            </td><td> 1.1-GCCcore-9.3.0                                 </td><td> buildset </td></tr>
-<tr><td> Amber                 </td><td> 18-intel-2019b-AmberTools-19-patchlevel-17-9 </td><td> 8-intel-2019b-AmberTools-19-patchlevel-17-12      </td><td> buildset </td></tr>
+<tr><td> Amber                 </td><td> 18-intel-2019b-AmberTools-19-patchlevel-17-9 </td><td> 18-intel-2020a-AmberTools-19-patchlevel-17-12, 20 </td><td> buildset </td></tr>
 <tr><td> ANSYS                 </td><td> 17.2                                         </td><td> Toolchain-independent                             </td><td> x86_64   </td></tr>
 <tr><td> ant                   </td><td> 1.10.1-Java-8                                </td><td> SYSTEM toolchain                                  </td><td> system   </td></tr>
 <tr><td> ANTs                  </td><td> 2.3.2-intel-2019b                            </td><td> 2.3.3-intel-2020a                                 </td><td> buildset </td></tr>
@@ -90,7 +90,8 @@
 <tr><td> freetype              </td><td> 2.9-intel-2018a                              </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> FriBidi               </td><td> 1.0.5-intel-2018b                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> GATK                  </td><td> 4.1.4.1-Java-8-minimal                       </td><td> SYSTEM toolchain                                  </td><td> system   </td></tr>
-<tr><td> Gaussian16            </td><td> g16_A3-AVX2                                  </td><td> Installed on demand                               </td><td> ?        </td></tr>
+<tr><td> Gaussian16            </td><td> g16_A3-AVX2                                  </td><td> g16_c01-avx2, g16_a03-avx2                        </td><td> ?        </td></tr>
+<tr><td> GaussView             </td><td> /                                            </td><td> 6.1.1                                             </td><td> ?        </td></tr>
 <tr><td> gc                    </td><td> 7.6.4-intel-2018a                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
 <tr><td> GCC                   </td><td> 8.3.0-2.32                                   </td><td> 9.3.0-2.34                                        </td><td> buildset </td></tr>
 <tr><td> GCCcore               </td><td> 8.3.0                                        </td><td> 9.3.0                                             </td><td> buildset </td></tr>
@@ -139,7 +140,7 @@
 <tr><td> Kraken                </td><td> 1.0-intel-2018b-Perl-5.26.1                  </td><td> Installed on demand (there is now a Kraken 2)     </td><td> buildset </td></tr>
 <tr><td> Kraken2               </td><td> /                                            </td><td> 2.0.9-beta-intel-2020a-Perl-5.30.2                </td><td> buildset </td></tr>
 <tr><td> kwant                 </td><td> 1.2.2-intel-2017a-Python-3.6.1               </td><td> 1.4.2-intel-2020a-Python-3.8.2                    </td><td> buildset </td></tr>
-<tr><td> kwant-bundle          </td><td> 1.3.2-intel-2018a-Python-3.6.6               </td><td> TODO - awaiting kwant bugfix with UMFpack         </td><td> buildset </td></tr>
+<tr><td> kwant-bundle          </td><td> 1.3.2-intel-2018a-Python-3.6.6               </td><td> 1.4.2-intel-2018a-Python-3.8.2                    </td><td> buildset </td></tr>
 <tr><td> LAME                  </td><td> 3.100-intel-2018b                            </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> buildset </td></tr>
 <tr><td> LAMMPS                </td><td> 16Mar2018-intel-2017a                        </td><td> 17Aug2017-intel-2020a                             </td><td> buildset </td></tr>
 <tr><td> libcerf               </td><td> 1.5-intel-2018b                              </td><td> Moved to baselibs/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
@@ -282,12 +283,14 @@
 <tr><td> vsc-vnc               </td><td> 0.1                                          </td><td> SYSTEM toolchain                                  </td><td> system   </td></tr>
 <tr><td> VSEARCH               </td><td> 2.14.2-intel-2019b                           </td><td> Moved into BioTools/2020a.00-intel-2020a          </td><td> /        </td></tr>
 <tr><td> Wannier90             </td><td> 2.1.0-intel-2018b                            </td><td> 3.1.0-intel-2020a                                 </td><td> buildset </td></tr>
+<tr><td> WannierTools          </td><td> /                                            </td><td> 2.5.1-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> worker                </td><td> 1.6.8-intel-2019b                            </td><td> 1.6.12-intel-2020a                                </td><td> buildset </td></tr>
 <tr><td> X11                   </td><td> 2019b-GCCcore-8.3.0                          </td><td> 2020a-GCCcore-9.3.0                               </td><td> buildset </td></tr>
 <tr><td> x264                  </td><td> 20180212-intel-2018b                         </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> x265                  </td><td> 2.8-intel-2018b                              </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> XML-LibXML            </td><td> 2.0132-intel-2018b-Perl-5.26.1               </td><td> Integrated into BioPerl                           </td><td> / </td></tr>
 <tr><td> xprop                 </td><td> 1.2.4-GCCcore-8.3.0                          </td><td> Integrated in X11/2020a-GCCcore-9.3.0             </td><td> /        </td></tr>
+<tr><td> Yambo                 </td><td> /                                            </td><td> 4.4.1-intel-2020a                                 </td><td> buildset </td></tr>
 <tr><td> XZ                    </td><td> 5.2.4-intel-2018b                            </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>
 <tr><td> ZDPlasKin             </td><td> 2.0a                                         </td><td> TODO                                              </td><td> buildset </td></tr>
 <tr><td> zlib                  </td><td> 1.2.11-intel-2018b                           </td><td> Moved into baselibs/2020a-GCCcore-9.3.0           </td><td> /        </td></tr>

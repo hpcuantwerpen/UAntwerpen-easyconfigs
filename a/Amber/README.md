@@ -236,4 +236,21 @@ Some tricks in the EasyConfig to work around problems in Amber:
     optimizations but no host-specific optimizations. There is a workaround by specifying the 
     compiler option for the host-specific optimizations via the environment variable `TUNEFLAGS`.
 
-  
+NOTE: Amber doesn't always build properly on BeeGFS. It sometimes fails with message 
+such as "resource busy". It looks like some locks are not released quickly enough or 
+so.
+
+### Amber 20 / AmberTools 20 in the 2020a toolchains
+
+  * A straightforward port.
+  * We no longer use TUNEFLAGS as the option gets overwritten anyway as these flags are already
+    added via the CFLAGS etc. passed by EasyBuild (and causes warnings on Rome that they get
+    overwritten).
+
+## In case of problems..
+
+  * It may be necessary to reset CFLAGS etc when calling configure in the EasyConfig and instead make
+    proper use of TUNEFLAGS (see the 2019b toolchain) to set the optimization options (and be careful
+    with AMD Rome). Some files are now compiled with `-O0` which gets overwritten by a `-O2` included
+    in CFLAGS etc.
+

@@ -163,6 +163,7 @@ local_protobuf_version =       '3.12.3'          # https://github.com/protocolbu
 local_PLUMED_version =         '2.6.1'           # https://www.plumed.org//download.html
 local_PRANK_version =          '170427'          # http://wasabiapp.org/download/prank/
 local_PROJ_version =           '7.0.1'           # https://proj.org/download.html
+local_pybinding_version =   '0.9.5'               # https://github.com/dean0x7d/pybinding/releases
 local_Python2_version =        '2.7.18'          # https://www.python.org/downloads/
 local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
 local_QuTiP_version =          '4.5.1'           # https://pypi.org/project/qutip/
@@ -178,6 +179,7 @@ local_Tk_version =             '8.6.10'          # http://www.tcl.tk/
 local_Unicycler_version =      '0.4.8'           # https://github.com/rrwick/Unicycler/releases
 local_VoroPlusPlus_version =   '0.4.6'           # 
 local_VMD_version =            '1.9.3'           # http://www.ks.uiuc.edu/Research/vmd/
+local_WannierTools_version =   '2.5.1'           # https://github.com/quanshengwu/wannier_tools/releases
 local_worker_version =         '1.6.12'          # https://github.com/gjbex/worker/releases
 
 local_LLVM_numba_version =     '8.0.1'           # Depends on the version of llvmlite, see https://github.com/numba/llvmlite/blob/master/README.rst
