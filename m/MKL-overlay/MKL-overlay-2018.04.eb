@@ -34,11 +34,20 @@ modextrapaths = {
     'PKG_CONFIG_PATH':      local_compilerroot + '/mkl/bin/pkgconfig',
 }
 
+# Note: It would be great to use something like altroot/altversion to let the EB*MKLMINOVERLAY variables
+# point to the actual MKL installation. However, since MKL is not installed through EasyBuild this does
+# not work. Unfortunately overwriting via modextravars does not work. moduluafooter would work though
+# one should verify what happens then when a module is unloaded.
 modextravars = {
-    'MKLROOT':       local_compilerroot + 'MKL',
+    'MKLROOT':       local_compilerroot + '/MKL',
     'EBROOTIMKL':    local_root,
     'EBVERSIONIMKL': local_compilerversion,
 }
+
+modluafooter = """
+setenv( "EBROOTMKLMINOVERLAY",    "%s" )
+setenv( "EBVERSIONMKLMINOVERLAY", "%s" )
+""" % (local_root, local_compilerversion)
 
 moduleclass = 'numlib'
 

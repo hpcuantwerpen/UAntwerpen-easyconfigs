@@ -1,0 +1,72 @@
+easyblock = 'MakeCp'
+
+name = 'Wannier90'
+version = '2.1.0'
+
+homepage = 'http://www.wannier.org'
+whatis = [
+    "Description: Wannier90 is a tool for obtaining maximally-localised Wannier functions."
+    "This module provides MPI-enabled executables",
+]
+
+description = """
+Wannier90  is a program for calculating maximally-localised Wannier functions
+(MLWFs) from a set of Bloch energy bands that may or may not be attached to or
+mixed with other bands. The formalism works by minimising the total spread of
+the MLWFs in real space. This is done in the space of unitary matrices that
+describe rotations of the Bloch bands at each k-point. As a result, wannier90
+is independent of the basis set used in the underlying calculation to obtain the
+Bloch states. Therefore, it may be interfaced straightforwardly to any
+electronic structure code. The locality of MLWFs can be exploited to compute
+band-structure, density of states and Fermi surfaces at modest computational
+cost. Furthermore, wannier90  is able to output MLWFs for visualisation and
+other post-processing purposes. Wannier functions are already used in a wide
+variety of applications. These include analysis of chemical bonding in real
+space; calculation of dielectric properties via the modern theory of
+polarisation; and as an accurate and minimal basis set in the construction of
+model Hamiltonians for large-scale systems, in linear-scaling quantum Monte
+Carlo calculations, and for efficient computation of material properties, such
+as the anomalous Hall coefficient.
+
+From version 2.0 on, Wannier90 supports parallel (MPI) execution for
+band-structure interpolation and the calculation of properties such as density
+of states, Berry curvature and orbital magnetisation.
+
+Wannier90 is freely available under the GNU General Public License.
+
+The programs were compiled with MPI support and single-threaded libraries.
+"""
+
+toolchain = {'name': 'intel', 'version': '2020a'}
+toolchainopts = {'usempi': True}
+# Wannier supports MPI, but the 2.1.0 code does not contain OpenMP pragmas.
+
+sources =     [SOURCELOWER_TAR_GZ]
+source_urls = ['http://www.wannier.org/code']
+checksums =   ['07a81c002b41d6d0f97857e55c57d769']
+
+prebuildopts = 'cp ./config/make.inc.ifort ./make.inc && '
+
+# The buildopts overwrite a number of variables set in make.inc
+buildopts  = 'all F90=$F90 MPIF90=$MPIF90 FCOPTS="$FFLAGS" LDOPTS="$FFLAGS" '
+buildopts += 'LIBDIR="$LAPACK_LIB_DIR" LIBS="$LIBLAPACK" '
+buildopts += 'COMMS=mpi'
+buildopts += '&& $F90 $FFLAGS utility/PL_assessment/PL_assess.f90 -o PL_assess.x'
+parallel = 1
+
+files_to_copy = [
+    (['wannier90.x', 'postw90.x', 'w90chk2chk.x'], 'bin'), 
+    (['utility/w90vdw/w90vdw.x'],                  'bin'),
+    (['utility/kmesh.pl'],                         'bin'),
+    (['libwannier.a'],                             'lib'),
+    'examples',
+    'pseudo',
+    'LICENSE',
+]
+
+sanity_check_paths = {
+    'files': ['bin/wannier90.x', 'bin/postw90.x', 'lib/libwannier.a'],
+    'dirs':  ['examples', 'pseudo']
+}
+
+moduleclass = 'chem'
