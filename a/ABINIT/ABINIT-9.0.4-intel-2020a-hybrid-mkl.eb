@@ -5,6 +5,10 @@ local_buildset =         '2020a'
 local_libxc_version =          '4.3.4'           # https://www.tddft.org/programs/libxc/download/
 local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
 
+import os as local_os
+local_UAcluster = local_os.environ['VSC_INSTITUTE_CLUSTER']
+
+
 name =          'ABINIT'
 version =       '9.0.4'
 versionsuffix = '-hybrid-mkl'
@@ -52,12 +56,19 @@ dependencies = [
     ('libxc',     local_libxc_version),
 ]
 
+if local_UAcluster == 'vaughan':
+    dependencies += [ ('MKL-overlay', '2018.04', '', True )]
 
 # https://docs.abinit.org/developers/autoconf_examples
 # https://github.com/abinit/abiconfig/blob/master/abiconfig/clusters
 
 preconfigopts  = 'export CC=mpiicc && export CXX=mpiicpc && export CPP="mpiicc -P"  && export FC=mpiifort && '
-preconfigopts += 'export FCFLAGS="-O2 -xHost -ftz -fp-speculation=safe -fp-model source  -noaltparam -nofpscomp -mcmodel=large -shared-intel" && '
+if local_UAcluster == 'vaughan':
+    preconfigopts += 'export FCFLAGS="-O2 -march=core-avx2 -mtune=core-avx2 -ftz -fp-speculation=safe -fp-model source  -noaltparam -nofpscomp -mcmodel=large -shared-intel" && '
+    preconfigopts += 'export CFLAGS="-O2 -march=core-avx2 -mtune=core-avx2 -ftz -fp-speculation=safe -fp-model source -DMKL_ILP64" && '
+    preconfigopts += 'export CXXFLAGS="-O2 -march=core-avx2 -mtune=core-avx2 -ftz -fp-speculation=safe -fp-model source" && '
+else:
+    preconfigopts += 'export FCFLAGS="-O2 -xHost -ftz -fp-speculation=safe -fp-model source  -noaltparam -nofpscomp -mcmodel=large -shared-intel" && '
 preconfigopts += 'export LINALG_CPPFLAGS="-I${MKLROOT}/include" && '
 preconfigopts += 'export LINALG_FCFLAGS="-I${MKLROOT}/include" && '
 preconfigopts += 'export LINALG_LIBS="-L${MKLROOT}/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lpthread -lm -ldl" && '
