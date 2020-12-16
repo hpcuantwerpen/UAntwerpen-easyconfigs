@@ -1,0 +1,45 @@
+easyblock = 'MakeCp'
+
+local_buildset =    '2020a'
+local_gcc_version = '9.3.0'
+
+local_STAR_version = '2.7.6a'
+
+name = 'STAR'
+version = '2.7.6a'
+
+homepage = 'https://github.com/alexdobin/STAR'
+
+whatis = [
+    "Description: STAR aligns RNA-seq reads to a reference genome using uncompressed suffix arrays."
+]
+
+description = "STAR aligns RNA-seq reads to a reference genome using uncompressed suffix arrays."
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'openmp': True}
+
+source_urls = ['https://github.com/alexdobin/STAR/archive/']
+sources = ['%(version)s.tar.gz']
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # for zlib and GSL
+]
+
+start_dir = 'source'
+
+buildopts = ' STAR && make STARlong'
+
+parallel = 1
+
+files_to_copy = [
+    (['source/STAR', 'source/STARlong'], 'bin'),
+    'CHANGES.md', 'doc', 'extras', 'LICENSE', 'README.md', 'RELEASEnotes.md',
+]
+
+sanity_check_paths = {
+    'files': ['bin/STAR', 'bin/STARlong'],
+    'dirs': [],
+}
+
+moduleclass = 'bio'
