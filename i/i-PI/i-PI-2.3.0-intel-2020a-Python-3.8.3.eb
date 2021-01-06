@@ -1,0 +1,92 @@
+easyblock = 'PythonBundle'
+
+local_buildset         = '2020a'
+
+local_Python3_version =  '3.8.3'     # https://www.python.org/downloads/
+
+name =           'i-PI'
+version =        '2.3.0'
+versionsuffix =  '-Python-%(pyver)s'
+
+homepage = 'http://ipi-code.org/'
+
+whatis = [
+    "Description: i-PI is a universal force engine interface written in Python, designed to be used together with an ab-initio (or force-field based) evaluation of the interactions between the atoms.",
+]
+
+description = """
+i-PI is a universal force engine interface written in Python, designed to be
+used together with an ab-initio (or force-field based) evaluation of the
+interactions between the atoms. The main goal is to decouple the problem of
+evolving the ionic positions to sample the appropriate thermodynamic ensemble
+and the problem of computing the inter-atomic forces.
+
+The implementation is based on a client-server paradigm, where i-PI acts as the
+server and deals with the propagation of the nuclear motion, whereas the
+calculation of the potential energy, forces and the potential energy part of the
+pressure virial is delegated to one or more instances of an external code,
+acting as clients.
+
+i-PI is free software, distributed under a dual MIT/GPLv3 licence. You are
+welcome to dowload, use, modify and redistribute it. To get the most up-to-date
+version, fetch it from the official i-PI repo. If you find it useful for your
+research, a citation would be appreciated to
+  Kapil et al., Comp. Phys. Comm. 236, 214–223 (2018)
+
+As of today, the following codes provide out-of-the-box an i-PI interface: CP2K,
+DFTB+, Lammps, Quantum ESPRESSO, Siesta, FHI-aims, Yaff, deMonNano, plumed, ASE,
+TBE. If you are interested in interfacing your code to i-PI please get in touch,
+we are always glad to help!
+"""
+
+docurls = [
+    " PDF manual: http://ipi-code.org/assets/pdf/manual.pdf (may not be the same version)"
+]
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+dependencies = [
+    ('Python',   local_Python3_version),
+]
+
+exts_default_options = {
+    'download_dep_fail': True,
+    'sanity_pip_check':  False,
+    'source_urls':       [PYPI_SOURCE],
+    'use_pip':           True,
+}
+
+exts_list = [
+    ('coverage', '5.3.1', {
+    }),
+    ('pytest-mock', '3.5.0', {
+        'modulename': 'pytest_mock',
+    }),
+    ('pytest-cov', '2.10.1', {
+        'modulename': 'pytest_cov',
+    }),
+    ('pycodestyle', '2.6.0' , {
+    }),
+    ('mccabe', '0.6.1', {
+    }),
+    ('pyflakes', '2.2.0', {
+    }),
+    ('flake8', '3.8.4', {
+    }),
+    (name, version, {
+        # https://github.com/i-pi/i-pi/archive/v2.3.0.tar.gz
+        'source_tmpl': 'v%(version)s.tar.gz',
+        'source_urls': ['https://github.com/i-pi/i-pi/archive'],
+        'modulename': 'ipi',
+    })
+]
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+# As the main EasyBlock is "Bundle" PYTHONPATH will not be set automatically
+# modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'chem'
