@@ -1,0 +1,122 @@
+easyblock = 'MakeCp'
+
+local_buildset = '2020a'
+
+name =          'VASP'
+version =       '6.1.2_patched'
+versionsuffix = '-Wannier90-2.1.0'
+
+import os as local_os
+local_UAcluster = local_os.environ['VSC_INSTITUTE_CLUSTER']
+local_systemstring = 'UA-' + local_UAcluster + '-' + local_buildset
+
+homepage = 'http://www.vasp.at'
+
+whatis = [
+    'Description: Vienna Ab initio Simulation Package (VASP), for atomic scale materials modelling',
+    'This module provides non-GPU versions of vasp_std, vasp_gam and vasp_ncl'
+]
+
+description = """
+NOTE BEFOREHAND: VASP sometimes shows very bad performance when compiled with
+this compiler (though sometimes very good also). But intel-2016b versions
+do give more predictable performance, though we have found them to go bad
+also in rare cases.
+
+The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic 
+scale materials modelling, e.g. electronic structure calculations and 
+quantum-mechanical molecular dynamics, from first principles.
+
+VASP computes an approximate solution to the many-body Schrödinger equation,
+either within density functional theory (DFT), solving the Kohn-Sham equations,
+or within the Hartree-Fock (HF) approximation, solving the Roothaan equations.
+Hybrid functionals that mix the Hartree-Fock approach with density functional
+theory are implemented as well. Furthermore, Green's functions methods (GW
+quasiparticles, and ACFDT-RPA) and many-body perturbation theory (2nd-order
+Møller-Plesset) are available in VASP.
+
+In VASP, central quantities, like the one-electron orbitals, the electronic
+charge density, and the local potential are expressed in plane wave basis sets.
+The interactions between the electrons and ions are described using
+norm-conserving or ultrasoft pseudopotentials, or the projector-augmented-wave
+method.
+
+To determine the electronic groundstate, VASP makes use of efficient iterative
+matrix diagonalisation techniques, like the residual minimisation method with
+direct inversion of the iterative subspace (RMM-DIIS) or blocked Davidson
+algorithms. These are coupled to highly efficient Broyden and Pulay density
+mixing schemes to speed up the self-consistency cycle.
+
+This module contains non-GPU versions of vasp_std, vasp_gam and vasp_ncl.
+
+VASP is licensed software. Only members of the avasp group can use VASP.
+
+"""
+description += 'The system string used in the results is ' + local_systemstring + '.'
+
+usage = """
+The VASP documentation can be found on the VASP web site www.vasp.at.
+Keep in mind that VASP can require a lot of memory and perform a lot of I/O
+when you are not exploiting parallelism sufficiently. Please choose your
+settings and cluster resources carefully to exploit sufficient parallelism and
+limit I/O. If you fail to do so, the result is slower running jobs, a more busy
+cluster and longer wait time for you and your colleagues.
+"""
+
+docurls = [
+    'Web-based documentation: https://www.vasp.at/documentation/'
+]
+
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+# Vasp is proprietary software, see https://www.vasp.at/faqs/ on how to get access to the code
+sources = ['vasp.%(version)s.tgz']
+
+builddependencies = [
+   ('Wannier90', '2.1.0'),
+]
+
+if local_UAcluster == 'vaughan':
+    dependencies = [ ('MKL-overlay', '2018.04', '', True )]
+
+#
+# Build instructions
+#
+
+prebuildopts  = 'cp arch/makefile.include.linux_intel ./makefile.include && '
+# Adapt the host name.
+prebuildopts += 'sed -i "s|LinuxIFC|' + local_systemstring + '|" makefile.include && '
+# Add the flag for Wannier90 
+prebuildopts += 'sed -i "s|-Dfock_dblbuf|-Dfock_dblbuf -DVASP2WANNIER90v2|" makefile.include && '
+# Adapt FFLAGS (add memory model)
+prebuildopts += 'sed -i "s|-assume byterecl|-assume byterecl -mcmodel=large -shared-intel|" makefile.include && '
+# Replace -xHOST for AMD Rome
+if local_UAcluster == 'vaughan':
+    prebuildopts += 'sed -i "s|-xHOST|-march=core-avx2 -mtune=core-avx2|" makefile.include && '
+#    prebuildopts += 'sed -i "s|-xHOST|-march=core-avx2|" makefile.include && '
+# Add Wannier90 library
+prebuildopts += 'sed -i "s|= \$(SCALAPACK)|= \$(EBROOTWANNIER90)/lib/libwannier.a \$(SCALAPACK)|" makefile.include && '
+## Add MKL wrapper of fftw + Wannier90 library
+#prebuildopts += 'sed -i "s|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o \$(MKLROOT)/lib/intel64/libfftw3xf_intel.a \$(EBROOTWANNIER90)/lib/libwannier.a |" makefile.include && '
+
+# VASP uses LIBS as a list of folders
+prebuildopts += 'unset LIBS && '
+
+buildopts = " std gam ncl "
+
+parallel = 1
+
+#
+# Install instructions
+#
+
+files_to_copy = [(['bin/vasp_std', 'bin/vasp_gam', 'bin/vasp_ncl'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/vasp_std', 'bin/vasp_gam', 'bin/vasp_ncl'],
+    'dirs':  []
+}
+
+moduleclass = 'phys'
