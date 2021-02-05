@@ -1,0 +1,225 @@
+easyblock = 'MakeCp'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_FFTW_version =           '3.3.8'           # http://www.fftw.org/
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+local_Yambo_version =          '4.5.3'           # https://github.com/yambo-code/yambo/releases
+local_libxc_Yambo_version =    '2.2.3'  # Search for version.*used in config/libxc.m4 or lib/archive/package.list.
+
+name =          'Yambo'
+version =       local_Yambo_version
+versionsuffix = '-noOpenMP-profile'
+
+homepage = 'http://www.yambo-code.org'
+
+whatis = [
+    'Description: Yambo is a FORTRAN/C code for Many-Body calculations in solid state and molecular physics.',
+]
+
+description = """
+YAMBO is an open-source code released within the GPL licence.
+
+YAMBO implements Many-Body Perturbation Theory (MBPT) methods (such as GW and
+BSE) and Time-Dependent Density Functional Theory (TDDFT), which allows for
+accurate prediction of fundamental properties as band gaps of semiconductors,
+band alignments, defect quasi-particle energies, optics and out-of-equilibrium
+properties of materials.
+
+The code resorts to previously computed electronic structure, usually at the
+Density Functional Theory (DFT) level and for this reason it is interfaced
+with two of the most used planewave DFT codes used in scientific community,
+Quantum ESPRESSO and Abinit.
+
+Options for Yambo:
+  * Compiled with MPI support but without OpenMP support
+  * The netCDF implementation is the one built internally by Yambo
+  * IOTK is included
+  * ETSF-IO is not included as the download link in the Yambo sources is wrong.
+  * Using FFTW3 as the FFT library as this has shown to be more reliable on
+    AMD Rome CPUs
+  * Single-threaded MKL BLAS/Lapack/ScaLPACK
+  * Support for SLEPc is included
+  * Time- and memory profiling is enabled
+
+The configuration is based on input from a UAntwerpen user.
+
+The configuration details are available in $EBROOTYAMBO/config/setup and
+$EBROOTYAMBO/config/report as these are requested when reporting bugs
+in the Yambo forum.
+"""
+
+site_contacts = 'hpc@uantwerpen.be'
+
+upstream_contacts = [
+    'http://www.yambo-code.org/forum/',
+]
+
+docurls = [
+    'Web-based documentation: http://www.yambo-code.org/learn/',
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+# https://github.com/yambo-code/yambo/archive/4.5.3.tar.gz
+sources = [
+    { # Yambo itself
+        'download_filename': '%(version)s.tar.gz',
+        'filename':          SOURCELOWER_TAR_GZ,
+        'source_urls':       ['https://github.com/yambo-code/yambo/archive']
+    },
+    { # Internal libxc: https://github.com/yambo-code/yambo/files/783150/libxc-2.2.3.tar.gz
+      # This file seems to differ from the standard libxc download with the same file name.
+         'filename':    'libxc-2.2.3.tar.gz',
+         'source_urls': ['https://github.com/yambo-code/yambo/files/783150/'],
+         'extract_cmd': 'cp %s yambo-%(version)s/lib/archive'
+    },
+    { # We download iotk-y1.2.2.tar.gz from the URL indicated in the Yambo scripts.
+        'filename':    'iotk-y1.2.2.tar.gz',
+        'source_urls': ['https://github.com/yambo-code/yambo/files/962173/'],
+        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive',
+    },
+#    { # ETSF-IO: Left out as according to the author of Yambo it isn't used anymore.
+#      # https://github.com/yambo-code/yambo/files/845218/etsf_io-1.0.4.tar.gz
+#        'filename':    'etsf_io-1.0.4.tar.gz',
+#        'source_urls': ['https://github.com/yambo-code/yambo/files/845218/'],
+#        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive',
+#    },
+    { # netcdf-c
+      # Yambo download: https://github.com/yambo-code/yambo/files/4570415/netcdf-c-4.7.4.tar.gz
+        'filename':    'netcdf-c-4.7.4.tar.gz',
+        'source_urls': ['https://github.com/yambo-code/yambo/files/4570415/'],
+        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive',
+    },
+    { # netcdf-fortran
+      # Yambo download: https://github.com/yambo-code/yambo/files/4570426/netcdf-fortran-4.5.2.tar.gz
+        'filename':    'netcdf-fortran-4.5.2.tar.gz',
+        'source_urls': ['https://github.com/yambo-code/yambo/files/4570426/'],
+        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive',
+    },
+    { # petsc-3.7.4
+      # Yambo download: https://github.com/yambo-code/yambo/files/783154/petsc-3.7.4.tar.gz
+      # PETSc GitLab: https://gitlab.com/petsc/petsc/-/archive/v3.7.4/petsc-v3.7.4.tar.gz: Not usable, different checksum.
+        'filename':    'petsc-3.7.4.tar.gz',
+        'source_urls': ['https://github.com/yambo-code/yambo/files/783154/'],
+        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive',
+    },
+    { # slepc-3.7.3
+      # Yambo download: https://github.com/yambo-code/yambo/files/789647/slepc-3.7.3.tar.gz
+      # SLEPc GitLab: https://gitlab.com/slepc/slepc/-/archive/v3.7.3/slepc-v3.7.3.tar.gz: Not usable, different checksum.
+        'filename':    'slepc-3.7.3.tar.gz',
+        'source_urls': ['https://github.com/yambo-code/yambo/files/789647/'],
+        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive',
+    },
+]
+patches = [
+    'Yambo-4.5.3_PETSc.patch',  # Fix PETSc Makefile.loc to enforce Python 2
+]
+checksums =   [
+    '04f89b5445d35443325c071784376c7b5c25cc900d1fdcc92971a441f8c05985',  # 4.5.3.tar/gz => yambo-4.5.3.tar.gz
+    '2f2b00b77a75c7fe8fe3f3ae70700cf28a09ff8d0ce791e47980ff7f9cde68e7',  # libxc-2.2.3.tar.gz
+    'c0a4eb19f3e885d83d7afa52eb90658fba7cb1cb6e66049866a98dcc980de543',  # iotk-y1.2.2.tar.gz
+#    '3140c2cde17f578a0e6b63acb27a5f6e9352257a1371a17b9c15c3d0ef078fa4',  # etsf_io-1.0.4.tar.gz
+    '0e476f00aeed95af8771ff2727b7a15b2de353fb7bb3074a0d340b55c2bd4ea8',  # netcdf-c-4.7.4.tar.gz
+    'b959937d7d9045184e9d2040a915d94a7f4d0185f4a9dceb8f08c94b0c3304aa',  # netcdf-fortran-4.5.2.tar.gz
+    '564deeefb852f473b35b0329bd4f695a2488c52209edb52e3a0b2448ab250b92',  # petsc-3.7.4.tar.gz
+    '3ef9bcc645a10c1779d56b3500472ceb66df692e389d635087d30e7c46424df9',  # slecps-3.7.3.tar.gz
+    'f7c710bb38996313a366c9bbe1c9bbc3d6c1587b63215e3842e2a3a3078bab64',  # Yambo-4.5.3_PETSc.patch
+]
+
+dependencies = [
+    ('FFTW',   local_FFTW_version,   '-MPI'),  # We certainly don't want Yambo to try to install its own FFTW as it needs patching.
+#    ('netCDF', local_netCDF_version, '-MPI'), # Does need the Fortran interface included in this module.
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True),
+]
+
+with_configure = True
+
+preconfigopts  = 'unset CPPFLAGS ; ' # Crucial or sbin/make_makefile.sh doesn't work as it should.
+preconfigopts += 'unset CC  ; unset MPICC  ; unset CFLAGS  ; '
+preconfigopts += 'unset FC  ; unset MPIFC  ; unset FCFLAGS ; '
+preconfigopts += 'unset F77 ; unset MPIF77 ; unset FFLAGS  ; '
+
+configopts  = 'CC=$EBVARCC_SEQ   MPICC=$EBVARCC   CFLAGS="$EBVARCFLAGS" '
+configopts += 'FC=$EBVARFC_SEQ   MPIFC=$EBVARFC   FCFLAGS="$EBVARFFLAGS" '
+configopts += 'F77=$EBVARF77_SEQ MPIF77=$EBVARF77 FFLAGS="$EBVARFFLAGS" '
+configopts += 'PFC=$EBVARFC '
+configopts += 'CPP=cpp FPP="fpp -free -P" '
+# Work around a bug in the build process that fails if --prefix points to
+# anything else than the build directory.
+configopts += '--prefix=%(builddir)s/%(namelower)s-%(version)s '
+# Configure the compilation.
+# --enable-keep-objects is essential. Without it, the build of the Yambo projects fail.
+# configopts += '--enable-keep-objects --enable-keep-src --enable-keep-extlibs '
+configopts += '--enable-keep-objects --disable-keep-src --disable-keep-extlibs '
+configopts += '--enable-msgs-comps --enable-options-check --disable-debug-flags '
+#configopts += '--enable-dp=no ' # This is the default, but specifying it this way does not work due to a bug in the configure script.
+configopts += '--enable-time-profile --enable-memory-profile --disable-uspp'
+configopts += '--enable-mpi --disable-open-mp '
+#
+# Configure file format support
+#
+# - Built-in net CDF
+configopts += '--disable-netcdf-classic --disable-netcdf-hdf5 '
+configopts += '--disable-hdf5-compression --disable-hdf5-par-io --disable-hdf5-p2y-support '
+# - IOTK
+configopts += '--enable-iotk '
+# ETSF-IO: Not used anymore in practice according to one of the authors of Yambo.
+configopts += '--disable-etsf-io '
+#
+# Configure the math support
+#
+# - FFT: We want to use our own FFTW3 module
+configopts += '--disable-internal-fftqe --disable-internal-fftsg --disable-3d-fft '
+configopts += '--with-fft-path=$EBROOTFFTW --with-fft-libdir=$EBROOTFFTW/lib/ --with-fft-includedir=$EBROOTFFTW/include/ '
+# - BLAS and Lapack from MKL
+configopts += '--disable-int-linalg  --disable-openmp-int-linalg '
+#configopts += '--with-blas-libs="-L$MKLROOT/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl" '
+configopts +='--with-blas-libs="-L$MKLROOT/lib/intel64 -$LIBBLAS" '
+#configopts += '--with-lapack-libs="-L$MKLROOT/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl" '
+configopts += '--with-lapack-libs="-L$MKLROOT/lib/intel64 $LIBLAPACK" '
+# - BLACS and ScaLAPACK from MKL
+configopts += '--disable-par-linalg '    # If set to yes, configure would enforce an internal BLACS and ScaLAPACK.
+#configopts += '--with-scalapack-libs="-L$MKLROOT/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lpthread -lm -ldl" '
+configopts += '--with-scalapack-libs="-L$MKLROOT/lib/intel64 $LIBSCALAPACK" '
+#configopts += '--with-blacs-libs="-L$MKLROOT/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lpthread -lm -ldl" '
+configopts += '--with-blacs-libs="-L$MKLROOT/lib/intel64 $LIBBLACS" '
+# - SLEPc (requires PETSc): Internal
+configopts += '--enable-slepc-linalg ' # Makes more sense that --with-petsc-libs and --with-slepc-libs in the config I got.
+#
+# Avoid an accidental GPU build
+#
+configopts += '--disable-cuda --disable-nvtx '
+
+#buildopts = 'yambo ypp interfaces'
+buildopts = 'all'
+#buildopts = 'int-libs'
+
+parallel = 1
+
+files_to_copy = [
+    'bin',
+    'lib',
+    'include',
+    'driver',
+    'README', 'AUTHORS', 'COPYING',
+    (['config/setup', 'config/report'], 'config'), # These files are requested when reporting bugs.
+]
+
+sanity_check_paths = {
+    'files': ['bin/' + x for x in ['yambo', 'ypp',
+                                   'a2y', 'p2y', # e2y not included in this build as we do not include etsf-io.
+                                   'yambo_ph', 'ypp_ph',  # Yambo PH project
+                                   'yambo_rt', 'ypp_rt',  # Yambo RT project
+                                   'yambo_nl', 'ypp_nl',  # Yambo NL project
+                                   'yambo_kerr',          # Yambo KERR project, no ypp equivalent
+                                   ]],
+    'dirs':  []
+}
+
+moduleclass = 'phys'

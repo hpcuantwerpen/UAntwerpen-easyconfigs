@@ -1,0 +1,27 @@
+Patch written by Kurt Lust, UAntwerp.
+Fixes a problem with the configure scripts of the internally compiled PETSc and SLEPc
+that only work with Python 2 and assume python is Python 2
+diff -ru yambo-4.5.3/lib/petsc/Makefile.loc.orig yambo-4.5.3/lib/petsc/Makefile.loc
+diff -ru yambo-4.5.3/lib/petsc/Makefile.loc.orig yambo-4.5.3/lib/slepc/Makefile.loc
+--- yambo-4.5.3/lib/petsc/Makefile.loc.orig	2021-02-03 14:13:04.000000000 +0100
++++ yambo-4.5.3/lib/petsc/Makefile.loc	2021-02-03 14:13:15.000000000 +0100
+@@ -43,7 +43,7 @@
+ 	  cd $(PACKAGE);  \
+ 	  unset PETSC_DIR; \
+ 	  unset PETSC_ARCH; \
+-	  ./configure $(AUXFLAGS) \
++	  python2 ./configure $(AUXFLAGS) \
+ 	  --with-cc=$(cc) \
+ 	  --with-fc=$(fc) ; \
+ 	fi
+--- yambo-4.5.3/lib/slepc/Makefile.loc.orig	2021-02-03 14:13:22.000000000 +0100
++++ yambo-4.5.3/lib/slepc/Makefile.loc	2021-02-03 14:13:31.000000000 +0100
+@@ -37,7 +37,7 @@
+ 	  cd $(PACKAGE); \
+ 	  PETSC_DIR=$(LIBPATH) \
+ 	  SLEPC_DIR=$(PWD)/$(PACKAGE) \
+-	  ./configure $(AUXFLAGS) ; \
++	  python2 ./configure $(AUXFLAGS) ; \
+ 	fi
+ 	touch configure-stamp
+ 	

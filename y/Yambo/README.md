@@ -11,8 +11,16 @@
       * [Yambo Wiki](http://www.yambo-code.org/wiki/index.php?title=Main_Page)
       * [Yambo forum](http://www.yambo-code.org/forum/) may provide useful information
         also.
+  * There is a [scary page with test results](http://www.yambo-code.org/robots/index.php),
+    unfortunately the testing is mostly done with a single compiler, GNU Fortran, except
+    for some GPU builds, and with a single set of linear algebra libraries, where it
+    is not even clear where they come from. It may simply be compiles of the reference
+    libraries from NetLib, or maybe OpenBLAS for BLAS (though on our systems that one
+    is called libopenblas.a).
   * Some articles that may provide additional information:
-      * [Many-body perturbation theory calculations using the yambo code](https://iopscience.iop.org/article/10.1088/1361-648X/ab15d0)
+      * [Many-body perturbation theory calculations using the yambo code](https://iopscience.iop.org/article/10.1088/1361-648X/ab15d0):
+        Likely for yambo 4.4 as that is the most recent version mentioned in the paper,
+        but contains more information than the documentation does.
 
 
 ## General information
@@ -23,6 +31,34 @@
     It however only seems to work with very old versions of libxc. It
     downloads its own libxc if it cannot find a compatible one.
     **Search for `version.*used` in `config/libxc.m4'.**
+
+### Yambo binaries (updated for 4.5.x)
+
+Executables in the ``bin`` directory:
+
+  * Yambo interfaces:
+      * ``a2y``: ABINIT interface based on binary Fortran files, lways part of the interfaces
+      * ``e2y``: ABINIT interface based on ETSF-IO. Only built when etsf-io support is turned on
+      * ``p2y``: This stands for pwscf-2-yambo, the interface to QuantumESPRESSO.
+        Only built when IOTK is enabled, additional features depending on the HDF5
+        configuration (``--enable-hdf5-p2y-support`).
+  * Core of Yambo consists of:
+      * ``yambo``
+      * ``ypp``, the Yambo Post- and Pre-Processing tool
+      * The Yambo interfaces
+  * The main Makefile suggests 4 Yambo projects:
+      * PH:
+          * ''yambo_ph''
+          * ''ypp_ph''
+      * RT:
+          * ''yambo_rt''
+          * ''ypp_rt'': Pre-and postpprocessing for ``yambo_rt`
+      * NL:
+          * ''yambo_nl''
+          * ''ypp_nl'': Pre-and postpprocessing for ``yambo_nl``
+      * KERR:
+          * ''yambo_kerr''
+
 
 ### Build process
 
@@ -166,33 +202,7 @@ We made our EasyConfig for Yambo 4.4.1 based on
 | --disable-nvtx             |                                  | cuda.m4              |
 
 
-#### Binaries generated
-
-Executables in the ``bin`` directory:
-
-  * Yambo interfaces:
-      * ``a2y``: Always part of the interfaces
-      * ``e2y``: Only when etsf-io support is turned on
-      * ``p2y``: Only when IOTK is enabled, additional features depending on the HDF5
-        configuration (``--enable-hdf5-p2y-support`).
-  * Core of Yambo consists of:
-      * ``yambo``
-      * ``ypp``
-      * The Yambo interfaces
-  * The main Makefile suggests 4 Yambo projects:
-      * PH:
-          * ''yambo_ph''
-          * ''ypp_ph''
-      * RT:
-          * ''yambo_rt''
-          * ''ypp_rt''
-      * NL:
-          * ''yambo_nl''
-          * ''ypp_nl''
-      * KERR:
-          * ''yambo_kerr''
-
-Building:
+#### Order of the build process
 
   * ``make ext-libs``: Build the libraries that need to be downloaded from external
     sources.
