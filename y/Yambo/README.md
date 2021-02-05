@@ -1,5 +1,19 @@
 # Yambo install instructions
 
+  * [Yambo home page](http://www.yambo-code.org/)
+  * [Yambo development on GitHub](https://github.com/yambo-code/yambo)
+      * [GitHub releases](https://github.com/yambo-code/yambo/releases). Note that
+        there are often hidden tags on that page, even at the top, hiding newer versions.
+  * The documentation is poor and outdated. Many of the features mentioned do not work
+    anymore or do no exist anymore (such as the test suite), and when installing version
+    4.5, the information about building Yambo was still for 4.4 and some pages even
+    for earlier versions.
+      * [Yambo Wiki](http://www.yambo-code.org/wiki/index.php?title=Main_Page)
+      * [Yambo forum](http://www.yambo-code.org/forum/) may provide useful information
+        also.
+  * Some articles that may provide additional information:
+      * [Many-body perturbation theory calculations using the yambo code](https://iopscience.iop.org/article/10.1088/1361-648X/ab15d0)
+
 
 ## General information
 
@@ -41,6 +55,9 @@
         (see also remarks in the spack code which confirm this).
    * `--enable-dp` has a different meaning than what one would expect. When it is set to yes,
      it effectively promotes variables that would be single precision otherwise to double precision.
+   * There used to be a test suite and
+     [it is still mentioned in the documentation](http://www.yambo-code.org/wiki/index.php?title=Test-suite-simple).
+     However, the repo is nowhere to be found.
 
 The conclusion can only be that Yambo can only be compiled in-place due to a very
 buggy and non-standard install procedure.
@@ -87,36 +104,6 @@ We made our EasyConfig for Yambo 4.4.1 based on
 
 ### Yambo 4.5.3 on intel/2020a
 
-STATUS: EasyBuild crashes because invalid Makefiles are generated somewhere, maybe
-because line continuation backslashes in hidden .objects files do not appear in the
-generated Makefiles.
-
-The problem may very well occur in ``sbin/make_makefile.sh`` which is called just before
-calling the Makefile.
-
-The crucial block of code is
-```bash
-cp $cdir/$ofile $cdir/$ofile.c
-$cpp $cppflags $dopts -D_$os -D_$target $cdir/$ofile.c >> $cdir/Makefile
-rm -f $cdir/$ofile.c
-```
-For some reason, cpp behaves different in the EasyConfig. Maybe a different binary
-is used but it is not clear yet which one.
-
-When building with EasyBuild, the command is:
-```bash
-cpp -I/apps/antwerpen/broadwell/centos7/FFTW/3.3.8-intel-2020a-MPI/include -I/apps/antwerpen/x86_64/centos7/intel-psxe/2020.04/compilers_and_libraries_2020.4.304/linux/mkl/include  -D_MPI -D_FFTW -D_SCALAPACK -D_TIMING -D_MEM_CHECK -D_linux -D_libqe_pseudo.a lib/qe_pseudo/.objects.c
-```
-while when building from the command line, we get
-```bash
-cpp -traditional -D_MPI -D_FFTW -D_SCALAPACK -D_TIMING -D_MEM_CHECK -D_linux -D_libqe_pseudo.a lib/qe_pseudo/.objects.c
-```
-The cause turned out to be that CPPFLAGS was set which avoided setting the ``-traditional``
-flag.
-
-
-REGULAR TEXT
-
   * Based on the setup of a user who reported problems with 4.4.1
   * Yambo 4.5.x still does not support a proper ``make install`` (nor a proper
     ``make help`` to get decent information about what the Makefiles support).
@@ -145,6 +132,7 @@ REGULAR TEXT
     is ``CPPFLAGS``. If that is set, it may be the trigger for very strange compile
     problems in some routines such as those in ``lib/qe_pseudo`` with compilation failing
     with an error message about a separator in the Makefile. See the issue below.
+
 
 | Option                     | Value                            | Where?
 |----------------------------|----------------------------------|----------------------|
@@ -177,6 +165,93 @@ REGULAR TEXT
 | --disable-cuda             |                                  | cuda.m4              |
 | --disable-nvtx             |                                  | cuda.m4              |
 
+
+#### Binaries generated
+
+Executables in the ``bin`` directory:
+
+  * Yambo interfaces:
+      * ``a2y``: Always part of the interfaces
+      * ``e2y``: Only when etsf-io support is turned on
+      * ``p2y``: Only when IOTK is enabled, additional features depending on the HDF5
+        configuration (``--enable-hdf5-p2y-support`).
+  * Core of Yambo consists of:
+      * ``yambo``
+      * ``ypp``
+      * The Yambo interfaces
+  * The main Makefile suggests 4 Yambo projects:
+      * PH:
+          * ''yambo_ph''
+          * ''ypp_ph''
+      * RT:
+          * ''yambo_rt''
+          * ''ypp_rt''
+      * NL:
+          * ''yambo_nl''
+          * ''ypp_nl''
+      * KERR:
+          * ''yambo_kerr''
+
+Building:
+
+  * ``make ext-libs``: Build the libraries that need to be downloaded from external
+    sources.
+      * The netCDF Fortran build has problems with a parallel build.
+  * ``make int-libs``:
+      * Builds the external libraries if not yet build
+      * Build the internal libraries (``qe_pseudo``, ``slatec``,
+        ``math77``, ``local`)
+  * ``make yambo``:
+      * Builds the internal and external libraries if not yet build
+      * Builds ``yambo``.
+  * ``make ypp``:
+      * Builds the internal and external libraries if not yet build
+      * Builds ``ypp``
+  * ``make a2y`` (if relevant)
+      * Builds the internal and external libraries if not yet build
+      * Builds ``a2y``
+  * ``make p2y`` (if relevant)
+      * Builds the internal and external libraries if not yet build
+      * Builds ``p2y``
+  * ``make e2y`` (if relevant)
+      * Builds the internal and external libraries if not yet build
+      * Builds ``e2y``
+  * ``make yambo_ph``
+      * Builds the internal and external libraries if not yet build
+      * Builds ``yambo_ph``
+  * ``make ypp_ph``
+      * Builds the internal and external libraries if not yet build
+      * Builds ``ypp_ph``
+  * ``make yambo_rt``
+      * Builds the internal and external libraries if not yet build
+      * Builds ``yambo_rt``
+  * ``make ypp_rt``
+      * Builds the internal and external libraries if not yet build
+      * Builds ``ypp_rt``
+  * ``make yambo_nl``
+      * Builds the internal and external libraries if not yet build
+      * Builds ``yambo_nl``
+  * ``make ypp_nl``
+      * Builds the internal and external libraries if not yet build
+      * Builds ``ypp_nl`
+  * ``make yambo_kerr``
+      * Builds the internal and external libraries if not yet build
+      * Builds ``yambo_kerr``
+
+
+Single-target builds:
+
+  * ``make libs`` is equivalent to ``make ext-libs int-libs``
+  * ``make core`` is equivalent to ``make ext-libs int-libs yambo ypp a2y p2y e2y``,
+    but leaving out the interfaces that are irrelevant.
+  * ``make interfaces`` is a shortcut to build ``a2y``, ``p2y`` and ``e2y`` in that
+    order.
+  * ``make ph_project`` is equivalent to ``make ext-libs int-libs yambo_ph ypp_ph``
+  * ``make rt_project`` is equivalent to ``make ext-libs int-libs yambo_rt ypp_rt``
+  * ``make nl_project`` is equivalent to ``make ext-libs int-libs yambo_nl ypp_nl``
+  * ``make kerr_project`` is equivalent to ``make ext-libs int-libs yambo_kerr``
+  * ``make all`` is equivalent to ``make ext-libs int-libs yambo ypp a2y p2y e2y yambo_ph
+    ypp_ph yambo_rt ypp_rt yambo_nl ypp_nl yambo_kerr``
 
 #### Issue with separators in some Makefiles
 
@@ -352,7 +427,7 @@ set up the same way) there are environment variables that point to the libraries
 the include files so that compilers may find them without `-L`` and ``-I``-options,
 which is why ``--enable-<feature>`` or ``--with-<feature>`` flags make sense.
 
-### Bug 8: Build process of libxc
+#### Bug 8: Build process of libxc
 
 The build process does not support a parallel make due to errors in the dependencies.
 So sometimes the compiler tries to open a module file that is not yet generated.
