@@ -1,0 +1,53 @@
+# This is a Makefile for kite-1.0/Src
+#
+
+all : KITEx
+
+# CXX ?= icpc is problematic because if make is not run with -R, the build-in value g++ takes precedence.
+CXX       = icpc
+# We need to use -ipo, otherwise linking fails unless the optimization level is -O0.
+#CXXFLAGS ?= -O2 -march=core-avx2 -mtune=core-avx2 -std=c++17 -ftz -fp-speculation=safe -fp-model source -fPIC -qopenmp
+CXXFLAGS ?= -O2 -ipo -march=core-avx2 -mtune=core-avx2 -std=c++17 -ftz -fp-speculation=safe -fp-model source -fPIC -qopenmp -Wall
+CXXFLAGS += -DVERBOSE=0 -DDEBUG=0 -DCOMPILE_WAVEPACKET=1 -I$(EBROOTEIGEN)/include -I$(EBROOTHDF5)/include
+LDFLAGS   = -L$(EBROOTHDF5)/lib
+LDLIBS    = -lhdf5_hl_cpp -lhdf5_cpp -lhdf5_hl -lhdf5 -lz -lm
+
+ComplexTraits.o : ComplexTraits.cpp
+Coordinates.o : Coordinates.cpp
+Gamma1D.o : Gamma1D.cpp
+Gamma2D.o : Gamma2D.cpp
+Gamma3D.o : Gamma3D.cpp
+Global.o : Global.cpp
+GlobalSimulation.o : GlobalSimulation.cpp
+Hamiltonian.o : Hamiltonian.cpp
+HamiltonianDefects.o : HamiltonianDefects.cpp
+HamiltonianRegular.o : HamiltonianRegular.cpp
+HamiltonianVacancies.o : HamiltonianVacancies.cpp
+KPM_Vector2D.o : KPM_Vector2D.cpp
+KPM_Vector3D.o : KPM_Vector3D.cpp
+KPM_VectorBasis.o : KPM_VectorBasis.cpp
+KPM_Vector.o : KPM_Vector.cpp
+LatticeStructure.o : LatticeStructure.cpp
+main.o : main.cpp
+myHDF5.o : myHDF5.cpp
+queue.o : queue.cpp
+Random.o : Random.cpp
+recursive_kpm.o : recursive_kpm.cpp
+SimulationARPES.o : SimulationARPES.cpp
+SimulationCondDC.o : SimulationCondDC.cpp
+SimulationCondOpt2.o : SimulationCondOpt2.cpp
+SimulationCondOpt.o : SimulationCondOpt.cpp
+Simulation.o : Simulation.cpp
+SimulationDOS.o : SimulationDOS.cpp
+SimulationGaussianWavePacket.o : SimulationGaussianWavePacket.cpp
+SimulationLMU.o : SimulationLMU.cpp
+SimulationSingleShot.o : SimulationSingleShot.cpp
+
+
+KITEx : ComplexTraits.o Coordinates.o Gamma1D.o Gamma2D.o Gamma3D.o Global.o GlobalSimulation.o Hamiltonian.o HamiltonianDefects.o HamiltonianRegular.o HamiltonianVacancies.o KPM_Vector2D.o KPM_Vector3D.o KPM_VectorBasis.o KPM_Vector.o LatticeStructure.o main.o myHDF5.o queue.o Random.o recursive_kpm.o SimulationARPES.o SimulationCondDC.o SimulationCondOpt2.o SimulationCondOpt.o Simulation.o SimulationDOS.o SimulationGaussianWavePacket.o SimulationLMU.o SimulationSingleShot.o
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
+clean :
+	-/bin/rm -f *.o
+	-/bin/rm -f KITEx
+

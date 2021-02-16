@@ -1,0 +1,57 @@
+# This is a makefile for kite-1.0/tools/src
+#
+
+all : KITE-tools
+
+# CXX ?= icpc is problematic because if make is not run with -R, the build-in value g++ takes precedence.
+CXX          = icpc
+# We need to use -ipo, otherwise linking fails unless the optimization level is -O0.
+#CXXFLAGS    ?= -O2 -march=core-avx2 -mtune=core-avx2 -std=c++17 -ftz -fp-speculation=safe -fp-model source -fPIC -qopenmp
+CXXFLAGS    ?= -O2 -ipo -march=core-avx2 -mtune=core-avx2 -std=c++17 -ftz -fp-speculation=safe -fp-model source -fPIC -qopenmp -Wall
+CXXDEFS      = -DVERBOSE=0 -DDEBUG=0 -DCOMPILE_WAVEPACKET=1
+CXXINCLUDES  = -I$(EBROOTEIGEN)/include -I$(EBROOTHDF5)/include
+LDFLAGS      = -L$(EBROOTHDF5)/lib
+LDLIBS       = -lhdf5_hl_cpp -lhdf5_cpp -lhdf5_hl -lhdf5 -lz -lm
+
+VPATH=.:cond_2order:cond_dc
+
+arpes.o :                arpes.cpp
+calculate.o :            calculate.cpp
+conductivity_2order.o :  conductivity_2order.cpp
+Gamma0.o :               Gamma0.cpp
+Gamma0photo.o :          Gamma0photo.cpp
+Gamma1.o :               Gamma1.cpp
+Gamma1photo.o :          Gamma1photo.cpp
+Gamma2.o :               Gamma2.cpp
+Gamma2photo.o :          Gamma2photo.cpp
+Gamma3.o :               Gamma3.cpp
+Gamma3photo.o :          Gamma3photo.cpp
+conductivity_dc.o :      conductivity_dc.cpp
+fill.o :                 fill.cpp
+conductivity_optical.o : conductivity_optical.cpp
+dos.o :                  dos.cpp
+functions.o :            functions.cpp
+ldos.o :                 ldos.cpp
+myHDF5.o :               myHDF5.cpp
+systemInfo.o :           systemInfo.cpp
+main.o :                 main.cpp                 compiletime_info.h
+parse_input.o :          parse_input.cpp          compiletime_info.h
+
+compiletime_info.h : .FORCE
+	echo "#define MACHINE_NAME \"$${VSC_INSTITUTE_CLUSTER}\""  > $@
+	echo "#define SYSTEM_NAME \"$${VSC_OS_LOCAL}\""           >> $@
+	echo "#define TODAY \"$$(date)\""                         >> $@
+
+.FORCE :
+
+%.o : %.cpp
+	$(CXX) -c $< -o $@ $(CXXFLAGS) $(CXXDEFS) $(CXXINCLUDES)
+
+KITE-tools : arpes.o calculate.o conductivity_2order.o Gamma0.o Gamma0photo.o Gamma1.o Gamma1photo.o Gamma2.o Gamma2photo.o Gamma3.o Gamma3photo.o conductivity_dc.o fill.o conductivity_optical.o dos.o functions.o ldos.o main.o myHDF5.o parse_input.o systemInfo.o
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
+clean :
+	-/bin/rm -f *.o
+	-/bin/rm -f compiletime_info.h
+	-/bin/rm -f KITE-tools
+

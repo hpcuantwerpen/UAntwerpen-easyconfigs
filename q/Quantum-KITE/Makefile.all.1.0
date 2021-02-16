@@ -1,0 +1,8 @@
+all : Src/KITEx tools/src/KITE-tools
+
+Src/KITEx :
+	$(MAKE) -C Src
+
+tools/src/KITE-tools :
+	$(MAKE) -C tools/src
+

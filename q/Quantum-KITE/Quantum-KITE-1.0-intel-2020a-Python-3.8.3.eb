@@ -1,0 +1,132 @@
+easyblock = 'MakeCp'
+
+local_buildset =         '2020a'
+
+local_Eigen_version =          '3.3.7'           # https://gitlab.com/libeigen/eigen/-/releases
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+local_kwant_version =          '1.4.2'           # https://pypi.org/project/kwant/
+
+local_QuantumKITE_version =    '1.0'             # Not the actual version, we install from a git commit as the 1.0 tag is missing in the repository.
+local_commit = '7e298ea'
+
+name =          'Quantum-KITE'
+version =       local_QuantumKITE_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://quantum-kite.com/'
+
+whatis = [
+    'Description: KITE: accurate modelling of electronic structure and response functions of large molecules, crystals and hybrid materials.',
+]
+
+description = """
+KITE is an open-source Python/C++ software suite for real-space tight-binding (TB)
+simulations of electronic structure and bulk quantum transport properties of
+disordered systems scalable to multi billions of atomic orbitals.
+
+KITE v1.0 is shipped with the following capabilities (for clean and disordered
+systems in two and three spatial dimensions):
+
+  - Quantum Transport: longitudinal and transverse DC conductivities at zero and
+    finite temperature;
+  - Optical Properties: AC longitudinal conductivity;
+  - Optical Properties: nonlinear optical susceptibility;
+  - Unitary time evolution: Gaussian wave-packet propagation (diffusion);
+  - Electronic Structure: high-resolution density of states (DoS);
+  - Electronic Structure: local DoS and ARPES;
+  - Special Features: automated magnetic field in 2D;
+  - Special Features: lattice perturbations (e.g., strain) and ‘disorder cell’
+    concept for implementation of multi-orbital/-bond impurities;
+  - Algorithms: ultra-high-resolution CPGF full spectral (DoS);
+  - Algorithms: high-resolution CPGF full spectral (finite temperature response
+    functions);
+  - Algorithms: ultra-high-resolution CPGF single-shot (zero temperature DC
+    conductivity)
+
+For further details on the algorithms and the implementation please refer to
+S. M. Joao et al., R. Soc. Open Sci. 7, 191809 (2020) [https://royalsocietypublishing.org/doi/full/10.1098/rsos.191809].
+
+KITE is licensed under the GNU Lesser General Public License.
+See $EBROOTQUANTUMMINKITE/LICENSE.md for a copy of the license.
+"""
+
+usage = """
+The following tools are provided:
+
+  - KITEx and KITE-tools are in the PATH after loading the module.
+  - kite.py is in PYTHONPATH
+  - $EBROOTQUANTUMMINKITE also contains copies of the examples
+    examples_workshop and KITE_paper_examples directories. These are
+    of course read-only so you will need to copy them if you want to
+    work with the examples.
+"""
+
+site_contacts = 'hpc@uantwerpen.be'
+
+docurls = [
+    'Web-based documentation on the main site: https://quantum-kite.com/getting-started/',
+    'Web-based documentation on GitHub: https://github.com/quantum-kite/kite/tree/master/docs',
+]
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'openmp': True, 'pic': True, 'cstd': 'c++17', 'extra_cxxflags': '-ipo'}
+
+dependencies = [
+    ('Python', local_Python3_version),
+    ('kwant-bundle', local_kwant_version, '-Python-%(pyver)s')
+]
+
+builddependencies = [
+    ('buildtools', local_buildset,      '', True),
+    ('Eigen',      local_Eigen_version, '', True),
+]
+
+sources = [
+    {
+        'filename':         'kite-%(version)s.tar.gz',
+        'git_config': {
+            'url':          'https://github.com/quantum-kite/',
+            'repo_name':    'kite',
+            'commit':       local_commit,
+            'keep_git_dir': False,
+        },
+    },
+    {
+        'filename':    'Makefile.all.%(version)s',
+        'extract_cmd': 'cp %s kite/Makefile'
+    },
+    {
+        'filename':    'Makefile.KITEx.%(version)s',
+        'extract_cmd': 'cp %s kite/Src/Makefile'
+    },
+    {
+        'filename':    'Makefile.KITE-tools.%(version)s',
+        'extract_cmd': 'cp %s kite/tools/src/Makefile'
+    },
+]
+
+start_dir = 'kite'
+skipsteps = ['configure']
+
+buildopts = 'CXX="$CXX"'
+
+files_to_copy = [
+    (['Src/KITEx', 'tools/src/KITE-tools'], 'bin'),
+    (['kite.py', 'process_arpes1.py', 'process_new.py'], 'scripts'),
+    ([ 'kite.py'], 'lib/python%(pyshortver)s/site-packages'),
+    'LICENSE.md', 'README.md', 'version.md',
+    'docs', 'examples', 'examples_workshop', 'KITE_paper_examples',
+]
+
+postinstallcmds = [
+    'cd %(installdir)s/lib/python%(pyshortver)s/site-packages ; python -m py_compile kite.py',
+]
+
+sanity_check_paths = {
+    'files': ['bin/KITEx', 'bin/KITE-tools'],
+    'dirs':  []
+}
+
+modextrapaths = {'PYTHONPATH': ['lib/python%(pyshortver)s/site-packages']}
+
+moduleclass = 'phys'
