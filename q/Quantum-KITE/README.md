@@ -88,7 +88,9 @@ Given the number of packages that are called ``kite``, we decided to name the pa
   * To avoid having two build process we also created a top-level Makefile that
     simply starts both build processes. Since there are more files that need
     copying we didn't implement a ``make install`` but simply use a ``MakeCp``
-    EasyBlock.
+    EasyBlock. Note that these Makefiles are not suitable for code development as
+    most dependencies on include files are missing. Hence an update of the include
+    files will not trigger the correct rebuilds.
   * Even though the executables ``KITEx`` and ``KITE-tools`` do not require Python
     at all, we decided to make ``kwant-bundle`` a dependency to ensure that it is
     used with a ``Python`` version with a compatible HDF5 library and since Pybinding

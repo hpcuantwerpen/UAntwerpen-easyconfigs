@@ -1,5 +1,8 @@
 # This is a Makefile for kite-1.0/Src
 #
+# Note that this Makefile is not suitable for development work most dependencies on
+# include files are missing.
+#
 
 all : KITEx
 

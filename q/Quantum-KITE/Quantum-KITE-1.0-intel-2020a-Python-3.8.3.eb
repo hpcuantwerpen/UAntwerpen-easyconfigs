@@ -59,6 +59,9 @@ The following tools are provided:
     examples_workshop and KITE_paper_examples directories. These are
     of course read-only so you will need to copy them if you want to
     work with the examples.
+
+Quantum-KITE was compiled with support for OpenMP so you'll have to ensure that
+OMP_NUM_THREADS has a suitable value on those machines that need it.
 """
 
 site_contacts = 'hpc@uantwerpen.be'
