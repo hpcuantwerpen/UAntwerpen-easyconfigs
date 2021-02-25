@@ -1,0 +1,52 @@
+easyblock = 'PythonPackage'
+
+local_buildset =         '2020a'
+
+local_archspec_version =       '0.1.0'           # https://github.com/archspec/archspec/releases. 0.1.1 requires a newer version of Clickx than is in our Python.
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+
+name =          'archspec'
+version =       local_archspec_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://github.com/archspec/archspec'
+
+whatis = [
+    'Description: archspec is a library for detecting, labeling, and reasoning about microarchitectures'
+]
+
+description = """
+Archspec aims at providing a standard set of human-understandable labels for
+various aspects of a system architecture like CPU, network fabrics, etc. and
+APIs to detect, query and compare them.
+
+This project grew out of Spack and is currently under active development. At
+present it supports APIs to detect and model compatibility relationships
+among different CPU microarchitectures.
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = [PYPI_SOURCE]
+sources =     ['archspec-%(version)s-py2.py3-none-any.whl']
+checksums =   ['12f2029f63ffbc560e43f7d1f366a45ff46c7bd0751653227f8015f83f121119']
+
+dependencies = [
+    ('Python', local_Python3_version)
+]
+
+unpack_sources = False
+
+download_dep_fail = True
+use_pip = True
+
+sanity_check_paths = {
+    'files': [],
+    'dirs':  ['lib/python%(pyshortver)s/site-packages'],
+}
+
+sanity_check_commands = ["python -c 'from archspec.cpu import host; print(host())'"]
+
+sanity_pip_check = True
+
+moduleclass = 'tools'

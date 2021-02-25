@@ -1,0 +1,63 @@
+# Updated from previous config
+# Author: Pavel Grochal (INUITS)
+# License: GPLv2
+#
+# Building this in interactive Slurm session will result in freeze during either
+# runtest phase or sanity_check_commands phase (python -c 'import yaff')
+#
+# If you submit this as non-interactive Slurm job, it will build just fine.
+# Possibly root cause: https://github.com/h5py/h5py/issues/917
+#
+easyblock = 'PythonPackage'
+
+local_buildset =         '2020a'
+
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+local_molmod_version =         '1.4.7'           # https://github.com/molmod/molmod/releases
+local_yaff_version =           '1.6.0'           # https://github.com/molmod/yaff/releases
+
+name =          'yaff'
+version =       local_yaff_version
+versionsuffix = '-Python-%(pyver)s'
+
+homepage = 'https://molmod.github.io/yaff/'
+
+whatis = [
+    'Description: Yaff stands for Yet another force field'
+]
+
+description = """
+Yaff stands for "Yet another force field". It is a pythonic force-field code
+used by Toon and Louis to test-drive their new models. The original motivation
+to develop Yaff was to provide a good reference implementation of the force
+fields developed at the Center for Molecular Modeling (CMM) at Ghent University.
+In its current version, Yaff is general and flexible enough to handle a large
+variety of force field models.
+
+More information about Yaff can be found on the CMM Code website:
+http://molmod.ugent.be/software
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+
+source_urls = ['https://github.com/molmod/yaff/releases/download/%(version)s']
+sources =     [SOURCE_TAR_GZ]
+checksums =   ['a266ab032778e37bb2e93152aefb67f396827aa728151651403984429c74ceaa']
+
+dependencies = [
+    ('Python', local_Python3_version),
+#   ('h5py', '2.10.0', versionsuffix), # Part of the standard Python module at UAntwerpen.
+    ('molmod', local_molmod_version,   versionsuffix),
+]
+
+use_pip = True
+download_dep_fail = True
+sanity_pip_check = True
+
+# required if we're building a Python package using Intel compilers on top of Python built with GCC
+# check_ldshared = True
+
+runtest  = "export MATPLOTLIBRC=$PWD; echo 'backend: agg' > $MATPLOTLIBRC/matplotlibrc; "
+runtest += "python setup.py build_ext -i; nosetests -v"
+
+moduleclass = 'chem'
