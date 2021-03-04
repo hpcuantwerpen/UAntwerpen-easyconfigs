@@ -1,0 +1,115 @@
+easyblock = 'Bundle'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'
+
+local_Ghostscript_version =    '9.52'            # https://www.ghostscript.com/index.html
+
+local_texinfo_version =        '6.7'             # https://ftp.gnu.org/gnu/texinfo/, look for the texinfo files
+local_groff_version =          '1.22.4'          # https://www.gnu.org/software/groff
+local_Pandoc_version =         '2.11.4'          # https://github.com/jgm/pandoc/releases
+
+name =    'Pandoc'
+version = local_Pandoc_version
+
+homepage = 'https://pandoc.org'
+
+whatis = [
+    'Description:    Pandoc is the swiss-army knife of conversion tools from markup to other formats.',
+    'Components:     texinfo/makeinfo-' + local_texinfo_version + ', groff-'+ local_groff_version + ', Pandoc-' + local_Pandoc_version,
+    'Software stack: calcua/' + local_buildset,
+]
+
+description = """
+If you need to convert files from one markup format into another, pandoc is your
+swiss-army knife.
+
+Pandoc is a Haskell library for converting from one markup format to another,
+and a command-line tool that uses this library.
+
+Pandoc can convert between numerous markup and word processing formats, including,
+but not limited to, various flavors of Markdown, HTML, LaTeX and Word docx. For
+the full lists of input and output formats, see the --from and --to options below.
+Pandoc can also produce PDF output: see creating a PDF, below.
+
+Pandoc’s enhanced version of Markdown includes syntax for tables, definition lists,
+metadata blocks, footnotes, citations, math, and much more.
+
+Pandoc is free software, released under the GPL. Copyright 2006–2020 John MacFarlane.
+
+This module also contains makeinfo/texinfo and groff/pdfroof for generating PDF.
+
+
+Limitations
+===========
+  * Pandoc depends on external programs for some file formats. Not all of those external
+    programs are available on our clusters. In particular, anything that depends on
+    LaTeX will fail. For PDF, the module provides an alternative path through pdfroff,
+    but that has less functionality than LaTeX.
+  * The Pandoc installation process is not compatible at all with software management
+    tools used on HPC clusters. Therefore it was installed from binaries, so compatibility
+    problems may occur.
+"""
+
+site_contacts = 'hpc@uantwerpen.be'
+
+docurls = [
+    'GNU groff/pdfroff web-based documentation on https://www.gnu.org/software/groff/manual/',
+    'GNU Texinfo web-based documentation on https://www.gnu.org/software/texinfo/manual/',
+    'Pandoc web-based documentation on https://pandoc.org/MANUAL.html',
+    'Pandoc manual page: man pandoc',
+]
+
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
+
+builddependencies = [
+    ('binutils',   local_binutils_version ),
+    ('buildtools', local_buildset,        '', True),
+]
+
+dependencies = [
+    ('baselibs',    local_buildset),
+    ('Ghostscript', local_Ghostscript_version ),
+]
+
+default_easyblock = 'ConfigureMake'
+
+components = [
+    ( 'texinfo', local_texinfo_version, {
+        'easyblock':      'ConfigureMake',
+        'sources':        [SOURCELOWER_TAR_XZ],
+        'source_urls':    [GNU_SOURCE],
+        'checksums':      ['988403c1542d15ad044600b909997ba3079b10e03224c61188117f3676b02caa'],
+        'start_dir':      '%(namelower)s-%(version)s',
+    }),
+    ( 'groff', local_groff_version, {
+        'easyblock':      'ConfigureMake',
+        'sources':        [SOURCELOWER_TAR_GZ],
+        'source_urls':    [GNU_SOURCE],
+        'checksums':      ['e78e7b4cb7dec310849004fa88847c44701e8d133b5d4c13057d876c1bad0293'],
+        'start_dir':      '%(namelower)s-%(version)s',
+        'preconfigopts':  'PATH=%(installdir)s/bin:$PATH ',
+        'prebuildopts':   'PATH=%(installdir)s/bin:$PATH ',
+        'preinstallopts': 'PATH=%(installdir)s/bin:$PATH ',
+    }),
+    # Tarball EasyBlock is buggy in a Bundle context and copies too much, so we took another road
+    ( 'Pandoc', local_Pandoc_version, {
+        'easyblock':      'MakeCp',
+        'sources':        ['%(namelower)s-%(version)s-linux-amd64.tar.gz'],
+        'source_urls':    ['https://github.com/jgm/pandoc/releases/download/%(version)s/'],
+        'checksums':      ['b15ce6009ab833fb51fc472bf8bb9683cd2bd7f8ac948f3ddeb6b8f9a366d69a'],
+        'start_dir':      '%(namelower)s-%(version)s',
+        'skipsteps':      ['configure', 'build'],
+        'files_to_copy':  [(['bin/pandoc'], 'bin'), (['share/man/man1/pandoc.1.gz'],'share/man/man1')]
+    }),
+]
+
+sanity_check_paths = {
+    'files': ['bin/makeinfo',
+              'bin/groff', 'bin/pdfroff',
+              'bin/pandoc'], # bin/pandoc-siteproc not included with version 2.11.
+    'dirs':  ['share'],
+}
+
+moduleclass = 'tools'
