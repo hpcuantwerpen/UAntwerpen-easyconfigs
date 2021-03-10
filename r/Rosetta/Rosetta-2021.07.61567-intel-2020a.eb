@@ -1,16 +1,21 @@
 name = 'Rosetta'
-version = '2021.07.61567'
+
+local_buildset =         '2020a'
+local_Rosetta_version =  '2021.07.61567'
+version =                local_Rosetta_version
 
 homepage = 'https://www.rosettacommons.org'
 description = """Rosetta is the premier software suite for modeling macromolecular structures. As a flexible,
 multi-purpose application, it includes tools for structure prediction, design, and remodeling of proteins and
 nucleic acids."""
 
-toolchain = {'name': 'intel', 'version': '2020a'}
+toolchain = {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'usempi': True}
 
 sources = ['%(namelower)s_src_%(version)s_bundle.tgz']
 
-builddependencies = [('SCons', '3.0.0', '', True)]
+builddependencies = [
+    ( 'buildtools', local_buildset,  '', True), # For SCons
+]
 
 moduleclass = 'bio'
