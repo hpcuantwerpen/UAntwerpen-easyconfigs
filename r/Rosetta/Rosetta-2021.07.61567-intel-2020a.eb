@@ -1,0 +1,16 @@
+name = 'Rosetta'
+version = '2021.07.61567'
+
+homepage = 'https://www.rosettacommons.org'
+description = """Rosetta is the premier software suite for modeling macromolecular structures. As a flexible,
+multi-purpose application, it includes tools for structure prediction, design, and remodeling of proteins and
+nucleic acids."""
+
+toolchain = {'name': 'intel', 'version': '2020a'}
+toolchainopts = {'usempi': True}
+
+sources = ['%(namelower)s_src_%(version)s_bundle.tgz']
+
+builddependencies = [('SCons', '3.0.0', '', True)]
+
+moduleclass = 'bio'
