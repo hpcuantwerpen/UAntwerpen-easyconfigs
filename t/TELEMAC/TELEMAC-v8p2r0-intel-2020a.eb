@@ -84,5 +84,11 @@ modextrapaths = {
     'PATH':       'scripts/python3'
 }
 
+modextravars = {
+    'HOMETEL':    '%(installdir)s',
+    'SYSTELCFG':  '%(installdir)s/configs/systel.easybuild.cfg',
+    'USETELCFG':  'ifortmpi'
+}
+
 moduleclass = 'math'
 
