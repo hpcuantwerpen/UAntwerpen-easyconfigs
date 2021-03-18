@@ -1,0 +1,58 @@
+name = 'CUDA'
+version = '11.2.1'
+local_driverversion = '460.32.03'
+
+homepage = 'https://developer.nvidia.com/cuda-toolkit'
+whatis = [
+    'Description: nVIDIA CUDA toolkit - Works only on GPU nodes',
+    'This module provides the CUDA libraries as downloaded from the nVIDIA website and installed in /apps/antwerpen',
+    'Keywords: CUDA, cuBLAS, cuSPARSE, cuSOLVER, cuRAND, cuFFT, NPP, nvGRAPH, Thrust'
+]
+
+description = """
+CUDA (formerly Compute Unified Device Architecture) is a parallel computing
+platform and programming model created by NVIDIA and implemented by the graphics
+processing units (GPUs) that they produce. CUDA gives developers access to the
+virtual instruction set and memory of the parallel computational elements in
+CUDA GPUs.
+
+The CUDA toolkit also includes a number of GPU-accelerated libraries
+* CUDA Math Library: For standard mathematical functions
+* cuBLAS: GPU-accelerated standard BLAS library
+* cuSPARSE: GPU-accelerated BLAS for sparse matrices
+* cuSOLVER: a collection of dense and sparse direct solvers
+* cuRAND: GPU-accelerated random number generators
+* cuFFT: Fast Fourier Transform library
+* NPP - NVIDIA Performance Primitives for GPU-accelerated image, video and 
+  signal processing functions
+* nvGRAPH: high-performance analytics on graphs
+* Thrust: an open source library of parallel algorithms and data structures
+  for convenience also included in the CUDA toolkit
+Other libraries are provided as separate modules.
+
+The CUDA libraries provided by this module are installed from nVIDIA-provided
+downloads.
+"""
+
+docurls = [
+    'Man pages for the commands (section 1), API (section 3) and libraries (Section 7)',
+]
+
+docpaths = [
+    'doc/html',
+    'doc/pdf'
+]
+
+
+toolchain = SYSTEM
+
+# Downloading on the Pascal nodes did not work, so downloaded on the PC and then
+# copied to /apps/antwerpen/sources.
+# https://developer.nvidia.com/compute/cuda/9.1/Prod/local_installers/cuda_9.1.85_387.26_linux
+source_urls = ['https://developer.nvidia.com/compute/cuda/%(version_major_minor)s/Prod/local_installers/']
+
+sources = ['cuda_%(version)s_%(dv)s_linux.run' % {'version': version, 'dv': local_driverversion}]
+
+#modextravars = {'CUDA_HOME': '%(installdir)s'}
+
+moduleclass = 'system'
