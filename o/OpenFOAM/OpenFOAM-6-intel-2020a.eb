@@ -11,15 +11,15 @@ local_binutils_version = '2.34'
 local_METIS_version =          '5.1.0'           # http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
 local_SCOTCH_version =         '6.0.7'           # https://gforge.inria.fr/projects/scotch/
 
-homepage = 'http://www.openfoam.com/'
+homepage = 'http://www.openfoam.org/'
 
 whatis = [
-    'Description: OpenFOAM is a free, open-source CFD package, from OpenFOAM.com',
+    'Description: OpenFOAM is a free, open-source CFD package, from OpenFOAM.org',
 ]
 
 description = """
 OpenFOAM is a free, open source CFD software package. OpenFOAM has an extensive
-range of features to solve anything from complex fluid flows involving chemical 
+range of features to solve anything from complex fluid flows involving chemical
 reactions, turbulence and heat transfer, to solid dynamics and electromagnetics.
 
 This module contains version %(version)s as distributed by OpenFOAM.com.
@@ -33,7 +33,7 @@ When loading the module, a minimum of FOAM_ and WM_ environment variables is
 set, enough to easily call the OpenFOAM script that sets the other variables.
 In Bash, you can simply execute
   source $FOAM_BASH
-after loading the module. 
+after loading the module.
 
 Note though that some variables have values that do not make sense:
   * The FOAM_JOBDIR and FOAM_SITE_* variables point to directories that do
