@@ -2,7 +2,7 @@ easyblock = 'Tarball'
 
 name =          'Guppy'
 version =       '4.4.1'
-versionsuffix = 'gpu'
+versionsuffix = '-gpu'
 
 homepage = 'https://nanoporetech.com/'
 
@@ -24,10 +24,9 @@ producing an additional FAST5 file of modified base probabilities.
 
 toolchain = SYSTEM
 
-sources = ['ont-%(namelower)s_%(version)s_linux64.tar.gz']
+sources = ['../../o/ONT-Guppy/ont-%(namelower)s_%(version)s_linux64.tar.gz']
 source_urls = ['https://mirror.oxfordnanoportal.com/software/analysis']
 checksums = ['ee85ea14863250204a04c1f7e7b79989454558480c86fef597a033510cc2736e']
-
 
 sanity_check_paths = {
     'files': ['bin/%s' % local_x for local_x in ['guppy_basecall_server', 'guppy_basecaller', 'guppy_aligner', 'guppy_barcoder']],
