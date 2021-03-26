@@ -270,7 +270,7 @@ an error message about a separator in the Makefile. These Makefiles are generate
 by the ``sbin/make_makefile.sh``-script and use hidden ``.objects``-files in the
 library directories.
 
-The root of the problem is that ``make_makefile,sh`` processes those files using
+The root of the problem is that ``make_makefile.sh`` processes those files using
 ``cpp`` and relies on the traditional, pre-C99-behaviour when dealing with lines
 in ``.objects`` that end with a backslash (to denote continuation lines).
 If the ``-traditional``-flag is missing, ``.objects`` can be expanded into something
@@ -283,7 +283,7 @@ cp $cdir/$ofile $cdir/$ofile.c
 $cpp $cppflags $dopts -D_$os -D_$target $cdir/$ofile.c >> $cdir/Makefile
 rm -f $cdir/$ofile.c
 ```
-in ``make_makefile.sh.in`` (and after running ``configure`` in ``make_makefile.sh`).
+in ``make_makefile.sh.in`` (and after running ``configure`` in ``make_makefile.sh``).
 If the environment variable CPPFLAGS is set when calling ``configure``, ``$cpp``
 contains ``cpp $CPPFLAGS`` (with ``$CPPFLAGS`` actually expanded) instead of
 ``cpp -traditional``.
@@ -312,7 +312,7 @@ According to the help information of configure, ``--enable-dp=no`` should be equ
 ``--disable-dp``, or, given that the default is to configure for single precision, not
 specifying this option. This however does not work and is a bug in the option handling
 for ``--enable-dp``, where only action is taken if nothing is specified or if the value
-is yes, leaving the variable ``build_precision` uninitialized (and causing the build of PETSc
+is yes, leaving the variable ``build_precision`` uninitialized (and causing the build of PETSc
 to fail). The actual bug is in ``config/yambo_specific.m4``.
 
 | Option          | enableval | enable_dp | def_dp    | build_precision |
@@ -493,7 +493,7 @@ So sometimes the compiler tries to open a module file that is not yet generated.
     specified and non-empty.
 
 
---enable-slepc-linalg and --enable-par-linalg are very confusing. There should be a
+``--enable-slepc-linalg`` and ``--enable-par-linalg`` are very confusing. There should be a
 clear default. Moreover.
   * if slecpc_linalg is disabled, a warning should be printed that all
     ``--with-petsc-*`` and ``--with-slepc-*`` settings are neglected if any of them
