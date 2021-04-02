@@ -1,0 +1,36 @@
+easyblock = 'GoPackage'
+
+name = 'gh'
+version = '1.8.0'
+
+homepage = 'https://github.com/cli/cli'
+
+whatis = [
+    "Description: gh is GitHub on the command line",
+]
+
+description = """
+gh is GitHub on the command line. It brings pull requests, issues,
+and other GitHub concepts to the terminal next to where you are
+already working with git and your code.
+"""
+
+usage = """
+This module works with any version of the git command line program,
+so it might be useful to also load the most recent buildtools module
+to get a more recent version of the git executable.
+"""
+
+toolchain = SYSTEM
+
+source_urls = ['https://github.com/cli/cli/archive']
+sources = ['v%(version)s.tar.gz']
+checksums = ['13576c42a0cb1486370b876eccebe498c1ef84868893ae41a1f717229be4d6bb']
+
+builddependencies = [
+    ('Go', '1.16.3'),
+]
+
+installopts = './cmd/%(namelower)s'
+
+moduleclass = 'tools'
