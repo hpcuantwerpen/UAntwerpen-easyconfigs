@@ -1,8 +1,13 @@
 # This does not work with the Intel 2019 compilers update 5, icc crashes on src/gromacs/pulling/pullutil.cpp
 easyblock = 'Bundle'
 
-local_buildset =         '2020a'
+import os as local_os
+local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
 
+if local_UAarch == "rome":
+    local_buildset =    '2020a.04'
+else:
+    local_buildset =    '2020a'
 local_GROMACS_curr_version =   '2021.1'          # http://manual.gromacs.org/documentation/
 
 name =          'GROMACS'
@@ -38,7 +43,7 @@ toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'openmp': False, 'usempi': False}
 
 builddependencies = [
-    ('buildtools', local_buildset, '', True),   # For CMake
+    ('buildtools', ''.join(local_buildset.split('.')[:1]), '', True),   # For CMake
 ]
 
 source_urls = ['ftp://ftp.gromacs.org/pub/gromacs/']
@@ -76,8 +81,6 @@ default_component_specs = {
 # in GROMACS is to add these in front of the options it selects itsel (which someone
 # told me can also be turned off).
 #
-import os as local_os
-local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
 if local_UAarch == "ivybridge":
     local_compflags = '-no-ftz'
 elif local_UAarch == "broadwell":
