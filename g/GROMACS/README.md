@@ -73,3 +73,13 @@ single or double precision.
 ### GROMACS 2020.2, Intel toolchain
 
 * Did a straightforwared port from the 2019.4 EasyConfig.
+
+### GROMACS 2021.1, Intel toolchain
+
+* Replaced -DGMX_SIMD=AUTO by -DGMX_SIMD=AVX2_128 for Rome/Zen2 only, following
+  https://manual.gromacs.org/documentation/2021/install-guide/index.html#simd-support
+* Needs 2020.4 compilers (problems with 2020.0), so slight workaround for toolchain 
+  on Rome/Zen2 
+* Added -DGMXAPI=OFF
+* Removed "check" from make in CUDA version
+
