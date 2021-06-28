@@ -1,0 +1,12 @@
+diff -ru OpenFOAM-8-version-8.orig/etc/bashrc OpenFOAM-8-version-8/etc/bashrc
+--- OpenFOAM-8-version-8.orig/etc/bashrc	2021-02-24 11:30:35.153261076 +0100
++++ OpenFOAM-8-version-8/etc/bashrc	2021-02-24 11:35:07.167757138 +0100
+@@ -189,7 +189,7 @@
+ # Source user setup files for optional packages
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/mpi`
+-_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/paraview`
++# _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/paraview`
+ _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/ensight`
+ _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/gperftools`
+ 

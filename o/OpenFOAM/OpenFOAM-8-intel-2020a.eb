@@ -1,0 +1,78 @@
+name = 'OpenFOAM'
+version = '8'
+
+local_buildset = '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'https://www.openfoam.org/'
+
+whatis = [
+    'Description: OpenFOAM is a free, open-source CFD package, from OpenFOAM.org', 
+]
+
+description = """
+OpenFOAM is a free, open source CFD software package. OpenFOAM has an extensive
+range of features to solve anything from complex fluid flows involving chemical
+reactions, turbulence and heat transfer, to solid dynamics and electromagnetics.
+
+This module contains version %(version)s as distributed by OpenFOAM.org.
+
+As the module has been compiled for the compute nodes, no 3D graphics features
+have been included.
+"""
+
+usage = """
+When loading the module, a minimum of FOAM_ and WM_ environment variables is 
+set, enough to easily call the OpenFOAM script that sets the other variables.
+In Bash, you can simply execute
+  source $FOAM_BASH
+after loading the module.
+
+Note though that some variables have values that do not make sense:
+  * The FOAM_JOBDIR and FOAM_SITE_* variables point to directories that do
+    not exist on our site as we have no site-specific customizations.
+  * WM_PROJECT_USER_DIR and therefore also FOAM_RUN and the FOAM_USER_* 
+    variables may point to directories that do not exist. You can customize
+    those variables at will. (But remember that jobs should mainly run from
+    scratch and never from $VSC_HOME!)
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'cstd': 'c++11'}
+
+source_urls = ['https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive']
+sources = ['version-%(version)s.tar.gz']
+patches = [
+    'OpenFOAM-%(version)s-remove_paraview_source.patch',
+    'OpenFOAM-%(version)s-cleanup.patch',
+]
+
+checksums = [
+    '94ba11cbaaa12fbb5b356e01758df403ac8832d69da309a5d79f76f42eb008fc',  # version-8.tar.gz
+    'c71ff3a7d8d66a0b1ed1154311e6ace12e92451a4f5b0b8b0d79a79501ac3215',  # OpenFOAM-8-remove_paraview_source.patch
+    'e3fac8049611ee109f07eb5b0ed4b1526782a21b3f12435e03529d56c8483b9f',  # OpenFOAM-8-cleanup.patch
+]
+
+# Since we didn't install paraview, we need to remove a line from bashrc.
+# Also change all references from $HOME to $VSC_SCRATCH
+postinstallcmds = [
+    "cd %(installdir)s/OpenFOAM-%(version)s/etc ; sed -e 's/\(_foamSource.*paraview\)/#\\1/' -e 's/\$HOME/\$VSC_SCRATCH/' -i bashrc",
+    "cd %(installdir)s/OpenFOAM-%(version)s/etc ; sed -e 's/\(_foamSource.*paraview\)/#\\1/' -e 's/\$HOME/\$VSC_SCRATCH/' -i cshrc",
+]
+
+
+dependencies = [
+    ('baselibs', local_buildset,        '', ('GCCcore', local_gcc_version)),  # For libreadline, ncurses
+    # OpenFOAM requires 64 bit METIS using 32 bit indexes (array indexes)
+    ('METIS', '5.1.0', '-i32-fp64'),
+    ('SCOTCH', '6.0.7'),
+    ('CGAL', '4.14.3', '-forOpenFOAM'),
+    #('ParaView', '5.8.1', '-mpi'),
+    ('gnuplot', '5.4.0')
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True) # For CMake, flex and Bison.
+]
+
+moduleclass = 'cae'
