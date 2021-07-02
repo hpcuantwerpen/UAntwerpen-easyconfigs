@@ -1,0 +1,73 @@
+# easyblock = "EB_OpenFOAM"
+name = 'OpenFOAM'
+version = 'v2012'
+
+local_buildset = '2020a'
+local_gcc_version = '9.3.0'
+
+homepage = 'https://www.openfoam.com/'
+
+whatis = [
+    'Description: OpenFOAM is a free, open-source CFD package, from OpenFOAM.com',
+]
+
+description = """
+OpenFOAM is a free, open source CFD software package. OpenFOAM has an extensive 
+range of features to solve anything from complex fluid flows involving chemical 
+ reactions, turbulence and heat transfer, to solid dynamics and electromagnetics.
+
+This module contains version %(version)s as distributed by OpenFOAM.com.
+
+As the module has been compiled for the compute nodes, no 3D graphics features 
+have been included.
+"""
+
+usage = """
+When loading the module, a minimum of FOAM_ and WM_ environment variables is
+set, enough to easily call the OpenFOAM script that sets the other variables.
+In Bash, you can simply execute
+  source $FOAM_BASH
+after loading the module.
+
+Note though that some variables have values that do not make sense:
+  * The FOAM_JOBDIR and FOAM_SITE_* variables point to directories that do
+    not exist on our site as we have no site-specific customizations.
+  * WM_PROJECT_USER_DIR and therefore also FOAM_RUN and the FOAM_USER_*
+    variables may point to directories that do not exist. You can customize
+    those variables at will. (But remember that jobs should mainly run from
+    scratch and never from $VSC_HOME!)
+"""
+
+toolchain = {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'cstd': 'c++11'}
+
+source_urls = ['https://sourceforge.net/projects/openfoam/files/%(version)s/']
+sources = [SOURCE_TGZ]
+patches = [
+    ('OpenFOAM-%(version)s-cleanup.patch', 1),
+]
+checksums = [
+    '3d6e39e39e7ae61d321fbc6db6c3748e6e5e1c4886454207a7f1a7321469e65a',  # OpenFOAM-v2012.tgz
+    'cdd2597a1ac1448e9bd33a364a8dfe17f51cc9ab5a8e0ab67cf92bba3ed9da43',  # OpenFOAM-v2012-cleanup.patch
+]
+
+sanity_check_paths = {
+    'files': ["OpenFOAM-%(version)s/etc/bashrc"],
+    'dirs': [ "OpenFOAM-%(version)s/applications", "OpenFOAM-%(version)s/applications/solvers", "OpenFOAM-%(version)s/bin"],
+}
+
+dependencies = [
+    ('baselibs', local_buildset, '', ('GCCcore', local_gcc_version)), # For libreadline, ncurses
+    # OpenFOAM requires 64 bit METIS using 32 bit indexes (array indexes)
+    ('METIS', '5.1.0', '-i32-fp64'),
+    ('SCOTCH', '6.0.7'),
+    ('CGAL', '4.14.3', '-forOpenFOAM'),
+    #('ParaView', '5.8.1', '-Python-3.8.2-mpi'),
+    ('gnuplot', '5.4.0'),
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True) # For CMake, flex and Bison.
+]
+
+moduleclass = 'cae'
