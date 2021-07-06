@@ -1,0 +1,87 @@
+easyblock = 'EB_EasyBuildMeta'
+
+name =    'EasyBuild'
+version = '4.4.1'
+
+homepage = 'https://easybuilders.github.io/easybuild'
+
+whatis = [
+    "Description: EasyBuild is a software build and installation framework written in Python that allows you to install software in a structured, repeatable and robust way."
+]
+
+description = """
+EasyBuild is a software build and installation framework
+written in Python that allows you to install software in a structured,
+repeatable and robust way.
+"""
+
+usage = """
+See the documentation on readthedocs. Only the documentation of the latest
+version is readily available.
+
+Things to know about our local installation:
+ - The EasyBuild configuration files that we used are stored in
+   /apps/antwerpen/easybuild/config
+ - The repository of EasyConfigs for installed software is in
+   /apps/antwerpen/easybuild/repo, organised per system architecture
+   and major OS release.
+ - We maintain GitHub repositories with our EasyConfig files and our
+   custom EasyBlocks:
+    - https://github.com/hpcuantwerpen/UAntwerpen-easyconfigs
+    - https://github.com/hpcuantwerpen/easybuild-easyblocks
+ - Note that our UAntwerp EasyBuild installation differs in a number of
+   aspects form an installation that you get from the default EasyBuilders
+   repositories. Hence you may want to make sure that EasyBuild checks our
+   repositories before checking the default ones if you want to build on top
+   of modules that we already provide.
+    - Specifically, we work a lot with bundles that bundle the functionality
+      of several other EasyBuild EasyConfigs/modules into one to reduce module
+      clutter.
+    - For centrally installed modules we also use our own naming scheme as the 
+      subdivision according to moduleclass is often arbitrary and therefore not
+      used in practice to limit the modules that one sees.
+"""
+
+docurls = [
+    "Web-based documentation on https://easybuild.readthedocs.io/"
+]
+
+toolchain = SYSTEM
+
+source_urls = [
+    # easybuild-framework
+    'https://files.pythonhosted.org/packages/10/c2/0339be284c63d24347c8d38e5e19b16084be4434fcb4614b3a0e1b8ea8ee/',
+    # easybuild-easyblocks
+    'https://files.pythonhosted.org/packages/1b/17/e057a79f436996ff4e17cecccf59ef0f1b87964ea7bee651273c4a1db915/',
+    # easybuild-easyconfigs
+    'https://files.pythonhosted.org/packages/47/17/3527ace0610e3e87468877e6dba0367da3fde6ea0f980bc68a13873fcc74/',
+]
+sources = [
+    'easybuild-framework-%(version)s.tar.gz',
+    'easybuild-easyblocks-%(version)s.tar.gz',
+    'easybuild-easyconfigs-%(version)s.tar.gz',
+]
+checksums = [
+    'd754a85cc46fd800006fccbea1eef4e0fb93e7083df251f8b2640481a7bf4da7',  # easybuild-framework-4.4.1.tar.gz
+    'de5a203a60ee14ea1c2e56ed34f21fc0f94670214e9f8818a24ebf9d78ba656e',  # easybuild-easyblocks-4.4.1.tar.gz
+    'a20ecba9091575fb45036db8218ea1a7bcbbe5b928f1a987e84ab4bdebfaa0d6',  # easybuild-easyconfigs-4.4.1.tar.gz
+]
+
+# order matters a lot, to avoid having dependencies auto-resolved (--no-deps easy_install option doesn't work?)
+# EasyBuild is a (set of) Python packages, so it depends on Python
+# usually, we want to use the system Python, so no actual Python dependency is listed
+allow_system_deps = [('Python', SYS_PYTHON_VERSION)]
+
+local_pyshortver = '.'.join(SYS_PYTHON_VERSION.split('.')[:2])
+
+sanity_check_paths = {
+    'files': ['bin/eb'],
+    'dirs':  ['lib/python%s/site-packages' % local_pyshortver],
+}
+
+# Set Python 3 for EasyBuild
+modextravars = {
+    'EB_PYTHON': 'python3',
+}
+
+moduleclass = 'tools'
