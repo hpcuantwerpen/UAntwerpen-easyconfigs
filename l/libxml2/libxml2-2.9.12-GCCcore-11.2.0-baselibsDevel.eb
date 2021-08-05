@@ -1,0 +1,86 @@
+# NOTE: Picks up the system Python despice --without-python. The subsequent libxslt build
+# does detect a libxml2 with Python support...
+easyblock = 'ConfigureMake' # Don\t use the libxml2-specific EasyBlock as that one is awkward to use in our Bundle and does not yet support XZ (3.9.3)
+
+buildset =             '2021b'
+gcc_version =          '11.2.0'
+binutils_version =     '2.32'
+
+ICU_version =          '64.2'          # http://site.icu-project.org/home
+XZ_version =           '5.2.4'         # https://tukaani.org/xz/
+zlib_version =         '1.2.11'        # https://zlib.net/
+libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
+
+name =          'libxml2'
+version =       libxml2_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://xmlsoft.org/'
+
+whatis = [
+    'The XML C parcer and toolkit of Gnome, but usable outside of the Gnome platform also',
+    'This module provides command line tools and static and shared libraries',
+]
+
+description = """
+Libxml2 is the XML C parser and toolkit developed for the Gnome project (but
+usable outside of the Gnome platform), it is free software available under the
+MIT License. XML itself is a metalanguage to design markup languages, i.e. text
+language where semantic and structure are added to the content using extra
+"markup" information enclosed between angle brackets. HTML is the most
+well-known markup language. Though the library is written in C a variety of
+language bindings make it available in other environments.
+
+This module provides command line tools and static and shared libraries.
+"""
+
+usage = """
+The module provides a number of command line tools
++ xmlcatalog: Parse and manipulate XML or SGML catalog files
++ xmllint:    Comand-line XML parser
++ xml-config: Provides information about the installed version of the library
+xmlcatalog and xmllint also support --help
+
+The library API is documented on the libxml website.
+"""
+
+docurls = [
+    'Web-based documentation: http://xmlsoft.org/html/index.html',
+    'Man pages for the command line tools and libxml',
+]
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = [
+    'http://xmlsoft.org/sources/',
+    'http://xmlsoft.org/sources/old/'
+]
+sources = [SOURCELOWER_TAR_GZ]
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('ICU',  ICU_version,  versionsuffix),
+    ('zlib', zlib_version, versionsuffix),
+    ('XZ',   XZ_version,   versionsuffix),
+]
+
+configopts = 'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib --with-lzma --without-python'
+
+sanity_check_paths = {
+    'files': [('lib/%(name)s.a', 'lib64/%(name)s.a'), ('lib/%(name)s.so', 'lib64/%(name)s.so')],
+    'dirs':  ['bin', 'include/%(name)s/libxml'],
+}
+
+sanity_check_commands = [
+    'xmlcatalog -v',
+    'xmllint --version',
+    'xml2-config --help',
+    'pkg-config --libs libxml-2.0',
+]
+
+moduleclass = 'lib'
