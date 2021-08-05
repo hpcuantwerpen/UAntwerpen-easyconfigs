@@ -1,0 +1,69 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2021b'
+gcc_version =          '11.2.0'
+binutils_version =     '2.32'
+
+GMP_version =          '6.2.1'         # https://ftp.gnu.org/gnu/gmp/
+MPFR_version =         '4.1.0'         # https://ftp.gnu.org/gnu/mpfr/
+MPC_version =          '1.2.1'         # https://ftp.gnu.org/gnu/mpc/
+
+name =          'MPC'
+version =       MPC_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://www.multiprecision.org/mpc/'
+
+whatis = [
+    'Description: GNU MPC is a C library for arbitrary precision arithmetic of complex numbers',
+]
+
+description = """
+GNU MPC is a C library for the arithmetic of complex numbers with arbitrarily
+high precision and correct rounding of the result. It extends the principles of
+the IEEE-754 standard for fixed precision real floating point numbers to complex
+numbers, providing well-defined semantics for every operation. At the same time,
+speed of operation at high precision is a major design goal.
+
+The library is built upon and follows the same principles as GNU MPFR.
+"""
+
+docurls = [
+    'PDF manual downloadable at http://www.multiprecision.org/mpc/documentation.html',
+    'Support for the info command (info mpc)'
+]
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+
+source_urls = ['http://ftpmirror.gnu.org/gnu/mpc/']
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['17503d2c395dfcf106b622dc142683c1199431d095367c6aacba6eec30340459']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+dependencies = [
+    ('GMP',  GMP_version,  versionsuffix),
+    ('MPFR', MPFR_version, versionsuffix),
+]
+
+# The configopts below are not really needed as they are either the defaults or the
+# libraries are found in other ways.
+configopts = '--enable-static --enable-shared --with-gmp="$EBROOTGMP" --with-mpfr="$EBROOTMPFR"'
+
+runtest = 'check'
+
+sanity_check_paths = {
+    'files': ['lib/libmpc.%s' % x for x in ['a', 'la', SHLIB_EXT]] +
+             ['include/mpc.h'],
+    'dirs':  []
+}
+
+modextrapaths = {
+    'INFOPATH' : 'share/info',
+}
+
+moduleclass = 'math'
