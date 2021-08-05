@@ -1,0 +1,88 @@
+easyblock = 'ConfigureMake'
+
+buildset =             '2021b'
+gcc_version =          '11.2.0'
+binutils_version =     '2.32'
+
+ncurses_version =      '6.2'           # https://ftp.gnu.org/pub/gnu/ncurses/
+libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
+GMP_version =          '6.2.1'         # https://ftp.gnu.org/gnu/gmp/
+
+name =          'GMP'
+version =       GMP_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://gmplib.org/'
+
+whatis = [
+    'Description: GNU Multiprecision Arithmetic Library',
+    'This module provides static and shared libraries',
+]
+
+description = """
+GMP is a free library for arbitrary precision arithmetic, operating on signed
+integers, rational numbers, and floating-point numbers. There is no practical
+limit to the precision except the ones implied by the available memory in the
+machine GMP runs on. GMP has a rich set of functions, and the functions have a
+regular interface.
+
+The main target applications for GMP are cryptography applications and research,
+Internet security applications, algebra systems, computational algebra research,
+etc.
+
+GMP is carefully designed to be as fast as possible, both for small operands and
+for huge operands. The speed is achieved by using fullwords as the basic
+arithmetic type, by using fast algorithms, with highly optimised assembly code
+for the most common inner loops for a lot of CPUs, and by a general emphasis on
+speed.
+
+This module provides static and shared liberaries.
+"""
+
+docurls = [
+    'Web-based documentation: https://gmplib.org/manual/',
+    'Support for the info command (info gmp)'
+]
+
+
+toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchainopts = {'pic': True}
+#toolchainopts = {'pic': True, 'precise': True}
+
+sources = [SOURCELOWER_TAR_BZ2]
+source_urls = ['http://ftp.gnu.org/gnu/gmp']
+
+builddependencies = [
+    ('binutils',   binutils_version),
+    ('buildtools', buildset,         '', True),
+]
+
+# The dependencies given in previous versions don't make sense. It was probably
+# just autotools that checked, but they are not used anywhere as there are no
+# executables generated and there is not a trace of them in the libraries.
+
+# enable C++ interface
+configopts = '--enable-cxx'
+
+runtest = 'check'
+
+# the output of config.guess is used by default and can be changed with --build
+# E.g.: configopts = ' --build=haswell-pc-linux-gnu'
+sanity_check_paths = {
+    'files': ['include/%s.h' % x for x in ['gmp', 'gmpxx']] +
+             ['lib/lib%s.%s' % (x, y) for x in ['gmp', 'gmpxx'] for y in [ 'a', 'la', SHLIB_EXT]] +
+             ['lib/pkgconfig/%s.pc' % x for x in ['gmp', 'gmpxx']],
+    'dirs':  ['share/info'],
+}
+
+# No binaries to easily check, but we do check if pkg-config can read the .pc files.
+sanity_check_commands = [
+    'pkg-config --libs gmp',
+    'pkg-config --libs gmpxx',
+]
+
+modextrapaths = {
+    'INFOPATH' : 'share/info',
+}
+
+moduleclass = 'math'
