@@ -4,8 +4,19 @@ name = 'TELEMAC'
 version = 'v8p1r0'
 
 homepage = 'http://www.opentelemac.org/'
-description = ("TELEMAC-MASCARET is an integrated suite of solvers for use in the field of\n"
-               "free-surface flow.")
+
+whatis = [
+    'Description: TELEMAC-MASCARET is an integrated suite of solvers for use in the field of free-surface flow.'
+]
+
+description = """
+TELEMAC-MASCARET is an integrated suite of solvers for use in the field of
+free-surface flow.
+
+The sources as compiled can be found in $EBROOTTELEMAC/sources.
+The constant MAXVAR in telemac2d/declarations_telemac2d.f was increased from
+100 to 1000 for this module.
+"""
 
 toolchain = {'name': 'intel', 'version': '2019b'}
 
