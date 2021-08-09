@@ -20,6 +20,10 @@ whatis = [
 description = """
 TELEMAC-MASCARET is an integrated suite of solvers for use in the field of
 free-surface flow.
+
+The sources as compiled can be found in $EBROOTTELEMAC/sources.
+The constant MAXVAR in telemac2d/declarations_telemac2d.f was increased from
+100 to 1000 for this module.
 """
 
 toolchain = {'name': 'intel', 'version': local_buildset}
