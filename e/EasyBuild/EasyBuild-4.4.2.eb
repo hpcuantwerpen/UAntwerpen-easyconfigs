@@ -1,7 +1,7 @@
 easyblock = 'EB_EasyBuildMeta'
 
 name =    'EasyBuild'
-version = '4.4.1'
+version = '4.4.2'
 
 homepage = 'https://easybuilders.github.io/easybuild'
 
