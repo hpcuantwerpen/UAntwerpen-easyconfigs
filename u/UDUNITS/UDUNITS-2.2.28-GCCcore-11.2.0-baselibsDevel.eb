@@ -54,7 +54,7 @@ source_urls = [
     'https://artifacts.unidata.ucar.edu/repository/downloads-udunits/',
     'https://sources.easybuild.io/u/UDUNITS/',
 ]
-checksums =   ['368f4869c9c7d50d2920fa8c58654124e9ed0d8d2a8c714a9d7fdadc08c7356d']
+checksums =   ['590baec83161a3fd62c00efa66f6113cec8a7c461e3f61a5182167e0cc5d579e']
 
 builddependencies = [
     ('binutils',   local_binutils_version),

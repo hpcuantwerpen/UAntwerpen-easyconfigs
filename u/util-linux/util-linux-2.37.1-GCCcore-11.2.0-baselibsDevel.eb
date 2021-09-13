@@ -32,7 +32,7 @@ toolchainopts = {'pic': True}
 
 source_urls = ['%s/v%%(version_major_minor)s' % homepage]
 sources =     [SOURCELOWER_TAR_XZ]
-checksums =   ['743f9d0c7252b6db246b659c1e1ce0bd45d8d4508b4dfa427bbb4a3e9b9f62b5']
+checksums =   ['8e4bd42053b726cf86eb4d13a73bc1d9225a2c2e1a2e0d2a891f1020f83e6b76']
 
 builddependencies = [
     ('binutils',   local_binutils_version),
