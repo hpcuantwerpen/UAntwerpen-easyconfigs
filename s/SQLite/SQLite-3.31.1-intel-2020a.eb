@@ -86,7 +86,7 @@ dependencies = [
 # a build failure.
 # The tricky bit: I took the CFLAGS options that EasyBuild sets by default for the
 # intel/2017c toolchain, then added -DSQLITE_DISABLE_INTRINSIC.
-configopts = 'CFLAGS="-O2 -xHost -ftz -fp-speculation=safe -fp-model source -DSQLITE_DISABLE_INTRINSIC"'
+configopts = 'CFLAGS="$CFLAGS -DSQLITE_DISABLE_INTRINSIC"'
 
 sanity_check_paths = {
     'files': ['bin/sqlite3', 'include/sqlite3ext.h', 'include/sqlite3.h', 'lib/libsqlite3.a',
