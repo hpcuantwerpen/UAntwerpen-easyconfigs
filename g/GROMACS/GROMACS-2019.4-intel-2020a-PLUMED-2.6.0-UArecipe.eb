@@ -1,18 +1,13 @@
 # This does not work with the Intel 2019 compilers update 5, icc crashes on src/gromacs/pulling/pullutil.cpp
 easyblock = 'Bundle'
 
-import os as local_os
-local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
-
-if local_UAarch == "rome":
-    local_buildset =    '2020a.04'               # required to avoid compilation problems
-else:
-    local_buildset =    '2020a'
-local_GROMACS_curr_version =   '2021.1'          # http://manual.gromacs.org/documentation/
+local_buildset =    '2020a'
+local_GROMACS_PLUMED_version = '2019.4'          # http://manual.gromacs.org/documentation/
+local_PLUMED_version =         '2.6.0'           # https://www.plumed.org//download.html
 
 name =          'GROMACS'
-version =       local_GROMACS_curr_version
-versionsuffix = '-UArecipe'
+version =       local_GROMACS_PLUMED_version
+versionsuffix = '-PLUMED-' + local_PLUMED_version + '-UArecipe'
 
 homepage = 'http://www.gromacs.org'
 
@@ -43,7 +38,11 @@ toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'openmp': False, 'usempi': False}
 
 builddependencies = [
-    ('buildtools', ''.join(local_buildset.split('.')[:1]), '', True),   # For CMake
+    ('buildtools', local_buildset, '', True),   # For CMake
+]
+
+dependencies = [
+    ('PLUMED', local_PLUMED_version)
 ]
 
 source_urls = ['ftp://ftp.gromacs.org/pub/gromacs/']
@@ -58,10 +57,10 @@ source_urls = ['ftp://ftp.gromacs.org/pub/gromacs/']
 default_easyblock = 'CMakeMake'
 default_component_specs = {
     'sources':   [SOURCELOWER_TAR_GZ],
-    'checksums': [ 'bc1d0a75c134e1fb003202262fe10d3d32c59bbb40d714bc3e5015c71effe1e5'],  # shasum -a 256 gromacs-2021.1.tar.gz
-    'separate_build_dir': False,
+    'checksums': [ 'ba4366eedfc8a1dbf6bddcef190be8cd75de53691133f305a7f9c296e5ca1867'],  # shasum -a 256 gromacs-2019.4.tar.gz
     'preconfigopts' : '( [ -f CMakeCache.txt ] && /bin/rm CMakeCache.txt ) ; ' +
-                      '( [ -f Makefile ] && make clean ) ; ' ,
+                      '( [ -f Makefile ] && make clean ) ; ' + 
+                      'plumed patch -p -e gromacs-%(version)s ; ',
 #    'buildopts' : 'all -j ',
     'buildopts' : 'all check -j ', 
 #    'installopts' : 'clean',   # To completely remove the build so that a new one can start clean.
@@ -81,6 +80,8 @@ default_component_specs = {
 # in GROMACS is to add these in front of the options it selects itsel (which someone
 # told me can also be turned off).
 #
+import os as local_os
+local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
 if local_UAarch == "ivybridge":
     local_compflags = '-no-ftz'
 elif local_UAarch == "broadwell":
@@ -92,7 +93,7 @@ else:
 
 local_sercompsel = "-DCMAKE_C_COMPILER='icc'    -DCMAKE_CXX_COMPILER='icpc'    -DCMAKE_C_FLAGS='%(flags)s' -DCMAKE_CXX_FLAGS='%(flags)s' " % {'flags' : local_compflags}
 local_mpicompsel = "-DCMAKE_C_COMPILER='mpiicc' -DCMAKE_CXX_COMPILER='mpiicpc' -DCMAKE_C_FLAGS='%(flags)s' -DCMAKE_CXX_FLAGS='%(flags)s' " % {'flags' : local_compflags}
-local_gmxbaseopts  = "-DGMX_PREFER_STATIC_LIBS=ON "
+local_gmxbaseopts  = "-DBUILD_SHARED_LIBS=OFF -DGMX_PREFER_STATIC_LIBS=ON " # Needed to avoid segmentation violations
 local_gmxbaseopts += "-DGMX_OPENMP=ON "
 
 # see https://manual.gromacs.org/documentation/2021/install-guide/index.html#simd-support
@@ -104,23 +105,21 @@ local_gmxbaseopts += "-DGMX_OPENMP=ON "
 
 local_gmxbaseopts += "-DGMX_SIMD=AUTO "
 
-local_gmxbaseopts += "-DGMX_HWLOC=ON "
-local_gmxbaseopts += "-DGMXAPI=OFF "
 local_gmxbaseopts += "-DGMX_GPU=OFF "
 local_gmxbaseopts += "-DGMX_X11=OFF "
 local_gmxbaseopts += "-DGMX_FFT_LIBRARY=mkl -DGMX_EXTERNAL_BLAS=ON -DGMX_EXTERNAL_LAPACK=ON "
 #local_gmxbaseopts += "-DREGRESSIONTEST_DOWNLOAD=ON "
 
 components = [
-    ('GROMACS', version, {
-        'configopts': local_sercompsel + local_gmxbaseopts + "-DGMX_MPI=OFF -DGMX_THREAD_MPI=ON  -DGMX_DOUBLE=OFF ",
-    }),
+#    ('GROMACS', version, {
+#        'configopts': local_sercompsel + local_gmxbaseopts + "-DGMX_MPI=OFF -DGMX_THREAD_MPI=ON  -DGMX_DOUBLE=OFF ",
+#    }),
     ('GROMACS', version, {
         'configopts': local_sercompsel + local_gmxbaseopts + "-DGMX_MPI=OFF -DGMX_THREAD_MPI=ON  -DGMX_DOUBLE=ON ",
     }),
-    ('GROMACS', version, {
-        'configopts': local_mpicompsel + local_gmxbaseopts + "-DGMX_MPI=ON  -DGMX_THREAD_MPI=OFF -DGMX_DOUBLE=OFF ",
-    }),
+#    ('GROMACS', version, {
+#        'configopts': local_mpicompsel + local_gmxbaseopts + "-DGMX_MPI=ON  -DGMX_THREAD_MPI=OFF -DGMX_DOUBLE=OFF ",
+#    }),
     ('GROMACS', version, {
         'configopts': local_mpicompsel + local_gmxbaseopts + "-DGMX_MPI=ON  -DGMX_THREAD_MPI=OFF -DGMX_DOUBLE=ON ",
     }),

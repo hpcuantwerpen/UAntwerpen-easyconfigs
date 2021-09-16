@@ -57,8 +57,8 @@ default_component_specs = {
     'separate_build_dir': False,
     'preconfigopts' : '( [ -f CMakeCache.txt ] && /bin/rm CMakeCache.txt ) ; ' +
                       '( [ -f Makefile ] && make clean ) ; ' ,
-#    'buildopts' : 'all -j 20',
-    'buildopts' : 'all check -j 20', 
+#    'buildopts' : 'all -j ',
+    'buildopts' : 'all check -j ', 
 #    'installopts' : 'clean',   # To completely remove the build so that a new one can start clean.
     'start_dir':   '%(namelower)s-%(version)s',
 }
@@ -91,7 +91,16 @@ local_sercompsel = "-DCMAKE_C_COMPILER='icc'    -DCMAKE_CXX_COMPILER='icpc'    -
 local_mpicompsel = "-DCMAKE_C_COMPILER='mpiicc' -DCMAKE_CXX_COMPILER='mpiicpc' -DCMAKE_C_FLAGS='%(flags)s' -DCMAKE_CXX_FLAGS='%(flags)s' " % {'flags' : local_compflags}
 local_gmxbaseopts  = "-DGMX_PREFER_STATIC_LIBS=ON "
 local_gmxbaseopts += "-DGMX_OPENMP=ON "
+
+# see https://manual.gromacs.org/documentation/2021/install-guide/index.html#simd-support
+# but noticed up to 50% performance drop on AMD Rome ...
+#if local_UAarch == "rome":
+#    local_gmxbaseopts += "-DGMX_SIMD=AVX2_128 "
+#else:
+#    local_gmxbaseopts += "-DGMX_SIMD=AUTO "
+
 local_gmxbaseopts += "-DGMX_SIMD=AUTO "
+
 local_gmxbaseopts += "-DGMX_GPU=OFF "
 local_gmxbaseopts += "-DGMX_X11=OFF "
 local_gmxbaseopts += "-DGMX_FFT_LIBRARY=mkl -DGMX_EXTERNAL_BLAS=ON -DGMX_EXTERNAL_LAPACK=ON "
