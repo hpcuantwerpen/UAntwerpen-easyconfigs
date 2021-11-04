@@ -18,6 +18,9 @@ local_HDF5_retro_version =     '1.10.6'          # https://support.hdfgroup.org/
 local_ELPA_version =           '2019.11.001'     #
 local_libxc_version =          '4.3.4'           # https://www.tddft.org/programs/libxc/download/
 
+import os as local_os
+local_UAcluster = local_os.environ['VSC_INSTITUTE_CLUSTER']
+
 name =          'QuantumESPRESSO'
 version =       local_QuantumESPRESSO_version
 versionsuffix = '-hybrid'
@@ -103,6 +106,10 @@ dependencies = [
     ('ELPA',  local_ELPA_version),               # Taken from recent UGhent EasyConfigs
     ('libxc', local_libxc_version),              # Taken from recent UGhent EasyConfigs
 ]
+
+if local_UAcluster == 'vaughan':
+    preconfigopts='export CFLAGS="-march=core-avx2 -mtune=core-avx2" && export FFLAGS="-march=core-avx2 -mtune=core-avx2" && '
+    dependencies = [ ('MKL-overlay', '2018.04', '', True )]
 
 hybrid = True
 
