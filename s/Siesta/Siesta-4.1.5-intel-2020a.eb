@@ -1,0 +1,41 @@
+# This EasyBlock contains modified version checks for the 4.1-bx releases.
+# This issue was also raised in https://github.com/easybuilders/easybuild-easyconfigs/issues/13559
+# and solved by pull request https://github.com/easybuilders/easybuild-easyblocks/pull/2553
+# The fix sadly was not merged yet in time for EasyBuild 4.5.0 (the latest version at time of installation).
+easyblock = 'EB_Siesta_UA_EB45'
+
+easybuild_version = '4.5.0'
+
+local_buildset = '2020a'
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+
+name =    'Siesta'
+version = '4.1.5'
+
+homepage = 'https://departments.icmab.es/leem/siesta/'
+
+whatis = [
+    'Description: Siesta is a first-principles materials simulation code using DFT'
+]
+
+description = """
+Siesta (Spanish Initiative for Electronic Simulations with Thousands of Atoms) is 
+both a method and its computer program implementation, to perform electronic 
+structure calculations and ab initio molecular dynamics simulations of molecules 
+and solids.
+"""
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True}
+
+sources =     [SOURCELOWER_TAR_GZ]
+source_urls = ['https://gitlab.com/siesta-project/siesta/-/releases/v%(version)s/downloads']
+checksums =   ['518df31aa6213af5e24cc73abb537b2c89a925b487171f5339d743d0c7140b3f']
+
+dependencies = [
+    ('netCDF', local_netCDF_version, '-noMPI'),
+]
+
+runtest = 'check'
+
+moduleclass = 'phys'
