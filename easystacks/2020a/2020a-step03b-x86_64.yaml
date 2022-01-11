@@ -1,0 +1,7 @@
+software:
+  NAMD:
+    toolchains:
+      SYSTEM:
+        versions:
+          '2.14':
+            versionsuffix: '-verbs-smp'

@@ -1,0 +1,13 @@
+software:
+  GCCcore:
+    toolchains:
+      SYSTEM:
+        versions: ['9.3.0']
+  binutils:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['2.34']
+  GCC:
+    toolchains:
+      SYSTEM:
+        versions: ['9.3.0']

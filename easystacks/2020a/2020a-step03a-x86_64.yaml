@@ -1,0 +1,63 @@
+software:
+  AutoDock_Vina:
+    toolchains:
+      SYSTEM:
+        versions: ['1.1.2']
+  g_mmpbsa:
+    toolchains:
+      SYSTEM:
+        versions: ['1.6']
+  monitor:
+    toolchains:
+      SYSTEM:
+        versions: ['1.1.2']
+  NAMD:
+    toolchains:
+      SYSTEM:
+        versions:
+          '2.14':
+            versionsuffix: '-verbs'
+  parallel:
+    toolchains:
+      SYSTEM:
+        versions: ['20200422']
+  Eigen:
+    toolchains:
+      SYSTEM:
+        versions: ['3.3.7']
+  GATK:
+    toolchains:
+      SYSTEM:
+        versions:
+          '4.1.4.1':
+            versionsuffix: '-Java-8-minimal'
+  Jmol:
+    toolchains:
+      SYSTEM:
+        versions:
+          '14.30.1':
+            versionsuffix: '-Java-11'
+  Pilon:
+    toolchains:
+      SYSTEM:
+        versions:
+          '1.23':
+            versionsuffix: '-Java-11'
+  JUnit:
+    toolchains:
+      SYSTEM:
+        versions:
+          '4.12':
+            versionsuffix: '-Java-8'
+  Trimmomatic:
+    toolchains:
+      SYSTEM:
+        versions:
+          '0.39':
+            versionsuffix: '-Java-11'
+  ant:
+    toolchains:
+      SYSTEM:
+        versions:
+          '1.10.1':
+            versionsuffix: '-Java-8'

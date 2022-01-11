@@ -3,3 +3,19 @@ software:
     toolchains:
       SYSTEM:
         versions: ['2020a']
+  zlib:
+    toolchains:
+      SYSTEM:
+        versions: ['1.2.11']
+  binutils:
+    toolchains:
+      SYSTEM:
+        versions: ['2.34']
+  atools:
+    toolchains:
+      SYSTEM:
+        versions:
+          '1.4.8':
+            versionsuffix: '-slurm'
+
+
