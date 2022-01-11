@@ -1,0 +1,67 @@
+software:
+  arpack-ng:
+    toolchains:
+      intel-2020a:
+        versions: ['3.6.3']
+  beagle-lib:
+    toolchains:
+      intel-2020a:
+        versions: ['3.1.2']
+  ELPA:
+    toolchains:
+      intel-2020a:
+        versions: ['2019.11.001', '2020.05.001']
+  GEOS:
+    toolchains:
+      intel-2020a:
+        versions: ['3.8.1']
+  GlobalArrays:
+    toolchains:
+      intel-2020a:
+        versions:
+          '5.7.2':
+            versionsuffix: '-peigs'
+  JAGS:
+    toolchains:
+      intel-2020a:
+        versions: ['4.3.0']
+  kim-api:
+    toolchains:
+      intel-2020a:
+        versions: ['2.2.1']
+  Libint:
+    toolchains:
+      intel-2020a:
+        versions:
+          'v2.6.0':
+            versionsuffix: '-cp2k-lmax-4'
+  libxc:
+    toolchains:
+      intel-2020a:
+        versions: ['4.3.4']
+  libxsmm:
+    toolchains:
+      intel-2020a:
+        versions: ['1.15']
+  MAFFT:
+    toolchains:
+      intel-2020a:
+        versions:
+          '7.471':
+            versionsuffix: '-with-extensions'
+  NGS:
+    toolchains:
+      intel-2020a:
+        versions: ['2.10.4']
+  Rosetta:
+    toolchains:
+      intel-2020a:
+        versions: ['2021.07.61567']
+  Voro++:
+    toolchains:
+      intel-2020a:
+        versions: ['0.4.6']
+  Wannier90:
+    toolchains:
+      intel-2020a:
+        versions: ['2.1.0', '3.1.0']

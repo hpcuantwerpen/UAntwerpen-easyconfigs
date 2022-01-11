@@ -17,5 +17,9 @@ software:
         versions:
           '1.4.8':
             versionsuffix: '-slurm'
+  vsc-mympirun:
+    toolchains:
+      SYSTEM:
+        versions: ['5.0.1']
 
 

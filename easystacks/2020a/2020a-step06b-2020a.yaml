@@ -1,0 +1,14 @@
+software:
+  ABINIT:
+    toolchains:
+      intel-2020a:
+        versions:
+          '8.10.3':
+            versionsuffix: '-hybrid-mkl'
+  GROMACS:
+    toolchains:
+      intel-2020a:
+        versions:
+          '2021.1':
+            versionsuffix: '-UArecipe'
+

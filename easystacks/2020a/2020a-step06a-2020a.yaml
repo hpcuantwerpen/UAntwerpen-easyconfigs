@@ -1,0 +1,28 @@
+software:
+  ABINIT:
+    toolchains:
+      intel-2020a:
+        versions:
+          '9.0.4':
+            versionsuffix: '-hybrid-mkl'
+  ANTs:
+    toolchains:
+      intel-2020a:
+        versions: ['2.3.3']
+  CPMD:
+    toolchains:
+      intel-2020a:
+        versions:
+          '4.3':
+            versionsuffix: '-pl4624'
+  GROMACS:
+    toolchains:
+      intel-2020a:
+        versions:
+          '2020.2':
+            versionsuffix: '-UArecipe'
+  OpenMX:
+    toolchains:
+      intel-2020a:
+        versions: ['3.8.5','3.9.2']
+

@@ -1,0 +1,13 @@
+software:
+  baselibs:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['2020a']
+  ACTC:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['1.1']
+  NSS-NSPR:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['3.51.1-4.25']
