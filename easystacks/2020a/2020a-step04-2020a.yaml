@@ -23,3 +23,51 @@ software:
     toolchains:
       GCCcore-9.3.0:
         versions: ['2.0.5']
+  Perl:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['5.30.2']
+  protobuf:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['3.12.3']
+  intltool:
+    toolchains:
+      GCCcore-9.3.0:
+        versions:
+          '0.51.0':
+            versionsuffix: '-Perl-5.30.2'
+  X11:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['2020a']
+  cairo:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['1.17.2']
+  FFmpeg:
+    toolchains:
+      GCCcore-9.3.0:
+        versions:
+          '4.2.2':
+            versionsuffix: '-CPU'
+  Ghostscript:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['9.52']
+  GObject-Introspection:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['1.64.1']
+  Pandoc:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['2.11.4']
+  HarfBuzz:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['2.6.4']
+  Pango:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['1.44.7']
