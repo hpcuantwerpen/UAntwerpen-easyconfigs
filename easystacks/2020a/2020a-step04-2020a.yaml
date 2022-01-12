@@ -63,11 +63,3 @@ software:
     toolchains:
       GCCcore-9.3.0:
         versions: ['2.11.4']
-  HarfBuzz:
-    toolchains:
-      GCCcore-9.3.0:
-        versions: ['2.6.4']
-  Pango:
-    toolchains:
-      GCCcore-9.3.0:
-        versions: ['1.44.7']
