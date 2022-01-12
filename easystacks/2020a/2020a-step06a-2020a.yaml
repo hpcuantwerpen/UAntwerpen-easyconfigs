@@ -25,4 +25,24 @@ software:
     toolchains:
       intel-2020a:
         versions: ['3.8.5','3.9.2']
+  Beast:
+    toolchains:
+      intel-2020a:
+        versions: ['2.6.2']
+  Bowtie2:
+    toolchains:
+      intel-2020a:
+        versions: ['2.4.1']
+  BWA:
+    toolchains:
+      intel-2020a:
+        versions: ['0.7.17']
+  CP2K:
+    toolchains:
+      intel-2020a:
+        versions: ['7.1']
+  GMAP-GSNAP:
+    toolchains:
+      intel-2020a:
+        versions: ['2020-03-12']
 

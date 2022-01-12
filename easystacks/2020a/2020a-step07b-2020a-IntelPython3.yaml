@@ -1,0 +1,10 @@
+software:
+  Boost:
+    toolchains:
+      intel-2020a:
+        versions:
+          '1.73.0':
+            versionsuffix: '-IntelPython3'
+
+
+

@@ -1,16 +1,16 @@
 software:
-  beagle-lib:
-    toolchains:
-      intel-2020a:
-        versions:
-          '3.1.2':
-            versionsuffix: '-OpenMP'
   Wannier90:
     toolchains:
       intel-2020a:
         versions:
           '2.0.1.1':
             versionsuffix: '-ABINIT'
+  FFTW:
+    toolchains:
+      intel-2020a:
+        versions:
+          '3.3.8':
+            versionsuffix: '-MPI'
 
 
 

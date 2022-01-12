@@ -53,10 +53,6 @@ software:
     toolchains:
       intel-2020a:
         versions: ['2.10.4']
-  Rosetta:
-    toolchains:
-      intel-2020a:
-        versions: ['2021.07.61567']
   Voro++:
     toolchains:
       intel-2020a:
@@ -65,3 +61,25 @@ software:
     toolchains:
       intel-2020a:
         versions: ['2.1.0', '3.1.0']
+  Boost:
+    toolchains:
+      intel-2020a:
+        versions: ['1.73.0']
+  ELSI:
+    toolchains:
+      intel-2020a:
+        versions: ['2.5.0']
+  FFTW:
+    toolchains:
+      intel-2020a:
+        versions: ['3.3.8']
+  gtest:
+    toolchains:
+      intel-2020a:
+        versions: ['1.10.0']
+  libgd:
+    toolchains:
+      intel-2020a:
+        versions: ['2.3.0']
+
+
