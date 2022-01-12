@@ -47,6 +47,11 @@
     * libsndfile: Encapsulates libopus, lib ogg/libvorbis, FLAC.
 * Also added libtheora to complete the line. It can be used in FFmpeg.
 
-NOTE: Buildtools does not work with EasyBuild 4.5.0 due to a change in the bzip2
-EasyBlock that now stupidly puts the PREFIX at the end. A solution might be to put
-an empty echo at the end of the installopts.
+Note: Intermediate changes for easyBuild 4.5.0
+* The EasyBlock for bzip2 has changed and now does the install the way it should
+  so installopts is no longer needed (and fails in fact).
+* libsndfile: Bumped the version to one that doesn't need autogen to be installed.
+* libxml2: Explicitly use ConfigureMake as the EB_libxml2 EasyBlock crashes with an
+  internal EasyBuild error. It also avoids problems with dependency detection that
+  can go wrong (and triggers the bug as it does not occur when using libxml2 as
+  a separate EasyConfig file).

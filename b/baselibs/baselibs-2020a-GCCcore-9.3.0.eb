@@ -1,3 +1,4 @@
+easybuild_version = '4.5.0'
 easyblock = 'Bundle'
 
 name =          'baselibs'
@@ -10,14 +11,14 @@ homepage = '(none)'
 # not searched when using module keyword.
 whatis = [
     "Description: A number of usefull libraries, installed together as a bundle",
-    "Contains: ncurses/ncursesw, readline, brotli, " + 
-    "bzip2, Szip, XZ utils, zlib, gzip, lzip, lz4, zstd, libb2, LZO(2), snappy, libdeflate, libarchive, " + 
-    "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " + 
+    "Contains: ncurses/ncursesw, readline, brotli, " +
+    "bzip2, Szip, XZ utils, zlib, gzip, lzip, lz4, zstd, libb2, LZO(2), snappy, libdeflate, libarchive, " +
+    "giflib, JasPer, libjpeg-turbo, libpng, LibTIFF, libwebp, " +
     "LAME, libopus, libogg (Ogg), libvorbis (OggVorbis), FLAC, libsndfile, x264, x265, libtheora, " +
-    "cURL, expat, libxml2, libxslt, libidn, libidn2, " + 
-    "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " + 
+    "cURL, expat, libxml2, libxslt, libidn, libidn2, " +
+    "GSL, libcerf, GMP, MPFR, MPC, pixman, freetype, fontconfig, " +
     "FriBidi, gettext, ICU, libiconv, libunistring, " +
-    "double-conversion, file, gc, libevent, libffi, libyaml, libtool, " + 
+    "double-conversion, file, gc, libevent, libffi, libyaml, libtool, " +
     "LMDB, PCRE, PCRE2, UDUNITS, D-Bus, util-linux, wget.",
 ]
 
@@ -30,7 +31,7 @@ local_ncurses_version =      '6.2'           # https://ftp.gnu.org/pub/gnu/ncurs
 local_libreadline_version =  '8.0'           # https://ftp.gnu.org/pub/gnu/readline/
 local_brotli_version =       '1.0.7'         # https://github.com/google/brotli/releases
 local_bzip2_version =        '1.0.6'         # http://www.bzip.org/downloads.html
-local_bzip2_major_minor =    '1.0'    
+local_bzip2_major_minor =    '1.0'
 local_Szip_version =         '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
 local_XZ_version =           '5.2.4'         # https://tukaani.org/xz/
 local_zlib_version =         '1.2.11'        # https://zlib.net/
@@ -57,7 +58,7 @@ local_libopus_version =      '1.3.1'         # http://opus-codec.org/downloads/
 local_libogg_version =       '1.3.4'         # https://www.xiph.org/downloads/ or https://github.com/xiph/ogg/releases
 local_libvorbis_version =    '1.3.6'         # https://xiph.org/downloads/ or https://github.com/xiph/vorbis/releases
 local_FLAC_version =         '1.3.3'         # https://xiph.org/downloads/ or https://github.com/xiph/flac/releases
-local_libsndfile_version =   '1.0.28'        # https://github.com/erikd/libsndfile/releases
+local_libsndfile_version =   '1.0.31'        # https://github.com/erikd/libsndfile/releases
 local_libtheora_version =    '1.1.1'         # https://www.theora.org/downloads/ or https://github.com/xiph/theora/releases
 local_cURL_version =         '7.69.1'        # https://curl.haxx.se/download/
 local_expat_version =        '2.2.9'         # https://github.com/libexpat/libexpat/releases
@@ -69,7 +70,7 @@ local_GMP_version =          '6.2.0'         # https://ftp.gnu.org/gnu/gmp/
 local_MPFR_version =         '4.0.2'         # https://ftp.gnu.org/gnu/mpfr/
 local_MPC_version =          '1.1.0'         # https://ftp.gnu.org/gnu/mpc/
 local_mpdecimal_version =    '2.4.2'         # https://www.bytereef.org/mpdecimal/
-local_fribidi_version =      '1.0.9'         # https://github.com/fribidi/fribidi/releases 
+local_fribidi_version =      '1.0.9'         # https://github.com/fribidi/fribidi/releases
 local_gettext_version =      '0.20.1'        # https://ftp.gnu.org/pub/gnu/gettext/
 local_ICU_version =          '66.1'          # http://site.icu-project.org/home
 local_libiconv_version =     '1.16'          # https://ftp.gnu.org/pub/gnu/libiconv/
@@ -109,80 +110,80 @@ Overview of included libraries:
     Documentation is available through man pages in sections 3, 5 and 7.
   + libreadline (version %(libreadline)s): The GNU Readline library provides a set of
     functions for use by applications that allow users to edit command lines as
-    they are typed in. Both Emacs and vi editing modes are available. 
+    they are typed in. Both Emacs and vi editing modes are available.
     The Readline library includes additional functions to maintain a list of
     previously-entered command lines, to recall and perhaps reedit those lines,
     and perform csh-like history expansion on previous commands.
     There are manual pages for readline and history and help via info.
 * File compression tools and libraries
-  + brolti (version %(brotli)s): Brotli is a generic-purpose lossless compression 
-    algorithm that compresses data using a combination of a modern variant of 
-    the LZ77 algorithm, Huffman coding currently available general-purpose 
-    compression methods. It is similar in speed with deflate but offers more 
+  + brolti (version %(brotli)s): Brotli is a generic-purpose lossless compression
+    algorithm that compresses data using a combination of a modern variant of
+    the LZ77 algorithm, Huffman coding currently available general-purpose
+    compression methods. It is similar in speed with deflate but offers more
     dense compression.
     The specification of the Brotli Compressed Data Format is defined in RFC 7932.
   + bzip2 (version %(bzip2)s): Patent-free high-quailty data compressor
-    with very good compression yet fast compression and decompression 
+    with very good compression yet fast compression and decompression
     (.bz2 files)
-  + LZ4 (version %(lz4)s): lossless compression algorithm, providing compression 
-    speed > 500 MB/s per core, scalable with multi-cores CPU. It features 
-    an extremely fast decoder, with speed in multiple GB/s per core, 
+  + LZ4 (version %(lz4)s): lossless compression algorithm, providing compression
+    speed > 500 MB/s per core, scalable with multi-cores CPU. It features
+    an extremely fast decoder, with speed in multiple GB/s per core,
     typically reaching RAM speed limits on multi-core systems.
   + Szip (version %(Szip)s): library maintained by the HDF group for lossless
     compression of scientific data.
-  + XZ Utils (version %(XZ)s): XZ data compression libraries and 
+  + XZ Utils (version %(XZ)s): XZ data compression libraries and
     utilities and the successor to LZMA Utils. It contains the liblzma library
-    with API similar to that of zlib and some command line tools and shell 
+    with API similar to that of zlib and some command line tools and shell
     scripts with similar function as those that come with gzip (xz, xzdec,
     xzgrep, xzdiff, ...)
-  + zlib (version %(zlib)s): Free lossless data compression library, not 
+  + zlib (version %(zlib)s): Free lossless data compression library, not
     covered by any patents, for the popular .gz files.
   + gzip (version %(gzip)s): gzip data compression programs.
-  + lzip (version %(lzip)s): Lzip is a lossless data compressor with a user interface 
-    similar to the one of gzip or bzip2. Lzip can compress about as fast as gzip 
-    (lzip -0) or compress most files more than bzip2 (lzip -9). Decompression 
-    speed is intermediate between gzip and bzip2. Lzip is better than gzip 
-    and bzip2 from a data recovery perspective. Lzip has been designed, 
-    written, and tested with great care to replace gzip and bzip2 as the 
+  + lzip (version %(lzip)s): Lzip is a lossless data compressor with a user interface
+    similar to the one of gzip or bzip2. Lzip can compress about as fast as gzip
+    (lzip -0) or compress most files more than bzip2 (lzip -9). Decompression
+    speed is intermediate between gzip and bzip2. Lzip is better than gzip
+    and bzip2 from a data recovery perspective. Lzip has been designed,
+    written, and tested with great care to replace gzip and bzip2 as the
     standard general-purpose compressed format for unix-like systems.
-  + zstd (version %(zstd)s: Facebook Zstandard compression, a real-time 
-    compression algorithm, providing high compression ratios. It offers a 
-    very wide range of compression/speed trade-off, while being backed by a 
-    very fast decoder. It also offers a special mode for small data, called 
+  + zstd (version %(zstd)s: Facebook Zstandard compression, a real-time
+    compression algorithm, providing high compression ratios. It offers a
+    very wide range of compression/speed trade-off, while being backed by a
+    very fast decoder. It also offers a special mode for small data, called
     dictionary compression, and can create dictionaries from any sample set.
   + libb2 (version %(libb2)s): a C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp
   + LZO (version %(LZO)s): a portable lossless data compression library written in ANSI C.
     It offers pretty fast compression and *extremely* fast decompression.
-    It also includes slower compression levels achieving a quite competitive 
+    It also includes slower compression levels achieving a quite competitive
     compression ratio while still decompressing at this very high speed.
     It is faster than zlip or BZIP2, but doesn't compress as well as those
     packages do.
   + snappy (version %(snappy)s): a compression/decompression library. It does not aim
     for maximum compression, or compatibility with any other compression library;
     instead, it aims for very high speeds and reasonable compression.
-  + Blosc (version %(blosc)s): a high performance compressor optimized for binary data. It has been 
-    designed to transmit data to the processor cache faster than the traditional, 
-    non-compressed, direct memory fetch approach via a memcpy() OS call. Blosc is 
-    the first compressor (that I'm aware of) that is meant not only to reduce the 
-    size of large datasets on-disk or in-memory, but also to accelerate 
+  + Blosc (version %(blosc)s): a high performance compressor optimized for binary data. It has been
+    designed to transmit data to the processor cache faster than the traditional,
+    non-compressed, direct memory fetch approach via a memcpy() OS call. Blosc is
+    the first compressor (that I'm aware of) that is meant not only to reduce the
+    size of large datasets on-disk or in-memory, but also to accelerate
     memory-bound computations (which is typical in vector-vector operations).
-    It uses the blocking technique (as described in this article) to reduce activity 
-    on the memory bus as much as possible. In short, the blocking technique works 
-    by dividing datasets in blocks that are small enough to fit in L1 cache of 
-    modern processor and perform compression/decompression there. It also 
-    leverages SIMD (SSE2) and multi-threading capabilities present in nowadays 
-    multi-core processors so as to accelerate the compression/decompression 
+    It uses the blocking technique (as described in this article) to reduce activity
+    on the memory bus as much as possible. In short, the blocking technique works
+    by dividing datasets in blocks that are small enough to fit in L1 cache of
+    modern processor and perform compression/decompression there. It also
+    leverages SIMD (SSE2) and multi-threading capabilities present in nowadays
+    multi-core processors so as to accelerate the compression/decompression
     process to a maximum.
-  + libdeflate (version %(libdeflate)s): libdeflate is a library for fast, whole-buffer DEFLATE-based 
-    compression and decompression. Libdeflate is heavily optimized. It is 
-    significantly faster than the zlib library, both for compression and 
-    decompression, and especially on x86 processors. In addition, libdeflate 
-    provides optional high compression modes that provide a better compression 
+  + libdeflate (version %(libdeflate)s): libdeflate is a library for fast, whole-buffer DEFLATE-based
+    compression and decompression. Libdeflate is heavily optimized. It is
+    significantly faster than the zlib library, both for compression and
+    decompression, and especially on x86 processors. In addition, libdeflate
+    provides optional high compression modes that provide a better compression
     ratio than the zlib's "level 9".
   + libarchive (version %(libarchive)s): Multi-format archive and compression library.
 * Graphics file formats
-  + giflib (version %(giflib)s): a library for reading and writing gif images. It is 
-    API and ABI compatible with libungif which was in wide use while the LZW 
+  + giflib (version %(giflib)s): a library for reading and writing gif images. It is
+    API and ABI compatible with libungif which was in wide use while the LZW
     compression algorithm was patented.
   + JasPer (version %(JasPer)s): an open-source initiative to provide a free
     software-based reference implementation of the codec specified in the
@@ -232,9 +233,9 @@ Overview of included libraries:
     additional tools on other OSes.
     The library, along with associated tool programs, should handle most of your
     needs for reading and writing TIFF images.
-  + libwebp (version %(libwebp)s): WebP is a modern image format that provides 
-    superior lossless and lossy compression for images on the web. Using WebP, 
-    webmasters and web developers can create smaller, richer images that make 
+  + libwebp (version %(libwebp)s): WebP is a modern image format that provides
+    superior lossless and lossy compression for images on the web. Using WebP,
+    webmasters and web developers can create smaller, richer images that make
     the web faster.
 * Audio and video
   + LAME (version %(LAME)s): LAME is a high quality MPEG Audio Layer III (MP3)
@@ -242,60 +243,60 @@ Overview of included libraries:
     Run lame with the --help option to get some help on the command line options
     of the lame command line tool. There is also a manual page for the lame
     command. The API is very poorly documented (basically through the source code).
-  + libopus (version %(opus)s): Opus is a totally open, royalty-free, highly versatile 
+  + libopus (version %(opus)s): Opus is a totally open, royalty-free, highly versatile
     audio codec. Opus is unmatched for interactive speech and music transmission over
-    the Internet, but is also intended for storage and streaming applications. It is 
-    standardized by the Internet Engineering Task Force (IETF) as RFC 6716 
-    which incorporated technology from Skype’s SILK codec and Xiph.Org’s 
+    the Internet, but is also intended for storage and streaming applications. It is
+    standardized by the Internet Engineering Task Force (IETF) as RFC 6716
+    which incorporated technology from Skype’s SILK codec and Xiph.Org’s
     CELT codec.
-  + libogg (version %(ogg)s): Ogg is a multimedia container format, and the native file and 
-    stream format for the Xiph.org multimedia codecs. As with all Xiph.org 
+  + libogg (version %(ogg)s): Ogg is a multimedia container format, and the native file and
+    stream format for the Xiph.org multimedia codecs. As with all Xiph.org
     technology is it an open format free for anyone to use.
-    As with most container formats it encapsulates raw compressed data and allows 
-    the interleaving of audio and video data inside a single convenient format. 
-    Other examples of container formats are Quicktime .mov, the MPEG program 
+    As with most container formats it encapsulates raw compressed data and allows
+    the interleaving of audio and video data inside a single convenient format.
+    Other examples of container formats are Quicktime .mov, the MPEG program
     stream, and AVI.
-    In addition to encapsulation and interleave of multiple data streams, Ogg 
-    provides packet framing, error detection, and periodic timestamps for 
+    In addition to encapsulation and interleave of multiple data streams, Ogg
+    provides packet framing, error detection, and periodic timestamps for
     seeking, and in a small, bounded percentage bitrate overhead.
-    Ogg is a stream oriented container, meaning it can be written and read in 
-    one pass, making it a natural fit for internet streaming and use in 
-    processing pipelines. This stream orientation is the major design 
+    Ogg is a stream oriented container, meaning it can be written and read in
+    one pass, making it a natural fit for internet streaming and use in
+    processing pipelines. This stream orientation is the major design
     difference over other file-based container formats.
-  + libvorbis (version %(vorbis)s): Ogg Vorbis is a fully open, non-proprietary, 
-    patent-and-royalty-free, general-purpose compressed audio format for mid to high 
-    quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable 
-    bitrates from 16 to 128 kbps/channel. This places Vorbis in the same 
-    competitive class as audio representations such as MPEG-4 (AAC), and 
-    similar to, but higher performance than MPEG-1/2 audio layer 3, MPEG-4 
+  + libvorbis (version %(vorbis)s): Ogg Vorbis is a fully open, non-proprietary,
+    patent-and-royalty-free, general-purpose compressed audio format for mid to high
+    quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable
+    bitrates from 16 to 128 kbps/channel. This places Vorbis in the same
+    competitive class as audio representations such as MPEG-4 (AAC), and
+    similar to, but higher performance than MPEG-1/2 audio layer 3, MPEG-4
     audio (TwinVQ), WMA and PAC.
-    The bitstream format for Vorbis I was frozen Monday, May 8th 2000. 
-    All bitstreams encoded since will remain compatible with all future 
+    The bitstream format for Vorbis I was frozen Monday, May 8th 2000.
+    All bitstreams encoded since will remain compatible with all future
     releases of Vorbis.
-  + FLAC (version %(FLAC)s): FLAC stands for Free Lossless Audio Codec, an audio format 
-    similar to MP3, but lossless, meaning that audio is compressed in FLAC 
-    without any loss in quality. This is similar to how Zip works, except with FLAC you 
-    will get much better compression because it is designed specifically for audio, and 
-    you can play back compressed FLAC files in your favorite player (or your car or home 
+  + FLAC (version %(FLAC)s): FLAC stands for Free Lossless Audio Codec, an audio format
+    similar to MP3, but lossless, meaning that audio is compressed in FLAC
+    without any loss in quality. This is similar to how Zip works, except with FLAC you
+    will get much better compression because it is designed specifically for audio, and
+    you can play back compressed FLAC files in your favorite player (or your car or home
     stereo, see supported devices) just like you would an MP3 file.
-    FLAC stands out as the fastest and most widely supported lossless audio codec, 
-    and the only one that at once is non-proprietary, is unencumbered by patents, 
-    has an open-source reference implementation, has a well documented format 
+    FLAC stands out as the fastest and most widely supported lossless audio codec,
+    and the only one that at once is non-proprietary, is unencumbered by patents,
+    has an open-source reference implementation, has a well documented format
     and API, and has several other independent implementations.
     FLAC is compiled with support for the Ogg container format but without
     XMMS plugin.
-  + libsndfile (version %(sndfile)s): Libsndfile is a C library for reading and 
-    writing files containing sampled sound (such as MS Windows WAV and the Apple/SGI 
-    AIFF format) through one standard library interface. It is released in source 
+  + libsndfile (version %(sndfile)s): Libsndfile is a C library for reading and
+    writing files containing sampled sound (such as MS Windows WAV and the Apple/SGI
+    AIFF format) through one standard library interface. It is released in source
     code format under the Gnu Lesser General Public License.
-    The library was written to compile and run on a Linux system but should compile 
-    and run on just about any Unix (including MacOS X). There are also pre-compiled 
+    The library was written to compile and run on a Linux system but should compile
+    and run on just about any Unix (including MacOS X). There are also pre-compiled
     binaries available for 32 and 64 bit windows.
-    It was designed to handle both little-endian (such as WAV) and big-endian (such 
-    as AIFF) data, and to compile and run correctly on little-endian (such as Intel 
-    and DEC/Compaq Alpha) processor systems as well as big-endian processor systems 
-    such as Motorola 68k, Power PC, MIPS and Sparc. Hopefully the design of the 
-    library will also make it easy to extend for reading and writing new sound file 
+    It was designed to handle both little-endian (such as WAV) and big-endian (such
+    as AIFF) data, and to compile and run correctly on little-endian (such as Intel
+    and DEC/Compaq Alpha) processor systems as well as big-endian processor systems
+    such as Motorola 68k, Power PC, MIPS and Sparc. Hopefully the design of the
+    library will also make it easy to extend for reading and writing new sound file
     formats.
     This module includes support for the FLAC, Opus and OggVorbis codecs, but does
     not include support for the obsoleet Speex codec. It also does not include support
@@ -310,11 +311,11 @@ Overview of included libraries:
     Documentation for the x265 command line tool is available through the --help
     command line option. Both the command line tool and API are also documented
     on the web.
-  + libtheora (version %(theora)s): Theora was Xiph.Org's first publicly released 
-    video codec, intended for use within the Foundation's Ogg multimedia streaming 
-    system. Theora is derived directly from On2's VP3 codec, adds new features while 
+  + libtheora (version %(theora)s): Theora was Xiph.Org's first publicly released
+    video codec, intended for use within the Foundation's Ogg multimedia streaming
+    system. Theora is derived directly from On2's VP3 codec, adds new features while
     allowing it a longer useful lifetime.
-    This module includes the optional encoder but does not include the 
+    This module includes the optional encoder but does not include the
     player.
 * Networking, security and XML
   + cURL (version %(cURL)s): libcurl is a free and easy-to-use client-side
@@ -324,9 +325,9 @@ Overview of included libraries:
     FTP uploading, HTTP form based upload, proxies, cookies, user+password
     authentication (Basic, Digest, NTLM, Negotiate, Kerberos), file transfer
     resume, http proxy tunneling and more.
-  + wget (version %(wget)s): GNU Wget is a free software package for retrieving 
-    files using HTTP, HTTPS and FTP, the most widely-used Internet protocols. 
-    It is a non-interactive command line tool, so it may easily be called from 
+  + wget (version %(wget)s): GNU Wget is a free software package for retrieving
+    files using HTTP, HTTPS and FTP, the most widely-used Internet protocols.
+    It is a non-interactive command line tool, so it may easily be called from
     scripts, cron jobs, terminals without X-Windows support, etc.
   + expat (version %(expat)s): Expat is an XML parser library written in C.
     It is a stream-oriented parser in which an application registers handlers
@@ -341,7 +342,7 @@ Overview of included libraries:
     language. Though the library is written in C a variety of language bindings
     make it available in other environments.
     There are 3 command line tools: xmlcatalog to parse and manipulate XML
-    or SGML catalog viles, xmllint which is a command-line XML parser and 
+    or SGML catalog viles, xmllint which is a command-line XML parser and
     xml-config which provides information about the installed version of the
     library.
   + libxslt (version %(xslt)s): Libxslt is the XSLT C library developed for the
@@ -385,27 +386,27 @@ Overview of included libraries:
     is a major design goal.
     The library is built upon and follows the same principles as GNU MPFR.
     MPFR is free. It is distributed under the GNU Lesser General Public License.
-  + mpdecimal (version %(mpdecimal)s): The libmpdecimal library, a package for 
+  + mpdecimal (version %(mpdecimal)s): The libmpdecimal library, a package for
     correctly-rounded arbitrary precision decimal floating point arithmetic.
-    libmpdec is a complete implementation of the General Decimal Arithmetic 
-    Specification. The specification, written by Mike Cowlishaw from IBM, 
-    defines a general purpose arbitrary precision data type together with 
-    rigorously specified functions and rounding behavior. As described in the 
-    scope section of the specification, libmpdec will - with minor restrictions - 
-    also conform to the IEEE 754-2008 Standard for Floating-Point Arithmetic, 
+    libmpdec is a complete implementation of the General Decimal Arithmetic
+    Specification. The specification, written by Mike Cowlishaw from IBM,
+    defines a general purpose arbitrary precision data type together with
+    rigorously specified functions and rounding behavior. As described in the
+    scope section of the specification, libmpdec will - with minor restrictions -
+    also conform to the IEEE 754-2008 Standard for Floating-Point Arithmetic,
     provided that the appropriate context parameters are set.
 * Drawing graphics
-  + pixman (version %(pixman)s): a low-level software library for pixel manipulation, 
-    providing features such as image compositing and trapezoid rasterization. 
+  + pixman (version %(pixman)s): a low-level software library for pixel manipulation,
+    providing features such as image compositing and trapezoid rasterization.
     Important users of pixman are the cairo graphics library and the X server.
-    Pixman is free and open source software. It is available to be redistributed 
+    Pixman is free and open source software. It is available to be redistributed
     and/or modified under the terms of the MIT license.
   + freetype (version %(freetype)s): TODO
-  + fontconfig (version %(fontconfig)s): a library designed to provide system-wide 
+  + fontconfig (version %(fontconfig)s): a library designed to provide system-wide
     font configuration, customization and application access.
     The package contains a number of command line tools and a shared library.
 * Unicode and multilingual support
-  + FriBidi (version %(fribidiv)s): Free Implementation of the Unicode Bidirectional 
+  + FriBidi (version %(fribidiv)s): Free Implementation of the Unicode Bidirectional
     Algorithm.
   + gettext (version %(gettext)s): GNU gettest is a support library for
     multilingual programs developed in the GNU Translation Project. It
@@ -419,17 +420,17 @@ Overview of included libraries:
     programs to massage in various ways the sets of translatable strings, or
     already translated strings. A special GNU Emacs mode also helps interested
     parties in preparing these sets, or bringing them up to date.
-  + ICU (version %(ICU)s): a mature, widely used set of C/C++ and Java libraries 
+  + ICU (version %(ICU)s): a mature, widely used set of C/C++ and Java libraries
     providing Unicode and Globalization support for software applications.
   + libiconv (version %(iconv)s): This library provides an implementation of the
     iconv() function call to convert various encodings to/from Unicode.
   + libunistring (version %(unistring)s): provides functions for manipulating Unicode
     strings and for manipulating C strings according to the Unicode standard.
 * Miscellaneous
-  + double-conversion (version %(DoubleConv)s): provides binary-decimal and decimal-binary 
+  + double-conversion (version %(DoubleConv)s): provides binary-decimal and decimal-binary
     routines for IEEE doubles.
-    The library consists of efficient conversion routines that have been 
-    extracted from the V8 JavaScript engine. The code has been refactored and 
+    The library consists of efficient conversion routines that have been
+    extracted from the V8 JavaScript engine. The code has been refactored and
     improved so that it can be used more easily in other projects.
   + file (version %(filev)s): The file command is "a file type guesser", that
     is, a command-line tool that tells you in words what kind of data a file
@@ -440,19 +441,19 @@ Overview of included libraries:
     re-implementation of the original file command shipped with Bell Labs UNIX.
   + gc (version %(gc)s): gc is the Boehm-Demers-Weiser conservative garbage
     collector, a garbage collecting replacement for C malloc or C++ new.
-  + GDBM (version %(GDBM)s): GNU dbm (or GDBM, for short) is a library of database functions that use 
-    extensible hashing and work similar to the standard UNIX dbm. These routines 
-    are provided to a programmer needing to create and manipulate a hashed 
+  + GDBM (version %(GDBM)s): GNU dbm (or GDBM, for short) is a library of database functions that use
+    extensible hashing and work similar to the standard UNIX dbm. These routines
+    are provided to a programmer needing to create and manipulate a hashed
     database.
-    The basic use of GDBM is to store key/data pairs in a data file. Each key 
+    The basic use of GDBM is to store key/data pairs in a data file. Each key
     must be unique and each key is paired with only one data item.
-    The library provides primitives for storing key/data pairs, searching and 
-    retrieving the data by its key and deleting a key along with its data. It 
+    The library provides primitives for storing key/data pairs, searching and
+    retrieving the data by its key and deleting a key along with its data. It
     also support sequential iteration over all key/data pairs in a database.
-    For compatibility with programs using old UNIX dbm function, the package 
+    For compatibility with programs using old UNIX dbm function, the package
     also provides traditional dbm and ndbm interfaces.
-  + libevent (version %(event)s): The libevent API provides a mechanism to 
-    execute a callback function when a specific event occurs on a file 
+  + libevent (version %(event)s): The libevent API provides a mechanism to
+    execute a callback function when a specific event occurs on a file
     descriptor or after a timeout has been reached. Furthermore, libevent
     also support callbacks due to signals or regular timeouts.
   + libffi (version %(ffi)s): FFI stands for Foreign Function Interface.
@@ -466,27 +467,27 @@ Overview of included libraries:
     calling conventions. This allows a programmer to call any function specified
     by a call interface description at run-time.
   + libyaml (version %(yaml)s): a YAML 1.1 parser and emitter written in C.
-  + LMDB (version %(LMDB)s): is an extraordinarily fast, memory-efficient database developed 
-    for the OpenLDAP Project. With memory-mapped files, it has the read performance 
-    of a pure in-memory database while retaining the persistence of standard 
+  + LMDB (version %(LMDB)s): is an extraordinarily fast, memory-efficient database developed
+    for the OpenLDAP Project. With memory-mapped files, it has the read performance
+    of a pure in-memory database while retaining the persistence of standard
     disk-based databases.
   + PCRE (version %(PCRE)s): The PCRE library is a set of functions that implement
     regular expression pattern matching using the same syntax and semantics as
     Perl 5. PCRE has its own native API, as well as a set of wrapper functions
     that correspond to the POSIX regular expression API. The PCRE library is
     free, even for building proprietary software.
-    The package includes the command line tools pcregrep, pcretest and 
+    The package includes the command line tools pcregrep, pcretest and
     pcre-config, documented through man pages. API documentation is available
     through man pcre.
   + PCRE2 (version %(PCRE2)s: More modern version of PCRE.
-    The package includes the command line tools pcre2grep, pcre2test and 
+    The package includes the command line tools pcre2grep, pcre2test and
     pcre2-config, documented through man pages. API documentation is available
     through man pcre2.
-  + UDUNITS (version %(UDUNITS)s): The UDUNITS package supports units of physical 
-    quantities. Its C library provides for arithmetic manipulation of units and for 
-    conversion of numeric values between compatible units. The package contains an 
-    extensive unit database, which is in XML format and user-extendable. The package 
-    also contains a command-line utility for investigating units and converting 
+  + UDUNITS (version %(UDUNITS)s): The UDUNITS package supports units of physical
+    quantities. Its C library provides for arithmetic manipulation of units and for
+    conversion of numeric values between compatible units. The package contains an
+    extensive unit database, which is in XML format and user-extendable. The package
+    also contains a command-line utility for investigating units and converting
     values.
     This module provides both static and shared libraries, and a command line
     utility.
@@ -494,7 +495,7 @@ Overview of included libraries:
     from the Linux kernel developers.
   + libtool (version %(libtool)s): Normally more a build tool, but included for those
     programs that actually link to it.
-""" % { 
+""" % {
     'ncurses':      local_ncurses_version,
     'libreadline':  local_libreadline_version,
     'brotli':       local_brotli_version,
@@ -532,7 +533,7 @@ Overview of included libraries:
     'expat':        local_expat_version,
     'xml2':         local_libxml2_version,
     'xslt':         local_libxslt_version,
-    'GSL':          local_GSL_version, 
+    'GSL':          local_GSL_version,
     'libcerf':      local_libcerf_version,
     'GMP':          local_GMP_version,
     'MPFR':         local_MPFR_version,
@@ -569,16 +570,16 @@ docurls = [
     'brotli:        Home page: https://github.com/google/brotli',
     'bzip2:         Web-based documentation on http://www.bzip.org/docs.html',
     'LZ4:           Web-based documentation on https://github.com/lz4/lz4',
-    'Szip:          Web pages on http://www.hdfgroup.org/doc_resource/SZIP/', 
+    'Szip:          Web pages on http://www.hdfgroup.org/doc_resource/SZIP/',
     'XZ Utils:      Man pages for the command line utilities',
-    'zlib:          Web-based manual on https://zlib.net/manual.html', 
+    'zlib:          Web-based manual on https://zlib.net/manual.html',
     'gzip:          Web-based documentation on https://www.gnu.org/software/gzip/manual/',
     'gzip:          Man pages for all commands (gzip, gunzip, gzexe, zcat, zcmp, zdiff, zforce, zgrep, zless, zmore, znew) in Section 1',
     'lzip:          Home page: https://www.nongnu.org/lzip/',
     'lzip:          Web-based manual on https://www.nongnu.org/lzip/manual/lzip_manual.html',
     'zstd:          Web-based documentation via the home page: http://www.zstd.net/',
     'libb2:         Home page: https://github.com/BLAKE2/libb2',
-    'LZO:           Home page http://www.oberhumer.com/opensource/lzo/', 
+    'LZO:           Home page http://www.oberhumer.com/opensource/lzo/',
     'snappy:        Web-based information on https://github.com/google/snappy',
     'Blosc:         Home page https://blosc.org/',
     'libdeflate:    Home page: https://github.com/ebiggers/libdeflate',
@@ -594,7 +595,7 @@ docurls = [
     'FLAC:          Web-based documentation on https://xiph.org/flac/documentation.html',
     'FLAC:          Man pages in section 1 for the flac and metaflac commands',
     'libsndfile:    Web-based API documentation on http://www.mega-nerd.com/libsndfile/api.html',
-    'libsndfile:    Manual pages for the tools in section 1',   
+    'libsndfile:    Manual pages for the tools in section 1',
     'x264:          Some information on http://www.videolan.org/developers/x264.html',
     'x265:          Web-based documentation: http://x265.readthedocs.io/en/default/',
     'libtheora:     Web-based documentation on https://www.theora.org/doc/',
@@ -614,7 +615,7 @@ docurls = [
     'libxslt:       Web-based documentation on the home page: http://xmlsoft.org/libxslt/',
     'libxslt:       Man pages for xsltproc, libxslt and libexslt',
     'double-conversion: Web-based documentation on https://github.com/google/double-conversion',
-    'file:          Home page is https://www.darwinsys.com/file/', 
+    'file:          Home page is https://www.darwinsys.com/file/',
     'FriBidi:       Home page is https://github.com/fribidi/fribidi',
     'gc:            Web-based documentation on the home page http://hboehm.info/gc/',
     'GDBM:          Web-based documentation: http://puszcza.gnu.org.ua/software/gdbm/manual/gdbm.html',
@@ -662,7 +663,7 @@ if local_UAarch == "ivybridge":
     local_snappy_opts = ' -DSNAPPY_REQUIRE_AVX=ON'
 else:
     local_snappy_opts = ' -DSNAPPY_REQUIRE_AVX2=ON'
-    
+
 default_easyblock = 'ConfigureMake'
 
 components = [
@@ -798,11 +799,13 @@ components = [
         'skipsteps':   ['configure'],
         'buildopts':   'CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ; ' + \
                        'make -f Makefile-libbz2_so CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ',
-        'installopts': 'PREFIX="%(installdir)s" ; ' + \
-                       'cp libbz2.so.'+local_bzip2_version+' %(installdir)s/lib ; ' \
-                       'cd %(installdir)s/lib ; ' + \
-                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so.'+local_bzip2_major_minor+' ; ' + \
-                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so' 
+# installopts is no longer needed with EasyBuild 4.5.0 as the EasyBlock now works correctly.
+#        'installopts': 'PREFIX="%(installdir)s" ; ' + \
+#                       'cp libbz2.so.'+local_bzip2_version+' %(installdir)s/lib ; ' \
+#                       'cd %(installdir)s/lib ; ' + \
+#                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so.'+local_bzip2_major_minor+' ; ' + \
+#                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so ; ' + \
+#                       'echo ' # Empty echo since EasyBuild 4.5 (and probably some version before that) puts a PREFIX at the end.
     }),
     ('lz4', local_lz4_version, {
         'sources':     [ {
@@ -861,7 +864,7 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'skipsteps':   ['configure'],
-        'installopts': "PREFIX=%(installdir)s" 
+        'installopts': "PREFIX=%(installdir)s"
     }),
     ('libb2', local_libb2_version, {
         'sources':     [SOURCELOWER_TAR_GZ],
@@ -898,7 +901,7 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s-shared',
         'build_type':  'Release',
-        'configopts':  '-DBUILD_SHARED_LIBS=ON'  + local_snappy_opts 
+        'configopts':  '-DBUILD_SHARED_LIBS=ON'  + local_snappy_opts
     }),
     ('Blosc', local_blosc_version, {
         'easyblock': 'CMakeMake',
@@ -919,7 +922,7 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'skipsteps':   ['configure'],
-        'installopts': "PREFIX=%(installdir)s" 
+        'installopts': "PREFIX=%(installdir)s"
     }),
     ('libarchive', local_libarchive_version, {
         'easyblock': 'CMakeMake',
@@ -956,7 +959,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '-DWITH_JPEG7=1 -DWITH_JPEG8=1 -DWITH_12BIT=0', # 12-bit support broken during configure step.
      }),
-    ('JasPer', local_JasPer_version, { 
+    ('JasPer', local_JasPer_version, {
         'easyblock':     'CMakeMake',
         'separate_build_dir': False,
         'sources':       [ {
@@ -1060,14 +1063,18 @@ components = [
         'configopts':    '--disable-xmms-plugin',
     }),
     ('libsndfile', local_libsndfile_version, { # Requires libopus, libogg, libvorbis and FLAC
-        'sources':       [ {
-                             'download_filename': '%(version)s.zip',
-                             'filename':          'libsndfile-%(version)s.zip',
-                             'source_urls':       ['https://github.com/erikd/libsndfile/archive/']
-                         } ],
+         'sources':      [SOURCE_TAR_BZ2],
+         'source_urls':  ['https://github.com/libsndfile/libsndfile/releases/download/%(version)s/'],
+# Old download for 1.0.28 which we used before.
+#        'sources':       [ {
+#                             'download_filename': '%(version)s.zip',
+#                             'filename':          'libsndfile-%(version)s.zip',
+#                             'source_urls':       ['https://github.com/erikd/libsndfile/archive/']
+#                         } ],
         'start_dir':     '%(namelower)s-%(version)s',
-        'preconfigopts': './autogen.sh && PKG_CONFIG_PATH="%(installdir)s/lib/pkgconfig:$PKG_CONFIG_PATH" ',
-        'configopts':    '--disable-alsa --disable-sqlite '
+#        'preconfigopts': './autogen.sh && PKG_CONFIG_PATH="%(installdir)s/lib/pkgconfig:$PKG_CONFIG_PATH" ',
+        'preconfigopts': 'PKG_CONFIG_PATH="%(installdir)s/lib/pkgconfig:$PKG_CONFIG_PATH" ',
+        'configopts':    '--disable-alsa --disable-sqlite --disable-octave '
     }),
     ('libtheora', local_libtheora_version, { # Requires libogg and libvorbis
         'sources':       [ {
@@ -1089,7 +1096,7 @@ components = [
                           'source_urls': ['https://curl.haxx.se/download/']
                        }],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--with-zlib=%(installdir)s', 
+        'configopts':  '--with-zlib=%(installdir)s',
     }),
     ('expat', local_expat_version, {
         'sources':     [ {
@@ -1099,6 +1106,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('libxml2', local_libxml2_version, { # Needs zlib. The configure also looks for XZ utilities (liblzma), but that depends on gettext which depends on libxml2...
+        'easyblock':   'ConfigureMake', # Overwrite the application specific EasyBlock which crashed in 4.5.0
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/']
@@ -1151,7 +1159,7 @@ components = [
 #        'buildopts': 'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" && ' + \
 #                     'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd - && ' + \
 #                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/Linux*.OBJ/* %(installdir)s && ' + \
-#                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public/*     %(installdir)s/include', 
+#                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public/*     %(installdir)s/include',
 #    }),
 #
 # Regular math libs
@@ -1168,7 +1176,7 @@ components = [
         'separate_build_dir': False,
         # https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v1.13/libcerf-v1.13.tar.bz2
         # The problem with this link is that whatever .tar.gz file you request to it, it will
-        # produce a file with that name and a version of libcerf into it, so we try to isolate 
+        # produce a file with that name and a version of libcerf into it, so we try to isolate
         # it.
         'sources':     [ {
                           'filename':    '%(namelower)s-v%(version)s.tar.bz2',
@@ -1255,7 +1263,7 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s-shared',
         'build_type':  'Release',
-        'configopts':  '-DBUILD_SHARED_LIBS=ON' 
+        'configopts':  '-DBUILD_SHARED_LIBS=ON'
     }),
     ('file', local_file_version, {
         'sources':     [ {
@@ -1407,7 +1415,7 @@ sanity_check_paths = {
 modextravars = {
     'CURL_INCLUDES':                '%(installdir)s/include',
 # Bad idea to add the variables below as they confuse get_software_libdir
-# in some EasyBlocks. It will be very tricy to only add those that 
+# in some EasyBlocks. It will be very tricy to only add those that
 # we need for certain packages and avoid others...
 #    # For increased compatibility with standard EasyBuild recipes
 #    'EBROOTNCURSES':                '%(installdir)s',
