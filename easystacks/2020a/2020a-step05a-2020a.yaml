@@ -81,5 +81,125 @@ software:
     toolchains:
       intel-2020a:
         versions: ['2.3.0']
+  METIS:
+    toolchains:
+      intel-2020a:
+        versions:
+          '5.1.0':
+            versionsuffix: '-i32-fp64'
+  ParMETIS:
+    toolchains:
+      intel-2020a:
+        versions:
+          '4.0.3':
+            versionsuffix: '-i32-fp64'
+  Perl:
+    toolchains:
+      intel-2020a:
+        versions: ['5.30.2']
+  PLUMED:
+    toolchains:
+      intel-2020a:
+        versions: ['2.6.0','2.6.1']
+  PRANK:
+    toolchains:
+      intel-2020a:
+        versions: ['170427']
+  SCOTCH:
+    toolchains:
+      intel-2020a:
+        versions: ['6.0.7']
+  Tcl:
+    toolchains:
+      intel-2020a:
+        versions: ['8.6.10']
+  Kraken:
+    toolchains:
+      intel-2020a:
+        versions:
+          '1.1.1':
+            versionsuffix: '-Perl-5.30.2'
+  libvdwxc:
+    toolchains:
+      intel-2020a:
+        versions:
+          '0.4.0':
+            versionsuffix: '-sequential'
+  MUMPS:
+    toolchains:
+      intel-2020a:
+        versions:
+          '5.3.1':
+            versionsuffix: '-noOpenMP-noMPI'
+  netCDF:
+    toolchains:
+      intel-2020a:
+        versions:
+          '4.7.3':
+            versionsuffix: '-noMPI'
+  ScaFaCoS:
+    toolchains:
+      intel-2020a:
+        versions: ['1.0.1']
+  SQLite:
+    toolchains:
+      intel-2020a:
+        versions: ['3.31.1']
+  SuiteSparse:
+    toolchains:
+      intel-2020a:
+        versions:
+          '5.7.1':
+            versionsuffix: '-METIS-5.1.0'
+  SQLite:
+    toolchains:
+      intel-2020a:
+        versions: ['3.31.1']
+  Kraken2:
+    toolchains:
+      intel-2020a:
+        versions:
+          '2.0.9-beta':
+            versionsuffix: '-Perl-5.30.2'
+  PROJ:
+    toolchains:
+      intel-2020a:
+        versions: ['7.0.1']
+  FFmpeg:
+    toolchains:
+      intel-2020a:
+        versions:
+          '4.2.2':
+            versionsuffix: '-CPU'
+  GDAL:
+    toolchains:
+      intel-2020a:
+        versions: ['3.1.0']
+  Tk:
+    toolchains:
+      intel-2020a:
+        versions: ['8.6.10']
+  Python:
+    toolchains:
+      intel-2020a:
+        versions: ['3.8.3']
+  GObject-Introspection:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['1.64.1']
+  HarfBuzz:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['2.6.4']
+  Pango:
+    toolchains:
+      GCCcore-9.3.0:
+        versions: ['1.44.7']
+  archspec:
+    toolchains:
+      intel-2020a:
+        versions:
+          '0.1.0':
+            versionsuffix: '-Python-3.8.3'
 
 

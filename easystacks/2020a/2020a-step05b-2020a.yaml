@@ -11,6 +11,28 @@ software:
         versions:
           '3.3.8':
             versionsuffix: '-MPI'
+  SCOTCH:
+    toolchains:
+      intel-2020a:
+        versions:
+          '6.0.7':
+            versionsuffix: '-compat-SuperLU'
+  libvdwxc:
+    toolchains:
+      intel-2020a:
+        versions:
+          '0.4.0':
+            versionsuffix: '-MPI'
+  netCDF:
+    toolchains:
+      intel-2020a:
+        versions:
+          '4.7.3':
+            versionsuffix: '-MPI'
+  SuperLU_DIST:
+    toolchains:
+      intel-2020a:
+        versions: ['6.3.0']
 
 
 
