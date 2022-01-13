@@ -1,3 +1,5 @@
+easybuild_version = '4.5.0'
+
 name =    'Python'
 version = '3.8.3'
 
@@ -47,22 +49,22 @@ toolchainopts = {'pic': True}
 #source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
 #sources = [SOURCE_TGZ]
 sources = [
-    { 
+    {
         'filename':   SOURCE_TGZ,
         'source_urls': ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
     },
 # Using download_filename / filename in the exts_list does not work, but downloading
 # here does the job...
-    { 
+    {
         'download_filename': 'v' + local_mkl_random_version + '.tar.gz',
         'filename': 'mkl_random-'+ local_mkl_random_version + '.tar.gz',
         'source_urls': ['https://github.com/IntelPython/mkl_random/archive']
-    }, 
-    { 
+    },
+    {
         'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
         'filename': 'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
         'source_urls': ['https://github.com/IntelPython/mkl_fft/archive']
-    }, 
+    },
 ]
 
 # python needs bzip2 to build the bz2 package
@@ -79,7 +81,7 @@ dependencies = [
 #
 # Extension package dependencies
 #
-    ('HDF5',        '1.10.6', '-MPI'),       # KL 20180629, needed for hf5py 
+    ('HDF5',        '1.10.6', '-MPI'),       # KL 20180629, needed for hf5py
 #    ('SuiteSparse', '4.5.6',  '-METIS-5.1.0'), # KL 20180703, for umfpack support in NumPy.
     ('SuiteSparse', '5.7.1',  '-METIS-5.1.0'), # KL 20180703, for umfpack support in NumPy.
 #    ('protobuf',    '3.5.0'),  # KL 20171204, protobuf now again in a separate module, faster code than the PyPi module
@@ -121,7 +123,7 @@ exts_default_options = {
 exts_list = [
 #
 # Reploace the included pip and setuptools with newer versions.
-#    
+#
     ('pip', '20.0.2', {
         'use_pip': False,
         'checksums': ['7db0c8ea4c7ea51c8049640e8e6e7fde949de672bfa4949920675563a5a6967f'],
@@ -162,19 +164,19 @@ exts_list = [
                        'download_filename': 'v' + local_mkl_random_version + '.tar.gz',
                        'filename':          'mkl_random-'+ local_mkl_random_version + '.tar.gz',
                        'source_urls':       ['https://github.com/IntelPython/mkl_random/archive']
-                     }], 
+                     }],
         'checksums': ['e57d2d57e2796f408fd64fd723bf14259537965af50dd92be049417edfba8816'],
-        'skipsteps': ['install'],
-    }),   
+#        'skipsteps': ['install'], # Should not be skipped with EasyBuild 4.5.0 which has a different default way of installing packages.
+    }),
     ('mkl_fft', local_mkl_fft_version, { # Does require NumPy
         'sources':  [{
                       'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
                       'filename':          'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
                       'source_urls':       ['https://github.com/IntelPython/mkl_fft/archive']
-                     }], 
+                     }],
         'checksums': ['bad1b957e457e9dc596b54047c741df5b6e78f677e2c8a67b62d8cbf2ce9ae83'],
-        'skipsteps': ['install'],
-    }),   
+#        'skipsteps': ['install'], # Should not be skipped with EasyBuild 4.5.0 which has a different default way of installing packages.
+    }),
     ('scipy', '1.4.1', {
         'easyblock': 'EB_scipy', # Not needed as it is automatically selected, but stressing that it is used helps in debugging.
         'patches':   ['scipy-1.4.1-fix-pthread.patch'],
@@ -239,7 +241,7 @@ exts_list = [
     }),
     ('tables', '3.6.1', {  # Also known as PyTables, and can be used by pandas
         'checksums': ['49a972b8a7c27a8a173aeb05f67acb45fe608b64cd8e9fa667c0962a60b71b49'],
-        # The LIBS part works around a bug in the installation procedure of tables. 
+        # The LIBS part works around a bug in the installation procedure of tables.
         # The _sysconfigdata_ of Python contains LIBS="-liomp5 -lpthread" and the installation
         # routine adds another -l in front of each.
         'preconfigopts':  'CC=mpiicc CXX=mpiicpc BZIP2_DIR=$EBROOTBASELIBS LZO2_DIR=$EBROOTBASELIBS BLOSC_DIR=$EBROOTBASELIBS LIBS="iomp5 pthread" ',
@@ -254,13 +256,13 @@ exts_list = [
         'checksums':   ['2dee9ffdd16292878336a58d04a20f0ffe95555465fee7c9bd23b3490ef2abf3'],
     }),
     ('pyzmq', '19.0.0', { # Interfaces to system libraries, but no other Python dependencies
-        'easyblock':   'EB_pyzmq', # Not needed as it is automatically selected, but stressing that it is used helps in debugging.
+        'easyblock':   'EB_PyZMQ', # Not needed as it is automatically selected, but stressing that it is used helps in debugging.
         'modulename':  'zmq',
         'checksums':   ['5e1f65e576ab07aed83f444e201d86deb01cd27dcf3f37c727bc8729246a60a8'],
     }),
 #
-# Packages that interface to multiple libraries without specifically exposing their API  
-#   
+# Packages that interface to multiple libraries without specifically exposing their API
+#
     ('pyparsing', '2.4.7', {
         'checksums': ['c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1'],
     }),
@@ -280,7 +282,7 @@ exts_list = [
     }),
     ('pytz', '2019.3', {  # Requirement for pandas
         'checksums': ['b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be'],
-    }),       
+    }),
     ('pandas', '1.0.3', {
         'checksums': ['32f42e322fb903d0e189a4c10b75ba70d90958cc4f66a1781ed027f1a1d14586'],
     }),
@@ -371,13 +373,13 @@ exts_list = [
     ('more-itertools', '8.2.0', {
         'modulename':  'more_itertools',
         'checksums': ['b1ddb932186d8a6ac451e1d95844b382f55e12686d51ca0c68b6f61f2ab7a507'],
-    }),    
+    }),
     ('py', '1.8.1', { # Needed for pytest
         'checksums': ['5e27081401262157467ad6e7f851b7aa402c5852dbcb3dae06768434de5752aa'],
     }),
     ('wcwidth', '0.1.9', {
         'checksums': ['ee73862862a156bf77ff92b09034fc4825dd3af9cf81bc5b360668d425f3c5f1'],
-    }),  
+    }),
     ('pluggy', '0.13.1', {
         'checksums': ['15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0'],
     }),
@@ -451,7 +453,7 @@ exts_list = [
         'modulename': 'absl',
         'source_tmpl': '%(name)s-%(version)s.tar.gz',
         'checksums':   ['75e737d6ce7723d9ff9b7aa1ba3233c34be62ef18d5859e706b8fdc828989830'],
-    }), 
+    }),
     ('xlrd', '1.2.0', { # Pure Python, no dependencies
         'checksums':   ['546eb36cee8db40c3eaa46c351e67ffee6eeb5fa2650b71bc4c758a29a1b29b2'],
     }),
@@ -592,7 +594,7 @@ exts_list = [
 ##    }),
 ]
 
-# The next block does not work in a Python EasyBlock EasyConfig: There is no 
+# The next block does not work in a Python EasyBlock EasyConfig: There is no
 # substitution of the variables....
 #postinstallcmds = [
 #    # The next command is needed to make sure the sanity check for ruamel.yaml.clib works.
