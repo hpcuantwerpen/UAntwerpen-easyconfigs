@@ -1,0 +1,49 @@
+easyblock = 'CMakeMake'
+
+name = 'RELION'
+version = '3.1.3'
+versionsuffix = '-CUDA'
+
+homepage = 'http://www2.mrc-lmb.cam.ac.uk/relion/index.php/Main_Page'
+description = """RELION (for REgularised LIkelihood OptimisatioN, pronounce rely-on) is a stand-alone computer
+ program that employs an empirical Bayesian approach to refinement of (multiple) 3D reconstructions or 2D class
+ averages in electron cryo-microscopy (cryo-EM)."""
+
+toolchain = {'name': 'intel', 'version': '2020a'}
+
+source_urls = ['https://github.com/3dem/relion/archive/']
+sources = ['%(version)s.tar.gz']
+#patches = ['fltk-ftp.patch'] # FLTK is not used at the moment
+
+builddependencies = [
+  ('buildtools', '2020a', '', True), # CMake
+]
+
+dependencies = [
+  # ('FLTK', '1.3.4'), # Not on Vaughan yet
+  ('baselibs','2020a','',('GCCcore', '9.3.0')), # LibTIFF
+  ('X11', '2020a', '', ('GCCcore', '9.3.0')),
+  ('CUDA', '11.2.1','', True),
+]
+
+# lowest supported capability is 3.5
+# A100 supports CUDA Compute Capability 8.0
+local_cc = '80'
+local_cuda_arch = '-gencode arch=compute_%s,code=\"sm_%s,compute_%s\"' % (local_cc,local_cc,local_cc)
+
+configopts = "-DCMAKE_SHARED_LINKER_FLAGS='-pthread' -DMPI_INCLUDE_PATH=$EBROOTIMPI/intel64/include "
+configopts += "-DCUDA=ON -DCudaTexture=ON "
+configopts += '-DCUDA_ARCH=' + local_cc + ' '
+configopts += "-DC_COMPILER=icc -DCXX_COMPILER=icpc "
+configopts += "-DMPI_C_COMPILER=mpiicc -DMPI_CXX_COMPILER=mpiicpc "
+configopts += "-DCMAKE_C_FLAGS='-O3 -ip -g -xCORE-AVX2 -restrict '"
+configopts += "-DCMAKE_CXX_FLAGS='-O3 -ip -g -xCORE-AVX2 -restrict '"
+configopts += "-DGUI=ON " 
+configopts += "-DMKLFFT=ON -DFORCE_OWN_FLTK=ON "
+
+sanity_check_paths = {
+    'files': ['bin/relion_star_handler'],
+    'dirs': ['bin']
+}
+
+moduleclass = 'bio'
