@@ -1,4 +1,5 @@
 easybuild_version = '4.5.0'
+#easyblock = 'EB_PythonCustom'
 
 name =    'Python'
 version = '3.8.3'
@@ -46,26 +47,8 @@ https://vlaams-supercomputing-centrum-vscdocumentation.readthedocs-hosted.com/en
 toolchain =     {'name': 'intel', 'version': local_buildset}
 toolchainopts = {'pic': True}
 
-#source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
-#sources = [SOURCE_TGZ]
-sources = [
-    {
-        'filename':   SOURCE_TGZ,
-        'source_urls': ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
-    },
-# Using download_filename / filename in the exts_list does not work, but downloading
-# here does the job...
-    {
-        'download_filename': 'v' + local_mkl_random_version + '.tar.gz',
-        'filename': 'mkl_random-'+ local_mkl_random_version + '.tar.gz',
-        'source_urls': ['https://github.com/IntelPython/mkl_random/archive']
-    },
-    {
-        'download_filename': 'v' + local_mkl_fft_version + '.tar.gz',
-        'filename': 'mkl_fft-'+ local_mkl_fft_version + '.tar.gz',
-        'source_urls': ['https://github.com/IntelPython/mkl_fft/archive']
-    },
-]
+source_urls = ['http://www.python.org/ftp/%(namelower)s/%(version)s/']
+sources =     [SOURCE_TGZ]
 
 # python needs bzip2 to build the bz2 package
 dependencies = [
@@ -109,13 +92,16 @@ optimized        = True
 use_lto          = None
 ulimit_unlimited = False
 
+install_pip = True
+
 exts_default_options = {
     'download_dep_fail': True,
     'sanity_pip_check':  False, # Otherwise requires all optional dependencies to also be installed.
+                                # True fails for scoop that claims argparse is not installed while it is.
+#    'sanity_pip_check':  True, # Otherwise requires all optional dependencies to also be installed.
     'source_urls':       [PYPI_SOURCE],
     'use_pip':           True,
 }
-
 
 # order is important!
 # package versions updated 20190730
@@ -123,17 +109,19 @@ exts_default_options = {
 exts_list = [
 #
 # Reploace the included pip and setuptools with newer versions.
+# Note that this will not work if you install with --skip --rebuild as Python will think
+# it already has pip and not replace it with the newer version.
 #
-    ('pip', '20.0.2', {
-        'use_pip': False,
-        'checksums': ['7db0c8ea4c7ea51c8049640e8e6e7fde949de672bfa4949920675563a5a6967f'],
-    }),
     ('setuptools', '45.2.0', {
         'source_tmpl': '%(name)s-%(version)s.zip',
         'checksums': ['89c6e6011ec2f6d57d43a3f9296c4ef022c2cbf49bab26b407fe67992ae3397f'],
     }),
     ('wheel', '0.34.2', {
         'checksums': ['8788e9155fe14f54164c1b9eb0a319d98ef02c160725587ad60f14ddc57b6f96'],
+    }),
+    ('pip', '20.0.2', {
+#        'use_pip': False,
+        'checksums': ['7db0c8ea4c7ea51c8049640e8e6e7fde949de672bfa4949920675563a5a6967f'],
     }),
     ('setuptools_scm', '3.5.0', {
         'checksums': ['5bdf21a05792903cafe7ae0c9501182ab52497614fa6b1750d9dbae7b60c1a87'],
