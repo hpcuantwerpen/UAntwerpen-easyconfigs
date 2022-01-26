@@ -5,6 +5,58 @@ software:
         versions:
           '1.73.0':
             versionsuffix: '-IntelPython3'
+  IntelPython3-Packages:
+    toolchains:
+      intel-2020a:
+        versions: ['2020a']
+  ASE:
+    toolchains:
+      intel-2020a:
+        versions:
+          '3.19.1':
+            versionsuffix: '-IntelPython3'
+  BioTools-Python:
+    toolchains:
+      intel-2020a:
+        versions:
+          '2020a.00':
+            versionsuffix: '-IntelPython3'
+  Boost:
+    toolchains:
+      intel-2020a:
+        versions:
+          '1.73.0':
+            versionsuffix: '-IntelPython3'
+  GPAW:
+    toolchains:
+      intel-2020a:
+        versions:
+          '20.1.0':
+            versionsuffix: '-IntelPython3'
+  metapub:
+    toolchains:
+      intel-2020a:
+        versions:
+          '0.5.5':
+            versionsuffix: '-IntelPython3'
+  molmod:
+    toolchains:
+      intel-2020a:
+        versions:
+          '1.4.7':
+            versionsuffix: '-IntelPython3'
+  phonopy:
+    toolchains:
+      intel-2020a:
+        versions:
+          '2.6.0':
+            versionsuffix: '-IntelPython3'
+  SWIG:
+    toolchains:
+      SYSTEM:
+        versions:
+          '4.0.1':
+            versionsuffix: '-IntelPython3-2020a'
 
 
 

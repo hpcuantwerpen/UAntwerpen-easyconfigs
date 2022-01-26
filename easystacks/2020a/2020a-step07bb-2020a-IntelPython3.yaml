@@ -1,0 +1,10 @@
+software:
+  GPAW:
+    toolchains:
+      intel-2020a:
+        versions:
+          '20.1.0':
+            versionsuffix: '-IntelPython3-MKLFFTW'
+
+
+
