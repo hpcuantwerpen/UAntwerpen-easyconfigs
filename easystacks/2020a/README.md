@@ -19,3 +19,8 @@
     4.5.0 due to undesirable different behaviour of the EasyBlock for bzip2.
 
     Also failure with libsndfile, need to check what is going wrong.
+
+  * Now you can install the step04, step05, step06 and step07 files.f
+
+    The 06 files are some bigger applications.
+    The 07 ones are mostly Python which is already installed in step05.

@@ -1,16 +1,16 @@
 # buildtools module
 
-Buildtools is a collection of various build tools installed in a single module and 
-directory tree. We update it once with every toolchain and give it a version number 
+Buildtools is a collection of various build tools installed in a single module and
+directory tree. We update it once with every toolchain and give it a version number
 based on the toolchain.
 
-The original setup was to only include executables and not libraries. However, that 
-created a build dependency on sufficiently recent versions of Bison 3.0 and flex, so 
-we decided to include them also even though they provide libraries that we may want 
-to compile with a more recent GCC when used in applications (though I expect that 
-even then those libraries will only be used on a non-performance-critical part of 
-the code, I would expect in I/O. And by specifying other flex and/or Bison modules 
-in the right order when building those applications, we may even totally avoid 
+The original setup was to only include executables and not libraries. However, that
+created a build dependency on sufficiently recent versions of Bison 3.0 and flex, so
+we decided to include them also even though they provide libraries that we may want
+to compile with a more recent GCC when used in applications (though I expect that
+even then those libraries will only be used on a non-performance-critical part of
+the code, I would expect in I/O. And by specifying other flex and/or Bison modules
+in the right order when building those applications, we may even totally avoid
 these problems.
 
 
@@ -45,19 +45,19 @@ The contents of the module evolved over time. It does contain a subset of:
 
 * This documentation was started when developing the 2020a version of the module.
 * CMake still requires an ncurses and OpenSSL library from the system.
-* There are dependencies between those packages, so sometimes the order in the 
+* There are dependencies between those packages, so sometimes the order in the
   EasyConfig file does matter and is chosen to use the newly installed tools
   for the installation of some of the other tools in the bundle.
 
 
 ### 2020a
 
-* We did notice that some GNU tools are no longer available in the tar.bz2 format and 
-  instead in .tar.lz. However, since there lzip was not yet installed on our systems 
+* We did notice that some GNU tools are no longer available in the tar.bz2 format and
+  instead in .tar.lz. However, since there lzip was not yet installed on our systems
   and since there is no easy-to-recognize SOURCE_TAR_LZ or SOURCELOWER_TAR_LZ constant
   defined in EasyBuild, we do not yet use that format.
 * We did add EBROOT and EBVERSION variables for all components for increased compatibility
-  with standard EasysBuild-generated modules (in case those variables would, e.g., 
+  with standard EasysBuild-generated modules (in case those variables would, e.g.,
   be used in EasyBlocks for certain software packages).
 * Added re2c and SCons to the bundle.
 
@@ -65,7 +65,7 @@ Versions used:
 * Byacc 20191125
 * Flex 2.6.4
 * re2c 1.3
-* git 2.26.0 
+* git 2.26.0
 * GNU Autoconf 2.69
 * GNU Automake 1.16.2
 * GNU Bison 3.5.3
@@ -85,3 +85,7 @@ Versions used:
 * GNU help2man 1.47.13
 * Doxygen 1.8.16 (1.8.17 did not compile)
 
+* Note: We have one package that needs AutoGen but installing that is a pain as it
+  also needs Guile. Newer versions of that package seem to be fine without AutoGen
+  so we do not install it in EasyBuild at the moment as it is only temporarily
+  needed.
