@@ -1,0 +1,8 @@
+software:
+  GROMACS:
+    toolchains:
+      intel-2020a:
+        versions:
+          '2019.4':
+            versionsuffix: '-PLUMED-2.6.0-UArecipe'
+

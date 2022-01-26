@@ -195,11 +195,11 @@ software:
     toolchains:
       GCCcore-9.3.0:
         versions: ['1.44.7']
-  archspec:
+  CGAL:
     toolchains:
       intel-2020a:
         versions:
-          '0.1.0':
-            versionsuffix: '-Python-3.8.3'
+          '4.14.3':
+            versionsuffix: '-forOpenFOAM'
 
 

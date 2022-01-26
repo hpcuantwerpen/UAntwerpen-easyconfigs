@@ -11,4 +11,10 @@ software:
         versions:
           '2021.1':
             versionsuffix: '-UArecipe'
+  Amber:
+    toolchains:
+      intel-2020a:
+        versions:
+          '20':
+            versionsuffix: '-AmberTools-20-patchlevel-6-10'
 

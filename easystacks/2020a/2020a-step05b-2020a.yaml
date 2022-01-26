@@ -33,6 +33,12 @@ software:
     toolchains:
       intel-2020a:
         versions: ['6.3.0']
+  CGAL:
+    toolchains:
+      intel-2020a:
+        versions:
+          '4.10.2':
+            versionsuffix: '-forOpenFOAM6'
 
 
 

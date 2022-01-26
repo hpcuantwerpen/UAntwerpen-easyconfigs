@@ -45,4 +45,90 @@ software:
     toolchains:
       intel-2020a:
         versions: ['2020-03-12']
+  MrBayes:
+    toolchains:
+      intel-2020a:
+        versions:
+          '3.2.7':
+            versionsuffix: '-MPI'
+  RAxML-NG:
+    toolchains:
+      intel-2020a:
+        versions: ['0.9.0']
+  SMALT:
+    toolchains:
+      intel-2020a:
+        versions: ['0.7.6']
+  STAR:
+    toolchains:
+      intel-2020a:
+        versions: ['2.7.6a']
+  BerkeleyGW:
+    toolchains:
+      intel-2020a:
+        versions:
+          '2.1':
+            versionsuffix: '-hybrid'
+  BioTools:
+    toolchains:
+      intel-2020a:
+        versions: ['2020a.00']
+  BLAST+:
+    toolchains:
+      intel-2020a:
+        versions: ['2.9.0','2.10.0']
+  BioPerl:
+    toolchains:
+      intel-2020a:
+        versions:
+          '1.7.7':
+            versionsuffix: '-Perl-5.30.2'
+  Bismark:
+    toolchains:
+      intel-2020a:
+        versions: ['0.22.3']
+  DSSP:
+    toolchains:
+      intel-2020a:
+        versions: ['3.1.4']
+  Siesta:
+    toolchains:
+      intel-2020a:
+        versions: ['4.0.2']
+  Amber:
+    toolchains:
+      intel-2020a:
+        versions:
+          '18':
+            versionsuffix: '-AmberTools-19-patchlevel-17-12'
+  TELEMAC:
+    toolchains:
+      intel-2020a:
+        versions: ['v8p1r1','v8p2r0']
+  R:
+    toolchains:
+      intel-2020a:
+        versions: ['4.0.2']
+  OpenFOAM:
+    toolchains:
+      intel-2020a:
+        versions: ['6','8', 'v2012']
+  GenomeTools:
+    toolchains:
+      intel-2020a:
+        versions: ['1.6.1']
+  gnuplot:
+    toolchains:
+      intel-2020a:
+        versions: ['5.4.0']
+  canu:
+    toolchains:
+      intel-2020a:
+        versions: ['2.0']
+  archspec:
+    toolchains:
+      intel-2020a:
+        versions:
+          '0.1.0':
+            versionsuffix: '-Python-3.8.3'
 
