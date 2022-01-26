@@ -1,0 +1,5 @@
+software:
+  R:
+    toolchains:
+      intel-2020a:
+        versions: ['4.0.2']

@@ -105,10 +105,6 @@ software:
     toolchains:
       intel-2020a:
         versions: ['v8p1r1','v8p2r0']
-  R:
-    toolchains:
-      intel-2020a:
-        versions: ['4.0.2']
   OpenFOAM:
     toolchains:
       intel-2020a:
