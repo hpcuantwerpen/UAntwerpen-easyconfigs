@@ -19,6 +19,7 @@ builddependencies = [
 
 dependencies = [
   ('baselibs','2020a','',('GCCcore', '9.3.0')), # LibTIFF
+  ('X11', '2020a', '', ('GCCcore', '9.3.0')),
 ]
 
 configopts = "-DCMAKE_SHARED_LINKER_FLAGS='-pthread' " # -DMPI_INCLUDE_PATH=$EBROOTIMPI/intel64/include "
@@ -27,7 +28,7 @@ configopts += "-DC_COMPILER=icc -DCXX_COMPILER=icpc "
 configopts += "-DMPI_C_COMPILER=mpiicc -DMPI_CXX_COMPILER=mpiicpc "
 configopts += "-DCMAKE_C_FLAGS='-O3 -ip -g -xCORE-AVX2 -restrict '"
 configopts += "-DCMAKE_CXX_FLAGS='-O3 -ip -g -xCORE-AVX2 -restrict '"
-configopts += "-DGUI=OFF " 
+configopts += "-DGUI=ON " 
 configopts += "-DMKLFFT=ON -DFORCE_OWN_FLTK=ON "
 
 sanity_check_paths = {
