@@ -127,4 +127,8 @@ software:
     toolchains:
       intel-2020a:
         versions: ['6','8', 'v2012']
+  R:
+    toolchains:
+      intel-2020a:
+        versions: ['4.0.2']
 
