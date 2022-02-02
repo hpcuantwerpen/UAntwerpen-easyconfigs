@@ -61,6 +61,7 @@ dependencies = [
     ('SCOTCH',   local_SCOTCH_version),
     ('CGAL',     '4.10.2',             '-forOpenFOAM6'), # This works
 #    ('ParaView', '5.4.1', '-mpi'),
+    ('gnuplot',  '5.4.0')
 ]
 
 builddependencies = [
@@ -73,6 +74,9 @@ postinstallcmds = [
     "cd %(installdir)s/OpenFOAM-%(version)s/etc ; sed -e 's/\(_foamSource.*paraview\)/#\\1/' -e 's/\$HOME/\$VSC_SCRATCH/' -i bashrc",
     "cd %(installdir)s/OpenFOAM-%(version)s/etc ; sed -e 's/\(_foamSource.*paraview\)/#\\1/' -e 's/\$HOME/\$VSC_SCRATCH/' -i cshrc",
 ]
+
+# Uncomment next line for debugging purposes if needed.
+# skipsteps = ['sanitycheck']
 
 #local_install = 'linux64IccDPInt32'
 #
