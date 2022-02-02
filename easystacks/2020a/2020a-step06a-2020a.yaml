@@ -105,10 +105,6 @@ software:
     toolchains:
       intel-2020a:
         versions: ['v8p1r1','v8p2r0']
-  OpenFOAM:
-    toolchains:
-      intel-2020a:
-        versions: ['6','8', 'v2012']
   GenomeTools:
     toolchains:
       intel-2020a:
@@ -127,4 +123,8 @@ software:
         versions:
           '0.1.0':
             versionsuffix: '-Python-3.8.3'
+  OpenFOAM:
+    toolchains:
+      intel-2020a:
+        versions: ['6','8', 'v2012']
 

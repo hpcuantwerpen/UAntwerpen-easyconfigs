@@ -65,23 +65,11 @@ software:
         versions:
           '0.9.6':
             versionsuffix: '-Python-3.8.3'
-  NEURON:
-    toolchains:
-      intel-2020a:
-        versions:
-          '7.7.2':
-            versionsuffix: '-Python-3.8.3'
   numba:
     toolchains:
       intel-2020a:
         versions:
           '0.49.1':
-            versionsuffix: '-Python-3.8.3'
-  NWChem:
-    toolchains:
-      intel-2020a:
-        versions:
-          '7.0.2':
             versionsuffix: '-Python-3.8.3'
   phonopy:
     toolchains:
@@ -124,6 +112,12 @@ software:
       intel-2020a:
         versions:
           '3Mar2020':
+            versionsuffix: '-Python-3.8.3'
+  NWChem:
+    toolchains:
+      intel-2020a:
+        versions:
+          '7.0.2':
             versionsuffix: '-Python-3.8.3'
 
 
