@@ -39,6 +39,9 @@ dependencies = [
 ]
 
 # When not building on a compute node, uncomment the next line.
+# The sanity check runs neurondemo and that does not always work outside the context of a job.
+# Moreover, executing this program by hand is not a good idea either as it tries to write in its own
+# directories. In fact, NEURON is not ideal for a central installation...
 #skipsteps = ['sanitycheck']
 
 moduleclass = 'math'
