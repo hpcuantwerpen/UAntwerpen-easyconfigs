@@ -1,0 +1,15 @@
+software:
+  buildtools:
+    toolchains:
+      SYSTEM:
+        versions: ['2021b']
+  zlib:
+    toolchains:
+      SYSTEM:
+        versions: ['1.2.11']
+  binutils:
+    toolchains:
+      SYSTEM:
+        versions: ['2.37']
+
+

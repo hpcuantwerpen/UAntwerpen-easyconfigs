@@ -1,0 +1,15 @@
+software:
+  GCCcore:
+    toolchains:
+      SYSTEM:
+        versions: ['11.2.0']
+  binutils:
+    toolchains:
+      GCCcore-11.2.0:
+        versions: ['2.37']
+  GCC:
+    toolchains:
+      SYSTEM:
+        versions: ['11.2.0']
+
+
