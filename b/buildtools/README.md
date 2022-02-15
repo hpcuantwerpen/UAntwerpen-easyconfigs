@@ -106,6 +106,10 @@ Versions used:
   * `makeinfo` was added to the bundle. It is not fully functional as there is no TeX
     on the system, but for some builds it seems to be enough.
 
+  * `xxd`, which is a tiny hex editor that comes with Vim, was also added to the bundle.
+    It is a dependency for PLUMED and available on most systems, but it was added to
+    the bundle for completeness.
+
   * Versions used: See the EasyConfig file.
 
   * AutoGen is still not included as that package is a pain to install.
