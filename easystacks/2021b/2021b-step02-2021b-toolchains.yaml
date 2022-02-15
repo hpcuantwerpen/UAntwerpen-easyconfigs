@@ -3,6 +3,10 @@ software:
     toolchains:
       SYSTEM:
         versions: ['11.2.0']
+  zlib:
+    toolchains:
+      GCCcore-11.2.0:
+        versions: ['1.2.11']
   binutils:
     toolchains:
       GCCcore-11.2.0:

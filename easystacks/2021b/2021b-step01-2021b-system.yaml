@@ -14,7 +14,7 @@ software:
   atools:
     toolchains:
       SYSTEM:
-        versions: '1.4.8']
+        versions: ['1.4.8']
   vsc-mympirun:
     toolchains:
       SYSTEM:

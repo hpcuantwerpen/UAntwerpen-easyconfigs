@@ -1,0 +1,56 @@
+local_buildset =         '2021b'
+local_gcc_version =      '11.2.0'
+local_binutils_version = '2.37'
+
+local_zlib_version =             '1.2.11'        # https://zlib.net/
+
+name =    'binutils'
+version = local_binutils_version
+
+homepage = 'http://directory.fsf.org/project/binutils/'
+
+whatis = [
+    "Description: GNU binutils compiled with the GCCcore toolchain.",
+]
+
+description = """
+The GNU binutils are a diverse collection of binary tools. It is complementary
+to the GNU Compiler Collection and contains a lot of tools to work with
+object files and executables.
+
+The binaries in this module were built with the GCCcore toolchain. The module
+is mostly meant to be used as a component of the GCC toolchain, so users
+preferably load the GCC toolchain instead of this module.
+"""
+
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
+
+source_urls = [GNU_SOURCE]
+sources =     [SOURCE_TAR_XZ]
+patches = [
+    'binutils-2.31.1-gold-ignore-discarded-note-relocts.patch',
+    'binutils-2.34-readd-avx512-vmovd.patch',
+]
+checksums = [
+    'f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952',  # binutils-2.34.tar.xz
+    '17f22cc9136d0e81cfe8cbe310328c794a78a864e7fe7ca5827ee6678f65af32',  # binutils-2.31.1-gold-ignore-discarded-note-relocts.patch
+    '45ecf7f5d198dd446d1a2e2a4d46b2747eb6fb8f2bfa18d7d42769e710e85716',  # binutils-2.34-readd-avx512-vmovd.patch
+]
+
+builddependencies = [
+    ('buildtools', local_buildset, '', True), # For flex and Bison
+    # use same binutils version that was used when building GCC toolchain, to 'bootstrap' this binutils
+    ('binutils',   version,        '', True)
+]
+
+dependencies = [
+    # zlib is a runtime dep to avoid that it gets embedded in libbfd.so,
+    # see https://github.com/easybuilders/easybuild-easyblocks/issues/1350
+    ('zlib', local_zlib_version),
+]
+
+# See our documentation: Workaround for systems without makeinfo.
+buildopts = 'MAKEINFO=true V=1'
+installopts = 'MAKEINFO=true'
+
+moduleclass = 'tools'
