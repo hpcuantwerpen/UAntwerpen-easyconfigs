@@ -26,16 +26,8 @@ preferably load the GCC toolchain instead of this module.
 toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
 
 source_urls = [GNU_SOURCE]
-sources =     [SOURCE_TAR_XZ]
-patches = [
-    'binutils-2.31.1-gold-ignore-discarded-note-relocts.patch',
-    'binutils-2.34-readd-avx512-vmovd.patch',
-]
-checksums = [
-    'f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952',  # binutils-2.34.tar.xz
-    '17f22cc9136d0e81cfe8cbe310328c794a78a864e7fe7ca5827ee6678f65af32',  # binutils-2.31.1-gold-ignore-discarded-note-relocts.patch
-    '45ecf7f5d198dd446d1a2e2a4d46b2747eb6fb8f2bfa18d7d42769e710e85716',  # binutils-2.34-readd-avx512-vmovd.patch
-]
+sources = [SOURCE_TAR_GZ]
+checksums = ['c44968b97cd86499efbc4b4ab7d98471f673e5414c554ef54afa930062dbbfcb']
 
 builddependencies = [
     ('buildtools', local_buildset, '', True), # For flex and Bison
