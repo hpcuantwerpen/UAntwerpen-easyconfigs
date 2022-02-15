@@ -49,6 +49,16 @@ The contents of the module evolved over time. It does contain a subset of:
   EasyConfig file does matter and is chosen to use the newly installed tools
   for the installation of some of the other tools in the bundle.
 
+#### What about Autoconf etc.?
+
+  * Autoconf provides: `autoconf`, `autoreconf`, `autom4te`, `autoscan`, `autoupdate`,
+    `ifnames`
+
+  * Autoconf_archive provides a lot of macros in `share/aclocal`
+
+  * Automake provides `aclocal`, `automake`, and versioned versions of
+    these commands, e.g., `aclocal-1.16` and `automake-1.16`.
+
 
 ### 2020a
 
@@ -89,3 +99,13 @@ Versions used:
   also needs Guile. Newer versions of that package seem to be fine without AutoGen
   so we do not install it in EasyBuild at the moment as it is only temporarily
   needed.
+
+
+### 2021b
+
+  * `makeinfo` was added to the bundle. It is not fully functional as there is no TeX
+    on the system, but for some builds it seems to be enough.
+
+  * Versions used: See the EasyConfig file.
+
+  * AutoGen is still not included as that package is a pain to install.
