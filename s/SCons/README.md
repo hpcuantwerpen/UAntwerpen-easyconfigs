@@ -6,10 +6,12 @@
 * [SCons on SourceForge](https://sourceforge.net/projects/scons/)
     * [Downloads on SourceForge](https://sourceforge.net/projects/scons/files/scons/)
 
+
 ## General information
 
 * SCons is Python software
     * Version 3.1 (when this documentation was first written) Requires 2.7 or 3.5+
+
 
 ## EasyBuild
 
@@ -20,6 +22,7 @@ There is support for SCons in the [
 EasyBuilders repository](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/s/SCons).
 It however relies on EasyBuild-generated Python modules which is kind of stupid
 for a tool that is used to install some very basic software.
+
 
 ### 3.1.2
 
@@ -34,6 +37,18 @@ for a tool that is used to install some very basic software.
       sed to use `python3` instead to ensure that the right version of Python
       corresponding to the installed libraries is used. Otherwise we could
       expect conflicts with the PYTHONPATH in buildtools.
-* Since our system Python does not have pip installed, we turned off pip 
+* Since our system Python does not have pip installed, we turned off pip
   installation.
- 
+
+
+### 4.3.0
+
+  * Installation from sources didn't work on Vaughan, likely because setuptools
+    in the system Python is too old.
+
+  * Installation from a wheel is a real option as this is a pure Python package.
+    It did take some work to get this to work in a Bundle context, basically
+    because the unpacking is done in a different way than in a PythonPackage
+    EasyConfig as the default list of extract_cmds doesn't recognize .whl files.
+    The problematic code is partly in `easybuild/tools/filetools.py` in the
+    EasyBuild framework.

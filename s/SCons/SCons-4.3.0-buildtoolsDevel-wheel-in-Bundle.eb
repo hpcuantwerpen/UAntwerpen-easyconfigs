@@ -1,0 +1,67 @@
+easyblock = 'Bundle'
+
+local_SCons_version =            '4.3.0'         # SCons      20101217 - https://github.com/SCons/scons/releases, https://scons.org/pages/download.html
+
+name =          'SCons'
+version =       local_SCons_version
+versionsuffix = '-buildtoolsDevel-wheel-in-Bundle'
+
+homepage = 'https://www.scons.org/'
+
+whatis = [
+    "Description: SCons is a software construction tool."
+]
+
+description = """
+SCons is an Open Source software construction tool—that is, a next-generation
+build tool. Think of SCons as an improved, cross-platform substitute for the
+classic Make utility with integrated functionality similar to autoconf/automake
+and compiler caches such as ccache. In short, SCons is an easier, more reliable
+and faster way to build software.
+"""
+
+toolchain = SYSTEM
+
+osdependencies = [
+    ('python3')
+]
+
+default_easyblock = 'PythonPackage'
+
+components = [
+    ('SCons', local_SCons_version, { # This has proven to be a pretty fragile installation process. $.x does not work.
+        # We install from a wheel as installing version 4.x from a .tar.gz file fails.
+        # It may be that the setuptools version in Python in CentOS 8.5 is too old.
+        'easyblock':        'PythonPackage',
+        'sources':          [ {
+                                'filename':    '%(name)s-%(version)s-py3-none-any.whl',
+                                'source_urls': [PYPI_SOURCE],
+                                'extract_cmd': 'cp -a %s .',
+                            } ],
+#        'sources':          ['%(name)s-%(version)s-py3-none-any.whl'],
+#        'source_urls':      [PYPI_SOURCE],
+        'checksums':        ['8c13911a2aa40552553488f7d625af4c0768fc8cdedab4a858d8ce42c8c3664d'],
+#        'start_dir':        '%(name)s-%(version)s',
+        'req_py_majver':     3, # Used to let EasyBuild select the right system Python executable.
+        'req_py_minver':     6, # Used to let EasyBuild select the right system Python executable.
+        'download_dep_fail': False,
+        'use_pip':           True,
+        'sanity_pip_check':  False,
+        'unpack_sources':    False,
+        'options':           {'modulename': False}
+        }),
+]
+
+#postinstallcmds = [
+#    '/bin/rm %(installdir)s/bin/scon*.bat',
+#    'cd %(installdir)s/bin; sed -e "s/env python/env python3/" -i scons*'
+#]
+
+sanity_check_paths = {
+    'files': ['bin/scons', 'bin/sconsign'], # scons-time is missing in SCons 4? Strange as there is a manual page for it.
+    'dirs':  [],
+}
+
+sanity_check_commands = ["scons --help"]
+
+moduleclass = 'devel'
