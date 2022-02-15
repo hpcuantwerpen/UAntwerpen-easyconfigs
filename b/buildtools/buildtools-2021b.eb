@@ -351,6 +351,8 @@ components = [
 postinstallcmds = [
     # For make
     'cd %(installdir)s/bin ; ln -s make gmake', # Some programs check for gmake first and fail if that version is too old.
+    # For scons
+    'cd %(installdir)s ; mv scon*.1 share/man/man1',
 ]
 
 sanity_check_paths = {
