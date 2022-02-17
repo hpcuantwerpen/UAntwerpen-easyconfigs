@@ -1,8 +1,8 @@
 easyblock = 'ConfigureMake'
 
-local_buildset =             '2021b'
-local_gcc_version =          '11.2.0'
-local_binutils_version =     '2.34'
+local_buildset =         '2021b'
+local_gcc_version =      '11.2.0'
+local_binutils_version = '2.37'
 
 local_ncurses_version =      '6.2'           # https://ftp.gnu.org/pub/gnu/ncurses/
 

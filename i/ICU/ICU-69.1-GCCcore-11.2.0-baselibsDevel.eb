@@ -1,0 +1,44 @@
+easyblock = 'ConfigureMake'
+
+local_buildset =         '2021b'
+local_gcc_version =      '11.2.0'
+local_binutils_version = '2.37'
+
+local_ICU_version =              '69.1'          # http://site.icu-project.org/home
+
+name =          'ICU'
+version =       local_ICU_version
+versionsuffix = '-baselibsDevel'
+
+homepage = 'http://site.icu-project.org/home'
+
+whatis = [
+    "Description: ICU is a set of C/C++ and Java libraries providing Unicode and globalization support",
+]
+
+description = """
+ICU is a mature, widely used set of C/C++ and Java libraries providing Unicode
+and Globalization support for software applications.
+"""
+
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
+toolchainopts = {'pic': True}
+
+# https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz
+source_urls = ['https://github.com/unicode-org/icu/releases/download/release-%(version_major)s-%(version_minor)s']
+sources =     ['icu4c-%(version_major)s_%(version_minor)s-src.tgz']
+checksums =   ['4cba7b7acd1d3c42c44bb0c14be6637098c7faf2b330ce876bc5f3b915d09745']
+
+builddependencies = [
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
+]
+
+start_dir = 'source'
+
+sanity_check_paths = {
+    'files': ['lib/libicu%s.%s' % (x, SHLIB_EXT) for x in ['data', 'i18n', 'io', 'test', 'tu', 'uc']],
+    'dirs':  ['bin', 'include/unicode', 'share/icu', 'share/man'],
+}
+
+moduleclass = 'lib'

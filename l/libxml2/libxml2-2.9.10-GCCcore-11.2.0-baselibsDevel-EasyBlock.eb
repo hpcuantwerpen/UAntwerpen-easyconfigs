@@ -1,19 +1,19 @@
 # NOTE: Picks up the system Python despice --without-python. The subsequent libxslt build
 # does detect a libxml2 with Python support...
-easyblock = 'ConfigureMake' # Don\t use the libxml2-specific EasyBlock as that one is awkward to use in our Bundle and does not yet support XZ (3.9.3)
+easyblock = 'EB_libxml2' # Don\t use the libxml2-specific EasyBlock as that one is awkward to use in our Bundle and does not yet support XZ (3.9.3)
 
-buildset =             '2021b'
-gcc_version =          '11.2.0'
-binutils_version =     '2.32'
+local_buildset =         '2021b'
+local_gcc_version =      '11.2.0'
+local_binutils_version = '2.37'
 
-ICU_version =          '64.2'          # http://site.icu-project.org/home
-XZ_version =           '5.2.4'         # https://tukaani.org/xz/
-zlib_version =         '1.2.11'        # https://zlib.net/
-libxml2_version =      '2.9.9'         # http://xmlsoft.org/sources/
+local_ICU_version =              '69.1'          # http://site.icu-project.org/home
+local_XZ_version =               '5.2.5'         # https://tukaani.org/xz/
+local_zlib_version =             '1.2.11'        # https://zlib.net/
+local_libxml2_version =          '2.9.9'         # http://xmlsoft.org/sources/
 
 name =          'libxml2'
-version =       libxml2_version
-versionsuffix = '-baselibsDevel'
+version =       local_libxml2_version
+versionsuffix = '-baselibsDevel-EasyBlock'
 
 homepage = 'http://xmlsoft.org/'
 
@@ -49,7 +49,7 @@ docurls = [
     'Man pages for the command line tools and libxml',
 ]
 
-toolchain =     {'name': 'GCCcore', 'version': gcc_version}
+toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
 toolchainopts = {'pic': True}
 
 source_urls = [
@@ -59,17 +59,21 @@ source_urls = [
 sources = [SOURCELOWER_TAR_GZ]
 
 builddependencies = [
-    ('binutils',   binutils_version),
-    ('buildtools', buildset,         '', True),
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
 ]
 
 dependencies = [
-    ('ICU',  ICU_version,  versionsuffix),
-    ('zlib', zlib_version, versionsuffix),
-    ('XZ',   XZ_version,   versionsuffix),
+    ('ICU',  local_ICU_version,  '-baselibsDevel'),
+    ('zlib', local_zlib_version),
+    ('XZ',   local_XZ_version,   '-baselibsDevel'),
 ]
 
-configopts = 'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib --with-lzma --without-python'
+#configopts = 'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib --with-lzma --without-python'
+
+buildopts = 'VERBOSE=1 V=1'
+
+maxparallel = 1
 
 sanity_check_paths = {
     'files': [('lib/%(name)s.a', 'lib64/%(name)s.a'), ('lib/%(name)s.so', 'lib64/%(name)s.so')],
