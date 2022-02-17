@@ -21,10 +21,10 @@ description = """
 This module provides NSS, the Netscape Security Services, and some related
 packages:
 
-  + NSPR (version %(NSPR)s): Netscape Portable Runtime (NSPR) provides a 
+  + NSPR (version %(NSPR)s): Netscape Portable Runtime (NSPR) provides a
     platform-neutral API for system level  and libc-like functions.
-  + NSS (version %(NSS)s): Network Security Services, a set of libraries designed 
-    to support cross-platform development of security-enabled client and server 
+  + NSS (version %(NSS)s): Network Security Services, a set of libraries designed
+    to support cross-platform development of security-enabled client and server
     applications.
 
 Note that for some applications, we have detected conflicts with the system
@@ -67,10 +67,10 @@ components = [
         'start_dir': '%(namelower)s-%(version)s/nss',
         'skipsteps': ['configure','install'],
         'parallel':  1,
-        'buildopts': 'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" OS_REL_CFLAGS="-D_XOPEN_SOURCE " && ' + 
-                     'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd - && ' + 
-                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/Linux*.OBJ/* %(installdir)s && ' + 
-                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public/*     %(installdir)s/include', 
+        'buildopts': 'BUILD_OPT=1 USE_64=1 CPATH="%(installdir)s/include/nspr:$CPATH" LIBRARY_PATH="%(installdir)s/lib:$LIBRARY_PATH"  LD_LIBRARY_PATH="%(installdir)s/lib:$LD_LIBRARY_PATH" OS_REL_CFLAGS="-D_XOPEN_SOURCE " && ' +
+                     'cd config && make PREFIX=%(installdir)s BUILD_OPT=1 USE_64=1 && cd - && ' +
+                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/Linux*.OBJ/* %(installdir)s && ' +
+                     '/bin/cp -Lpr %(builddir)s/%(namelower)s-%(version)s/dist/public/*     %(installdir)s/include',
     }),
 ]
 
