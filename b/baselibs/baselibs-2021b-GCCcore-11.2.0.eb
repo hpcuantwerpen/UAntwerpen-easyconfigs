@@ -1,4 +1,5 @@
 easyblock = 'Bundle'
+easybuild_version = '4.5.3'
 
 name =          'baselibs'
 version =       '2020a'
@@ -22,8 +23,8 @@ whatis = [
     "LMDB, PCRE, PCRE2, UDUNITS, D-Bus, util-linux, wget.",
 ]
 
-local_binutils_version = '2.34'     # A build dependency, as GCCcore with the system binutils might fail.
-local_gcc_version      = '11.20'
+local_binutils_version = '2.37'     # A build dependency, as GCCcore with the system binutils might fail.
+local_gcc_version      = '11.2.0'
 
 local_libtool_version =          '2.4.6'         # libtool    20150215 - https://ftp.gnu.org/gnu/libtool/
 
@@ -82,6 +83,7 @@ local_ncurses_version =          '6.2'           # https://ftp.gnu.org/pub/gnu/n
 local_PCRE_version =             '8.45'          # https://ftp.pcre.org/pub/pcre/
 local_PCRE2_version =            '10.37'         # https://ftp.pcre.org/pub/pcre/
 local_pixman_version =           '0.40.0'        # https://www.cairographics.org/releases/
+local_snappy_version =           '1.1.9'         # https://github.com/google/snappy/releases
 local_Szip_version =             '2.1.1'         # https://support.hdfgroup.org/ftp/lib-external/szip/
 local_UDUNITS_version =          '2.2.28'        # ftp://ftp.unidata.ucar.edu/pub/udunits
 local_util_version =             '2.37'          # https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/
@@ -137,6 +139,7 @@ Overview of included libraries:
     xzgrep, xzdiff, ...)
   + zlib (version %(zlib)s): Free lossless data compression library, not
     covered by any patents, for the popular .gz files.
+    The zlib package is included in this module as a dependency.
   + gzip (version %(gzip)s): gzip data compression programs.
   + lzip (version %(lzip)s): Lzip is a lossless data compressor with a user interface
     similar to the one of gzip or bzip2. Lzip can compress about as fast as gzip
@@ -652,6 +655,10 @@ builddependencies = [
     ('buildtools', version,                '', True),
 ]
 
+dependencies = [
+    ('zlib', local_zlib_version),
+]
+
 osdependencies = [
     ('openssl-devel', 'libssl-dev', 'libopenssl-devel'), # For wget
 #    ('gnutls-devel', 'gnutls-dev', 'libgnutls-devel'),   # Alternative for wget, but then configopts needs to be removed.
@@ -671,6 +678,7 @@ components = [
 # Duplicate from buildtools, needed for the libraries.
 #
     ('libtool', local_libtool_version, { # Needs M4 from buildtools.
+        'easyblock':   'ConfigureMake',
         'sources':     [SOURCELOWER_TAR_XZ],
         'source_urls': [GNU_SOURCE],
         'checksums':   ['7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f'],
@@ -680,6 +688,7 @@ components = [
 # Terminal libraries
 #
     ('ncurses', local_ncurses_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
@@ -689,6 +698,7 @@ components = [
         'configopts':  '--with-shared --enable-overwrite', # First build: default build.
     }),
     ('ncurses', local_ncurses_version, {
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                             'filename':    SOURCE_TAR_GZ,
                             'source_urls': [GNU_SOURCE]
@@ -699,6 +709,7 @@ components = [
         'configopts':    '--with-shared --enable-overwrite --enable-ext-colors --enable-widec --includedir=%(installdir)s/include/ncursesw/' # Second build: the UTF-8 enabled version (ncursesw)
     }),
     ('libreadline', local_libreadline_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    'readline-%(version)s.tar.gz',
                           'source_urls': ['http://ftp.gnu.org/gnu/readline']
@@ -714,6 +725,7 @@ components = [
 # to avoid further complicating matters.
 #
     ('gettext', local_gettext_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': [GNU_SOURCE]
@@ -726,31 +738,33 @@ components = [
         'configopts':    '--without-emacs --with-libncurses-prefix=%(installdir)s --with-included-libunistring --with-included-libxml',
     }),
     ('libiconv', local_libiconv_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    # Now recompile gettext to enable the additional features
-    ('gettext', local_gettext_version, {
-        'sources':     [ {
-                          'filename':    SOURCELOWER_TAR_XZ,
-                          'source_urls': [GNU_SOURCE]
-                       } ],
-        'start_dir':     '%(namelower)s-%(version)s',
-        'preconfigopts': 'make distclean && ',
-#        'preconfigopts': 'make distclean && ' + \
-#                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
-#                         'CPATH=%(installdir)s/include:$CPATH ' + \
-#                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
-#                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
-        'configopts':    '--without-emacs --with-libncurses-prefix=%(installdir)s --with-included-libunistring --with-included-libxml',
-    }),
+#    # Now recompile gettext to enable the additional features
+#    ('gettext', local_gettext_version, {
+#        'sources':     [ {
+#                          'filename':    SOURCELOWER_TAR_XZ,
+#                          'source_urls': [GNU_SOURCE]
+#                       } ],
+#        'start_dir':     '%(namelower)s-%(version)s',
+#        'preconfigopts': 'make distclean && ',
+##        'preconfigopts': 'make distclean && ' + \
+##                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
+##                         'CPATH=%(installdir)s/include:$CPATH ' + \
+##                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
+##                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
+#        'configopts':    '--without-emacs --with-libncurses-prefix=%(installdir)s --with-included-libunistring --with-included-libxml',
+#    }),
 #
 # Unicode and multi-language support
 #
     ('FriBidi', local_fribidi_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           # https://github.com/fribidi/fribidi/releases/download/v1.0.9/fribidi-1.0.9.tar.xz
                           'filename':    SOURCELOWER_TAR_XZ,
@@ -760,6 +774,7 @@ components = [
         'configopts':  '--disable-docs',
     }),
     ('ICU', local_ICU_version, { # Unicode/multilanguage support
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           # https://github.com/unicode-org/icu/archive/release-66-1.zip
                           'filename':    'release-%(version_major)s-%(version_minor)s.zip',
@@ -768,6 +783,7 @@ components = [
         'start_dir':   '%(namelower)s-release-'+ local_ICU_version.replace('.','-') + '/icu4c/source',
     }),
     ('libunistring', local_libunistring_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': [GNU_SOURCE]
@@ -788,24 +804,19 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
     }),
-    ('bzip2', local_bzip2_version, {
+    ('bzip2', local_bzip2_version, { # EasyBlock works correctly in 4.5.0 and later.
+        'easyblock':   'EB_bzip2',
         # The bzip2 EasyBlock does not work in a bundle since there is a problem with with_shared_libs
         # https://sourceforge.net/projects/bzip2/files/bzip2-1.0.6.tar.gz/download
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
-                          'source_urls': [SOURCEFORGE_SOURCE]
+                          'source_urls': ['https://sourceware.org/pub/%(name)s/']
                        } ],
-	    'start_dir':   '%(namelower)s-%(version)s',
-        'skipsteps':   ['configure'],
-        'buildopts':   'CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ; ' + \
-                       'make -f Makefile-libbz2_so CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ',
-        'installopts': 'PREFIX="%(installdir)s" ; ' + \
-                       'cp libbz2.so.'+local_bzip2_version+' %(installdir)s/lib ; ' \
-                       'cd %(installdir)s/lib ; ' + \
-                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so.'+local_bzip2_major_minor+' ; ' + \
-                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so'
+        'patches':     ['bzip2-%(version)s-pkgconfig-manpath.patch'],
+        'start_dir':   '%(namelower)s-%(version)s',
     }),
     ('lz4', local_lz4_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    'v%(version)s.tar.gz',
                           'source_urls': ['https://github.com/lz4/lz4/archive/']
@@ -815,6 +826,7 @@ components = [
         'installopts': "PREFIX=%(installdir)s",
     }),
     ('Szip', local_Szip_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['http://www.hdfgroup.org/ftp/lib-external/szip/%(version)s/src']
@@ -822,15 +834,16 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  '--with-pic'
     }),
-    ('zlib', local_zlib_version, {
-        'sources':     [ {
-                          # https://www.zlib.net/zlib-1.2.11.tar.gz
-                          'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': ['https://www.zlib.net/']
-                       } ],
-        'start_dir':   '%(namelower)s-%(version)s'
-    }),
+#    ('zlib', local_zlib_version, { # No longer included since 2021b, see the README.md file.
+#        'sources':     [ {
+#                          # https://www.zlib.net/zlib-1.2.11.tar.gz
+#                          'filename':    SOURCELOWER_TAR_GZ,
+#                          'source_urls': ['https://www.zlib.net/']
+#                       } ],
+#        'start_dir':   '%(namelower)s-%(version)s'
+#    }),
     ('gzip', local_gzip_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
@@ -838,6 +851,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('XZ', local_XZ_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': ['http://tukaani.org/xz/']
@@ -855,6 +869,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('zstd', local_zstd_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                            'download_filename': 'v%(version)s.tar.gz',
                            'filename':          SOURCELOWER_TAR_GZ,
@@ -865,11 +880,13 @@ components = [
         'installopts': "PREFIX=%(installdir)s"
     }),
     ('libb2', local_libb2_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [SOURCELOWER_TAR_GZ],
         'source_urls': ['https://github.com/BLAKE2/libb2/releases/download/v%(version)s'],
         'start_dir':   '%(namelower)s-%(version)s',
     }),
     ('LZO', local_LZO_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [SOURCELOWER_TAR_GZ],
         'source_urls': ['https://www.oberhumer.com/opensource/lzo//download'],
         'start_dir':   '%(namelower)s-%(version)s',
@@ -884,9 +901,10 @@ components = [
                           'source_urls':       ['https://github.com/google/snappy/archive/'],
                           'extract_cmd':       "mkdir %(namelower)s-%(version)s-static ; tar -x --strip-components=1 -C %(namelower)s-%(version)s-static -f %s"
                        } ],
+        'patches':     ['%(name)s-%(version)s_inline-functions.patch'],
         'start_dir':   '%(namelower)s-%(version)s-static',
         'build_type':  'Release',
-        'configopts':  '-DBUILD_SHARED_LIBS=OFF' + local_snappy_opts,
+        'configopts':  '-DBUILD_SHARED_LIBS=OFF -DSNAPPY_BUILD_TESTS=OFF -DSNAPPY_BUILD_BENCHMARKS=OFF' + local_snappy_opts,
     }),
     ('snappy', local_snappy_version, { # NEeds zlib and LZO - shared build
         'easyblock':   'CMakeMake',
@@ -897,9 +915,10 @@ components = [
                           'source_urls':       ['https://github.com/google/snappy/archive/'],
                           'extract_cmd':       "mkdir %(namelower)s-%(version)s-shared ; tar -x --strip-components=1 -C %(namelower)s-%(version)s-shared -f %s"
                        } ],
+        'patches':     ['%(name)s-%(version)s_inline-functions.patch'],
         'start_dir':   '%(namelower)s-%(version)s-shared',
         'build_type':  'Release',
-        'configopts':  '-DBUILD_SHARED_LIBS=ON'  + local_snappy_opts
+        'configopts':  '-DBUILD_SHARED_LIBS=ON -DSNAPPY_BUILD_TESTS=OFF -DSNAPPY_BUILD_BENCHMARKS=OFF'  + local_snappy_opts
     }),
     ('Blosc', local_blosc_version, {
         'easyblock': 'CMakeMake',
@@ -912,6 +931,7 @@ components = [
         'start_dir': 'c-blosc-%(version)s',
     }),
     ('libdeflate', local_libdeflate_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           # https://github.com/ebiggers/libdeflate/archive/v1.5.zip
                           'download_filename': 'v%(version)s.zip',
@@ -938,6 +958,7 @@ components = [
 # Graphics file formats
 #
     ('giflib', local_giflib_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': [('http://sourceforge.net/projects/giflib/files', 'download')]
@@ -960,11 +981,13 @@ components = [
     ('JasPer', local_JasPer_version, {
         'easyblock':     'CMakeMake',
         'separate_build_dir': False,
-        'sources':       [ {
-                            'filename':    SOURCELOWER_TAR_GZ,
-                            'source_urls': ['http://www.ece.uvic.ca/~frodo/jasper/software/']
+        'sources':       [ { # https://github.com/jasper-software/jasper/releases/download/version-2.0.33/jasper-2.0.33.tar.gz
+                             # https://github.com/jasper-software/jasper/archive/refs/tags/version-2.0.33.tar.gz
+                            'filename':          SOURCELOWER_TAR_GZ,
+                            'download_filename': 'version-%(version)s.tar.gz',
+                            'source_urls':       ['https://github.com/jasper-software/jasper/archive/refs/tags/']
                          } ],
-        'start_dir':     '%(namelower)s-%(version)s',
+        'start_dir':     '%(namelower)s-version-%(version)s',
         'preconfigopts': 'cd %(builddir)s/%(namelower)s-%(version)s ; ',
         'configopts':    '-DJAS_ENABLE_DOC=0 -DJAS_ENABLE_OPENGL=0 -DJAS_ENABLE_LIBJPEG=1 -DALLOW_IN_SOURCE_BUILD=ON ',
         'prebuildopts':  'cd %(builddir)s/%(namelower)s-%(version)s ; ',
@@ -980,6 +1003,7 @@ components = [
         'postinstallcmds':  ['ln -s %(installdir)s/include/libpng16 %(installdir)s/include/libpng']
     }),
     ('LibTIFF', local_libtiff_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    'tiff-%(version)s.tar.gz',
                           'source_urls': ['https://download.osgeo.org/libtiff/']
@@ -987,6 +1011,7 @@ components = [
         'start_dir':   'tiff-%(version)s'
     }),
     ('libwebp', local_libwebp_version, { # Needs giflib, libjpeg-turbo, libpng and libTIFF
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['https://storage.googleapis.com/downloads.webmproject.org/releases/webp']
@@ -995,6 +1020,7 @@ components = [
         'configopts':  '--enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras',
     }),
     ('LibTIFF', local_libtiff_version, { # Recompile as libwebp also adds features to LibTIFF.
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    'tiff-%(version)s.tar.gz',
                           'source_urls': ['https://download.osgeo.org/libtiff/']
@@ -1005,12 +1031,13 @@ components = [
 # Audio and video file formats
 #
     ('x264', local_x264_version, {
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                             'download_filename': 'x264-%s.tar.gz' % local_x264_commit,
                             'filename':          SOURCE_TAR_GZ,
                             'source_urls':       ['https://code.videolan.org/videolan/x264/-/archive/%s/' % local_x264_commit]
                          } ],
-        'start_dir':     'x264-snapshot-%(version)s-stable',
+        'start_dir':     'x264-' + local_x264_commit,
         'configopts':    '--enable-shared --enable-static',
         'installopts':   ' && mkdir -p %(installdir)s/doc && cp -r doc/* %(installdir)s/doc'
     }),
@@ -1019,11 +1046,12 @@ components = [
         'separate_build_dir': False,
         'sources':       [ {
                             'filename':    '%(name)s_%(version)s.tar.gz',
-                            'source_urls': ['http://ftp.videolan.org/pub/videolan/x265/', 'http://download.videolan.org/pub/videolan/x265/']
+                            'source_urls': ['https://bitbucket.org/multicoreware/x265_git/downloads/']
                          }],
         'start_dir':     '%(namelower)s_%(version)s/source',
     }),
     ('LAME', local_LAME_version, { # Needs ncurses!
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                             'filename':    SOURCELOWER_TAR_GZ,
                             'source_urls': ['https://sourceforge.net/projects/lame/files/lame/%(version_major_minor)s/']
@@ -1032,6 +1060,7 @@ components = [
         'preconfigopts': 'CPATH=%(installdir)s/include:$CPATH LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH LDFLAGS="-L%(installdir)s/lib $LDFLAGS" FRONTEND_LDADD="-L%(installdir)s/lib" ',
     }),
     ('libopus', local_libopus_version, {
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                             'filename':    'opus-%(version)s.tar.gz',
                             'source_urls': ['https://archive.mozilla.org/pub/opus']
@@ -1039,6 +1068,7 @@ components = [
         'start_dir':     'opus-%(version)s',
     }),
     ('libogg', local_libogg_version, {
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                              'filename':    SOURCELOWER_TAR_XZ,
                              'source_urls': ['http://downloads.xiph.org/releases/ogg/']
@@ -1047,6 +1077,7 @@ components = [
         'preconfigopts': "sed -e 's/-O20 //' -i configure && ",
     }),
     ('libvorbis', local_libvorbis_version, { # Requires libogg
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                              'filename':    SOURCELOWER_TAR_XZ,
                              'source_urls': ['http://downloads.xiph.org/releases/vorbis/']
@@ -1072,6 +1103,7 @@ components = [
         'configopts':    '--disable-alsa --disable-sqlite '
     }),
     ('libtheora', local_libtheora_version, { # Requires libogg and libvorbis
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                              'filename':    SOURCELOWER_ZIP,
                              'source_urls': ['http://downloads.xiph.org/releases/theora/']
@@ -1084,31 +1116,35 @@ components = [
 # Network, security and XML
 #
     ( 'cURL', local_cURL_version, { # USES zlib
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           # https://curl.haxx.se/download/curl-7.69.1.tar.xz
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': ['https://curl.haxx.se/download/']
                        }],
         'start_dir':   '%(namelower)s-%(version)s',
-        'configopts':  '--with-zlib=%(installdir)s',
+        'configopts':  '--with-zlib=$EBROOTZLIB --with-openssl',
     }),
     ('expat', local_expat_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_BZ2,
                           'source_urls': [SOURCEFORGE_SOURCE]
                        }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    ('libxml2', local_libxml2_version, { # Needs zlib. The configure also looks for XZ utilities (liblzma), but that depends on gettext which depends on libxml2...
+    ('libxml2', local_lib_version, { # Needs zlib. The configure also looks for XZ utilities (liblzma), but that depends on gettext which depends on libxml2...
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/']
                        }],
         'start_dir':   '%(namelower)s-%(version)s',
-#        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-zlib=%(installdir)s --with-lzma=%(installdir)s --without-python',
-        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib --with-lzma --without-python',
+#        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib=$EBROOTZLIB --with-lzma=%(installdir)s --without-python --with-icu',
+        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib=$EBROOTZLIB --with-lzma=%(installdir)s --without-python',
     }),
     ('libxslt', local_libxslt_version, { # Needs libxml2 and can find it through pkg-config, so configure that path.
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['http://xmlsoft.org/sources/','http://xmlsoft.org/sources/old/']
@@ -1118,6 +1154,7 @@ components = [
         'configopts':  '--with-pic --without-python',
     }),
     ('libidn', local_libidn_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
@@ -1126,6 +1163,7 @@ components = [
     }),
 
     ('libidn2', local_libidn2_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['https://ftp.gnu.org/gnu/libidn/']
@@ -1158,6 +1196,7 @@ components = [
 # Regular math libs
 #
     ('GSL', local_GSL_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
@@ -1184,6 +1223,7 @@ components = [
 # Arbitrary precision math
 #
     ('GMP', local_GMP_version, {
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                             'filename':    SOURCELOWER_TAR_XZ,
                             'source_urls': [GNU_SOURCE]
@@ -1193,6 +1233,7 @@ components = [
         'configopts':    '--enable-cxx'
     }),
     ('MPFR', local_MPFR_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': [GNU_SOURCE]
@@ -1201,7 +1242,8 @@ components = [
         'configopts':  '--with-gmp=%(installdir)s'
     }),
     ('MPC', local_MPC_version, {
-         'sources':    [ {
+        'easyblock':  'ConfigureMake',
+        'sources':    [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
                        } ],
@@ -1209,7 +1251,8 @@ components = [
         'configopts':  '--with-gmp=%(installdir)s --with-mpfr=%(installdir)s'
     }),
     ('mpdecimal', local_mpdecimal_version, {
-         'sources':    [ {
+        'easyblock':  'ConfigureMake',
+        'sources':    [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['https://www.bytereef.org/software/mpdecimal/releases/']
                        } ],
@@ -1260,11 +1303,12 @@ components = [
     ('file', local_file_version, {
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
-                          'source_urls': ['ftp://ftp.astron.com/pub/file/']
+                          'source_urls': ['https://www.astron.com/pub/file/']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('gc', local_gc_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': ['http://hboehm.info/gc/gc_source/']
@@ -1278,6 +1322,7 @@ components = [
         'configopts':    '--enable-threads=posix',
     }),
     ('GDBM', local_GDBM_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': [GNU_SOURCE]
@@ -1286,6 +1331,7 @@ components = [
         'configopts':  '--enable-libgdbm-compat --with-libiconv-prefix=%(installdir)s',
     }),
     ('libevent', local_libevent_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    '%(name)s-%(version)s-stable.tar.gz',
                           'source_urls': ['https://github.com/%(name)s/%(name)s/releases/download/release-%(version)s-stable/']
@@ -1293,13 +1339,15 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s-stable'
     }),
     ('libffi', local_libffi_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
-                          'source_urls': ['ftp://sourceware.org/pub/libffi/', 'http://www.mirrorservice.org/sites/sourceware.org/pub/libffi/']
+                          'source_urls': ['https://github.com/libffi/libffi/releases/download/v%(version)s/']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('libyaml', local_libyaml_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    'yaml-%(version)s.tar.gz',
                           'source_urls': ['http://pyyaml.org/download/libyaml/']
@@ -1310,6 +1358,7 @@ components = [
         'start_dir':     'yaml-%(version)s'
     }),
     ('LMDB', local_LMDB_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    '%(name)s_%(version)s.tar.gz',
                           'source_urls': ['https://github.com/LMDB/lmdb/archive/']
@@ -1321,9 +1370,10 @@ components = [
         'installopts': 'prefix="%(installdir)s"',
     }),
     ('PCRE', local_PCRE_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_BZ2,
-                          'source_urls': ['https://ftp.pcre.org/pub/pcre/']
+                          'source_urls': [SOURCEFORGE_SOURCE]
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  "--with-pic --disable-cpp --enable-utf --enable-unicode-properties --enable-newline-is-any " + \
@@ -1331,9 +1381,10 @@ components = [
                        "--enable-pcregrep-libz --enable-pcregrep-libbz2 --enable-pcretest-libreadline ",
     }),
     ('PCRE2', local_PCRE2_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_BZ2,
-                          'source_urls': ['https://ftp.pcre.org/pub/pcre/']
+                          'source_urls': ['https://download.sourceforge.net/pcre']
                        } ],
         'start_dir':   '%(namelower)s-%(version)s',
         'configopts':  "--with-pic --disable-cpp --enable-newline-is-any " + \
@@ -1341,6 +1392,7 @@ components = [
                        "--enable-pcre2grep-libz --enable-pcre2grep-libbz2 --enable-pcre2test-libreadline "
     }),
     ('UDUNITS', local_UDUNITS_version, { # depends on expat!
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
                           'source_urls': ['ftp://ftp.unidata.ucar.edu/pub/udunits']
@@ -1348,6 +1400,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
     }),
     ('util-linux', local_util_version, { # Needs ncurses and zlib
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_XZ,
                           'source_urls': ['http://www.kernel.org/pub/linux/utils/util-linux/v' + local_util_major_minor]
@@ -1361,6 +1414,7 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s'
     }),
     ('wget', local_wget_version, { # depends on PCRE, libidn and zlib.
+        'easyblock':   'ConfigureMake',
         'sources':       [ {
                             'filename':    SOURCELOWER_TAR_GZ,
                             'source_urls': [GNU_SOURCE]
@@ -1373,6 +1427,7 @@ components = [
 # Graphics
 #
     ('pixman', local_pixman_version, {
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
                           'source_urls': ['http://cairographics.org/releases']
@@ -1381,6 +1436,7 @@ components = [
         'configopts':  '--enable-gnuplot ',
     }),
     ('freetype', local_freetype_version, { # Needs zlib, bzip2 and libpng
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCE_TAR_XZ,
                           'source_urls': [GNU_SAVANNAH_SOURCE]
@@ -1389,8 +1445,9 @@ components = [
         'configopts':  '--enable-freetype-config --with-harfbuzz=no',
     }),
     ('fontconfig', local_fontconfig_version, { # Needs pkg-config and gperf (buildtools) and expat, freetype and util-linux.
+        'easyblock':   'ConfigureMake',
         'sources':     [ {
-                          'filename':    SOURCE_TAR_BZ2,
+                          'filename':    SOURCE_TAR_XZ,
                           'source_urls': ['http://www.freedesktop.org/software/fontconfig/release/']
                        } ],
         'start_dir':     '%(namelower)s-%(version)s',
