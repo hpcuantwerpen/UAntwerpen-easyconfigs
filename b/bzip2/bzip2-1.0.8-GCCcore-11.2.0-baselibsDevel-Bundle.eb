@@ -1,0 +1,95 @@
+easyblock = 'Bundle'
+
+local_buildset =         '2021b'
+local_gcc_version =      '11.2.0'
+local_binutils_version = '2.37'
+
+local_bzip2_version =        '1.0.8'         # http://www.bzip.org/downloads.html
+
+name =          'bzip2'
+version =       local_bzip2_version
+versionsuffix = '-baselibsDevel-Bundle'
+
+homepage = 'http://www.bzip.org/'
+
+whatis = [
+    'Description: bzip2 is a freely available, patent free, high-quality data compressor.',
+    'The module contains both executables and libraries.'
+    'Keywords: BZ2',
+]
+
+description = """
+bzip2 is a freely available, patent free, high-quality data compressor. It
+typically compresses files to within 10% to 15% of the best available techniques
+(the PPM family of statistical compressors), whilst being around twice as fast
+at compression and six times faster at decompression. It is based on the
+Burrows-Wheeler block-sorting text compression algorithm and Huffman coding.
+"""
+
+usage = """
+Check the man pages for the available commands or the web-based documentation for the
+library functions.
+"""
+
+docurls = [
+    'Web-based documentation: http://www.bzip.org/docs.html',
+    'Man pages available for bzcmp, bzdiff, bzegrep, bzfgrep, bzgrep, bzip2, bunzip2, bzless and bzmore',
+]
+
+toolchain = {'name': 'GCCcore', 'version': local_gcc_version}
+toolchainopts = {'pic': True}
+
+#source_urls = ['https://sourceware.org/pub/%(name)s/']
+#sources =     [SOURCE_TAR_GZ]
+#patches =     ['bzip2-%(version)s-pkgconfig.patch']
+#checksums = [
+#    'ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269',  # bzip2-1.0.8.tar.gz
+#    '9299e8ee4d014ea973777b6ea90661fe329dfa991f822add4c763ea9ddb9aab1',  # bzip2-1.0.8-pkgconfig.patch
+#]
+
+
+builddependencies = [
+    ('binutils',   local_binutils_version),
+    ('buildtools', local_buildset,         '', True),
+]
+
+local_bzip2_major_minor =  '.'.join(local_bzip2_version.split('.')[:2])
+
+components = [
+    ('bzip2', local_bzip2_version, {
+        'easyblock':  'ConfigureMake',
+        # The bzip2 EasyBlock does not work in a bundle since there is a problem with with_shared_libs
+        # https://sourceforge.net/projects/bzip2/files/bzip2-1.0.6.tar.gz/download
+        'sources':     [ {
+                          'filename':    SOURCE_TAR_GZ,
+                          'source_urls': ['https://sourceware.org/pub/%(name)s/']
+                       } ],
+        'patches':     ['bzip2-%(version)s-pkgconfig-manpath.patch'],
+        'start_dir':   '%(namelower)s-%(version)s',
+        'skipsteps':   ['configure'],
+        'buildopts':   'CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ; ' + \
+                       'make -f Makefile-libbz2_so CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ',
+        'installopts': 'PREFIX="%(installdir)s" ; ' + \
+                       'cp libbz2.so.'+local_bzip2_version+' %(installdir)s/lib ; ' \
+                       'cd %(installdir)s/lib ; ' + \
+                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so.'+local_bzip2_major_minor+' ; ' + \
+                       'ln -s libbz2.so.'+local_bzip2_version+' libbz2.so'
+    }),
+]
+
+sanity_check_paths = {
+    'files': [ 'lib/pkgconfig/bzip2.pc', 'lib/libbz2.a', 'lib/libbz2.%s' % SHLIB_EXT,
+               'lib/libbz2.%s.%s' % (SHLIB_EXT, local_bzip2_major_minor),
+               'lib/libbz2.%s.%s' % (SHLIB_EXT, local_bzip2_version),
+               'include/bzlib.h' ] +
+             [ 'bin/b%s' % x for x in ['unzip2', 'zcat', 'zdiff', 'zgrep', 'zip2', 'zip2recover', 'zmore'] ] +
+             [ 'share/man/man1/bz%s.1' % x for x in ['cmp', 'diff', 'egrep', 'fgrep', 'grep', 'ip2', 'less', 'more'] ],
+    'dirs':  []
+}
+
+sanity_check_commands = [
+    'bzip2 --help',
+    'pkg-config --libs bzip2',
+]
+
+moduleclass = 'tools'
