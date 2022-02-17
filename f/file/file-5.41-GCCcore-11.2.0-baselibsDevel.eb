@@ -10,7 +10,7 @@ local_gcc_version =          '8.3.0'
 local_binutils_version =     '2.32'
 
 local_zlib_version =         '1.2.11'        # https://zlib.net/
-local_file_version =         '5.40'          # ftp://ftp.astron.com/pub/file/
+local_file_version =         '5.41'          # ftp://ftp.astron.com/pub/file/
 
 name =          'file'
 version =       local_file_version
@@ -41,9 +41,10 @@ docurls = [
 toolchain =     {'name': 'GCCcore', 'version': local_gcc_version}
 toolchainopts = {'pic': True}
 
-source_urls = ['ftp://ftp.astron.com/pub/file/']
+# https://www.astron.com/pub/file/file-5.41.tar.gz
+source_urls = ['https://www.astron.com/pub/file']
 sources =     [SOURCE_TAR_GZ]
-checksums =   ['167321f43c148a553f68a0ea7f579821ef3b11c27b8cbe158e4df897e4a5dd57']
+checksums =   ['13e532c7b364f7d57e23dfeea3147103150cb90593a57af86c10e4f6e411603f']
 
 builddependencies = [
     ('binutils',   local_binutils_version),
