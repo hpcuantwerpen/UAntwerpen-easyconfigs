@@ -61,9 +61,10 @@ for versions.
 | [GSL](https://ftp.gnu.org/gnu/gsl/) | [EB GSL](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/g/GSL) |
 | [gzip](https://ftp.gnu.org/gnu/gzip/) | [EB gzip](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/g/gzip) |
 | [ICU](http://site.icu-project.org/home) | [EB ICU](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/i/ICU) |
-| [JasPer](https://github.com/jasper-software/jasper/releases) | [ EB JasPEr](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/j/JasPer) |
+| [JasPer](https://github.com/jasper-software/jasper/releases) | [ EB JasPer](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/j/JasPer) |
 | [LAME](http://lame.sourceforge.net/) | [EB LAME](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/LAME) |
 | [libarchive](https://github.com/libarchive/libarchive/releases) | [EB libarchive](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libarchive) |
+| [libatomic](https://github.com/ivmai/libatomic_ops/releases) | [EB gc](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/g/gc) |
 | [libb2](https://github.com/BLAKE2/libb2/releases) | / |
 | [libcerf](https://jugit.fz-juelich.de/mlz/libcerf/-/releases) | [ EB libcerf](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libcerf) |
 | [libdeflate](https://github.com/ebiggers/libdeflate/releases) | [EB libdeflate](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libdeflate) |
@@ -86,7 +87,7 @@ for versions.
 | [libxml2](http://xmlsoft.org/sources/) | [EB libxml2](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libxml2) |
 | [libxslt](http://xmlsoft.org/sources/) | [EB libxslt](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libxslt) |
 | [libyaml](https://github.com/yaml/libyaml/releases) | [ EB libyaml](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libyaml) |
-| [LMDB](https://github.com/LMDB/lmdb/releases) | [LEBLMDB](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/LMDB) |
+| [LMDB](https://github.com/LMDB/lmdb/releases) | [LE LMDB](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/LMDB) |
 | [lz4](https://github.com/lz4/lz4/releases) | [EB lz4](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/lz4) |
 | [lzip](http://download.savannah.gnu.org/releases/lzip/) | / |
 | [LZO](http://www.oberhumer.com/opensource/lzo/#download) | [EB LZO](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/LZO) |
@@ -97,6 +98,7 @@ for versions.
 | [PCRE](https://ftp.pcre.org/pub/pcre/) | [EB PCRE](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/p/PCRE) |
 | [PCRE2](https://ftp.pcre.org/pub/pcre/) | [EB PCRE2](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/p/PCRE2) |
 | [pixman](https://www.cairographics.org/releases/) | [EB pixman](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/p/pixman) |
+| [snappy](https://github.com/google/snappy/releases) | [EB snappy](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/s/snappy) |
 | [Szip](https://support.hdfgroup.org/ftp/lib-external/szip/) | [EB Szip](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/s/Szip) |
 | [UDUNITS](https://artifacts.unidata.ucar.edu/service/rest/repository/browse/downloads-udunits/) | [EB UDNITS](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/u/UDUNITS) |
 | [util-linux](https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/) | [EB util-linux](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/u/util-linux) |
@@ -125,7 +127,6 @@ for versions.
 | [intltool](https://launchpad.net/intltool/+download) | [EB intltool](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/i/intltool) |
 | [libaec](https://gitlab.dkrz.de/k202009/libaec/-/tags) | [EB libaec](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libaec) |
 | [libarchive](https://github.com/libarchive/libarchive/releases) | [EB libarchive](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libarchive) |
-| [libatomic](https://github.com/ivmai/libatomic_ops/releases) | / |
 | [libb2](https://github.com/BLAKE2/libb2/releases) | / |
 | [libgd](http://www.libgd.org/) | [EB libgd](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libgd) |
 | [libpciaccess](https://cgit.freedesktop.org/xorg/lib/libpciaccess/) | [EB libpciaccess](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/l/libpciaccess) |
@@ -135,7 +136,6 @@ for versions.
 | [Perl](https://www.perl.org/get.html) | [EB Perl](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/p/Perl) |
 | [PLUMED](https://github.com/plumed/plumed2/releases) | [EB PLUMED](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/p/PLUMED) |
 | [PROJ](https://proj.org/download.html) | [EB PROJ](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/p/PROJ) |
-| [snappy](https://github.com/google/snappy/releases) | [EB snappy](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/s/snappy) |
 | [SQLite](https://www.sqlite.org/) | [ EB SQLite](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/s/SQLite) |
 | [SCOTCH](https://gforge.inria.fr/projects/scotch/) | [EB SCOTCH](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/s/SCOTCH) |
 | [Tcl](https://tcl.tk/) | [ EB Tcl](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/t/Tcl) |
