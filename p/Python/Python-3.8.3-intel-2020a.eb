@@ -138,6 +138,12 @@ exts_list = [
     ('Cython', '0.29.16', { # Needed for NumPy according to the NumPy documentation.
         'checksums': ['232755284f942cbb3b43a06cd85974ef3c970a021aef19b5243c03ee2b08fa05'],
     }),
+    ('pybind11', '2.4.3', {
+        'easyblock': 'PythonPackage',
+        # https://files.pythonhosted.org/packages/aa/91/deb6743e79e22ab01502296570b39b8404f10cc507a6692d612a7fee8d51/pybind11-2.4.3.tar.gz
+        'checksums': ['72e6def53fb491f7f4e92692029d2e7bb5a0783314f20d80222735ff10a75758'],
+#        'patches':   ['%(name)s-%(version)s-fix-get-include.patch'],
+    }),
     ('numpy', '1.18.3', {
         'easyblock':   'EB_numpy',  # Not needed as it is automatically selected, but stressing that it is used helps in debugging.
         'patches':     ['numpy-1.18.2-mkl.patch'],
@@ -177,6 +183,9 @@ exts_list = [
         'source_urls': ['https://bitbucket.org/mpi4py/mpi4py/downloads/'],
         'checksums':   ['012d716c8b9ed1e513fcc4b18e5af16a8791f51e6d1716baccf988ad355c5a1f'],
     }),
+#    ('pkgconfig', '1.5.1', { # Needed for lz4
+##        'checksums': ['97bfe3d981bab675d5ea3ef259045d7919c93897db7d3b59d4e8593cba8d354f'],
+#    }),
     ('lz4', '3.0.2', { # Useful option for joblib
         'checksums': ['9c9f6a8b71c18c24bd83537a4d616f0301623a5e98db7c7ca956d608e1bcd4c7'],
     }),
