@@ -1133,7 +1133,7 @@ components = [
                        }],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-    ('libxml2', local_lib_version, { # Needs zlib. The configure also looks for XZ utilities (liblzma), but that depends on gettext which depends on libxml2...
+    ('libxml2', local_libxml2_version, { # Needs zlib. The configure also looks for XZ utilities (liblzma), but that depends on gettext which depends on libxml2...
         'easyblock':   'ConfigureMake',
         'sources':     [ {
                           'filename':    SOURCELOWER_TAR_GZ,
@@ -1141,7 +1141,7 @@ components = [
                        }],
         'start_dir':   '%(namelower)s-%(version)s',
 #        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib=$EBROOTZLIB --with-lzma=%(installdir)s --without-python --with-icu',
-        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-icu --with-zlib=$EBROOTZLIB --with-lzma=%(installdir)s --without-python',
+        'configopts':  'CC=$CC CXX=$CXX --with-pic --with-zlib=$EBROOTZLIB --with-lzma=%(installdir)s --without-python',
     }),
     ('libxslt', local_libxslt_version, { # Needs libxml2 and can find it through pkg-config, so configure that path.
         'easyblock':   'ConfigureMake',
@@ -1218,6 +1218,7 @@ components = [
         #'source_urls': [ 'https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v' + local_libcerf_version ],
         'separate_build_dir': True,
         'start_dir':   '%(namelower)s-v%(version)s',
+        'configopts':  '-DLIB_MAN=OFF',
     }),
 #
 # Arbitrary precision math
