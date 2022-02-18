@@ -183,12 +183,6 @@ exts_list = [
         'source_urls': ['https://bitbucket.org/mpi4py/mpi4py/downloads/'],
         'checksums':   ['012d716c8b9ed1e513fcc4b18e5af16a8791f51e6d1716baccf988ad355c5a1f'],
     }),
-#    ('pkgconfig', '1.5.1', { # Needed for lz4
-##        'checksums': ['97bfe3d981bab675d5ea3ef259045d7919c93897db7d3b59d4e8593cba8d354f'],
-#    }),
-    ('lz4', '3.0.2', { # Useful option for joblib
-        'checksums': ['9c9f6a8b71c18c24bd83537a4d616f0301623a5e98db7c7ca956d608e1bcd4c7'],
-    }),
     ('PyYAML', '5.3.1', {  # Interface to libyaml in baselibs, needed for PyTorch
         'source_tmpl': '%(name)s-%(version)s.tar.gz',
         'source_urls': [PYPI_LOWER_SOURCE],
@@ -218,7 +212,7 @@ exts_list = [
     ('bcrypt', '3.1.7', { # REquires six, cffi and pycparser
         'checksums':   ['0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42'],
     }),
-    ('pkgconfig', '1.5.1', { # Found in setup.py of h5py.
+    ('pkgconfig', '1.5.1', { # Found in setup.py of h5py and also used by lz4
         'checksums': ['97bfe3d981bab675d5ea3ef259045d7919c93897db7d3b59d4e8593cba8d354f'],
         'use_pip':   False, # Fails with use_pip True
     }),
@@ -227,6 +221,11 @@ exts_list = [
         'prebuildopts':   'export CC=mpiicc && export HDF5_MPI="ON" && python setup.py configure --mpi --hdf5=$EBROOTHDF5 && ',
         'preinstallopts': 'CC=mpiicc HDF5_MPI="ON"',
         'checksums':      ['84412798925dc870ffd7107f045d7659e60f5d46d1c70c700375248bf6bf512d'],
+        'modulename':     'lz4', # Bogus module name because the sanity check may fail as this one uses MPI. 
+                                 # Taking a later module to have more chance of working with --skip --rebuild.
+    }),
+    ('lz4', '3.0.2', { # Useful option for joblib
+        'checksums': ['9c9f6a8b71c18c24bd83537a4d616f0301623a5e98db7c7ca956d608e1bcd4c7'],
     }),
     ('numexpr', '2.7.1', {  # Requirement tables
         'easyblock': 'EB_numexprUA',
@@ -598,6 +597,8 @@ exts_list = [
 #    # Manual installtion via pip --install-option="--prefix... does create that directory.
 #    "mkdir -p %(installdir)s/lib/python%(pyshortver)s/site-packages/ruamel/yaml/clib" % { 'installdir': installdir },
 #]
+
+#skipsteps = ['sanity_Check']
 
 moduleclass = 'lang'
 
