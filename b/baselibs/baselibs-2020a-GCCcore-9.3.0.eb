@@ -789,7 +789,6 @@ components = [
         'start_dir':   '%(namelower)s-%(version)s',
     }),
     ('bzip2', local_bzip2_version, {
-        # The bzip2 EasyBlock does not work in a bundle since there is a problem with with_shared_libs
         # https://sourceforge.net/projects/bzip2/files/bzip2-1.0.6.tar.gz/download
         'sources':     [ {
                           'filename':    SOURCE_TAR_GZ,
@@ -797,8 +796,9 @@ components = [
                        } ],
 	    'start_dir':   '%(namelower)s-%(version)s',
         'skipsteps':   ['configure'],
-        'buildopts':   'CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ; ' + \
-                       'make -f Makefile-libbz2_so CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ',
+# buildopts is no longer needed with EasyBuild 4.5.0 as the EasyBlock now works correctly.
+#        'buildopts':   'CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ; ' + \
+#                       'make -f Makefile-libbz2_so CC="$CC" CFLAGS="-Wall -Winline $CFLAGS -g \$(BIGFILES)" ',
 # installopts is no longer needed with EasyBuild 4.5.0 as the EasyBlock now works correctly.
 #        'installopts': 'PREFIX="%(installdir)s" ; ' + \
 #                       'cp libbz2.so.'+local_bzip2_version+' %(installdir)s/lib ; ' \

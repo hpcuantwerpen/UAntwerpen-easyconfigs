@@ -745,21 +745,21 @@ components = [
                        } ],
         'start_dir':   '%(namelower)s-%(version)s'
     }),
-#    # Now recompile gettext to enable the additional features
-#    ('gettext', local_gettext_version, {
-#        'sources':     [ {
-#                          'filename':    SOURCELOWER_TAR_XZ,
-#                          'source_urls': [GNU_SOURCE]
-#                       } ],
-#        'start_dir':     '%(namelower)s-%(version)s',
-#        'preconfigopts': 'make distclean && ',
-##        'preconfigopts': 'make distclean && ' + \
-##                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
-##                         'CPATH=%(installdir)s/include:$CPATH ' + \
-##                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
-##                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
-#        'configopts':    '--without-emacs --with-libncurses-prefix=%(installdir)s --with-included-libunistring --with-included-libxml',
-#    }),
+    # Now recompile gettext to enable the additional features
+    ('gettext', local_gettext_version, {
+        'sources':     [ {
+                          'filename':    SOURCELOWER_TAR_XZ,
+                          'source_urls': [GNU_SOURCE]
+                       } ],
+        'start_dir':     '%(namelower)s-%(version)s',
+        'preconfigopts': 'make distclean && ',
+#        'preconfigopts': 'make distclean && ' + \
+#                         'PKG_CONFIG_PATH=%(installdir)s/lib/pkgconfig:%(installdir)s/lib64/pkgconfig:$PKG_CONFIG_PATH ' + \
+#                         'CPATH=%(installdir)s/include:$CPATH ' + \
+#                         'LD_LIBRARY_PATH=%(installdir)s/lib:$LD_LIBRARY_PATH ' + \
+#                         'LIBRARY_PATH=%(installdir)s/lib:$LIBRARY_PATH ',
+        'configopts':    '--without-emacs --with-libncurses-prefix=%(installdir)s --with-included-libunistring --with-included-libxml',
+    }),
 #
 # Unicode and multi-language support
 #

@@ -55,3 +55,23 @@ Note: Intermediate changes for easyBuild 4.5.0
   internal EasyBuild error. It also avoids problems with dependency detection that
   can go wrong (and triggers the bug as it does not occur when using libxml2 as
   a separate EasyConfig file).
+
+### 2021b bundle
+
+  * zlib is moved out again and included as a dependency. The reason is that we
+    already need zlib to get binutils to work correctly. The approach that EasyBuild
+    used to take to include zlib in the binutils libraries that need it, turned out
+    to not always work correctly, causing trouble with static linking.
+
+    See also [easybuild-easyblocks issue 1350](https://github.com/easybuilders/easybuild-easyblocks/issues/1350)
+
+  * Several source directories or download file names needed corrections. Among them
+    bzip2, fontconfig, JasPer, libffi, PCRE, PCRE2, x264, x265.
+
+  * Update of the bzip2 build process which now uses the EasyBlock (works in a Bundle
+    since EasyBuild 4.5.0) but also has an adapted patch to not only generate a pkg-config
+    file but also puts the manual pages in share/man rather than man.
+
+  * As we switched to different sources for x264, the start directory also needed updating.
+
+  * cURL options needed to be changed to find zlib and to select the right TLS backend.
