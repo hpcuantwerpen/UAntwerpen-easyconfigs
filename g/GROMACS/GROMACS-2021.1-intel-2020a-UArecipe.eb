@@ -3,8 +3,9 @@ easyblock = 'Bundle'
 
 import os as local_os
 local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
+local_UAos = local_os.environ['VSC_OS_LOCAL'] 
 
-if local_UAarch == "rome":
+if local_UAos == "centos8":
     local_buildset =    '2020a.04'               # required to avoid compilation problems
 else:
     local_buildset =    '2020a'
