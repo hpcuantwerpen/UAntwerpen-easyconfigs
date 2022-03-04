@@ -3,8 +3,8 @@ easyblock = 'MakeCp'
 local_buildset = '2020a'
 
 name =          'VASP'
-version =       '6.2.1'
-versionsuffix = '-Wannier90-3.1.0'
+version =       '6.3.0'
+versionsuffix = '-Wannier90-2.1.0'
 group =         'avasp6'
 
 import os as local_os
@@ -19,11 +19,6 @@ whatis = [
 ]
 
 description = """
-NOTE BEFOREHAND: VASP sometimes shows very bad performance when compiled with
-this compiler (though sometimes very good also). But intel-2016b versions
-do give more predictable performance, though we have found them to go bad
-also in rare cases.
-
 The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic 
 scale materials modelling, e.g. electronic structure calculations and 
 quantum-mechanical molecular dynamics, from first principles.
@@ -77,6 +72,7 @@ sources = ['vasp.%(version)s.tgz']
 
 builddependencies = [
    ('Wannier90', '2.1.0'),
+   ('HDF5', '1.12.0', '-MPI'),
 ]
 
 if local_UAcluster == 'vaughan':
@@ -86,36 +82,34 @@ if local_UAcluster == 'vaughan':
 # Build instructions
 #
 
-prebuildopts  = 'cp arch/makefile.include.linux_intel ./makefile.include && '
+prebuildopts  = 'cp arch/makefile.include.intel ./makefile.include && '
 # Adapt the host name.
 prebuildopts += 'sed -i "s|LinuxIFC|' + local_systemstring + '|" makefile.include && '
-# Add the flag for Wannier90 
-prebuildopts += 'sed -i "s|-Dfock_dblbuf|-Dfock_dblbuf -DVASP2WANNIER90v2|" makefile.include && '
 # Adapt FFLAGS (add memory model)
 prebuildopts += 'sed -i "s|-assume byterecl|-assume byterecl -mcmodel=large -shared-intel|" makefile.include && '
+# use -mkl instead of -qmkl (pre oneAPI)
+prebuildopts += 'sed -i "s|qmkl|mkl|" makefile.include && '
+
+# Add HDF5 support
+prebuildopts += 'sed -i "s|#\(.*[(_]HDF5.*\)|\\1|g" makefile.include && '
+prebuildopts += 'sed -i "s|#HDF5_ROOT.*|HDF5ROOT    = \$(EBROOTHDF5)|" makefile.include && '
+
+# Add Wannier90 support
+prebuildopts += 'sed -i "s|#\(.*[(2]WANNIER90.*\)|\\1|g" makefile.include && '
+prebuildopts += 'sed -i "s|#WANNIER90_ROOT.*|WANNIER90ROOT   = \$(EBROOTWANNIER90)|" makefile.include && '
 
 # Replace -xHOST for AMD Rome
 if local_UAcluster == 'vaughan':
     prebuildopts += 'sed -i "s|-xHOST|-march=core-avx2 -mtune=core-avx2|" makefile.include && '
-#    prebuildopts += 'sed -i "s|-xHOST|-march=core-avx2|" makefile.include && '
-
-# Add Wannier90 library
-prebuildopts += 'sed -i "s|= \$(SCALAPACK)|= \$(EBROOTWANNIER90)/lib/libwannier.a \$(SCALAPACK)|" makefile.include && '
-
-## Add MKL wrapper of fftw + Wannier90 library
-#prebuildopts += 'sed -i "s|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o|= fftmpiw.o fftmpi_map.o fft3dlib.o fftw3d.o \$(MKLROOT)/lib/intel64/libfftw3xf_intel.a \$(EBROOTWANNIER90)/lib/libwannier.a |" makefile.include && '
-
-# Use "legacy" Intel MPI versions (pre 2021)
-prebuildopts += 'sed -i "s|^MPI_INC|##MPI_INC|" makefile.include && '
-prebuildopts += 'sed -i "s|^#MPI_INC|MPI_INC|" makefile.include && '
 
 
 # VASP uses LIBS as a list of folders
 prebuildopts += 'unset LIBS && '
 
+build_cmd = " make DEPS=1"
 buildopts = " std gam ncl "
 
-parallel = 1
+#parallel = 1
 
 #
 # Install instructions
