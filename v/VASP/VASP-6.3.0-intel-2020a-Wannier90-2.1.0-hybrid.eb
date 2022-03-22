@@ -4,7 +4,7 @@ local_buildset = '2020a'
 
 name =          'VASP'
 version =       '6.3.0'
-versionsuffix = '-Wannier90-2.1.0'
+versionsuffix = '-Wannier90-2.1.0-hybrid'
 group =         'avasp6'
 
 import os as local_os
@@ -65,7 +65,7 @@ docurls = [
 
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
-toolchainopts = {'usempi': True}
+toolchainopts = {'usempi': True, 'openmp': True}
 
 # Vasp is proprietary software, see https://www.vasp.at/faqs/ on how to get access to the code
 sources = ['vasp.%(version)s.tgz']
@@ -85,7 +85,7 @@ if local_UAcluster == 'vaughan':
 # Build instructions
 #
 
-prebuildopts  = 'cp arch/makefile.include.intel ./makefile.include && '
+prebuildopts  = 'cp arch/makefile.include.intel_omp ./makefile.include && '
 # Adapt the host name.
 prebuildopts += 'sed -i "s|LinuxIFC|' + local_systemstring + '|" makefile.include && '
 # Adapt FFLAGS (add memory model)
