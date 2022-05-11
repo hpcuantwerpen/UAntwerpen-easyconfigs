@@ -1,0 +1,11 @@
+--- AmberTools/src/configure2.orig	2021-04-27 22:14:35.000000000 +0200
++++ AmberTools/src/configure2	2022-05-09 09:54:05.281965879 +0200
+@@ -1299,7 +1299,7 @@
+     sm30flags='-gencode arch=compute_30,code=sm_30'
+ 
+     cudaversion=`$nvcc --version | grep 'release' | cut -d' ' -f5 | cut -d',' -f1`
+-    if [ "$cudaversion" = "11.0" -o "$cudaversion" = "11.1" ]; then
++    if [ "$cudaversion" = "11.0" -o "$cudaversion" = "11.1" -o "$cudaversion" = "11.2" -o "$cudaversion" = "11.3" -o "$cudaversion" = "11.4" -o "$cudaversion" = "11.5" -o "$cudaversion" = "11.6" ]; then
+       # Implement the standard, not warp synchronous, compilation
+       sm75flags='-gencode arch=compute_75,code=sm_75'
+       sm70flags='-gencode arch=compute_70,code=sm_70'
