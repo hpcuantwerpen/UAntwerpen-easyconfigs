@@ -35,7 +35,7 @@ options as much as possible untouched.
 """
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
-toolchainopts = {'openmp': False, 'usempi': False}
+toolchainopts = {'openmp': True, 'usempi': True}
 
 builddependencies = [
     ('buildtools', local_buildset, '', True),   # For CMake
