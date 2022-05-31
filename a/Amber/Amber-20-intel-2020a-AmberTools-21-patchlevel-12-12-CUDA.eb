@@ -12,6 +12,10 @@ local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/
 local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
 local_CUDA_version =           '11.6.2'
 
+import os as local_os
+local_UAcluster = local_os.environ['VSC_INSTITUTE_CLUSTER']
+local_systemstring = 'UA-' + local_UAcluster + '-' + local_buildset
+
 name =                 'Amber'
 version =              '20'
 local_ambertools_ver = '21'
@@ -77,6 +81,11 @@ patches = [
     'AmberTools-19_patch_no-gcc.patch',
     'AmberTools-21_patch_cuda_version.patch',
 ]
+
+if local_UAcluster == 'vaughan':
+    patches += ['AmberTools21-intel-zen2.patch']
+
+
 #checksums = [
 #    '2060897c0b11576082d523fb63a51ba701bc7519ff7be3d299d5ec56e8e6e277',  # Amber18.tar.bz2
 #    '0c86937904854b64e4831e047851f504ec45b42e593db4ded92c1bee5973e699',  # AmberTools19.tar.bz2

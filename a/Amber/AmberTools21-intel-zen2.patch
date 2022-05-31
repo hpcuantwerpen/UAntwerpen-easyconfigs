@@ -1,0 +1,270 @@
+diff -Naur amber20_src.orig/AmberTools/src/configure2 patch/amber20_src/AmberTools/src/configure2
+--- amber20_src.orig/AmberTools/src/configure2	2021-04-27 22:14:35.000000000 +0200
++++ patch/amber20_src/AmberTools/src/configure2	2022-05-31 15:29:43.550846687 +0200
+@@ -1725,7 +1725,7 @@
+                 coptflags="$coptflags -ax$SSE_TYPES"
+             else
+                 if [ "$mpi" = "no" ] ; then
+-                   coptflags="$coptflags -xHost"
++                   coptflags="$coptflags -march=core-avx2"
+                 fi
+             fi
+         else
+@@ -1737,7 +1737,7 @@
+                 foptflags="$foptflags -ax$SSE_TYPES"
+             else
+                 if [ "$mpi" = "no" ] ; then
+-                   foptflags="$foptflags -xHost"
++                   foptflags="$foptflags -march=core-avx2"
+                 fi
+             fi
+         else
+@@ -1776,12 +1776,12 @@
+        # IA-32/Intel-64 Linux: -ipo -O3 -no-prec-div -static -xP
+        if [ "$is_mac" = 'yes' ]; then
+           if [ "$cc_version_major" -ge 11 ]; then
+-             pmemd_coptflags='-ipo -O3 -mdynamic-no-pic -no-prec-div -xHost'
++             pmemd_coptflags='-ipo -O3 -mdynamic-no-pic -no-prec-div -march=core-avx2'
+           else
+              pmemd_coptflags='-ipo -O3 -mdynamic-no-pic -no-prec-div'
+           fi
+           if [ "$fc_version_major" -ge 11 ]; then
+-             pmemd_foptflags='-ipo -O3 -mdynamic-no-pic -no-prec-div -xHost'
++             pmemd_foptflags='-ipo -O3 -mdynamic-no-pic -no-prec-div -march=core-avx2'
+           else
+              pmemd_foptflags='-ipo -O3 -mdynamic-no-pic -no-prec-div'
+           fi
+@@ -1790,15 +1790,15 @@
+              pmemd_coptflags='-ip -O3 -no-prec-div'
+              pmemd_foptflags='-ip -O3 -no-prec-div'
+           elif [ "$mic_offload" = 'yes' ]; then
+-             pmemd_coptflags='-ip -O3 -no-prec-div -xHost'
+-             pmemd_foptflags='-ip -O3 -no-prec-div -xHost'
++             pmemd_coptflags='-ip -O3 -no-prec-div -march=core-avx2'
++             pmemd_foptflags='-ip -O3 -no-prec-div -march=core-avx2'
+           else
+              if [ "$cc_version_major" -ge 11 ]; then
+                 if [ "$sse" = 'yes' ]; then
+                    if [ -n "$SSE_TYPES" ] ; then
+                       pmemd_coptflags="-ipo -O3 -no-prec-div -ax$SSE_TYPES"
+                    else
+-                      pmemd_coptflags='-ipo -O3 -no-prec-div -xHost'
++                      pmemd_coptflags='-ipo -O3 -no-prec-div -march=core-avx2'
+                    fi
+                 else
+                    pmemd_coptflags='-ipo -O3 -no-prec-div'
+@@ -1815,7 +1815,7 @@
+                    if [ -n "$SSE_TYPES" ] ; then
+                       pmemd_foptflags="-ipo -O3 -no-prec-div -ax$SSE_TYPES"
+                    else
+-                      pmemd_foptflags='-ipo -O3 -no-prec-div -xHost'
++                      pmemd_foptflags='-ipo -O3 -no-prec-div -march=core-avx2'
+                    fi
+                  else
+                    pmemd_foptflags='-ipo -O3 -no-prec-div'
+diff -Naur amber20_src.orig/AmberTools/src/cphstats/configure patch/amber20_src/AmberTools/src/cphstats/configure
+--- amber20_src.orig/AmberTools/src/cphstats/configure	2021-04-25 02:42:47.000000000 +0200
++++ patch/amber20_src/AmberTools/src/cphstats/configure	2022-05-31 15:29:01.998183957 +0200
+@@ -112,9 +112,9 @@
+    f90flags = ['-warn', 'all']
+ 
+    if opt.opt:
+-      cppflags.extend(['-O3', '-xHost', '-ipo'])
+-      f90flags.extend(['-O3', '-xHost', '-ipo'])
+-      ldflags.extend(['-O3', '-xHost', '-ipo'])
++      cppflags.extend(['-O3', '-march=core-avx2', '-ipo'])
++      f90flags.extend(['-O3', '-march=core-avx2', '-ipo'])
++      ldflags.extend(['-O3', '-march=core-avx2', '-ipo'])
+    else:
+       cppflags.append('-O0')
+       f90flags.append('-O0')
+diff -Naur amber20_src.orig/AmberTools/src/cpptraj/configure patch/amber20_src/AmberTools/src/cpptraj/configure
+--- amber20_src.orig/AmberTools/src/cpptraj/configure	2021-04-26 15:45:39.000000000 +0200
++++ patch/amber20_src/AmberTools/src/cpptraj/configure	2022-05-31 15:29:51.610784161 +0200
+@@ -1358,7 +1358,7 @@
+       if [ -z "$FC" ]; then FC=ifort; fi
+       CXXFLAGS="-fp-model precise -fp-model source $CXXFLAGS"
+       CFLAGS="-fp-model precise -fp-model source $CFLAGS"
+-      hostflags='-xHost'
++      hostflags='-march=core-avx2'
+       optflags='-O3'
+       VERSION_LINE=`$CXX -v 2>&1 | grep version`
+       if [ $? -ne 0 ] ; then
+diff -Naur amber20_src.orig/AmberTools/src/gem.pmemd/config.h.par.int patch/amber20_src/AmberTools/src/gem.pmemd/config.h.par.int
+--- amber20_src.orig/AmberTools/src/gem.pmemd/config.h.par.int	2021-04-25 02:51:37.000000000 +0200
++++ patch/amber20_src/AmberTools/src/gem.pmemd/config.h.par.int	2022-05-31 15:27:46.887796394 +0200
+@@ -14,8 +14,8 @@
+ 
+ #PMEMD Specific build flags
+ PMEMD_F90=mpiifort -DMPI -DUSE_MPI_IN_PLACE -DPUBFFT
+-PMEMD_FOPTFLAGS=-ipo -O3 -no-prec-div -xHost
++PMEMD_FOPTFLAGS=-ipo -O3 -no-prec-div -march=core-avx2
+ PMEMD_CC=mpiicc
+-PMEMD_COPTFLAGS=-ipo -O3 -no-prec-div -xHost -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DMPI -DUSE_MPI_IN_PLACE
++PMEMD_COPTFLAGS=-ipo -O3 -no-prec-div -march=core-avx2 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DMPI -DUSE_MPI_IN_PLACE
+ PMEMD_FLIBSF=
+ PMEMD_LD= mpiifort
+diff -Naur amber20_src.orig/AmberTools/src/gem.pmemd/config.h.ser.int patch/amber20_src/AmberTools/src/gem.pmemd/config.h.ser.int
+--- amber20_src.orig/AmberTools/src/gem.pmemd/config.h.ser.int	2021-04-25 02:51:37.000000000 +0200
++++ patch/amber20_src/AmberTools/src/gem.pmemd/config.h.ser.int	2022-05-31 15:27:38.559861024 +0200
+@@ -14,8 +14,8 @@
+ 
+ #PMEMD Specific build flags
+ PMEMD_F90=ifort -DPUBFFT
+-PMEMD_FOPTFLAGS= -ipo -O3 -no-prec-div -xHost
++PMEMD_FOPTFLAGS= -ipo -O3 -no-prec-div -march=core-avx2
+ PMEMD_CC=icc
+-PMEMD_COPTFLAGS= -ipo -O3 -no-prec-div -xHost -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
++PMEMD_COPTFLAGS= -ipo -O3 -no-prec-div -march=core-avx2 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+ PMEMD_FLIBSF= 
+ PMEMD_LD= ifort 
+diff -Naur amber20_src.orig/AmberTools/src/quick/cmake/CompilerFlags.cmake patch/amber20_src/AmberTools/src/quick/cmake/CompilerFlags.cmake
+--- amber20_src.orig/AmberTools/src/quick/cmake/CompilerFlags.cmake	2021-04-26 15:45:42.000000000 +0200
++++ patch/amber20_src/AmberTools/src/quick/cmake/CompilerFlags.cmake	2022-05-31 15:28:14.858579316 +0200
+@@ -271,7 +271,7 @@
+ 			if(NOT "${SSE_TYPES}" STREQUAL "")
+ 				list(APPEND OPT_CFLAGS "-ax${SSE_TYPES}")
+ 			else()
+-				list(APPEND OPT_CFLAGS -xHost)
++				list(APPEND OPT_CFLAGS -march=core-avx2)
+ 			endif()
+ 		else()
+ 			list(APPEND OPT_CFLAGS -axSTPW)
+@@ -304,7 +304,7 @@
+ 				if(NOT "${SSE_TYPES}" STREQUAL "")
+ 					list(APPEND OPT_FFLAGS "-ax${SSE_TYPES}")
+ 				else()
+-					list(APPEND OPT_FFLAGS -xHost)
++					list(APPEND OPT_FFLAGS -march=core-avx2)
+ 				endif()
+ 			else()
+ 				list(APPEND OPT_FFLAGS -axSTPW)
+diff -Naur amber20_src.orig/AmberTools/src/quick/cmake/PMEMDCompilerFlags.cmake patch/amber20_src/AmberTools/src/quick/cmake/PMEMDCompilerFlags.cmake
+--- amber20_src.orig/AmberTools/src/quick/cmake/PMEMDCompilerFlags.cmake	2021-04-26 15:45:42.000000000 +0200
++++ patch/amber20_src/AmberTools/src/quick/cmake/PMEMDCompilerFlags.cmake	2022-05-31 15:28:04.642658600 +0200
+@@ -48,7 +48,7 @@
+       
+ 	if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+ 	
+-		set(PMEMD_CFLAGS -O3 -mdynamic-no-pic -no-prec-div -ipo -xHost)
++		set(PMEMD_CFLAGS -O3 -mdynamic-no-pic -no-prec-div -ipo -march=core-avx2)
+ 
+ 	else()
+ 
+@@ -58,7 +58,7 @@
+ 			if(NOT "${SSE_TYPES}" STREQUAL "")
+ 				list(APPEND PMEMD_CFLAGS "-ax${SSE_TYPES}")
+ 			else()
+-				list(APPEND PMEMD_CFLAGS -xHost)
++				list(APPEND PMEMD_CFLAGS -march=core-avx2)
+ 			endif()
+ 		endif()
+ 
+@@ -78,7 +78,7 @@
+ 	
+ 	if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+ 	
+-		set(PMEMD_FFLAGS -O3 -mdynamic-no-pic -no-prec-div -ipo -xHost)
++		set(PMEMD_FFLAGS -O3 -mdynamic-no-pic -no-prec-div -ipo -march=core-avx2)
+ 		
+ 		list(APPEND PMEMD_FFLAGS -ipo)
+    
+@@ -90,7 +90,7 @@
+ 			if(NOT "${SSE_TYPES}" STREQUAL "")
+ 				list(APPEND PMEMD_FFLAGS "-ax${SSE_TYPES}")
+ 			else()
+-				list(APPEND PMEMD_FFLAGS -xHost)
++				list(APPEND PMEMD_FFLAGS -march=core-avx2)
+ 			endif()
+ 		endif()
+ 
+diff -Naur amber20_src.orig/AmberTools/src/quick/CMakeLists.txt patch/amber20_src/AmberTools/src/quick/CMakeLists.txt
+--- amber20_src.orig/AmberTools/src/quick/CMakeLists.txt	2021-04-26 15:45:42.000000000 +0200
++++ patch/amber20_src/AmberTools/src/quick/CMakeLists.txt	2022-05-31 15:28:23.405510051 +0200
+@@ -139,7 +139,7 @@
+ 
+     set(CMAKE_C_FLAGS_DEBUG "-g -debug all -traceback")
+     
+-    set(OPT_CFLAGS -ip -O2 -xHost)
++    set(OPT_CFLAGS -ip -O2 -march=core-avx2)
+ 		
+ endif()
+ 
+@@ -147,7 +147,7 @@
+ 
+     set(CMAKE_CXX_FLAGS_DEBUG "-g -debug all -traceback")
+ 	
+-    set(OPT_CXXFLAGS -ip -O2 -xHost)
++    set(OPT_CXXFLAGS -ip -O2 -march=core-avx2)
+ 
+ endif()
+ 
+@@ -156,7 +156,7 @@
+     set(CMAKE_Fortran_FLAGS_DEBUG "-g -debug all -traceback")
+     set(CMAKE_Fortran_FLAGS "-cpp -diag-disable 8291")
+ 	
+-    set(OPT_FFLAGS -ip -O2 -xHost)
++    set(OPT_FFLAGS -ip -O2 -march=core-avx2)
+ 
+     if(WARNINGS)
+ 	add_flags(Fortran "-warn all" "-warn nounused")
+diff -Naur amber20_src.orig/cmake/CompilerFlags.cmake patch/amber20_src/cmake/CompilerFlags.cmake
+--- amber20_src.orig/cmake/CompilerFlags.cmake	2021-04-26 15:45:47.000000000 +0200
++++ patch/amber20_src/cmake/CompilerFlags.cmake	2022-05-31 15:30:10.503637599 +0200
+@@ -282,7 +282,7 @@
+ 			if(NOT "${SSE_TYPES}" STREQUAL "")
+ 				list(APPEND OPT_CFLAGS "-ax${SSE_TYPES}")
+ 			else()
+-				list(APPEND OPT_CFLAGS -xHost)
++				list(APPEND OPT_CFLAGS -march=core-avx2)
+ 			endif()
+ 		else()
+ 			list(APPEND OPT_CFLAGS -axSTPW)
+@@ -315,7 +315,7 @@
+ 				if(NOT "${SSE_TYPES}" STREQUAL "")
+ 					list(APPEND OPT_FFLAGS "-ax${SSE_TYPES}")
+ 				else()
+-					list(APPEND OPT_FFLAGS -xHost)
++					list(APPEND OPT_FFLAGS -march=core-avx2)
+ 				endif()
+ 			else()
+ 				list(APPEND OPT_FFLAGS -axSTPW)
+diff -Naur amber20_src.orig/cmake/PMEMDCompilerFlags.cmake patch/amber20_src/cmake/PMEMDCompilerFlags.cmake
+--- amber20_src.orig/cmake/PMEMDCompilerFlags.cmake	2021-04-25 02:51:44.000000000 +0200
++++ patch/amber20_src/cmake/PMEMDCompilerFlags.cmake	2022-05-31 15:30:02.764697634 +0200
+@@ -48,7 +48,7 @@
+       
+ 	if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+ 	
+-		set(PMEMD_CFLAGS -O3 -mdynamic-no-pic -no-prec-div -ipo -xHost)
++		set(PMEMD_CFLAGS -O3 -mdynamic-no-pic -no-prec-div -ipo -march=core-avx2)
+ 
+ 	else()
+ 
+@@ -58,7 +58,7 @@
+ 			if(NOT "${SSE_TYPES}" STREQUAL "")
+ 				list(APPEND PMEMD_CFLAGS "-ax${SSE_TYPES}")
+ 			else()
+-				list(APPEND PMEMD_CFLAGS -xHost)
++				list(APPEND PMEMD_CFLAGS -march=core-avx2)
+ 			endif()
+ 		endif()
+ 
+@@ -78,7 +78,7 @@
+ 	
+ 	if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+ 	
+-		set(PMEMD_FFLAGS -O3 -mdynamic-no-pic -no-prec-div -ipo -xHost)
++		set(PMEMD_FFLAGS -O3 -mdynamic-no-pic -no-prec-div -ipo -march=core-avx2)
+ 		
+ 		list(APPEND PMEMD_FFLAGS -ipo)
+    
+@@ -90,7 +90,7 @@
+ 			if(NOT "${SSE_TYPES}" STREQUAL "")
+ 				list(APPEND PMEMD_FFLAGS "-ax${SSE_TYPES}")
+ 			else()
+-				list(APPEND PMEMD_FFLAGS -xHost)
++				list(APPEND PMEMD_FFLAGS -march=core-avx2)
+ 			endif()
+ 		endif()
+ 
