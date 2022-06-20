@@ -1,0 +1,35 @@
+easyblock = 'Tarball'
+
+name =    'gh'
+version = '2.5.2'
+
+homepage = 'https://github.com/cli/cli'
+
+whatis = [
+    "Description: gh is GitHub on the command line",
+]
+
+description = """
+gh is GitHub on the command line. It brings pull requests, issues,
+and other GitHub concepts to the terminal next to where you are
+already working with git and your code.
+"""
+
+usage = """
+This module works with any version of the git command line program,
+so it might be useful to also load the most recent buildtools module
+to get a more recent version of the git executable.
+"""
+
+toolchain = SYSTEM
+
+source_urls = ['https://github.com/cli/cli/releases/download/v%(version)s']
+sources =     ['gh_%(version)s_linux_amd64.tar.gz']
+checksums =   ['30629f88c1a142cb325a4f706eec812aca771f1fae21e9818057e8735883d89d']
+
+sanity_check_paths = {
+    'files': ['bin/gh'],
+    'dirs':  ['share/man'],
+}
+
+moduleclass = 'tools'
