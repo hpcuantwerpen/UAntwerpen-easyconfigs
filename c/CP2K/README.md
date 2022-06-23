@@ -133,3 +133,20 @@ officially supported by CP2K version 7.1. We also tested compiling with the olde
 version 2.4.7 of PLUMED, which still worked in the old way with statically linking
 to a list of object files (different patch included).
 
+
+### Version 9.1
+
+* [GitHub](https://github.com/cp2k/cp2k/tree/support/v9.1)
+     * [Scripts for dependencies](https://github.com/cp2k/cp2k/tree/support/v9.1/tools/toolchain/scripts)
+* Only trivial changes were needed compared to the EasyConfigs for the previoius versions.
+* Support for PLUMED 2.7.3 included.
+
+Suggested dependencies:
+<table>
+  <tr><th>Package</th><th>Version suggested</th><th>Version used</th></tr>
+  <tr><td>ELPA</td>   <td>2021.11.001</td>  <td>2021.11.002</td></tr>
+  <tr><td>Libint</td> <td>2.6.0</td>        <td>2.6.0</td></tr>
+  <tr><td>libxc</td>  <td>5.1.7</td>        <td>5.1.7</td></tr>
+  <tr><td>libxsmm</td><td>1.17</td>         <td>1.17</td></tr>
+  <tr><td>PLUMED</td> <td>2.7.3</td>        <td>2.7.3</td></tr>
+<table>
