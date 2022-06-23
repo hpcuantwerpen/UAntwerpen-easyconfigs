@@ -3,8 +3,9 @@ easyblock = 'Bundle'
 
 import os as local_os
 local_UAarch = local_os.environ['VSC_ARCH_LOCAL']
+local_UAos = local_os.environ['VSC_OS_LOCAL']
 
-if local_UAarch == "rome":
+if local_UAos == "centos8":
     local_buildset =    '2020a.04'
 else:
     local_buildset =    '2020a'
@@ -36,14 +37,14 @@ options as much as possible untouched.
 """
 
 toolchain =     {'name': 'intel', 'version': local_buildset}
-toolchainopts = {'openmp': False, 'usempi': False}
+toolchainopts = {'openmp': True, 'usempi': True}
 
 builddependencies = [
     ('buildtools', ''.join(local_buildset.split('.')[:1]), '', True),   # For CMake
 ]
 
 dependencies = [
-    ('CUDA', '11.2.1', '', True)
+    ('CUDA', '11.6.2', '', True)
 ]
 
 source_urls = ['ftp://ftp.gromacs.org/pub/gromacs/']
@@ -62,8 +63,8 @@ default_component_specs = {
     'separate_build_dir': False,
     'preconfigopts' : '( [ -f CMakeCache.txt ] && /bin/rm CMakeCache.txt ) ; ' +
                       '( [ -f Makefile ] && make clean ) ; ' ,
-    'buildopts' : 'all -j 20',
-#    'buildopts' : 'all check -j 20', 
+#    'buildopts' : 'all -j ',
+    'buildopts' : 'all check -j ', 
 #    'installopts' : 'clean',   # To completely remove the build so that a new one can start clean.
     'start_dir':   '%(namelower)s-%(version)s',
 }
@@ -109,19 +110,22 @@ local_gmxbaseopts += "-DGMX_FFT_LIBRARY=mkl -DGMX_EXTERNAL_BLAS=ON -DGMX_EXTERNA
 
 components = [
     ('GROMACS', version, {
+        'easyblock': "CMakeMake",
         'configopts': local_sercompsel + local_gmxbaseopts + "-DGMX_MPI=OFF -DGMX_THREAD_MPI=ON  -DGMX_DOUBLE=OFF ",
     }),
 #    ('GROMACS', version, {
+#        'easyblock': "CMakeMake",
 #        'configopts': local_sercompsel + local_gmxbaseopts + "-DGMX_MPI=OFF -DGMX_THREAD_MPI=ON  -DGMX_DOUBLE=ON ",
 #    }),
     ('GROMACS', version, {
+        'easyblock': "CMakeMake",
         'configopts': local_mpicompsel + local_gmxbaseopts + "-DGMX_MPI=ON  -DGMX_THREAD_MPI=OFF -DGMX_DOUBLE=OFF ",
     }),
 #    ('GROMACS', version, {
+#        'easyblock': "CMakeMake",
 #        'configopts': local_mpicompsel + local_gmxbaseopts + "-DGMX_MPI=ON  -DGMX_THREAD_MPI=OFF -DGMX_DOUBLE=ON ",
 #    }),
 ] 
-
 
 # This does what GMXRC.bash does except that it does not enable the command completion.
 modextravars = {
