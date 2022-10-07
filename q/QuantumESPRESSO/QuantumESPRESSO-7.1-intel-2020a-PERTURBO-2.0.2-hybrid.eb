@@ -1,0 +1,126 @@
+name = 'QuantumESPRESSO'
+
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+
+local_QuantumESPRESSO_version = '7.1' # https://gitlab.com/QEF/q-e/-/tags
+local_wannier90_version = '3.1.0'
+local_perturbo_version = '2.0.2'
+
+local_FFTW_version =           '3.3.8'           # http://www.fftw.org/
+local_HDF5_version =           '1.12.0'          # https://support.hdfgroup.org/HDF5/
+local_HDF5_retro_version =     '1.10.6'          # https://support.hdfgroup.org/HDF5/
+# Probably needs a non-standard ELPA!
+local_ELPA_version =           '2019.11.001'     #
+local_libxc_version =          '4.3.4'           # https://www.tddft.org/programs/libxc/download/
+
+import os as local_os
+local_UAcluster = local_os.environ['VSC_INSTITUTE_CLUSTER']
+
+name =          'QuantumESPRESSO'
+version =       local_QuantumESPRESSO_version
+versionsuffix = '-PERTURBO-%(pv)s-hybrid' % { 'pv': local_perturbo_version }
+
+homepage = 'https://www.quantum-espresso.org'
+whatis = [
+    "Description: Quantum ESPRESSO, an integrated suite for electronic-structure calculations based on DFT, plane waves and pseudopotentials",
+    'Version:     %(version)s hybrid MPI/OpenMP executables',
+]
+
+description = """
+Quantum ESPRESSO  is an integrated suite of computer codes for
+electronic-structure calculations and materials modeling at the nanoscale.  It
+is based on density-functional theory, plane waves, and pseudopotentials (both
+norm-conserving and ultrasoft).
+
+This module contains hybrid OpenMP/MPI executables, so you'll need to set
+OPENMP_NUM_THREADS to the appropriate value. See chapter 3 of the user guide
+for information on parallelism in QuantumESPRESSO.
+
+Installed plugins:
+* QE-GIPAW %(version)s
+* Wannier90 %(wv)s
+* PERTURBO %(pv)s
+
+Other plugins supported in some of the other QuantumESPRESSO modules are
+supported by this module:
+* WANT, West, Yambo and PLUMED do not compile
+""" % { 'version': version, 'wv': local_wannier90_version, 'pv': local_perturbo_version }
+
+toolchain =     {'name': 'intel', 'version': local_buildset}
+toolchainopts = {'usempi': True, 'openmp': True}
+
+local_QE_release = '.'.join(local_QuantumESPRESSO_version.split('.')[:2])
+
+sources = [
+    {
+        'filename': 'q-e-qe-%(version)s.tar.gz',
+        'extract_cmd': 'mkdir -p %(builddir)s/qe-%(version)s && tar xzvf %s --strip-components=1 -C $_',
+        'source_urls': ['https://gitlab.com/QEF/q-e/-/archive/qe-%(version)s']
+    },
+
+    # QE-GIPAW
+    {
+      'filename':          'qe-gipaw-%(version)s.tar.gz',
+      'source_urls':       ['https://github.com/dceresoli/qe-gipaw/releases/download/%(version)s/']
+    },
+
+    # Wannier
+    {
+      'filename':          'wannier90-%(wv)s.tar.gz' % {'wv': local_wannier90_version},
+      'download_filename': 'v%(wv)s.tar.gz'          % {'wv': local_wannier90_version},
+      'source_urls':       ['https://github.com/wannier-developers/wannier90/archive/']
+    },
+
+    # PERTURBO
+    {
+      'filename':          'perturbo-%(pv)s.tar.gz' % {'pv': local_perturbo_version},
+    },
+]
+
+source_urls = [ ]
+
+checksums = [
+    'd56dea096635808843bd5a9be2dee3d1f60407c01dbeeda03f8256a3bcfc4eb6',  # q-e-qe-7.1.tar.gz
+    '0eee3f613d249ff14e8b891493fe68a3567188575ec7397a8fbe3a97cbf6cb69',  # qe-gipaw-7.1.tar.gz
+    '40651a9832eb93dec20a8360dd535262c261c34e13c41b6755fa6915c936b254',  # wannier90-3.1.0.tar.gz
+    '7d0eaf5d455f04259214c20f8bc811ee8f77af473137fa6fb8e5ddcb1857c99f',  # perturbo-2.0.2.tar.gz.
+]
+
+# builddependencies = [('M4', '1.4.19')]
+
+dependencies = [
+    ('FFTW',  local_FFTW_version),               # The Intel FFTW interface lacks .f03 header files that are needed.
+    ('HDF5',  local_HDF5_retro_version, '-MPI'), # 1.8 which we have in this toolchain did not work.
+    ('ELPA',  local_ELPA_version),               # Taken from recent UGhent EasyConfigs
+    ('libxc', local_libxc_version),              # Taken from recent UGhent EasyConfigs
+]
+
+# preconfigopts
+if local_UAcluster == 'vaughan':
+    dependencies += [ ('MKL-overlay', '2018.04', '', True )]
+
+# prebuildopts for PERTURBO
+
+prebuildopts = 'sed -i "s|^#IFLAGS.*|IFLAGS += -I\$(EBROOTHDF5)/include|" perturbo-%(pv)s/make.sys && ' % { 'pv': local_perturbo_version }
+prebuildopts += 'sed -i "s|^#HDF5_LIB.*|HDF5_LIB += -I\$(EBROOTHDF5)/lib -lhdf5 -lhdf5_fortran|" perturbo-%(pv)s/make.sys && ' % { 'pv': local_perturbo_version }
+prebuildopts += 'sed -i "s|FFTXlib/|FFTXlib/src/|" perturbo-%(pv)s/make.sys && ' % { 'pv': local_perturbo_version }
+
+
+hybrid = True
+
+# add plumed and uncomment the lines in sources and checksums if the package is downloaded manually
+buildopts = 'all gwl xspectra couple epw gipaw w90 && cd perturbo-%(pv)s && make' % { 'pv': local_perturbo_version }
+
+# parallel build tends to fail
+parallel = 1
+
+# Save the make.inc file for future reference.
+# copy the extra files from perturbo
+postinstallcmds = [
+    'mkdir -p %(installdir)s/easybuild',
+    'cp %(builddir)s/qe-%(version)s/make.inc %(installdir)s/easybuild',
+    'cp %(builddir)s/qe-%(version)s/perturbo*/bin/* %(installdir)s/bin',
+]
+
+moduleclass = 'chem'
