@@ -1,0 +1,37 @@
+easyblock = 'Tarball'
+
+name =          'Guppy'
+version =       '6.3.8'
+versionsuffix = '-cpu'
+
+homepage = 'https://nanoporetech.com/'
+
+whatis = [
+    "Description: Guppy is a data processing toolkit that contains the Oxford Nanopore Technologies' basecalling algorithms, and several bioinformatic post-processing features.",
+]
+
+description = """
+Guppy is a data processing toolkit that contains the Oxford Nanopore 
+Technologies' basecalling algorithms, and several bioinformatic 
+post-processing features. It is provided as a separate package, as well as 
+being integrated with MinKNOW, the Oxford Nanopore device control software.
+
+Early downstream analysis components such as barcoding/demultiplexing, adapter 
+trimming and alignment are contained within Guppy. Furthermore, Guppy now 
+performs modified basecalling (5mC, 6mA and CpG) from the raw signal data, 
+producing an additional FAST5 file of modified base probabilities.
+"""
+
+toolchain = SYSTEM
+
+sources = ['../../o/ONT-Guppy/ont-%(namelower)s%(versionsuffix)s_%(version)s_linux64.tar.gz']
+source_urls = ['https://mirror.oxfordnanoportal.com/software/analysis']
+checksums = ['30c1a17342b7e2b0b788c6d303071d1f60a58c142f144e25dbdf7ba4e0804e06']
+
+sanity_check_paths = {
+    'files': ['bin/%s' % local_x for local_x in ['guppy_basecall_server', 'guppy_basecaller', 'guppy_aligner', 'guppy_barcoder']],
+    'dirs':  ['bin', 'lib', 'data'],
+}
+
+moduleclass = 'bio'
+group = 'aguppy'
