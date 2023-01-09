@@ -71,7 +71,9 @@ preconfigopts += 'export LINALG_FCFLAGS="-I${MKLROOT}/include" && '
 preconfigopts += 'export LINALG_LIBS="-L${MKLROOT}/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lpthread -lm -ldl" && '
 
 patches = [
-    'ABINIT-9.0.4_configure_intel.patch'
+    'ABINIT-9.0.4_configure_intel.patch',
+    # cfr. ticket #2490 and forum post https://discourse.abinit.org/t/how-important-is-it-to-store-1wf-files/3214/7
+    ('m_dfpt_looppert.F90', 'src/95_drive/m_dfpt_looppert.F90')
 ]
 
 configopts = ""
