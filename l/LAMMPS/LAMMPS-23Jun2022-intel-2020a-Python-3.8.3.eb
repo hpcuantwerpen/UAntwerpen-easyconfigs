@@ -69,7 +69,7 @@ sources = [
 
 #patches = ['LAMMPS-3Mar2020_fix-docs-build.patch']
 checksums = [
-    'u8a560213e83919623525c4a7c4b5f0eda35cdf3b0c0e6548fd891379e04ca9e6',  # stable_23Jun2022_update2.tar.gz
+    '8a560213e83919623525c4a7c4b5f0eda35cdf3b0c0e6548fd891379e04ca9e6',  # stable_23Jun2022_update2.tar.gz
     'c28fa5a1ea9608e4fd8686937be501c3bed8cc03ce1956f1cf0a1efce2c75349',  # lammps_vs_yaff_test_single_point_energy.py
 ]
 
