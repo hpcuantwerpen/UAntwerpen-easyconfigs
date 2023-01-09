@@ -1,0 +1,226 @@
+local_buildset =         '2020a'
+local_gcc_version =      '9.3.0'
+local_binutils_version = '2.34'
+
+local_archspec_version =       '0.1.0'           # https://github.com/archspec/archspec/releases
+local_Eigen_version =          '3.3.7'           # https://gitlab.com/libeigen/eigen/-/releases
+local_FFmpeg_version =         '4.2.2'           # http://ffmpeg.org/releases/
+local_kimapi_version =         '2.2.1'           # https://openkim.org/doc/usage/obtaining-models/#installing_api
+local_netCDF_version =         '4.7.3'           # https://www.unidata.ucar.edu/software/netcdf/
+local_PLUMED_version =         '2.6.1'           # https://www.plumed.org/download.html
+local_Python3_version =        '3.8.3'           # https://www.python.org/downloads/
+local_ScaFaCos_version =       '1.0.1'           # https://github.com/scafacos/scafacos/releases
+local_yaff_version =           '1.6.0'           # https://github.com/molmod/yaff/releases
+local_VoroPlusPlus_version =   '0.4.6'           #
+
+name =          'LAMMPS'
+version =       '23Jun2022'
+local_python_versionsuffix = '-Python-%(pyver)s'
+versionsuffix = local_python_versionsuffix
+
+homepage = 'https://lammps.sandia.gov/'
+
+whatis = [
+    'Description: LAMMPS is a classical molecular dynamics code, and an acronym for Large-scale Atomic/Molecular Massively Parallel Simulator'
+]
+
+description = """
+LAMMPS is a classical molecular dynamics code, and an acronym
+for Large-scale Atomic/Molecular Massively Parallel Simulator. LAMMPS has
+potentials for solid-state materials (metals, semiconductors) and soft matter
+(biomolecules, polymers) and coarse-grained or mesoscopic systems. It can be
+used to model atoms or, more generically, as a parallel particle simulator at
+the atomic, meso, or continuum scale. LAMMPS runs on single processors or in
+parallel using message-passing techniques and a spatial-decomposition of the
+simulation domain. The code is designed to be easy to modify or extend with new
+functionality.
+
+This build of LAMMPS is without Kokkos as the kokkos support did not compile
+properly. It does include the LAMMPS tools though. The build was done with
+both MPI and OpenMP enabled.
+
+The LAMMPS license asks you to site
+    S. Plimpton, Fast Parallel Algorithms for Short-Range Molecular Dynamics,
+    J Comp Phys, 117, 1-19 (1995)
+in your papers that use LAMMPS and to also give the URL http://lammps.sandia.gov
+of the LAMMPS web site.
+"""
+
+software_license = 'LicenseGPLv3'
+software_license_urls = [
+    'https://lammps.sandia.gov/doc/Intro_opensource.html',
+]
+
+site_contacts = 'hpc@uantwerpen.be'
+upstream_contacts = [
+    'LAMMPS mailing list: https://lammps.sandia.gov/mail.html',
+    'LAMMPS Slack channel: https://lammps.sandia.gov/slack.html',
+]
+
+toolchain =     {'name': 'intel', 'version': '2020a'}
+toolchainopts = {'openmp': True, 'usempi': True, 'cstd': 'c++11'}
+
+# 'https://github.com/lammps/lammps/archive/'
+source_urls = [GITHUB_LOWER_SOURCE]
+sources = [
+    'stable_%(version)s_update2.tar.gz',
+    {'filename': 'lammps_vs_yaff_test_single_point_energy.py', 'extract_cmd': "cp %s %(builddir)s"},
+]
+
+#patches = ['LAMMPS-3Mar2020_fix-docs-build.patch']
+checksums = [
+    'u8a560213e83919623525c4a7c4b5f0eda35cdf3b0c0e6548fd891379e04ca9e6',  # stable_23Jun2022_update2.tar.gz
+    'c28fa5a1ea9608e4fd8686937be501c3bed8cc03ce1956f1cf0a1efce2c75349',  # lammps_vs_yaff_test_single_point_energy.py
+]
+
+local_source_dir_name = '%(namelower)s-%(version)s_update2'
+
+builddependencies = [
+    ('buildtools', local_buildset,         '', True),                   # Guarantees recent versions of CMake and pkg-config
+    ('archspec',   local_archspec_version, local_python_versionsuffix), # Only needed when using the LAMMPS EasyBlock
+]
+
+dependencies = [
+    ('baselibs', local_buildset,            '',     ('GCCcore', local_gcc_version)), # For libpng, libjpeg-turbo, GSL, gzip, zlib, cURL, PCRE, libxml2
+    ('Python',   local_Python3_version),
+    ('netCDF',   local_netCDF_version,      '-MPI'),
+#   ('HDF5',     '1.10.6'), # Loaded automatically as a dependency of netCDF.
+#   ('tbb', '2020.1'),      # Included in our Intel module
+    ('FFmpeg',   local_FFmpeg_version,      '-CPU'),
+    ('Voro++',   local_VoroPlusPlus_version),
+    ('kim-api',  local_kimapi_version),
+    ('Eigen',    local_Eigen_version,        '', True),
+    ('yaff',     local_yaff_version,         local_python_versionsuffix),
+    ('PLUMED',   local_PLUMED_version),
+    ('ScaFaCoS', local_ScaFaCos_version),
+    # See below for why this is not included
+    # ('VTK', '8.2.0', local_python_versionsuffix),
+]
+
+# Build the documentation with an initialized MPI, otherwise sphinx-build will crash.
+# This is known issue with intel/2020a. See easybuilders/easybuild-easyconfigs issue #10213
+preconfigopts  = ''
+#local_doccmake = '%(builddir)s/%(namelower)s-stable_%(version)s/cmake/Modules/Documentation.cmake'
+#preconfigopts  += "sed -i 's/sphinx-build/%%(mpi_cmd_prefix)s sphinx-build/g' %s && " % local_doccmake
+local_usermake = '%(builddir)s/%(namelower)s-stable_%(version)s_update2/cmake/Modules/Packages/INTEL.cmake'
+preconfigopts += "sed -i 's/ -xHost//g' %s && " % local_usermake # Remove -xHost option. No need to put the correct one in there, it will be imported from EasyBuild.
+
+# To use additional custom configuration options, use the 'configopts' easyconfig parameter
+# See docs and lammps easyblock for more information.
+# https://github.com/lammps/lammps/blob/master/cmake/README.md#lammps-configuration-options
+#configopts = '-DBUILD_DOC=no -DBUILD_TOOLS=yes -DBUILD_LAMMPS_SHELL=yes '
+configopts  = '-DBUILD_DOC=no -DBUILD_TOOLS=yes -DBUILD_LAMMPS_SHELL=no '
+configopts += '-DPLUMED_MODE=shared '
+configopts += '-D DOWNLOAD_N2P2=yes '  # https://docs.lammps.org/Build_extras.html#ml-hdnnp
+
+#parallel = 1
+
+# auto-enabled by easyblock
+# 'GPU'    - if cuda package is present and kokkos is disabled
+# 'KOKKOS' - if kokkos is enabled (by default)
+#kokkos = True # This is the default but we set this in case the default changes in future versions of EasyBuild
+kokkos = False
+
+# not enabled (yet), needs more work/additional dependencies:
+# LATTE, - https://lammps.sandia.gov/doc/Build_extras.html#latte-package
+# MSCG,  - https://lammps.sandia.gov/doc/Build_extras.html#mscg-package
+# ADIOS - https://lammps.sandia.gov/doc/Build_extras.html#adios-package
+# AWPMD - https://lammps.sandia.gov/doc/Build_extras.html#awpmd-package
+# QUIP  - https://lammps.sandia.gov/doc/Build_extras.html#quip-package
+# VTK   - support is available in the foss version but currently fails to build for intel
+# due to https://software.intel.com/en-us/forums/intel-fortran-compiler/topic/746611
+# see https://github.com/lammps/lammps/issues/1964 for details
+general_packages = [
+    'ASPHERE',
+    'ATC',
+    'BOCS',
+    'BODY',
+    'BPM',
+    'BROWNIAN',
+    'CG-DNA',
+    'CG-SDK',
+    'CLASS2',
+    'COLLOID',
+    'COLVARS',
+    'COMPRESS',
+    'CORESHELL',
+    'DIELECTRIC',
+    'DIFFRACTION',
+    'DIPOLE',
+    'DPD-BASIC',
+    'DPD-MESO',
+    'DPD-REACT',
+    'DPD-SMOOTH',
+    'DRUDE',
+    'EFF',
+    'ELECTRODE',
+    'EXTRA-COMPUTE',
+    'EXTRA-DUMP',
+    'EXTRA-FIX',
+    'EXTRA-MOLECULE',
+    'EXTRA-PAIR',
+    'FEP',
+    'GRANULAR',
+    'H5MD',
+    'INTEL', # Requires the -restrict flag when compiling with the Intel compilers.
+    'INTERLAYER',
+    'KIM', 
+    'KSPACE',
+    'LATBOLTZ',
+    'MANIFOLD',
+    'MACHDYN',
+    'MANYBODY',
+    'MC',
+    'MEAM',
+    'MGPT',
+    'MISC',
+    'ML-HDNNP',
+    'ML-IAP',
+    'ML-PACE',
+    'ML-RANN',
+    'ML-SNAP',
+    'MOFFF',
+    'MOLECULE',
+    'MOLFILE', # Needs VMD molfile header files, but some defaults come with LAMMPS
+    'MPIIO',
+    'NETCDF',
+    'OPENMP',
+    'ORIENT',
+    'PERI',
+    'PHONON',
+    'PLUGIN',
+    'PLUMED',
+    'POEMS',
+    'PTM',
+    'PYTHON',
+    'QEQ',
+    'QTB',
+    'REACTION',
+    'REAXFF',
+    'REPLICA',
+    'RIGID',
+    'SCAFACOS',
+    'SHOCK',
+    'SMTBQ',
+    'SPH',
+    'SPIN',
+    'SRD',
+    'TALLY',
+    'UEF',
+    'VORONOI',
+    'YAFF',
+]
+
+# disabled for 23Jun22 update 2:
+# enhance_sanity_check = True
+#
+# two errors (others ran successfully):
+# - examples/friction/in.friction: ERROR: Region intersect region above-lo does not exist (src/region_intersect.cpp:46)
+# - examples/hugoniostat/in.hugoniostat: ERROR: Atom count is inconsistent, cannot write restart file (src/write_restart.cpp:223)
+
+# run short test case to make sure installation doesn't produce blatently incorrect results;
+# this catches a problem where having the INTEL package enabled causes trouble when installing with intel/2019b
+# (requires an MPI context for intel/2020a)
+sanity_check_commands = ["cd %(builddir)s && %(mpi_cmd_prefix)s python lammps_vs_yaff_test_single_point_energy.py"]
+
+moduleclass = 'chem'

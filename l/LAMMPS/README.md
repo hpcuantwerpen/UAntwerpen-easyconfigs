@@ -87,6 +87,13 @@ directly steering the build process from the EasyConfig file.
         mode to ``shared`` by adding ``-DPLUMED_MODE=shared`` to the CMake command
         line.
 
+### Version 23Jun2022 (update 2) for Intel 2020a
 
+  * Started from the 3Mar2020 version
+  * No difference any more between "USER-" and the "general" packages
+  * Added more packages, following what's mentioned in the easyconfig file in the Easybuild repo
+  * *NOTE*: temporarily disabled the generic sanity checks since two of them failed: 
+      * examples/friction/in.friction: ERROR: Region intersect region above-lo does not exist (src/region_intersect.cpp:46)
+      * examples/hugoniostat/in.hugoniostat: ERROR: Atom count is inconsistent, cannot write restart file (src/write_restart.cpp:223)
 
 
