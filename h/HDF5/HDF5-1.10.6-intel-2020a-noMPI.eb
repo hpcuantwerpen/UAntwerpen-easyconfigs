@@ -9,7 +9,7 @@ homepage = 'http://www.hdfgroup.org/HDF5/'
 
 whatis = [
     'Description: HDF5 tools/libraries for working with large and complex data collections',
-    'This module provides command line tools and static and shared libraries, compiled with MPI support',
+    'This module provides command line tools and static and shared libraries, compiled without MPI support',
 ]
 
 description = """
